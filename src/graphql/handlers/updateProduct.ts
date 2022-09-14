@@ -3,6 +3,7 @@ import { updateProductQuery } from '../queries/updateProduct';
 
 export const updateProduct = async (productUpdateData) => {
   let Data = {};
+  // !. Graphql api call
   await request('localhost:4030', updateProductQuery(productUpdateData))
     .then((data) => {
       Data = data;

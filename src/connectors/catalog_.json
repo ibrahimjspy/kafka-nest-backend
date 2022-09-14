@@ -2,9 +2,10 @@
     "name": "inventory-connector",
     "config": {
 
-        "connector.class": "io.debezium.connector.mysql.MySqlConnector",
+        "connector.class": "io.debezium.connector.sqlserver.SqlServerConnector",
         "tasks.max": "1",
-        "database.hostname": "mysql",
+        
+        "database.hostname": "sqlserver",
         "database.port": "3306",
         "database.user": "debezium",
         "database.password": "dbz",
@@ -12,10 +13,8 @@
         "database.server.name": "dbserver1",
         "table.include.list": "dbo.TBCatalog",
 
-        "database.include.list": "inventory",
-
         "database.history.kafka.bootstrap.servers": "kafka:9092",
-        "database.history.kafka.topic": "schema-changes.inventory",
+        "database.history.kafka.topic": "schema-changes.catalog",
 
         "transforms": "route",
         "transforms.route.type": "org.apache.kafka.connect.transforms.RegexRouter",

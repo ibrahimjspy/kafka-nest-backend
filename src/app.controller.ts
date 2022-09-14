@@ -6,9 +6,9 @@ import { AppService } from './app.service';
 export class AppController {
   constructor(private readonly appService: AppService) { }
 
-  @MessagePattern('product_create') // Our topic name
+  @MessagePattern('product_create_catalog') // topic name
   addProduct(@Payload() message) {
     console.log(message.value);
-    return this.appService.addProduct(message.value)
+    return this.appService.addProductCatalog(message.value)
   }
 }

@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { createProduct } from './graphql/handlers/createProduct';
+import { createProductCatalog } from './graphql/handlers/createProduct';
 
 @Injectable()
 export class AppService {
   getHello(): string {
     return 'Hello World!';
   }
-  addProduct(kafkaMessage) {
-    return createProduct(kafkaMessage) ;
+  addProductCatalog(kafkaMessage) {
+    return createProductCatalog(kafkaMessage) ;
   }
 }

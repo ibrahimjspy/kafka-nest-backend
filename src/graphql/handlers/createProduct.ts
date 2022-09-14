@@ -1,9 +1,10 @@
 import { request } from 'graphql-request';
-import { createProductQuery } from '../queries/createProduct';
+import { createProductCatalogQuery } from '../queries/createProduct';
 
-export const createProduct = async (productData) => {
+export const createProductCatalog = async (productData) => {
   let Data = {};
-  await request('localhost:4030', createProductQuery(productData))
+   // !. Graphql api call
+  await request('localhost:4030', createProductCatalogQuery(productData))
     .then((data) => {
       Data = data;
     })

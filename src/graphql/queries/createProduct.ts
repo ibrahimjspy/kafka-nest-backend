@@ -1,6 +1,9 @@
 import { gql } from 'graphql-request';
 
-export const createProductQuery = (productData) => {
+export const createProductCatalogQuery = (kafkaPayload) => {
+  // <!> Debezium kafka message parse
+  const productData = kafkaPayload.after
+
   return gql`
     mutation{
   productCreate(
