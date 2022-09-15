@@ -9,6 +9,11 @@ export class AppController {
   @MessagePattern('product') // topic name
   addProduct(@Payload() message) {
     console.log(message);
-    return message;
+    return this.appService.addProductCatalog(message);
+  }
+  @MessagePattern('seo_description') // topic name
+  addSeoDescription(@Payload() message) {
+    console.log(message);
+    return this.appService;
   }
 }
