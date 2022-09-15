@@ -1,5 +1,5 @@
-import { Injectable } from '@nestjs/common';
-import { createProductCatalog } from './graphql/handlers/createProduct';
+import {Injectable} from '@nestjs/common';
+import {createProductCatalog} from './graphql/handlers/createProduct';
 
 @Injectable()
 export class AppService {
@@ -7,6 +7,6 @@ export class AppService {
     return 'Hello World!';
   }
   addProductCatalog(kafkaMessage) {
-    return createProductCatalog(kafkaMessage) ;
+    return createProductCatalog(kafkaMessage);
   }
 }

@@ -1,10 +1,10 @@
 /* eslint-disable prettier/prettier */
-import { gql } from 'graphql-request';
+import {gql} from 'graphql-request';
 
 export const updateProductQuery = (productData) => {
   const dynamic_product_queries = () => {
     for (const [key, value] of Object.entries(productData)) {
-      return `${key}: ${value}`
+      return `${key}: ${value}`;
     }
   };
   return gql`
