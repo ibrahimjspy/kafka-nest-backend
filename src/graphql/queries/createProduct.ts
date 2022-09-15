@@ -17,12 +17,12 @@ export const createProductCatalogQuery = (kafkaPayload) => {
       name: "{productData.name}"
       slug: "{productData.slug}"
       seo: {
-        title: "${productData.seo_title}"
-        description: "${productData.seo_description}"
+        title: "{productData.seo_title}"
+        description: "{productData.seo_description}"
       }
       weight: "{productData.weight}"
       rating: "{productData.rating}"
-      productType: "$productType"
+      productType: "productType"
     }
   )
 }
