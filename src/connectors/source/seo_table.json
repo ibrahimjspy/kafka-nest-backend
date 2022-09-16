@@ -16,10 +16,14 @@
         "database.history.kafka.bootstrap.servers": "kafka:9092",
         "database.history.kafka.topic": "schema-changes.catalog",
 
-        "transforms": "route",
+        "transforms": "route,renameTopic",
         "transforms.route.type": "org.apache.kafka.connect.transforms.RegexRouter",
         "transforms.route.regex": "([^.]+)\\.([^.]+)\\.([^.]+)",
-        "transforms.route.replacement": "$3"
+        "transforms.route.replacement": "$3",
+
+        "transforms.renameTopic.type":"org.apache.kafka.connect.transforms.RegexRouter",
+        "transforms.renameTopic.regex":"seo",
+        "transforms.renameTopic.replacement":"product_product_seo"
         
     }
 }

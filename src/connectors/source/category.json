@@ -1,5 +1,5 @@
 {
-    "name": "catalog-connector",
+    "name": "category-connector",
     "config": {
 
         "connector.class": "io.debezium.connector.sqlserver.SqlServerConnector",
@@ -11,7 +11,7 @@
         "database.password": "dbz",
         "database.server.id": "184054",
         "database.server.name": "dbserver1",
-        "table.include.list": "dbo.TBCatalog",
+        "table.include.list": "dbo.TBcategory",
 
         "database.history.kafka.bootstrap.servers": "kafka:9092",
         "database.history.kafka.topic": "schema-changes.catalog",
@@ -22,8 +22,8 @@
         "transforms.route.replacement": "$3",
 
         "transforms.renameTopic.type":"org.apache.kafka.connect.transforms.RegexRouter",
-        "transforms.renameTopic.regex":"products_catalog",
-        "transforms.renameTopic.replacement":"products_catalog"
+        "transforms.renameTopic.regex":"categories",
+        "transforms.renameTopic.replacement":"product_categories"
         
     }
 }
