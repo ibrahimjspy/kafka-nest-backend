@@ -15,4 +15,9 @@ export class AppController {
     // console.log(message);
     return this.appService.addProductCatalog(message);
   }
+  @MessagePattern('product_media') // topic name
+  addProductMedia(@Payload() message) {
+    // console.log(message);
+    return this.appService.addProductCatalog(message);
+  }
 }
