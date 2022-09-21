@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { productGeneralTransform } from 'src/transforms/productGeneral';
 /**
  * Transformation class with utility methods performing specific
  *  transformations on product Object and its utilities
@@ -34,6 +35,6 @@ export class ProductModelTransformService {
     return productObject;
   }
   public generalTransform(productObject) {
-    return productObject;
+    return productGeneralTransform(productObject);
   }
 }

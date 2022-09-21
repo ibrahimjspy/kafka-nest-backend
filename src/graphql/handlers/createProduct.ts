@@ -1,19 +1,10 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import { request } from 'graphql-request';
-import { createProductCatalogQuery } from '../queries/createProduct';
+import { graphqlCall, graphqlExceptionHandler } from 'src/utils/graphqlHandler';
+import { createProductMutation } from '../queries/createProduct';
 
 export const createProductCatalog = async (productData) => {
-  let Data = {};
-  // !. Graphql api call
-  await request(
-    'http://54.185.167.149:4000/',
-    createProductCatalogQuery(productData),
-  )
-    .then((data) => {
-      Data = data;
-    })
-    .catch((error) => {
-      console.log('graphql method was called');
-    });
-  return Data;
+  try {
+    return await graphqlCall(createProductMutation(productData));
+  } catch (err) {
+    return graphqlExceptionHandler(err);
+  }
 };

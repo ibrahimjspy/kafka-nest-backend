@@ -1,18 +1,10 @@
-import { request } from 'graphql-request';
+import { graphqlCall, graphqlExceptionHandler } from 'src/utils/graphqlHandler';
 import { updateProductQuery } from '../queries/updateProduct';
 
 export const updateProduct = async (productUpdateData) => {
-  let Data = {};
-  // !. Graphql api call
-  await request(
-    'http://54.185.167.149:4000/',
-    updateProductQuery(productUpdateData),
-  )
-    .then((data) => {
-      Data = data;
-    })
-    .catch((error) => {
-      console.log(error);
-    });
-  return Data;
+  try {
+    return await graphqlCall(updateProductQuery(productUpdateData));
+  } catch (err) {
+    return graphqlExceptionHandler(err);
+  }
 };
