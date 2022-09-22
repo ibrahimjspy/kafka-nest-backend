@@ -29,3 +29,17 @@ export const createProductMutation = (kafkaPayload) => {
 }
     `;
 };
+export const addOrangeShineIdMutation = (saleorId, orangeShineId) => {
+  return gql`
+    mutation {
+      updateMetadata(
+        id: "${saleorId}"
+        input: { key: "OS_ID", value: "${orangeShineId}" }
+      ) {
+        item {
+          __typename
+        }
+      }
+    }
+  `;
+};
