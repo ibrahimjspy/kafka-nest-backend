@@ -1,17 +1,11 @@
 export const productGeneralTransform = async (productObject) => {
-  nameValidator(productObject);
+  productNameValidator(productObject);
   return productObject;
 };
 // validator to check if product name exists in object
-const nameValidator = async (productObject) => {
-  if (productObject.name) {
+const productNameValidator = async (productObject) => {
+  if (productObject.style_name) {
     return;
-  }
-  if (productObject.web_name) {
-    productObject.name = productObject.web_name;
-  }
-  if (productObject.contact.name) {
-    productObject.name = productObject.contact.name;
   } else {
     productObject.name = 'test_product';
   }
