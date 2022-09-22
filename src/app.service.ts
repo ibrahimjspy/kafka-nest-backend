@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { createProductMutationHandler } from './graphql/handlers/createProduct';
+import { createProductHandler } from './graphql/handlers/createProduct';
 import { ProducerService } from './kafka/producer.service';
 import { seoMessageStream } from './streams/seo';
 @Injectable()
@@ -10,7 +10,7 @@ export class AppService {
   }
   public addProductCatalog(kafkaMessage) {
     console.log(kafkaMessage);
-    return createProductMutationHandler(kafkaMessage, kafkaMessage.op);
+    return createProductHandler(kafkaMessage);
   }
   //kafka streams api method
   async addSeoStreamService(kafkaMessage) {

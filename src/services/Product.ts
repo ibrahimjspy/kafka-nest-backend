@@ -1,15 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import { createProductMutationHandler } from 'src/graphql/handlers/createProduct';
-import { kafkaMessageCheck } from 'src/utils/kafkaMessageNature';
+import { createProductHandler } from 'src/graphql/handlers/createProduct';
+import { updateProduct } from 'src/graphql/handlers/updateProduct';
 import { productCheckHandler } from 'src/utils/productExistingCheck';
 import { testProductData } from 'test/product';
 @Injectable()
-export class AppService {
+export class ProductService {
   getHello(): string {
     return 'Hello World!';
   }
-  public async addProductCatalog(kafkaMessage) {
-    const message_nature = kafkaMessageCheck(kafkaMessage);
+  public async handleProductChange(kafkaMessage) {
     const productExists = await productCheckHandler(kafkaMessage.after);
     const productData = Object.assign(
       testProductData,
@@ -17,8 +16,8 @@ export class AppService {
       productExists,
     );
     if (productExists.exists) {
-      return createProductMutationHandler(productData, message_nature);
+      return createProductHandler(productData);
     }
-    return createProductMutationHandler(productData, message_nature);
+    return updateProduct(productData);
   }
 }
