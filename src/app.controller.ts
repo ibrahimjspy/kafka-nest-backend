@@ -1,13 +1,10 @@
 import { Controller } from '@nestjs/common';
 import { MessagePattern, Payload } from '@nestjs/microservices';
 import { AppService } from './app.service';
-import { ProductService } from './services/Product';
+
 @Controller()
 export class AppController {
-  constructor(
-    private readonly appService: AppService,
-    private readonly productService: ProductService,
-  ) {}
+  constructor(private readonly appService: AppService) {}
   @MessagePattern('product') // topic name
   addProductTest(@Payload() message) {
     return this.appService.addProductCatalog(message);
@@ -25,6 +22,6 @@ export class AppController {
   @MessagePattern('TBStyleNo') // topic name
   handleProductUpdate(@Payload() message) {
     // console.log(message);
-    return this.productService.handleProductChange(message.value);
+    return this.appService.handleProductCDC(message.value);
   }
 }

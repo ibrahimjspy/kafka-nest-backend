@@ -28,6 +28,7 @@
     "graphql": "^16.6.0",
     "graphql-request": "^5.0.0",
     "kafkajs": "^2.2.0",
+    "mssql": "^9.0.1",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^7.2.0"
