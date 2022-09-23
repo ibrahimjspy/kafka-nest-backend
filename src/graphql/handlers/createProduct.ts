@@ -6,7 +6,6 @@ import {
 
 export const createProductHandler = async (productData) => {
   try {
-    //TODO add product transformation class and methods on compositeProductData
     const createProduct = await graphqlCall(createProductMutation(productData));
     const registerOrangeShineId = await graphqlCall(
       addOrangeShineIdMutation(createProduct, productData),

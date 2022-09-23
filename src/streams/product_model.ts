@@ -31,6 +31,7 @@ export class ProductModelTransformService {
   public pricingTransform(productObject) {
     return productObject;
   }
+  // TODO add productObject seo transform.
   public seoTransform(productObject) {
     return productObject;
   }
