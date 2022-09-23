@@ -5,7 +5,7 @@ import { fetchMsSql } from 'src/utils/fetchProductView';
 import { productCheckHandler } from 'src/utils/productExistingCheck';
 @Injectable()
 export class ProductService {
-  getHello(): string {
+  public getHello(): string {
     return 'Hello World!';
   }
   public async handleProductApi(kafkaMessage) {
@@ -17,8 +17,8 @@ export class ProductService {
       productExists,
     );
     if (productExists.exists) {
-      return createProductHandler(productCompositeData);
+      return updateProduct(productCompositeData);
     }
-    return updateProduct(productCompositeData);
+    return createProductHandler(productCompositeData);
   }
 }

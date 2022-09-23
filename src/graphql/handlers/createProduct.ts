@@ -1,9 +1,16 @@
 import { graphqlCall, graphqlExceptionHandler } from 'src/utils/graphqlHandler';
-import { createProductMutation } from '../queries/createProduct';
+import {
+  addOrangeShineIdMutation,
+  createProductMutation,
+} from '../queries/createProduct';
 
 export const createProductHandler = async (productData) => {
   try {
-    return await graphqlCall(createProductMutation(productData));
+    const createProduct = await graphqlCall(createProductMutation(productData));
+    const registerOrangeShineId = await graphqlCall(
+      addOrangeShineIdMutation(createProduct, productData),
+    );
+    return { ...createProduct, ...registerOrangeShineId };
   } catch (err) {
     return graphqlExceptionHandler(err);
   }

@@ -3,14 +3,10 @@
 
 [Nest](https://github.com/nestjs/nest) framework TypeScript starter repository
 
-## kafka_setup
+## start by using docker
 
 ```bash
-docker pull spotify/kafka
-```
-
-```bash
-docker run -p 2181:2181 -p 9092:9092 --name kafka-docker-container --env ADVERTISED_HOST=127.0.0.1 --env ADVERTISED_PORT=9092 spotify/kafka
+docker-compose -f docker-compose.yaml up
 ```
 
 Node js setup

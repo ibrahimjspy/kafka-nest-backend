@@ -26,10 +26,23 @@ export const createProductMutation = (kafkaPayload) => {
       productType: "UHJvZHVjdFR5cGU6MQ=="
     }
   )
+  {
+        product {
+          name
+          id
+          seoTitle
+        }
+        errors {
+          field
+          message
+        }
+      }
 }
     `;
 };
-export const addOrangeShineIdMutation = (saleorId, orangeShineId) => {
+export const addOrangeShineIdMutation = (saleorResponse, productObject) => {
+  const saleorId = saleorResponse.product.id;
+  const orangeShineId = productObject.id;
   return gql`
     mutation {
       updateMetadata(
