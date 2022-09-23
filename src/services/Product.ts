@@ -9,14 +9,14 @@ export class ProductService {
     return 'Hello World!';
   }
   public async handleProductApi(kafkaMessage) {
-    const productExists = await productCheckHandler(kafkaMessage);
-    const productViewData = await fetchMsSql(kafkaMessage.TBItem_ID);
+    const productExistsInSaleor = await productCheckHandler(kafkaMessage);
+    const productAdditionalData = await fetchMsSql(kafkaMessage.TBItem_ID);
     const productCompositeData = Object.assign(
-      productViewData,
+      productAdditionalData,
       kafkaMessage,
-      productExists,
+      productExistsInSaleor,
     );
-    if (productExists.exists) {
+    if (productExistsInSaleor.exists) {
       return updateProduct(productCompositeData);
     }
     return createProductHandler(productCompositeData);
