@@ -12,7 +12,7 @@ export const createProductMutation = (kafkaPayload) => {
     input: {
       attributes: [
         id: A1
-        values: ["{productData.color}"]
+        values: ["${productData.color || 'RED'}"]
       ]
       category: {productData.category || null}
 

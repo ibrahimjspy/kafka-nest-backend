@@ -8,12 +8,12 @@ export const updateProductQuery = (productData) => {
       id:${productData.product_id}
       input: {
         name: "${productData.name}"
-        description:"${productData.name}"
+        description:"${productData.descriptiopn}"
         seo: {
           title: "${productData.brand.seo_title || ''}"
           description: "${productData.brand.seo_description || ''}"
         }
-        rating: "${productData.rating}"
+        rating: "${productData.rating || 2}"
       }
     )
   }

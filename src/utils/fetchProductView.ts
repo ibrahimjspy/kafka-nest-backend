@@ -18,6 +18,6 @@ export const fetchMsSql = async (productId: string): Promise<object> => {
     }
     return testProductData;
   } catch (err) {
-    console.log(err);
+    return testProductData;
   }
 };
