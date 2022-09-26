@@ -11,7 +11,9 @@ export const productCheckHandler = async (changeData) => {
   // Queries Saleor to check product existence in its ecosystem
   const response = await graphqlCall(metadataCheckQuery(changeData.TBItem_ID));
   // Parses and validates the response and returns an object containing required information of product existence
-  productIdResponse = productIdResponseCheckValidation(response);
+  response
+    ? (productIdResponse = productIdResponseCheckValidation(response))
+    : '';
   return productIdResponse;
 };
 
@@ -20,7 +22,7 @@ export const productCheckHandler = async (changeData) => {
  * @params cdc debezium response parsed
  */
 export const productIdResponseCheckValidation = (response) => {
-  const productSaleorId: string = response.data.products.edges[0].node.id;
+  const productSaleorId: string = response.data?.products?.edges[0].node.id;
   let objectResponse = { exists: false, saleorId: '' };
   if (productSaleorId) {
     objectResponse = { exists: true, saleorId: `${productSaleorId}` };
