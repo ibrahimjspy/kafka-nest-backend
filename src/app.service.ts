@@ -12,7 +12,7 @@ export class AppService {
     private readonly productTransformService: ProductModelTransformService,
   ) {}
   handleProductCDC(kafkaMessage) {
-    return this.productService.handleProductApi(kafkaMessage);
+    return this.productService.handleProductCDC(kafkaMessage);
   }
   public addProductCatalog(kafkaMessage) {
     console.log(kafkaMessage);

@@ -6,7 +6,7 @@ import { graphqlCall } from 'src/utils/graphqlHandler';
  * it returns Saleor id stored in metadata of its object
  * @params cdc debezium payload
  */
-export const productCheckHandler = async (changeData) => {
+export const productExistenceCheckHandler = async (changeData) => {
   let productIdResponse = { exists: false, saleorId: '' };
   // Queries Saleor to check product existence in its ecosystem
   const response = await graphqlCall(metadataCheckQuery(changeData.TBItem_ID));
