@@ -3,7 +3,7 @@ import { createProductHandler } from './graphql/handlers/createProduct';
 import { ProducerService } from './kafka/producer.service';
 import { ProductService } from './services/Product';
 import { ProductModelTransformService } from './streams/product_model';
-import { seoMessageStream } from './streams/seo';
+import { seoTransform } from './transforms/seo';
 @Injectable()
 export class AppService {
   constructor(
@@ -20,7 +20,7 @@ export class AppService {
   }
   //kafka streams api method
   async addSeoStreamService(kafkaMessage) {
-    const streamedMessage = await seoMessageStream(kafkaMessage);
+    const streamedMessage = await seoTransform(kafkaMessage);
     await this.producerService.produce({
       topic: 'seo_details',
       messages: [
