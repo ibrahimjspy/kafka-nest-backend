@@ -26,8 +26,8 @@ export class ProductService {
     await this.transformService.productTransform(productCompositeData);
 
     if (productExistsInSaleor.exists) {
-      return updateProduct(productCompositeData);
+      return updateProduct(productAdditionalData);
     }
-    return createProductHandler(productCompositeData);
+    return createProductHandler(productAdditionalData);
   }
 }

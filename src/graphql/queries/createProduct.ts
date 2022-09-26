@@ -2,30 +2,20 @@
 import { gql } from 'graphql-request';
 
 export const createProductMutation = (productData) => {
-  const fallbackJSON = '{"phonetype":"N95","test":"WP"}';
-  const fallbackString = '';
-
+  // parsing product data;
+  const seoTitle = productData.brand.information.seo_title;
+  const seoDescription = productData.brand.seo_title;
+  const productName = productData.style_name;
   return gql`
-    mutation{
-  productCreate(
-    input: {
-      attributes: [
-        id: A1
-        values: ["${productData.color || fallbackString}"]
-      ]
-      category: ${productData.category || fallbackString}
-
-      description: "${productData.description || fallbackJSON}"
-      name: "${productData.name}"
-      seo: {
-        title: "${productData.brand.seo_title || fallbackString}"
-        description: "${productData.brand.seo_description || fallbackString}"
-      }
-      rating: "${productData.order_review.score || null}"
-      productType: "UHJvZHVjdFR5cGU6MQ=="
-    }
-  )
-  {
+    mutation {
+      productCreate(
+        input: {
+          productType: "UHJvZHVjdFR5cGU6MQ=="
+          name: "${productName}"
+          seo: { title: "${seoTitle}", description: "${seoDescription}" }
+          rating: 4
+        }
+      ) {
         product {
           name
           id
@@ -36,12 +26,13 @@ export const createProductMutation = (productData) => {
           message
         }
       }
-}
-    `;
+    }
+  `;
 };
 export const addOrangeShineIdMutation = (saleorResponse, productObject) => {
-  const saleorId = saleorResponse.product.id;
+  const saleorId = saleorResponse.productCreate.product.id;
   const orangeShineId = productObject.id;
+  console.log({ saleorId, orangeShineId });
   return gql`
     mutation {
       updateMetadata(

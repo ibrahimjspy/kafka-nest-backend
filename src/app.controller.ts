@@ -7,7 +7,7 @@ export class AppController {
   constructor(private readonly appService: AppService) {}
   @MessagePattern('product') // topic name
   addProductTest(@Payload() message) {
-    return this.appService.addProductCatalog(message);
+    return this.appService.handleProductCDC(message);
   }
   @MessagePattern('seo_description') // topic name
   addSeoDescription(@Payload() message) {

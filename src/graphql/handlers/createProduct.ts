@@ -10,6 +10,8 @@ export const createProductHandler = async (productData) => {
     const registerOrangeShineId = await graphqlCall(
       addOrangeShineIdMutation(createProduct, productData),
     );
+    console.log(createProduct);
+    console.log(registerOrangeShineId);
     return { ...createProduct, ...registerOrangeShineId };
   } catch (err) {
     return graphqlExceptionHandler(err);

@@ -12,7 +12,7 @@ type GraphqlCall = (Query: string, Mock?: string) => Promise<object>;
  */
 export const graphqlCall: GraphqlCall = async (Query) => {
   let Data = {};
-  await request('http://54.185.167.149:4000/', Query)
+  await request('http://54.185.167.149:4003/', Query)
     .then((data) => {
       Data = data;
     })

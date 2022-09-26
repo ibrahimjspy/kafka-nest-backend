@@ -16,8 +16,8 @@ export const fetchMsSql = async (productId: string): Promise<object> => {
     if (result) {
       return result;
     }
-    return testProductData;
+    return testProductData.data;
   } catch (err) {
-    return testProductData;
+    return testProductData.data;
   }
 };
