@@ -2,7 +2,7 @@ import { graphqlCall, graphqlExceptionHandler } from 'src/utils/graphqlHandler';
 import {
   addOrangeShineIdMutation,
   createProductMutation,
-} from '../queries/createProduct';
+} from '../mutations/createProduct';
 
 export const createProductHandler = async (productData) => {
   try {

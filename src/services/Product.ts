@@ -22,11 +22,11 @@ export class ProductService {
       kafkaMessage,
       productExistsInSaleor,
     );
-
-    await this.transformService.productTransform(productCompositeData);
-
     if (productExistsInSaleor.exists) {
-      return updateProduct(productAdditionalData);
+      await this.productModelTransformerService.productTransform(
+        productCompositeData,
+      );
+      return updateProduct(productCompositeData);
     }
     return createProductHandler(productAdditionalData);
   }
