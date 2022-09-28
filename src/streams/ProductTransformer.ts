@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { productGeneralTransform } from 'src/transforms/productGeneral';
-import { seoTransform } from 'src/transforms/seo';
+import { productGeneralTransformer } from 'src/transformers/productGeneral';
+import { seoTransformer } from 'src/transformers/seo';
 /**
  * Transformation class with utility methods performing specific
  *  transformations on product Object and its utilities
  */
 @Injectable()
-export class ProductModelTransformService {
+export class ProductModelTransformerService {
   /**
    * complete product object transform
    * @params productObject
@@ -33,9 +33,9 @@ export class ProductModelTransformService {
     return productObject;
   }
   public seoTransform(productObject) {
-    return seoTransform(productObject);
+    return seoTransformer(productObject);
   }
   public generalTransform(productObject) {
-    return productGeneralTransform(productObject);
+    return productGeneralTransformer(productObject);
   }
 }

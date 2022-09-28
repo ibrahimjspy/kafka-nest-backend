@@ -1,5 +1,5 @@
 import { graphqlCall, graphqlExceptionHandler } from 'src/utils/graphqlHandler';
-import { updateProductQuery } from '../queries/updateProduct';
+import { updateProductQuery } from '../mutations/updateProduct';
 
 export const updateProduct = async (productUpdateData) => {
   try {

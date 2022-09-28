@@ -4,7 +4,7 @@
  * @value seoDescription
  * @params productObject,  Composite productObject containing cdc changeData, productView data
  */
-export const seoTransform = async (productObject) => {
+export const seoTransformer = async (productObject) => {
   const fallbackString = '';
   const seoTitle = productObject.brand.information.seo_title || fallbackString;
   const seoDescription =

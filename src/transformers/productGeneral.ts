@@ -5,7 +5,7 @@
  * @value seo_information
  * @params productObject,  Composite productObject containing cdc changeData, productView data
  */
-export const productGeneralTransform = async (productObject) => {
+export const productGeneralTransformer = async (productObject) => {
   productNameValidator(productObject);
   productDescriptionTransform(productObject);
   return productObject;

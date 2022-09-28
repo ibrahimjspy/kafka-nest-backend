@@ -1,4 +1,4 @@
-export const brandGeneralTransform = async (productObject) => {
+export const brandGeneralTransformer = async (productObject) => {
   brandNameValidator(productObject);
   return productObject;
 };
