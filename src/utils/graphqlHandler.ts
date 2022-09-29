@@ -1,3 +1,4 @@
+import { Logger } from '@nestjs/common';
 import { request } from 'graphql-request';
 type GraphqlCall = (Query: string, Mock?: string) => Promise<object>;
 /**
@@ -32,7 +33,7 @@ export const graphqlExceptionHandler = (error): object => {
   };
   const error_message = error_response ? error_response : 'server side';
   const error_code: number = error.type ? 500 : error?.response?.status;
-  console.log('graphql error', error_message);
+  Logger.error(error_message);
   return {
     status: error_code == 200 ? 405 : error_code,
     graphql_error: error_message,

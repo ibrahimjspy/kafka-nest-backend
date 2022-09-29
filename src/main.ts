@@ -1,3 +1,4 @@
+import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { Transport, MicroserviceOptions } from '@nestjs/microservices';
 
@@ -21,7 +22,7 @@ async function bootstrap() {
   );
 
   app.listen().then(() => {
-    console.log('connected to kafka server');
+    Logger.verbose('kafka client connected');
   });
 }
 bootstrap();

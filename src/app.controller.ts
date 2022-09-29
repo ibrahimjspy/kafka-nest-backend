@@ -1,4 +1,4 @@
-import { Controller } from '@nestjs/common';
+import { Controller, Logger } from '@nestjs/common';
 import { MessagePattern, Payload } from '@nestjs/microservices';
 import { AppService } from './app.service';
 
@@ -7,6 +7,7 @@ export class AppController {
   constructor(private readonly appService: AppService) {}
   @MessagePattern('product') // topic name
   addProductTest(@Payload() message) {
+    Logger.log(message);
     return this.appService.handleProductCDC(message);
   }
   @MessagePattern('seo_description') // topic name
