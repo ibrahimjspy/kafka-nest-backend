@@ -25,4 +25,8 @@ export class AppController {
     Logger.log(message);
     return this.appService.handleProductCDC(message.value);
   }
+  @MessagePattern('health check') // topic name
+  healthCheck() {
+    return 'service running';
+  }
 }
