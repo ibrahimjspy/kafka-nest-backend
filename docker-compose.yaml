@@ -1,32 +1,5 @@
-version: '3.3'
+version: '2'
 services:
-  postgres:
-    image: debezium/example-postgres:1.9
-    container_name: postgres
-    ports:
-      - 5433:5432
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-
-  sqlserver:
-    image: mcr.microsoft.com/mssql/server:2019-latest
-    ports:
-     - 1433:1433 
-    environment:
-     - ACCEPT_EULA=Y
-     - MSSQL_PID=Standard
-     - SA_PASSWORD=Password!
-     - MSSQL_AGENT_ENABLED=true
-
-# 1. kafka & zookeeper --> docker
-# 2. kafdrop --> docker
-# 3. postgres --> docker
-# 4. debezium connector --> docker
-# 5. pgAdmin/DBeaver --> local system
-# 6. Postman --> local system
-# 7. sqlserver --> docker
-
 # Zookeeper, single node
   zookeeper:
     image: wurstmeister/zookeeper:latest
@@ -54,6 +27,15 @@ services:
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
       #https://github.com/wurstmeister/kafka-docker/issues/553
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    ports:
+     - 1433:1433 
+    environment:
+     - ACCEPT_EULA=Y
+     - MSSQL_PID=Standard
+     - SA_PASSWORD=Password!
+     - MSSQL_AGENT_ENABLED=true
 
   kafka2:
     image: wurstmeister/kafka:latest
@@ -83,26 +65,42 @@ services:
     depends_on:
       - kafka1
       - kafka2
-  
+#kafdrop for topic/msg visualization
 
-  # debezium connector
-  kconnect:
-    image: debezium/connect:1.9
+  postgres:
+    image: quay.io/debezium/postgres:9.6
     ports:
-      - 8083:8083
+     - "5432:5432"
     environment:
-      CONFIG_STORAGE_TOPIC: my_connect_configs
-      OFFSET_STORAGE_TOPIC: my_connect_offsets
-      STATUS_STORAGE_TOPIC: my_connect_statuses
-      BOOTSTRAP_SERVERS: kafka1:29092,kafka2:29093
+     - POSTGRES_USER=postgresuser
+     - POSTGRES_PASSWORD=postgrespw
+     - POSTGRES_DB=inventory  
+  connect:
+    image:  debezium/connect-jdbc-es:${DEBEZIUM_VERSION}
+    build:
+      context: debezium-jdbc-es
+      args:
+        DEBEZIUM_VERSION: ${DEBEZIUM_VERSION}
+    ports:
+     - 8083:8083
+     - 5005:5005
     links:
-      - zookeeper
-      - postgres
-    depends_on:
-      - kafka1
-      - kafka2
-      - zookeeper
-      - postgres  
+     - kafka1
+     - kafka2
+     - sqlserver
+     - postgres
+    environment:
+     - BOOTSTRAP_SERVERS=kafka1:29092,kafka2:29093
+     - GROUP_ID=1
+     - CONFIG_STORAGE_TOPIC=my_connect_configs
+     - OFFSET_STORAGE_TOPIC=my_connect_offsets
+     - STATUS_STORAGE_TOPIC=my_connect_statuses
+# For testing newer connector versions, unpack the connector archive into this
+# directory and uncomment the lines below
+#    volumes:
+#     - ./debezium-connector-sqlserver:/kafka/connect/debezium-connector-sqlserver
+
+# Make sure ports in your debzium source connectors are 29092,29093 
 
 # POST  http://localhost:8083/connectors --> To register the kafka connector
 # {
