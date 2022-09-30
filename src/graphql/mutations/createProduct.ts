@@ -29,14 +29,17 @@ export const createProductMutation = (productData) => {
     }
   `;
 };
-export const addOrangeShineIdMutation = (saleorResponse, productObject) => {
-  const saleorId = saleorResponse.productCreate.product.id;
+export const addOrangeShineIdMutation = (
+  destinationResponse,
+  productObject,
+) => {
+  const destinationId = destinationResponse.productCreate.product.id;
   const orangeShineId = productObject.id;
-  console.log({ saleorId, orangeShineId });
+  console.log({ destinationId, orangeShineId });
   return gql`
     mutation {
       updateMetadata(
-        id: "${saleorId}"
+        id: "${destinationId}"
         input: { key: "OS_ID", value: "${orangeShineId}" }
       ) {
         item {

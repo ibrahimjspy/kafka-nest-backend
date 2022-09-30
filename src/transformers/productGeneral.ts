@@ -20,7 +20,7 @@ const productNameValidator = async (productObject) => {
   }
 };
 
-// product description transformed from string format to richText(Saleor format)
+// product description transformed from string format to richText(destination format)
 const productDescriptionTransformer = (productObject) => {
   const transformedDescription = `{\"time\": 1662995227870, \"blocks\": [{\"id\": \"cqWmV3MIPH\", \"data\": {\"text\": \"${productObject.description}\"}, \"type\": \"paragraph\"}], \"version\": \"2.24.3\"}`;
   productObject.description = transformedDescription;

@@ -10,7 +10,7 @@ import { graphqlCall } from 'src/utils/graphqlHandler';
 export const productExistenceCheckHandler = async (changeData) => {
   let productIdResponse: productExistingInterface = {
     exists: false,
-    saleorId: '',
+    destinationId: '',
   };
   // Queries Destination to check product existence in its ecosystem
   const response = await graphqlCall(metadataCheckQuery(changeData.TBItem_ID));
@@ -26,13 +26,14 @@ export const productExistenceCheckHandler = async (changeData) => {
  * @params cdc debezium response parsed
  */
 export const productIdResponseCheckValidation = (response) => {
-  const productSaleorId: string = response.data?.products?.edges[0].node.id;
+  const productdestinationId: string =
+    response.data?.products?.edges[0].node.id;
   let objectResponse: productExistingInterface = {
     exists: false,
-    saleorId: '',
+    destinationId: '',
   };
-  if (productSaleorId) {
-    objectResponse = { exists: true, saleorId: `${productSaleorId}` };
+  if (productdestinationId) {
+    objectResponse = { exists: true, destinationId: `${productdestinationId}` };
     return objectResponse;
   }
   return objectResponse;

@@ -5,7 +5,6 @@ import { Transport, MicroserviceOptions } from '@nestjs/microservices';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
-  // <!.> connecting to kafka server as a consumer
   const app = await NestFactory.createMicroservice<MicroserviceOptions>(
     AppModule,
     {
@@ -20,9 +19,14 @@ async function bootstrap() {
       },
     },
   );
-
-  app.listen().then(() => {
-    Logger.verbose('kafka client connected');
-  });
+  // <!.> connecting to kafka server as a consumer
+  app
+    .listen()
+    .then(() => {
+      Logger.verbose('kafka client connected');
+    })
+    .catch((err) => {
+      Logger.error(err);
+    });
 }
 bootstrap();
