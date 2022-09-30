@@ -4,7 +4,7 @@ import {
   createProductMutation,
 } from '../mutations/createProduct';
 
-export const createProductHandler = async (productData) => {
+export const createProductHandler = async (productData: object) => {
   try {
     const createProduct = await graphqlCall(createProductMutation(productData));
     const registerOrangeShineId = await graphqlCall(

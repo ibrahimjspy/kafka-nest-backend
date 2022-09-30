@@ -2,7 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { createProductHandler } from 'src/graphql/handlers/createProduct';
 import { updateProduct } from 'src/graphql/handlers/updateProduct';
 import { ProductModelTransformerService } from 'src/streams/ProductTransformer';
-import { fetchMsSql } from 'src/utils/fetchProductView';
+import { productExistingInterface } from 'src/types/Product';
+import { fetchAdditionalProductData } from 'src/utils/fetchProductView';
 import { productExistenceCheckHandler } from 'src/utils/productExistingCheck';
 @Injectable()
 export class ProductService {
@@ -12,18 +13,19 @@ export class ProductService {
   public getHello(): string {
     return 'Hello World!';
   }
-  public async handleProductCDC(kafkaMessage) {
-    const productExistsInSaleor = await productExistenceCheckHandler(
-      kafkaMessage,
+  public async handleProductCDC(kafkaMessage): Promise<object> {
+    const productExistsInDestination: productExistingInterface =
+      await productExistenceCheckHandler(kafkaMessage);
+    const productAdditionalData: object = await fetchAdditionalProductData(
+      kafkaMessage.TBItem_ID,
     );
-    const productAdditionalData = await fetchMsSql(kafkaMessage.TBItem_ID);
-    const productCompositeData = Object.assign(
+    const productCompositeData: object = Object.assign(
       productAdditionalData,
       kafkaMessage,
-      productExistsInSaleor,
+      productExistsInDestination,
     );
-    if (productExistsInSaleor.exists) {
-      await this.productModelTransformerService.productTransform(
+    if (productExistsInDestination.exists) {
+      await this.productModelTransformerService.productTransformer(
         productCompositeData,
       );
       return updateProduct(productCompositeData);

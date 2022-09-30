@@ -1,7 +1,10 @@
 import { graphqlCall, graphqlExceptionHandler } from 'src/utils/graphqlHandler';
-import { createProductMediaMutation } from '../queries/updateMedia';
+import { createProductMediaMutation } from '../mutations/updateMedia';
 
-export const updateProductMedia = async (productData, productId) => {
+export const updateProductMedia = async (
+  productData: object,
+  productId: string,
+) => {
   try {
     return await graphqlCall(
       createProductMediaMutation(productData, productId),

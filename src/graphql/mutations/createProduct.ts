@@ -1,46 +1,38 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { gql } from 'graphql-request';
 
-export const createProductMutation = (kafkaPayload) => {
-  // <!> Debezium kafka message parse
-  const productData = kafkaPayload.after;
-
+export const createProductMutation = (productData) => {
+  // parsing product data;
+  const seoTitle = productData.brand.information.seo_title;
+  const seoDescription = productData.brand.seo_title;
+  const productName = productData.style_name;
   return gql`
-    mutation{
-        productCreate(
-          input: {
-            attributes: [
-              id: A1
-              values: ["${productData.color || 'RED'}"]
-            ]
-            category: {productData.category || null}
-
-            description: "{productData.description || fallbackJSON}"
-            name: "{productData.name}"
-            seo: {
-              title: "{productData.brand.seo_title || ''}"
-              description: "{productData.brand.seo_description || ''}"
-            }
-            rating: "{productData.order_review.score || null}"
-            productType: "UHJvZHVjdFR5cGU6MQ=="
-          }
-        )
-        {
-              product {
-                name
-                id
-                seoTitle
-              }
-              errors {
-                field
-                message
-              }
-            }
+    mutation {
+      productCreate(
+        input: {
+          productType: "UHJvZHVjdFR5cGU6MQ=="
+          name: "${productName}"
+          seo: { title: "${seoTitle}", description: "${seoDescription}" }
+          rating: 4
+        }
+      ) {
+        product {
+          name
+          id
+          seoTitle
+        }
+        errors {
+          field
+          message
+        }
       }
-    `;
+    }
+  `;
 };
 export const addOrangeShineIdMutation = (saleorResponse, productObject) => {
-  const saleorId = saleorResponse.product.id;
+  const saleorId = saleorResponse.productCreate.product.id;
   const orangeShineId = productObject.id;
+  console.log({ saleorId, orangeShineId });
   return gql`
     mutation {
       updateMetadata(

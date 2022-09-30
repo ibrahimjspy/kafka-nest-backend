@@ -12,17 +12,17 @@ export class AppController {
   }
   @MessagePattern('seo_description') // topic name
   addSeoDescription(@Payload() message) {
-    // console.log(message);
+    Logger.log(message);
     return this.appService.addProductCatalog(message);
   }
   @MessagePattern('product_media') // topic name
   addProductMedia(@Payload() message) {
-    // console.log(message);
+    Logger.log(message);
     return this.appService.addProductCatalog(message);
   }
   @MessagePattern('TBStyleNo') // topic name
   handleProductUpdate(@Payload() message) {
-    // console.log(message);
+    Logger.log(message);
     return this.appService.handleProductCDC(message.value);
   }
 }
