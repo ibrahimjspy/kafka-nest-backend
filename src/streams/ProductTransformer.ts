@@ -20,20 +20,20 @@ export class ProductTransformer {
     this.generalTransformer(productObject);
     return productObject;
   }
-  public categoryTransformer(productObject) {
-    return productObject;
+  public categoryTransformer(categoryObject) {
+    return categoryObject;
   }
-  public productMediaTransformer(productObject) {
-    return productObject;
+  public productMediaTransformer(mediaObject) {
+    return mediaObject;
   }
-  public reviewsTransformer(productObject) {
-    return productObject;
+  public reviewsTransformer(reviewsObject) {
+    return reviewsObject;
   }
-  public pricingTransformer(productObject) {
-    return productObject;
+  public pricingTransformer(pricingObject) {
+    return pricingObject;
   }
-  public seoTransformer(productObject) {
-    return seoTransformer(productObject);
+  public seoTransformer(seoObject) {
+    return seoTransformer(seoObject);
   }
   public generalTransformer(productObject) {
     return productGeneralTransformer(productObject);
