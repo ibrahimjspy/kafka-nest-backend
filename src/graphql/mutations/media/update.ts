@@ -1,6 +1,6 @@
 import { gql } from 'graphql-request';
 
-export const createProductMediaMutation = (productMedia, productId) => {
+export const updateProductMediaMutation = (productMedia, productId) => {
   return gql`
     mutation{
     productMediaCreate(

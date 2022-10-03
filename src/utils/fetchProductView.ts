@@ -1,11 +1,13 @@
 import sql from 'mssql';
-import { testProductData } from 'test/product';
+import { testProductData } from '../../test/product';
 
 /**
- * fetches OrangeShine product and brand details against its product_id
- * @params productId,  It must be a valid OrangeShine product_id
+ * fetches source product and brand details against its product_id
+ * @params productId,It must be a valid source product_id
  */
-export const fetchMsSql = async (productId: string): Promise<object> => {
+export const fetchAdditionalProductData = async (
+  productId: string,
+): Promise<object> => {
   try {
     // make sure that any items are correctly URL encoded in the connection string
     await sql.connect(

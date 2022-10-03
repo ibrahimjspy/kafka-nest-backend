@@ -6,36 +6,36 @@ import { seoTransformer } from 'src/transformers/seo';
  *  transformations on product Object and its utilities
  */
 @Injectable()
-export class ProductModelTransformerService {
+export class ProductTransformer {
   /**
    * complete product object transform
    * @params productObject
    */
-  public productTransform(productObject) {
-    this.categoryTransform(productObject);
-    this.productMediaTransform(productObject);
-    this.reviewsTransform(productObject);
-    this.pricingTransform(productObject);
-    this.seoTransform(productObject);
-    this.generalTransform(productObject);
+  public productTransformer(productObject) {
+    this.categoryTransformer(productObject);
+    this.productMediaTransformer(productObject);
+    this.reviewsTransformer(productObject);
+    this.pricingTransformer(productObject);
+    this.seoTransformer(productObject);
+    this.generalTransformer(productObject);
     return productObject;
   }
-  public categoryTransform(productObject) {
-    return productObject;
+  public categoryTransformer(categoryObject) {
+    return categoryObject;
   }
-  public productMediaTransform(productObject) {
-    return productObject;
+  public productMediaTransformer(mediaObject) {
+    return mediaObject;
   }
-  public reviewsTransform(productObject) {
-    return productObject;
+  public reviewsTransformer(reviewsObject) {
+    return reviewsObject;
   }
-  public pricingTransform(productObject) {
-    return productObject;
+  public pricingTransformer(pricingObject) {
+    return pricingObject;
   }
-  public seoTransform(productObject) {
-    return seoTransformer(productObject);
+  public seoTransformer(seoObject) {
+    return seoTransformer(seoObject);
   }
-  public generalTransform(productObject) {
+  public generalTransformer(productObject) {
     return productGeneralTransformer(productObject);
   }
 }

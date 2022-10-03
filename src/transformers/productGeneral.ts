@@ -7,7 +7,7 @@
  */
 export const productGeneralTransformer = async (productObject) => {
   productNameValidator(productObject);
-  productDescriptionTransform(productObject);
+  productDescriptionTransformer(productObject);
   return productObject;
 };
 
@@ -20,8 +20,13 @@ const productNameValidator = async (productObject) => {
   }
 };
 
-// product description transformed from string format to richText(Saleor format)
-const productDescriptionTransform = (productObject) => {
-  const transformedDescription = `{\"time\": 1662995227870, \"blocks\": [{\"id\": \"cqWmV3MIPH\", \"data\": {\"text\": \"${productObject.description}\"}, \"type\": \"paragraph\"}], \"version\": \"2.24.3\"}`;
+// product description transformed from string format to richText(destination format)
+const productDescriptionTransformer = (productObject) => {
+  let transformedDescription = {};
+  if (productObject.description) {
+    transformedDescription = `{\"time\": 1662995227870, \"blocks\": [{\"id\": \"cqWmV3MIPH\", \"data\": {\"text\": \"${productObject.description}\"}, \"type\": \"paragraph\"}], \"version\": \"2.24.3\"}`;
+  } else {
+    transformedDescription = `{\"time\": 1662995227870, \"blocks\": [{\"id\": \"cqWmV3MIPH\", \"data\": {\"text\": \"test product}\"}, \"type\": \"paragraph\"}], \"version\": \"2.24.3\"}`;
+  }
   productObject.description = transformedDescription;
 };

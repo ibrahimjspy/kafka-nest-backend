@@ -1,0 +1,29 @@
+{
+    "name": "category-sub-connector",
+    "config": {
+
+        "connector.class": "io.debezium.connector.sqlserver.SqlServerConnector",
+        "tasks.max": "1",
+
+        "database.hostname": "sqlserver",
+        "database.port": "3306",
+        "database.user": "debezium",
+        "database.password": "dbz",
+        "database.server.id": "184054",
+        "database.server.name": "dbserver1",
+        "table.include.list": "dbo.TBStyleNo_OS_Category_Master",
+
+        "database.history.kafka.bootstrap.servers": "kafka:9092",
+        "database.history.kafka.topic": "schema-changes.catalog",
+
+        "transforms": "route,renameTopic",
+        "transforms.route.type": "org.apache.kafka.connect.transforms.RegexRouter",
+        "transforms.route.regex": "([^.]+)\\.([^.]+)\\.([^.]+)",
+        "transforms.route.replacement": "$3",
+
+        "transforms.renameTopic.type":"org.apache.kafka.connect.transforms.RegexRouter",
+        "transforms.renameTopic.regex":"categories",
+        "transforms.renameTopic.replacement":"product_categories_master"
+        
+    }
+}
