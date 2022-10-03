@@ -7,9 +7,10 @@ export class AppController {
   constructor(private readonly appService: AppService) {}
   @MessagePattern('products') // topic name
   addProductTest(@Payload() message) {
-    const king = JSON.parse(message);
-    Logger.log(king.payload);
-    return this.appService.handleProductCDC(message);
+    // const king = JSON.parse(message);
+    console.log(message.payload.after);
+    // Logger.log(king.payload);
+    // return this.appService.handleProductCDC(message);
   }
   @MessagePattern('seo_description') // topic name
   addSeoDescription(@Payload() message) {

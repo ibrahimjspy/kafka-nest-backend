@@ -6,7 +6,7 @@ import { seoTransformer } from 'src/transformers/seo';
  *  transformations on product Object and its utilities
  */
 @Injectable()
-export class ProductModelTransformerService {
+export class ProductTransformer {
   /**
    * complete product object transform
    * @params productObject

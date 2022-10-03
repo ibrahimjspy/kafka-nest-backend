@@ -1,5 +1,5 @@
 import { metadataCheckQuery } from 'src/graphql/queries/metadataCheck';
-import { productExistingInterface } from 'src/types/Product';
+import { productExistingInterface } from 'src/types/product';
 import { graphqlCall } from 'src/utils/graphqlHandler';
 
 /**
