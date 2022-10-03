@@ -5,9 +5,10 @@ import { AppService } from './app.service';
 @Controller()
 export class AppController {
   constructor(private readonly appService: AppService) {}
-  @MessagePattern('product') // topic name
+  @MessagePattern('products') // topic name
   addProductTest(@Payload() message) {
-    Logger.log(message);
+    const king = JSON.parse(message);
+    Logger.log(king.payload);
     return this.appService.handleProductCDC(message);
   }
   @MessagePattern('seo_description') // topic name
@@ -17,7 +18,8 @@ export class AppController {
   }
   @MessagePattern('product_media') // topic name
   addProductMedia(@Payload() message) {
-    Logger.log(message);
+    const king = JSON.parse(message);
+    Logger.log(king);
     return this.appService.addProductCatalog(message);
   }
   @MessagePattern('TBStyleNo') // topic name
@@ -25,7 +27,7 @@ export class AppController {
     Logger.log(message);
     return this.appService.handleProductCDC(message.value);
   }
-  @MessagePattern('health check') // topic name
+  @MessagePattern('healthCheck') // topic name
   healthCheck() {
     return 'service running';
   }
