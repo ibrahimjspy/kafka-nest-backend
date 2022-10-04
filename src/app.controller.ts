@@ -12,16 +12,16 @@ export class AppController {
     // Logger.log(king.payload);
     // return this.appService.handleProductCDC(message);
   }
-  @MessagePattern('seo_description') // topic name
+  @MessagePattern('category_master') // topic name
   addSeoDescription(@Payload() message) {
     Logger.log(message);
-    return this.appService.addProductCatalog(message);
+    // return this.appService.addProductCatalog(message);
   }
-  @MessagePattern('product_media') // topic name
+  @MessagePattern('category_sub') // topic name
   addProductMedia(@Payload() message) {
-    const king = JSON.parse(message);
-    Logger.log(king);
-    return this.appService.addProductCatalog(message);
+    // const king = JSON.parse(message);
+    console.log(message.payload.after);
+    // return this.appService.addProductCatalog(message);
   }
   @MessagePattern('TBStyleNo') // topic name
   handleProductUpdate(@Payload() message) {
