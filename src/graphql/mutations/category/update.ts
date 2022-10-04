@@ -2,15 +2,14 @@ import { gql } from 'graphql-request';
 
 export const updateCategoryMutation = (categoryData, categoryId: string) => {
   const categoryName = categoryData.CategoryMasterName;
-  const categorySlug = categoryData.slug;
-  // const categoryDescription = categoryData.description;
+  const categoryDescription = categoryData.description;
   return gql`
     mutation {
       categoryUpdate(
         id:"${categoryId}"
+        description:"${categoryDescription}"
         input: {
           name: "${categoryName}"
-          slug: "${categorySlug}"
           seo: { title: "${categoryData.seo_title}", description: "${categoryData.seo_description}" }
         }
       ) {
