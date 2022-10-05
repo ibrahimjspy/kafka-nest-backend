@@ -4,6 +4,8 @@ import { TransformerService } from '../transformer/Transformer';
 import {
   fetchMasterCategoryId,
   fetchSubCategoryId,
+  insertMasterCategoryId,
+  insertSubCategoryId,
 } from 'src/postgres/handlers/category';
 
 describe('CategoriesController', () => {
@@ -25,6 +27,14 @@ describe('CategoriesController', () => {
     });
     it('checking whether Sub category id sql connection is working', async () => {
       const data = await fetchSubCategoryId('3');
+      expect(data).toBeDefined();
+    });
+    it('checking whether insert in master id sql connection is working', async () => {
+      const data = await insertMasterCategoryId('3', '4');
+      expect(data).toBeDefined();
+    });
+    it('checking whether insert in sub id sql connection is working', async () => {
+      const data = await insertSubCategoryId('5', '590');
       expect(data).toBeDefined();
     });
   });

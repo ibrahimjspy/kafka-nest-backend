@@ -1,19 +1,20 @@
 import client from '../config';
 
-import { insertProductIdQuery, ProductIdQuery } from '../queries/product';
+import { insertProductIdQuery, productIdQuery } from '../queries/product';
 
-export const fetchProductId = async (sourceId: string) => {
-  await client.query(ProductIdQuery(sourceId), (err, res) => {
+export const fetchProductId = async (sourceId: string): Promise<string> => {
+  let id = '';
+  await client.query(productIdQuery(sourceId), (err, res) => {
     if (err) throw err;
-    console.log(res.rows);
+    id = res.rows[0].destination_id;
   });
-  return 'res';
+  return id;
 };
 
-export const InsertProductId = async (
+export const insertProductId = async (
   sourceId: string,
   destinationId: string,
-) => {
+): Promise<string> => {
   await client.query(
     insertProductIdQuery(sourceId, destinationId),
     (err, res) => {

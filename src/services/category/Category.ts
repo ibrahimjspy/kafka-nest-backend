@@ -16,9 +16,7 @@ import { TransformerService } from '../transformer/Transformer';
  */
 @Injectable()
 export class CategoryService {
-  constructor(
-    private readonly productModelTransformerClass: TransformerService,
-  ) {}
+  constructor(private readonly transformerService: TransformerService) {}
 
   public healthCheck(): string {
     return 'Service running';
@@ -29,7 +27,7 @@ export class CategoryService {
       kafkaMessage.id,
     );
     if (categoryExistsInDestination) {
-      await this.productModelTransformerClass.productTransformer(kafkaMessage);
+      await this.transformerService.categoryTransformer(kafkaMessage);
       return updateCategoryHandler(kafkaMessage, categoryExistsInDestination);
     }
     return createCategoryMasterHandler(kafkaMessage);
@@ -39,13 +37,13 @@ export class CategoryService {
     const categoryExistsInDestination = await fetchSubCategoryId(
       kafkaMessage.TBStyleNo_OS_Category_Sub_ID,
     );
+    if (categoryExistsInDestination) {
+      await this.transformerService.categoryTransformer(kafkaMessage);
+      return updateCategoryHandler(kafkaMessage, categoryExistsInDestination);
+    }
     const parentCategoryId = await fetchMasterCategoryId(
       kafkaMessage.TBStyleNo_OS_Category_Master_ID,
     );
-    if (categoryExistsInDestination) {
-      await this.productModelTransformerClass.productTransformer(kafkaMessage);
-      return updateCategoryHandler(kafkaMessage, categoryExistsInDestination);
-    }
     return createCategorySubHandler(kafkaMessage, parentCategoryId);
   }
 }

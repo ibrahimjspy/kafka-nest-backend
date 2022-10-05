@@ -1,8 +1,10 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Test, TestingModule } from '@nestjs/testing';
 import { ProductService } from './Product';
 import { TransformerService } from '../transformer/Transformer';
-import { fetchProductId } from 'src/postgres/handlers/product';
+import { fetchProductId, insertProductId } from 'src/postgres/handlers/product';
 import { Logger } from '@nestjs/common';
+import { insertMasterCategoryId } from 'src/postgres/handlers/category';
 
 describe('TransformerController', () => {
   let service: ProductService;
@@ -23,5 +25,15 @@ describe('TransformerController', () => {
       Logger.log(data);
       expect(data).toBeDefined();
     });
+    //                       < insert tests >
+    // it('checking whether product id sql connection is working', async () => {
+    //   const data = await insertProductId('3', '786');
+    //   Logger.log(data);
+    //   expect(data).toBeDefined();
+    // });
+    // it('checking whether master category id insert sql connection is working', async () => {
+    //   const data = await insertMasterCategoryId('40', '4');
+    //   expect(data).toBeDefined();
+    // });
   });
 });

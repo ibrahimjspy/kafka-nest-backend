@@ -11,7 +11,7 @@ type GraphqlCall = (Query: string) => Promise<object>;
  */
 export const graphqlCall: GraphqlCall = async (Query) => {
   let Data = {};
-  await request('http://54.185.167.149:4003/', Query)
+  await request(process.env.DESTINATION_GRAPHQL_ENDPOINT, Query)
     .then((data) => {
       Data = data;
     })
