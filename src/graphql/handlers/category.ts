@@ -3,16 +3,16 @@ import {
   createCategoryMasterMutation,
   createCategorySubMutation,
 } from '../mutations/category/create';
+import { updateCategoryMutation } from '../mutations/category/update';
 
 //  <-->  Create  <-->
 
 export const createCategoryMasterHandler = async (categoryData: object) => {
   try {
-    const createProduct = await graphqlCall(
+    const createCategoryMaster = await graphqlCall(
       createCategoryMasterMutation(categoryData),
     );
-    console.log(createProduct);
-    return { ...createProduct };
+    return { ...createCategoryMaster };
   } catch (err) {
     return graphqlExceptionHandler(err);
   }
@@ -23,14 +23,28 @@ export const createCategorySubHandler = async (
   masterId: string,
 ) => {
   try {
-    const createProduct = await graphqlCall(
+    const createCategorySub = await graphqlCall(
       createCategorySubMutation(categoryData, masterId),
     );
-    console.log(createProduct);
-    return { ...createProduct };
+    return { ...createCategorySub };
   } catch (err) {
     return graphqlExceptionHandler(err);
   }
 };
 
 //   <-->  Update  <-->
+
+export const updateCategoryHandler = async (
+  categoryData: object,
+  categoryId: string,
+) => {
+  try {
+    const updateCategory = await graphqlCall(
+      updateCategoryMutation(categoryData, categoryId),
+    );
+    console.log(updateCategory);
+    return { ...updateCategory };
+  } catch (err) {
+    return graphqlExceptionHandler(err);
+  }
+};

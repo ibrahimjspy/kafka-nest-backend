@@ -3,30 +3,30 @@
  * @value description
  * @value style_name
  * @value seo_information
- * @params productObject,  Composite productObject containing cdc changeData, productView data
+ * @params object,  Composite object containing cdc changeData, productView data
  */
-export const productGeneralTransformer = async (productObject) => {
-  productNameValidator(productObject);
-  productDescriptionTransformer(productObject);
-  return productObject;
+export const productGeneralTransformer = async (object) => {
+  productNameValidator(object);
+  productDescriptionTransformer(object);
+  return object;
 };
 
 // validator to check if product name exists in object
-const productNameValidator = async (productObject) => {
-  if (productObject.style_name) {
+const productNameValidator = async (object) => {
+  if (object.style_name) {
     return;
   } else {
-    productObject.name = 'test_product';
+    object.name = 'test_product';
   }
 };
 
 // product description transformed from string format to richText(destination format)
-const productDescriptionTransformer = (productObject) => {
+const productDescriptionTransformer = (object) => {
   let transformedDescription = {};
-  if (productObject.description) {
-    transformedDescription = `{\"time\": 1662995227870, \"blocks\": [{\"id\": \"cqWmV3MIPH\", \"data\": {\"text\": \"${productObject.description}\"}, \"type\": \"paragraph\"}], \"version\": \"2.24.3\"}`;
+  if (object.description) {
+    transformedDescription = `{\"time\": 1662995227870, \"blocks\": [{\"id\": \"cqWmV3MIPH\", \"data\": {\"text\": \"${object.description}\"}, \"type\": \"paragraph\"}], \"version\": \"2.24.3\"}`;
   } else {
     transformedDescription = `{\"time\": 1662995227870, \"blocks\": [{\"id\": \"cqWmV3MIPH\", \"data\": {\"text\": \"test product}\"}, \"type\": \"paragraph\"}], \"version\": \"2.24.3\"}`;
   }
-  productObject.description = transformedDescription;
+  object.description = transformedDescription;
 };

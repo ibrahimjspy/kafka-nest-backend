@@ -3,19 +3,23 @@ import {
   createProductHandler,
   updateProductHandler,
 } from 'src/graphql/handlers/product';
-import { ProductTransformer } from 'src/streams/ProductTransformer';
 import { productExistingInterface } from 'src/types/product';
 import { fetchAdditionalProductData } from 'src/utils/fetchProductView';
 import { productExistenceCheckHandler } from 'src/utils/productExistingCheck';
-
+import { TransformerService } from './Transformer';
+/**
+ *  Injectable class handling product and its relating tables CDC
+ *  @Injected transformation class for CDC payload validations and transformations
+ *  @requires Injectable in app scope or in kafka connection to reach kafka messages
+ */
 @Injectable()
 export class ProductService {
   constructor(
-    private readonly productModelTransformerClass: ProductTransformer,
+    private readonly productModelTransformerClass: TransformerService,
   ) {}
 
-  public getHello(): string {
-    return 'Hello World!';
+  public healthCheck(): string {
+    return 'Service running';
   }
 
   public async handleProductCDC(kafkaMessage): Promise<object> {

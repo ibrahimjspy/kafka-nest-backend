@@ -4,9 +4,10 @@ import { seoTransformer } from 'src/transformers/seo';
 /**
  * Transformation class with utility methods performing specific
  *  transformations on product Object and its utilities
+ * @params CDC object to transform and validate
  */
 @Injectable()
-export class ProductTransformer {
+export class TransformerService {
   /**
    * complete product object transform
    * @params productObject
