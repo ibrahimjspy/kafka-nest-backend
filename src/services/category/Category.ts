@@ -4,8 +4,11 @@ import {
   createCategorySubHandler,
   updateCategoryHandler,
 } from 'src/graphql/handlers/category';
-import { fetchMasterCategoryId, fetchSubCategoryId } from 'src/utils/db';
-import { TransformerService } from './Transformer';
+import {
+  fetchMasterCategoryId,
+  fetchSubCategoryId,
+} from 'src/postgres/handlers/category';
+import { TransformerService } from '../transformer/Transformer';
 /**
  *  Injectable class handling category and its relating tables CDC
  *  @Injected transformation class for CDC payload validations and transformations

@@ -39,4 +39,7 @@ export class TransformerService {
   public generalTransformer(productObject) {
     return productGeneralTransformer(productObject);
   }
+  public healthCheck(): string {
+    return 'Service running';
+  }
 }

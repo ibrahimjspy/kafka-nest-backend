@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { createProductHandler } from './graphql/handlers/product';
 import { ProducerService } from './kafka/producer.service';
-import { ProductService } from './services/Product';
+import { ProductService } from './services/product/Product';
 import { seoTransformer } from './transformers/seo';
 @Injectable()
 export class AppService {

@@ -6,7 +6,7 @@ import {
 import { productExistingInterface } from 'src/types/product';
 import { fetchAdditionalProductData } from 'src/utils/fetchProductView';
 import { productExistenceCheckHandler } from 'src/utils/productExistingCheck';
-import { TransformerService } from './Transformer';
+import { TransformerService } from '../transformer/Transformer';
 /**
  *  Injectable class handling product and its relating tables CDC
  *  @Injected transformation class for CDC payload validations and transformations
