@@ -18,8 +18,8 @@ export class ProductService {
     private readonly productModelTransformerClass: TransformerService,
   ) {}
 
-  public getHello(): string {
-    return 'Hello World!';
+  public healthCheck(): string {
+    return 'Service running';
   }
 
   public async handleProductCDC(kafkaMessage): Promise<object> {

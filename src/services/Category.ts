@@ -17,8 +17,8 @@ export class CategoryService {
     private readonly productModelTransformerClass: TransformerService,
   ) {}
 
-  public getHello(): string {
-    return 'Hello World!';
+  public healthCheck(): string {
+    return 'Service running';
   }
 
   public async handleMasterCategoryCDC(kafkaMessage): Promise<object> {

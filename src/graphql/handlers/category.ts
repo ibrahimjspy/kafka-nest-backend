@@ -12,7 +12,6 @@ export const createCategoryMasterHandler = async (categoryData: object) => {
     const createCategoryMaster = await graphqlCall(
       createCategoryMasterMutation(categoryData),
     );
-    console.log(createCategoryMaster);
     return { ...createCategoryMaster };
   } catch (err) {
     return graphqlExceptionHandler(err);
@@ -27,7 +26,6 @@ export const createCategorySubHandler = async (
     const createCategorySub = await graphqlCall(
       createCategorySubMutation(categoryData, masterId),
     );
-    console.log(createCategorySub);
     return { ...createCategorySub };
   } catch (err) {
     return graphqlExceptionHandler(err);

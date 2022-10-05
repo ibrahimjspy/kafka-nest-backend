@@ -7,21 +7,18 @@ export class AppController {
   constructor(private readonly appService: AppService) {}
   @MessagePattern('products') // topic name
   addProductTest(@Payload() message) {
-    // const king = JSON.parse(message);
-    console.log(message.payload.after);
-    // Logger.log(king.payload);
-    // return this.appService.handleProductCDC(message);
+    // console.log(message.payload.after);
+    return this.appService.handleProductCDC(message);
   }
   @MessagePattern('category_master') // topic name
   addSeoDescription(@Payload() message) {
-    Logger.log(message);
-    // return this.appService.addProductCatalog(message);
+    // Logger.log(message);
+    return this.appService.addProductCatalog(message);
   }
   @MessagePattern('category_sub') // topic name
   addProductMedia(@Payload() message) {
-    // const king = JSON.parse(message);
     console.log(message.payload.after);
-    // return this.appService.addProductCatalog(message);
+    return this.appService.addProductCatalog(message);
   }
   @MessagePattern('TBStyleNo') // topic name
   handleProductUpdate(@Payload() message) {
