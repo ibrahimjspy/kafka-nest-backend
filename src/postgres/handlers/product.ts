@@ -1,26 +1,35 @@
+import { Logger } from '@nestjs/common';
 import client from '../config';
 
 import { insertProductIdQuery, productIdQuery } from '../queries/product';
 
 export const fetchProductId = async (sourceId: string): Promise<string> => {
-  let id = '';
-  await client.query(productIdQuery(sourceId), (err, res) => {
-    if (err) throw err;
-    id = res.rows[0].destination_id;
-  });
+  let id = null;
+  await client
+    .query(productIdQuery(sourceId), [])
+    .then((res) => {
+      Logger.log(res.rows);
+      id = null;
+    })
+    .catch((err) => {
+      Logger.warn('postgres error', err);
+    });
   return id;
 };
 
-export const insertProductId = async (
-  sourceId: string,
-  destinationId: string,
-): Promise<string> => {
-  await client.query(
-    insertProductIdQuery(sourceId, destinationId),
-    (err, res) => {
-      if (err) throw err;
-      console.log(res.rows);
-    },
-  );
-  return 'run';
+export const insertProductId = async (sourceId: string, destinationId) => {
+  console.log(sourceId); // done
+  console.log(destinationId.productCreate.product.id);
+  await client
+    .query(
+      insertProductIdQuery(sourceId, destinationId.productCreate.product.id),
+      [],
+    )
+    .then((res) => {
+      Logger.log(res);
+    })
+    .catch((err) => {
+      Logger.warn('postgres error', err);
+    });
+  return 'product id inserted';
 };

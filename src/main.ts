@@ -3,6 +3,7 @@ import { NestFactory } from '@nestjs/core';
 import { Transport, MicroserviceOptions } from '@nestjs/microservices';
 
 import { AppModule } from './app.module';
+// import client from './postgres/config';
 
 async function bootstrap() {
   const app = await NestFactory.createMicroservice<MicroserviceOptions>(
@@ -19,6 +20,7 @@ async function bootstrap() {
       },
     },
   );
+  // await client.connect();
   // <!.> connecting to kafka server as a consumer
   app
     .listen()

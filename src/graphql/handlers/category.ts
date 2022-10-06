@@ -1,3 +1,7 @@
+import {
+  insertMasterCategoryId,
+  insertSubCategoryId,
+} from 'src/postgres/handlers/category';
 import { graphqlCall, graphqlExceptionHandler } from 'src/utils/graphqlHandler';
 import {
   createCategoryMasterMutation,
@@ -7,11 +11,16 @@ import { updateCategoryMutation } from '../mutations/category/update';
 
 //  <-->  Create  <-->
 
-export const createCategoryMasterHandler = async (categoryData: object) => {
+export const createCategoryMasterHandler = async (categoryData) => {
   try {
     const createCategoryMaster = await graphqlCall(
       createCategoryMasterMutation(categoryData),
     );
+    insertMasterCategoryId(
+      categoryData.TBStyleNo_OS_Category_Master_ID,
+      createCategoryMaster,
+    );
+    // console.log(createCategoryMaster);
     return { ...createCategoryMaster };
   } catch (err) {
     return graphqlExceptionHandler(err);
@@ -19,13 +28,18 @@ export const createCategoryMasterHandler = async (categoryData: object) => {
 };
 
 export const createCategorySubHandler = async (
-  categoryData: object,
+  categoryData,
   masterId: string,
 ) => {
   try {
     const createCategorySub = await graphqlCall(
       createCategorySubMutation(categoryData, masterId),
     );
+    insertSubCategoryId(
+      categoryData.TBStyleNo_OS_Category_Sub_ID,
+      createCategorySub,
+    );
+    // console.log(createCategorySub);
     return { ...createCategorySub };
   } catch (err) {
     return graphqlExceptionHandler(err);
@@ -42,7 +56,7 @@ export const updateCategoryHandler = async (
     const updateCategory = await graphqlCall(
       updateCategoryMutation(categoryData, categoryId),
     );
-    console.log(updateCategory);
+    // console.log(updateCategory);
     return { ...updateCategory };
   } catch (err) {
     return graphqlExceptionHandler(err);

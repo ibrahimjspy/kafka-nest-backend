@@ -8,7 +8,6 @@ import { TransformerService } from './services/transformer/Transformer';
 import { brandGeneralTransformer } from './transformers/brand';
 import { productGeneralTransformer } from './transformers/productGeneral';
 import { graphqlCall } from './utils/graphqlHandler';
-import { kafkaMessageCheck } from './utils/kafkaMessageNature';
 
 describe('AppController', () => {
   let appController: AppController;
@@ -26,10 +25,6 @@ describe('AppController', () => {
     it('should return "Hello World!"', () => {
       expect(appController.healthCheck());
     });
-  });
-  it('should return update based on kafka message nature', () => {
-    const testObject = { op: 'u' };
-    expect(kafkaMessageCheck(testObject)).toBe('update');
   });
   it('checks whether transformation of general product work properly', async () => {
     expect(await productGeneralTransformer(testObjectEmpty)).not.toBe({

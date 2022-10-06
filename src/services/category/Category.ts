@@ -23,9 +23,8 @@ export class CategoryService {
   }
 
   public async handleMasterCategoryCDC(kafkaMessage): Promise<object> {
-    const categoryExistsInDestination = await fetchMasterCategoryId(
-      kafkaMessage.id,
-    );
+    console.log(kafkaMessage);
+    const categoryExistsInDestination = undefined;
     if (categoryExistsInDestination) {
       await this.transformerService.categoryTransformer(kafkaMessage);
       return updateCategoryHandler(kafkaMessage, categoryExistsInDestination);

@@ -3,9 +3,7 @@ import {
   createProductHandler,
   updateProductHandler,
 } from 'src/graphql/handlers/product';
-import { productExistingInterface } from 'src/types/product';
-import { fetchAdditionalProductData } from 'src/utils/fetchProductView';
-import { productExistenceCheckHandler } from 'src/utils/productExistingCheck';
+import { fetchProductId } from 'src/postgres/handlers/product';
 import { TransformerService } from '../transformer/Transformer';
 /**
  *  Injectable class handling product and its relating tables CDC
@@ -23,22 +21,13 @@ export class ProductService {
   }
 
   public async handleProductCDC(kafkaMessage): Promise<object> {
-    const productExistsInDestination: productExistingInterface =
-      await productExistenceCheckHandler(kafkaMessage);
-    const productAdditionalData: object = await fetchAdditionalProductData(
+    const productExistsInDestination = await fetchProductId(
       kafkaMessage.TBItem_ID,
     );
-    const productCompositeData: object = Object.assign(
-      productAdditionalData,
-      kafkaMessage,
-      productExistsInDestination,
-    );
-    if (productExistsInDestination.exists) {
-      await this.productModelTransformerClass.productTransformer(
-        productCompositeData,
-      );
-      return updateProductHandler(productCompositeData);
+    if (productExistsInDestination) {
+      await this.productModelTransformerClass.productTransformer(kafkaMessage);
+      return updateProductHandler(kafkaMessage, productExistsInDestination);
     }
-    return createProductHandler(productAdditionalData);
+    return createProductHandler(kafkaMessage);
   }
 }

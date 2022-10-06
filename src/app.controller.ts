@@ -1,4 +1,4 @@
-import { Controller, Logger } from '@nestjs/common';
+import { Controller } from '@nestjs/common';
 import { MessagePattern, Payload } from '@nestjs/microservices';
 import { AppService } from './app.service';
 
@@ -6,23 +6,22 @@ import { AppService } from './app.service';
 export class AppController {
   constructor(private readonly appService: AppService) {}
   @MessagePattern('products') // topic name
-  addProductTest(@Payload() message) {
+  productCDC(@Payload() message) {
     // console.log(message.payload.after);
-    return this.appService.handleProductCDC(message);
+    return this.appService.handleProductCDC(message.payload.after);
   }
   @MessagePattern('category_master') // topic name
-  addSeoDescription(@Payload() message) {
+  masterCategoryCDC(@Payload() message) {
     // Logger.log(message);
-    return this.appService.addProductCatalog(message);
+    return this.appService.handleMasterCategoryCDC(message.payload.after);
   }
   @MessagePattern('category_sub') // topic name
-  addProductMedia(@Payload() message) {
-    console.log(message.payload.after);
-    return this.appService.addProductCatalog(message);
+  subCategoryCDC(@Payload() message) {
+    return this.appService.handleSubCategoryCDC(message.payload.after);
   }
   @MessagePattern('TBStyleNo') // topic name
   handleProductUpdate(@Payload() message) {
-    Logger.log(message);
+    // Logger.log(message);
     return this.appService.handleProductCDC(message.value);
   }
   @MessagePattern('healthCheck') // topic name

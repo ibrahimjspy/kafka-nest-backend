@@ -26,14 +26,14 @@ describe('TransformerController', () => {
       expect(data).toBeDefined();
     });
     //                       < insert tests >
-    // it('checking whether product id sql connection is working', async () => {
-    //   const data = await insertProductId('3', '786');
-    //   Logger.log(data);
-    //   expect(data).toBeDefined();
-    // });
-    // it('checking whether master category id insert sql connection is working', async () => {
-    //   const data = await insertMasterCategoryId('40', '4');
-    //   expect(data).toBeDefined();
-    // });
+    it('checking whether product id sql connection is working', async () => {
+      const data = await insertProductId('30', '7860');
+      Logger.log(data);
+      expect(data).toBeDefined();
+    });
+    it('checking whether master category id insert sql connection is working', async () => {
+      const data = await insertMasterCategoryId('40', '4');
+      expect(data).toBeDefined();
+    });
   });
 });
