@@ -3,12 +3,11 @@ import { testQuery } from '../test/query';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { KafkaModule } from './kafka/kafka.module';
-import { ProductService } from './services/Product';
-import { ProductTransformer } from './streams/ProductTransformer';
+import { ProductService } from './services/product/Product';
+import { TransformerService } from './services/transformer/Transformer';
 import { brandGeneralTransformer } from './transformers/brand';
 import { productGeneralTransformer } from './transformers/productGeneral';
 import { graphqlCall } from './utils/graphqlHandler';
-import { kafkaMessageCheck } from './utils/kafkaMessageNature';
 
 describe('AppController', () => {
   let appController: AppController;
@@ -17,7 +16,7 @@ describe('AppController', () => {
     const app: TestingModule = await Test.createTestingModule({
       imports: [KafkaModule],
       controllers: [AppController],
-      providers: [AppService, ProductService, ProductTransformer],
+      providers: [AppService, ProductService, TransformerService],
     }).compile();
     appController = app.get<AppController>(AppController);
   });
@@ -26,10 +25,6 @@ describe('AppController', () => {
     it('should return "Hello World!"', () => {
       expect(appController.healthCheck());
     });
-  });
-  it('should return update based on kafka message nature', () => {
-    const testObject = { op: 'u' };
-    expect(kafkaMessageCheck(testObject)).toBe('update');
   });
   it('checks whether transformation of general product work properly', async () => {
     expect(await productGeneralTransformer(testObjectEmpty)).not.toBe({

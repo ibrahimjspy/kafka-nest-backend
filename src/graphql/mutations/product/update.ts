@@ -1,19 +1,19 @@
 /* eslint-disable prettier/prettier */
 import {gql} from 'graphql-request';
 
-export const updateProductQuery = (productData) => {
+export const updateProductQuery = (productData, destinationId) => {
   return gql`
     mutation{
       productUpdate(
-        id:${productData.product_id}
+        id:${destinationId}
         input: {
-          name: "${productData.name}"
-          description:"${productData.descriptiopn}"
+          name: "${productData.nStyleName}"
+          description:"product description test"
           seo: {
-            title: "${productData.brand.seo_title || ''}"
+            title: "seo title"
             description: "${productData.brand.seo_description || ''}"
           }
-          rating: "${productData.rating || 2}"
+          rating: "2"
         }
       )
     }

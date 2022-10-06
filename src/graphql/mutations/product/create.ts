@@ -1,17 +1,18 @@
 import { gql } from 'graphql-request';
 
 export const createProductMutation = (productData) => {
+  console.log(productData);
   // parsing product data;
-  const seoTitle = productData.brand.information.seo_title;
-  const seoDescription = productData.brand.seo_title;
-  const productName = productData.style_name;
+  // const seoTitle = productData.brand.information.seo_title;
+  const seoDescription = productData.nItemDescription;
+  const productName = productData.nStyleName;
   return gql`
     mutation {
       productCreate(
         input: {
           productType: "UHJvZHVjdFR5cGU6MQ=="
           name: "${productName}"
-          seo: { title: "${seoTitle}", description: "${seoDescription}" }
+          seo: { title: "title seo", description: "${seoDescription}" }
           rating: 4
         }
       ) {
@@ -28,6 +29,7 @@ export const createProductMutation = (productData) => {
     }
   `;
 };
+
 export const addOrangeShineIdMutation = (
   destinationResponse,
   productObject,

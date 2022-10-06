@@ -1,5 +1,5 @@
-export const productCategoryTransformer = (productObject) => {
-  productObject.category.master = 'transformed category';
-  productObject.category.sub = 'transformed child category';
-  productObject.category.sub.parentID = 'parent category id';
+export const productCategoryTransformer = (object) => {
+  object.category.master = 'transformed category';
+  object.category.sub = 'transformed child category';
+  object.category.sub.parentID = 'parent category id';
 };

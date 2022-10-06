@@ -1,6 +1,5 @@
-import { metadataCheckQuery } from 'src/graphql/queries/metadataCheck';
+import { fetchProductId } from 'src/postgres/handlers/product';
 import { productExistingInterface } from 'src/types/product';
-import { graphqlCall } from 'src/utils/graphqlHandler';
 
 /**
  * This function checks whether given source product ID exists against Destination if so
@@ -13,7 +12,7 @@ export const productExistenceCheckHandler = async (changeData) => {
     destinationId: '',
   };
   // Queries Destination to check product existence in its ecosystem
-  const response = await graphqlCall(metadataCheckQuery(changeData.TBItem_ID));
+  const response = await fetchProductId(changeData.TBItem_ID);
   // Parses and validates the response and returns an object containing required information of product existence
   response
     ? (productIdResponse = productIdResponseCheckValidation(response))
@@ -26,14 +25,13 @@ export const productExistenceCheckHandler = async (changeData) => {
  * @params cdc debezium response parsed
  */
 export const productIdResponseCheckValidation = (response) => {
-  const productdestinationId: string =
-    response.data?.products?.edges[0].node.id;
+  const productDestinationId: string = response;
   let objectResponse: productExistingInterface = {
     exists: false,
     destinationId: '',
   };
-  if (productdestinationId) {
-    objectResponse = { exists: true, destinationId: `${productdestinationId}` };
+  if (productDestinationId) {
+    objectResponse = { exists: true, destinationId: `${productDestinationId}` };
     return objectResponse;
   }
   return objectResponse;

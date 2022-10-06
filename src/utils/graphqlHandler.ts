@@ -1,5 +1,5 @@
 import { Logger } from '@nestjs/common';
-import { request } from 'graphql-request';
+import { GraphQLClient } from 'graphql-request';
 type GraphqlCall = (Query: string) => Promise<object>;
 /**
  * This is top level function which handles graphql requests , exceptions and logic
@@ -11,11 +11,21 @@ type GraphqlCall = (Query: string) => Promise<object>;
  */
 export const graphqlCall: GraphqlCall = async (Query) => {
   let Data = {};
-  await request('http://54.185.167.149:4003/', Query)
+  const graphQLClient = new GraphQLClient(
+    process.env.DESTINATION_GRAPHQL_ENDPOINT,
+    {
+      headers: {
+        authorization: process.env.AUTHORIZATION_HEADER,
+      },
+    },
+  );
+  await graphQLClient
+    .request(Query)
     .then((data) => {
       Data = data;
     })
     .catch((error) => {
+      Logger.warn('graphl error');
       Data = graphqlExceptionHandler(error);
     });
   return Data;
