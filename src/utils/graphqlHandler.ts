@@ -9,7 +9,9 @@ type GraphqlCall = (Query: string) => Promise<object>;
  * is based on env files content .
  * @returns an object with data or graphql error
  */
-export const graphqlCall: GraphqlCall = async (Query) => {
+export const graphqlCall: GraphqlCall = async (
+  Query: string,
+): Promise<object> => {
   let Data = {};
   const graphQLClient = new GraphQLClient(
     process.env.DESTINATION_GRAPHQL_ENDPOINT,
@@ -25,11 +27,12 @@ export const graphqlCall: GraphqlCall = async (Query) => {
       Data = data;
     })
     .catch((error) => {
-      Logger.warn('graphl error');
+      console.log(error);
       Data = graphqlExceptionHandler(error);
     });
   return Data;
 };
+
 // TODO apply custom error handling taking whole catch thing at functional level
 export const graphqlExceptionHandler = (error): object => {
   const system_error = 'system error (graphql server not running)';

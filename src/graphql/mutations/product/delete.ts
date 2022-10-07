@@ -1,7 +1,6 @@
 import { gql } from 'graphql-request';
 
-export const deleteProductMutation = (productData) => {
-  const productId = productData.TBItem_ID;
+export const deleteProductMutation = (productId) => {
   return gql`
     mutation{
     productDelete(id:"${productId}"){

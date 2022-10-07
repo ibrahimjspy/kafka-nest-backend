@@ -5,14 +5,14 @@
  * @value seo_information
  * @params object,  Composite object containing cdc changeData, productView data
  */
-export const productGeneralTransformer = async (object) => {
+export const productGeneralTransformer = async (object): Promise<object> => {
   productNameValidator(object);
   productDescriptionTransformer(object);
   return object;
 };
 
 // validator to check if product name exists in object
-const productNameValidator = async (object) => {
+const productNameValidator = async (object): Promise<object> => {
   if (object.style_name) {
     return;
   } else {

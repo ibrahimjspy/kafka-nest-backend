@@ -26,6 +26,7 @@ describe('AppController', () => {
       expect(appController.healthCheck());
     });
   });
+
   it('checks whether transformation of general product work properly', async () => {
     expect(await productGeneralTransformer(testObjectEmpty)).not.toBe({
       description:
@@ -33,6 +34,7 @@ describe('AppController', () => {
       name: 'test_product',
     });
   });
+
   it('checks whether transformation of brand name work properly', async () => {
     expect(await brandGeneralTransformer(testObjectEmpty)).not.toBe({
       description:
@@ -40,6 +42,7 @@ describe('AppController', () => {
       name: 'test_product',
     });
   });
+
   it('checks whether graphql Call works properly', async () => {
     const data = await graphqlCall(testQuery());
     expect(data).toBeDefined();
