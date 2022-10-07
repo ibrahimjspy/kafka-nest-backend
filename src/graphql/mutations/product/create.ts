@@ -11,7 +11,7 @@ export const createProductMutation = (productData) => {
         input: {
           productType: "UHJvZHVjdFR5cGU6MTc="
           name: "${productName}"
-          seo: { title: "title seo", description: "${productData.nItemDescription}" }
+          seo: { title: "seo title", description: "${productData.nItemDescription}" }
           rating: 4
         }
       ) {
