@@ -4,7 +4,8 @@ import {
   createCategorySubHandler,
   deleteMasterCategoryHandler,
   deleteSubCategoryHandler,
-  updateCategoryHandler,
+  updateMasterCategoryHandler,
+  updateSubCategoryHandler,
 } from 'src/graphql/handlers/category';
 import {
   deleteMasterCategoryId,
@@ -37,7 +38,10 @@ export class CategoryService {
     // console.log(categoryExistsInDestination);
     if (categoryExistsInDestination) {
       await this.transformerService.categoryTransformer(kafkaMessage);
-      return updateCategoryHandler(kafkaMessage, categoryExistsInDestination);
+      return updateMasterCategoryHandler(
+        kafkaMessage,
+        categoryExistsInDestination,
+      );
     }
     return createCategoryMasterHandler(kafkaMessage);
   }
@@ -51,7 +55,10 @@ export class CategoryService {
     );
     if (categoryExistsInDestination) {
       await this.transformerService.categoryTransformer(kafkaMessage);
-      return updateCategoryHandler(kafkaMessage, categoryExistsInDestination);
+      return updateSubCategoryHandler(
+        kafkaMessage,
+        categoryExistsInDestination,
+      );
     }
     const parentCategoryId = await fetchMasterCategoryId(
       kafkaMessage.TBStyleNo_OS_Category_Master_ID,
