@@ -1,4 +1,6 @@
 import {
+  deleteMasterCategoryId,
+  deleteSubCategoryId,
   insertMasterCategoryId,
   insertSubCategoryId,
 } from 'src/postgres/handlers/category';
@@ -7,20 +9,22 @@ import {
   createCategoryMasterMutation,
   createCategorySubMutation,
 } from '../mutations/category/create';
+import { deleteCategoryMutation } from '../mutations/category/delete';
 import { updateCategoryMutation } from '../mutations/category/update';
 
 //  <-->  Create  <-->
 
 export const createCategoryMasterHandler = async (categoryData) => {
   try {
+    console.log(categoryData, 'category data');
     const createCategoryMaster = await graphqlCall(
       createCategoryMasterMutation(categoryData),
     );
-    insertMasterCategoryId(
+    await insertMasterCategoryId(
       categoryData.TBStyleNo_OS_Category_Master_ID,
       createCategoryMaster,
     );
-    // console.log(createCategoryMaster);
+    console.log(createCategoryMaster);
     return { ...createCategoryMaster };
   } catch (err) {
     return graphqlExceptionHandler(err);
@@ -39,7 +43,7 @@ export const createCategorySubHandler = async (
       categoryData.TBStyleNo_OS_Category_Sub_ID,
       createCategorySub,
     );
-    // console.log(createCategorySub);
+    console.log(createCategorySub);
     return { ...createCategorySub };
   } catch (err) {
     return graphqlExceptionHandler(err);
@@ -56,8 +60,30 @@ export const updateCategoryHandler = async (
     const updateCategory = await graphqlCall(
       updateCategoryMutation(categoryData, categoryId),
     );
-    // console.log(updateCategory);
+    console.log(updateCategory);
     return { ...updateCategory };
+  } catch (err) {
+    return graphqlExceptionHandler(err);
+  }
+};
+
+//  <-->  Delete  <-->
+
+export const deleteMasterCategoryHandler = async (categoryId) => {
+  try {
+    const data = await graphqlCall(deleteCategoryMutation(categoryId));
+    await deleteMasterCategoryId(categoryId);
+    console.log(data);
+  } catch (err) {
+    return graphqlExceptionHandler(err);
+  }
+};
+
+export const deleteSubCategoryHandler = async (categoryId) => {
+  try {
+    const data = await graphqlCall(deleteCategoryMutation(categoryId));
+    await deleteSubCategoryId(categoryId);
+    console.log(data);
   } catch (err) {
     return graphqlExceptionHandler(err);
   }

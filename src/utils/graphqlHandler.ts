@@ -25,11 +25,12 @@ export const graphqlCall: GraphqlCall = async (Query) => {
       Data = data;
     })
     .catch((error) => {
-      Logger.warn('graphl error');
+      console.log(error);
       Data = graphqlExceptionHandler(error);
     });
   return Data;
 };
+
 // TODO apply custom error handling taking whole catch thing at functional level
 export const graphqlExceptionHandler = (error): object => {
   const system_error = 'system error (graphql server not running)';

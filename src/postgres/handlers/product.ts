@@ -1,35 +1,58 @@
 import { Logger } from '@nestjs/common';
 import client from '../config';
 
-import { insertProductIdQuery, productIdQuery } from '../queries/product';
+import {
+  deleteProductIdQuery,
+  insertProductIdQuery,
+  productIdQuery,
+} from '../queries/product';
+
+//                       <fetch>
 
 export const fetchProductId = async (sourceId: string): Promise<string> => {
   let id = null;
   await client
     .query(productIdQuery(sourceId), [])
     .then((res) => {
-      Logger.log(res.rows);
-      id = null;
+      console.log(res.rows);
+      id = res.rows[0]?.destination_id;
     })
     .catch((err) => {
-      Logger.warn('postgres error', err);
+      console.warn('postgres error', err);
     });
   return id;
 };
 
+//                       <insert>
+
 export const insertProductId = async (sourceId: string, destinationId) => {
   console.log(sourceId); // done
-  console.log(destinationId.productCreate.product.id);
+  console.log(destinationId.productCreate.errors);
   await client
     .query(
       insertProductIdQuery(sourceId, destinationId.productCreate.product.id),
       [],
     )
     .then((res) => {
-      Logger.log(res);
+      console.log(res);
     })
     .catch((err) => {
       Logger.warn('postgres error', err);
     });
   return 'product id inserted';
+};
+
+//                       <delete>
+
+export const deleteProductId = async (destinationId) => {
+  // console.log(destinationId.productCreate.errors);
+  await client
+    .query(deleteProductIdQuery(destinationId), [])
+    .then((res) => {
+      console.log(res);
+    })
+    .catch((err) => {
+      Logger.warn('postgres error', err);
+    });
+  return 'product deleted';
 };

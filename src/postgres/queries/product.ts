@@ -1,3 +1,5 @@
+//                       <fetch>
+
 export const productIdQuery = (sourceId: string): string => {
   return `
   select
@@ -6,6 +8,8 @@ export const productIdQuery = (sourceId: string): string => {
   where source_id = ${sourceId}
 `;
 };
+
+//                       <insert>
 
 export const insertProductIdQuery = (
   sourceId: string,
@@ -16,5 +20,14 @@ export const insertProductIdQuery = (
   INSERT INTO cdc.product_id_mapping_table
   (source_id, destination_id)
   VALUES(${sourceId}, '${destinationId}');
+`;
+};
+
+//                       <delete>
+
+export const deleteProductIdQuery = (sourceId: string): string => {
+  return `
+  DELETE FROM cdc.product_id_mapping_table
+  WHERE source_id=${sourceId};
 `;
 };

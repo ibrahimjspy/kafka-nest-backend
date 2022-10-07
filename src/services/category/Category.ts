@@ -2,9 +2,13 @@ import { Injectable } from '@nestjs/common';
 import {
   createCategoryMasterHandler,
   createCategorySubHandler,
+  deleteMasterCategoryHandler,
+  deleteSubCategoryHandler,
   updateCategoryHandler,
 } from 'src/graphql/handlers/category';
 import {
+  deleteMasterCategoryId,
+  deleteSubCategoryId,
   fetchMasterCategoryId,
   fetchSubCategoryId,
 } from 'src/postgres/handlers/category';
@@ -24,7 +28,10 @@ export class CategoryService {
 
   public async handleMasterCategoryCDC(kafkaMessage): Promise<object> {
     console.log(kafkaMessage);
-    const categoryExistsInDestination = undefined;
+    const categoryExistsInDestination = await fetchMasterCategoryId(
+      kafkaMessage.TBStyleNo_OS_Category_Master_ID,
+    );
+    console.log(categoryExistsInDestination);
     if (categoryExistsInDestination) {
       await this.transformerService.categoryTransformer(kafkaMessage);
       return updateCategoryHandler(kafkaMessage, categoryExistsInDestination);
@@ -44,5 +51,29 @@ export class CategoryService {
       kafkaMessage.TBStyleNo_OS_Category_Master_ID,
     );
     return createCategorySubHandler(kafkaMessage, parentCategoryId);
+  }
+
+  public async handleMasterCategoryCDCDelete(kafkaMessage): Promise<object> {
+    const categoryExistsInDestination = await fetchMasterCategoryId(
+      kafkaMessage.TBStyleNo_OS_Category_Master_ID,
+    );
+    if (categoryExistsInDestination) {
+      await deleteMasterCategoryHandler(categoryExistsInDestination);
+      await deleteMasterCategoryId(
+        kafkaMessage.TBStyleNo_OS_Category_Master_ID,
+      );
+    }
+    return;
+  }
+
+  public async handleSubCategoryCDCDelete(kafkaMessage): Promise<object> {
+    const categoryExistsInDestination = await fetchSubCategoryId(
+      kafkaMessage.TBStyleNo_OS_Category_Sub_ID,
+    );
+    if (categoryExistsInDestination) {
+      await deleteSubCategoryHandler(categoryExistsInDestination);
+      await deleteSubCategoryId(kafkaMessage.TBStyleNo_OS_Category_Sub_ID);
+    }
+    return;
   }
 }

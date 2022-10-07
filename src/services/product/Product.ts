@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import {
   createProductHandler,
+  deleteProductHandler,
   updateProductHandler,
 } from 'src/graphql/handlers/product';
 import { fetchProductId } from 'src/postgres/handlers/product';
@@ -21,13 +22,24 @@ export class ProductService {
   }
 
   public async handleProductCDC(kafkaMessage): Promise<object> {
+    console.log(kafkaMessage);
     const productExistsInDestination = await fetchProductId(
       kafkaMessage.TBItem_ID,
     );
     if (productExistsInDestination) {
-      await this.productModelTransformerClass.productTransformer(kafkaMessage);
+      // await this.productModelTransformerClass.productTransformer(kafkaMessage);
       return updateProductHandler(kafkaMessage, productExistsInDestination);
     }
-    return createProductHandler(kafkaMessage);
+    return await createProductHandler(kafkaMessage);
+  }
+
+  public async handleProductCDCDelete(kafkaMessage): Promise<object> {
+    const productExistsInDestination = await fetchProductId(
+      kafkaMessage.TBItem_ID,
+    );
+    if (productExistsInDestination) {
+      return deleteProductHandler(kafkaMessage.TBItem_ID);
+    }
+    return;
   }
 }
