@@ -6,18 +6,18 @@ export const updateProductQuery = (productData, destinationId) => {
   return gql`
     mutation{
       productUpdate(
-    id:"${destinationId}" 
-    input:{
-    name:"${productData.nStyleName}"
-    seo:{title:"seo title",description:"${productData.nItemDescription}"},
-    rating:4
-  }){
+        id:"${destinationId}" 
+        input:{
+        name:"${productData.nStyleName}"
+        seo:{title:"seo title",description:"${productData.nItemDescription}"},
+        rating:4
+      }){
     product{
       name
       id
       rating
     }
-  }
+   }
     }
 `;
 };

@@ -12,6 +12,7 @@ import {
   fetchMasterCategoryId,
   fetchSubCategoryId,
 } from 'src/postgres/handlers/category';
+import { masterCategoryCDC, subCategoryCDC } from 'src/types/Category';
 import { TransformerService } from '../transformer/Transformer';
 /**
  *  Injectable class handling category and its relating tables CDC
@@ -26,12 +27,14 @@ export class CategoryService {
     return 'Service running';
   }
 
-  public async handleMasterCategoryCDC(kafkaMessage): Promise<object> {
-    console.log(kafkaMessage);
-    const categoryExistsInDestination = await fetchMasterCategoryId(
+  public async handleMasterCategoryCDC(
+    kafkaMessage: masterCategoryCDC,
+  ): Promise<object> {
+    // console.log(kafkaMessage);
+    const categoryExistsInDestination: string = await fetchMasterCategoryId(
       kafkaMessage.TBStyleNo_OS_Category_Master_ID,
     );
-    console.log(categoryExistsInDestination);
+    // console.log(categoryExistsInDestination);
     if (categoryExistsInDestination) {
       await this.transformerService.categoryTransformer(kafkaMessage);
       return updateCategoryHandler(kafkaMessage, categoryExistsInDestination);
@@ -39,8 +42,11 @@ export class CategoryService {
     return createCategoryMasterHandler(kafkaMessage);
   }
 
-  public async handleSubCategoryCDC(kafkaMessage): Promise<object> {
-    const categoryExistsInDestination = await fetchSubCategoryId(
+  public async handleSubCategoryCDC(
+    kafkaMessage: subCategoryCDC,
+  ): Promise<object> {
+    // console.log(kafkaMessage);
+    const categoryExistsInDestination: string = await fetchSubCategoryId(
       kafkaMessage.TBStyleNo_OS_Category_Sub_ID,
     );
     if (categoryExistsInDestination) {
@@ -53,8 +59,10 @@ export class CategoryService {
     return createCategorySubHandler(kafkaMessage, parentCategoryId);
   }
 
-  public async handleMasterCategoryCDCDelete(kafkaMessage): Promise<object> {
-    const categoryExistsInDestination = await fetchMasterCategoryId(
+  public async handleMasterCategoryCDCDelete(
+    kafkaMessage: masterCategoryCDC,
+  ): Promise<object> {
+    const categoryExistsInDestination: string = await fetchMasterCategoryId(
       kafkaMessage.TBStyleNo_OS_Category_Master_ID,
     );
     if (categoryExistsInDestination) {
@@ -66,8 +74,10 @@ export class CategoryService {
     return;
   }
 
-  public async handleSubCategoryCDCDelete(kafkaMessage): Promise<object> {
-    const categoryExistsInDestination = await fetchSubCategoryId(
+  public async handleSubCategoryCDCDelete(
+    kafkaMessage: subCategoryCDC,
+  ): Promise<object> {
+    const categoryExistsInDestination: string = await fetchSubCategoryId(
       kafkaMessage.TBStyleNo_OS_Category_Sub_ID,
     );
     if (categoryExistsInDestination) {

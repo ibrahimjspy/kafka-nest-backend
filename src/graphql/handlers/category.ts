@@ -4,6 +4,7 @@ import {
   insertMasterCategoryId,
   insertSubCategoryId,
 } from 'src/postgres/handlers/category';
+import { masterCategoryCDC, subCategoryCDC } from 'src/types/Category';
 import { graphqlCall, graphqlExceptionHandler } from 'src/utils/graphqlHandler';
 import {
   createCategoryMasterMutation,
@@ -14,9 +15,11 @@ import { updateCategoryMutation } from '../mutations/category/update';
 
 //  <-->  Create  <-->
 
-export const createCategoryMasterHandler = async (categoryData) => {
+export const createCategoryMasterHandler = async (
+  categoryData: masterCategoryCDC,
+): Promise<object> => {
   try {
-    console.log(categoryData, 'category data');
+    // console.log(categoryData, 'category data');
     const createCategoryMaster = await graphqlCall(
       createCategoryMasterMutation(categoryData),
     );
@@ -32,11 +35,11 @@ export const createCategoryMasterHandler = async (categoryData) => {
 };
 
 export const createCategorySubHandler = async (
-  categoryData,
+  categoryData: subCategoryCDC,
   masterId: string,
-) => {
+): Promise<object> => {
   try {
-    const createCategorySub = await graphqlCall(
+    const createCategorySub: object = await graphqlCall(
       createCategorySubMutation(categoryData, masterId),
     );
     insertSubCategoryId(
@@ -55,9 +58,9 @@ export const createCategorySubHandler = async (
 export const updateCategoryHandler = async (
   categoryData: object,
   categoryId: string,
-) => {
+): Promise<object> => {
   try {
-    const updateCategory = await graphqlCall(
+    const updateCategory: object = await graphqlCall(
       updateCategoryMutation(categoryData, categoryId),
     );
     console.log(updateCategory);
@@ -69,9 +72,11 @@ export const updateCategoryHandler = async (
 
 //  <-->  Delete  <-->
 
-export const deleteMasterCategoryHandler = async (categoryId) => {
+export const deleteMasterCategoryHandler = async (
+  categoryId: string,
+): Promise<object> => {
   try {
-    const data = await graphqlCall(deleteCategoryMutation(categoryId));
+    const data: object = await graphqlCall(deleteCategoryMutation(categoryId));
     await deleteMasterCategoryId(categoryId);
     console.log(data);
   } catch (err) {
@@ -79,11 +84,14 @@ export const deleteMasterCategoryHandler = async (categoryId) => {
   }
 };
 
-export const deleteSubCategoryHandler = async (categoryId) => {
+export const deleteSubCategoryHandler = async (
+  categoryId: string,
+): Promise<object> => {
   try {
-    const data = await graphqlCall(deleteCategoryMutation(categoryId));
+    const data: object = await graphqlCall(deleteCategoryMutation(categoryId));
     await deleteSubCategoryId(categoryId);
     console.log(data);
+    return data;
   } catch (err) {
     return graphqlExceptionHandler(err);
   }

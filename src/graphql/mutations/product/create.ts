@@ -3,11 +3,7 @@ import { gql } from 'graphql-request';
 export const createProductMutation = (productData) => {
   console.log(productData);
   // parsing product data;
-  // const seoTitle = productData.brand.information.seo_title;
   // const testProductType = "UHJvZHVjdFR5cGU6MQ=="
-  // const productDescription = descriptionTransformer(
-  //   productData.nItemDescription,
-  // );
   const productName = productData.nStyleName;
   return gql`
     mutation {

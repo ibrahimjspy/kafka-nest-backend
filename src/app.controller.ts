@@ -12,7 +12,7 @@ export class AppController {
   }
   @MessagePattern('category_master') // topic name
   masterCategoryCDC(@Payload() message) {
-    console.log(message.payload);
+    // console.log(message.payload);
     return this.appService.handleMasterCategoryCDC(message.payload);
   }
   @MessagePattern('category_sub') // topic name

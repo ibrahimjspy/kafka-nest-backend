@@ -9,7 +9,9 @@ type GraphqlCall = (Query: string) => Promise<object>;
  * is based on env files content .
  * @returns an object with data or graphql error
  */
-export const graphqlCall: GraphqlCall = async (Query) => {
+export const graphqlCall: GraphqlCall = async (
+  Query: string,
+): Promise<object> => {
   let Data = {};
   const graphQLClient = new GraphQLClient(
     process.env.DESTINATION_GRAPHQL_ENDPOINT,
