@@ -11,7 +11,10 @@ import {
   createCategorySubMutation,
 } from '../mutations/category/create';
 import { deleteCategoryMutation } from '../mutations/category/delete';
-import { updateCategoryMutation } from '../mutations/category/update';
+import {
+  updateMasterCategoryMutation,
+  updateSubCategoryMutation,
+} from '../mutations/category/update';
 
 //  <-->  Create  <-->
 
@@ -55,13 +58,28 @@ export const createCategorySubHandler = async (
 
 //   <-->  Update  <-->
 
-export const updateCategoryHandler = async (
+export const updateMasterCategoryHandler = async (
   categoryData: object,
   categoryId: string,
 ): Promise<object> => {
   try {
     const updateCategory: object = await graphqlCall(
-      updateCategoryMutation(categoryData, categoryId),
+      updateMasterCategoryMutation(categoryData, categoryId),
+    );
+    console.log(updateCategory);
+    return { ...updateCategory };
+  } catch (err) {
+    return graphqlExceptionHandler(err);
+  }
+};
+
+export const updateSubCategoryHandler = async (
+  categoryData: object,
+  categoryId: string,
+): Promise<object> => {
+  try {
+    const updateCategory: object = await graphqlCall(
+      updateSubCategoryMutation(categoryData, categoryId),
     );
     console.log(updateCategory);
     return { ...updateCategory };
