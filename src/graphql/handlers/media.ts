@@ -1,4 +1,7 @@
-import { graphqlCall, graphqlExceptionHandler } from 'src/utils/graphqlHandler';
+import {
+  graphqlCall,
+  graphqlExceptionHandler,
+} from 'src/utils/graphql/handler';
 
 export const updateProductMedia = async (
   productData: object,

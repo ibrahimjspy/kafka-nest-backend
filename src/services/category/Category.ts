@@ -35,15 +35,16 @@ export class CategoryService {
     const categoryExistsInDestination: string = await fetchMasterCategoryId(
       kafkaMessage.TBStyleNo_OS_Category_Master_ID,
     );
+    const categoryData =
+      await this.transformerService.masterCategoryTransformer(kafkaMessage);
     // console.log(categoryExistsInDestination);
     if (categoryExistsInDestination) {
-      await this.transformerService.categoryTransformer(kafkaMessage);
       return updateMasterCategoryHandler(
-        kafkaMessage,
+        categoryData,
         categoryExistsInDestination,
       );
     }
-    return createCategoryMasterHandler(kafkaMessage);
+    return createCategoryMasterHandler(categoryData);
   }
 
   public async handleSubCategoryCDC(
@@ -53,17 +54,19 @@ export class CategoryService {
     const categoryExistsInDestination: string = await fetchSubCategoryId(
       kafkaMessage.TBStyleNo_OS_Category_Sub_ID,
     );
+    const categoryData = await this.transformerService.subCategoryTransformer(
+      kafkaMessage,
+    );
     if (categoryExistsInDestination) {
-      await this.transformerService.categoryTransformer(kafkaMessage);
       return updateSubCategoryHandler(
-        kafkaMessage,
+        categoryData,
         categoryExistsInDestination,
       );
     }
     const parentCategoryId = await fetchMasterCategoryId(
       kafkaMessage.TBStyleNo_OS_Category_Master_ID,
     );
-    return createCategorySubHandler(kafkaMessage, parentCategoryId);
+    return createCategorySubHandler(categoryData, parentCategoryId);
   }
 
   public async handleMasterCategoryCDCDelete(

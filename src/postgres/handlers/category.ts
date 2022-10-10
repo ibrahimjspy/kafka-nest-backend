@@ -1,5 +1,6 @@
-import { Logger } from '@nestjs/common';
-import client from '../config';
+import { postgresDeleteCall } from 'src/utils/postgres/delete';
+import { postgresFetchCall } from 'src/utils/postgres/fetch';
+import { postgresInsertCall } from 'src/utils/postgres/insert';
 import {
   deleteMasterCategoryIdQuery,
   deleteSubCategoryIdQuery,
@@ -12,31 +13,11 @@ import {
 //                       <fetch>
 
 export const fetchMasterCategoryId = async (sourceId: string) => {
-  let id = '';
-  await client
-    .query(masterCategoryIdQuery(sourceId), [])
-    .then((res) => {
-      console.log(res);
-      id = res.rows[0]?.destination_id;
-    })
-    .catch((err) => {
-      Logger.warn('postgres error', err);
-    });
-  return id;
+  return await postgresFetchCall(masterCategoryIdQuery(sourceId));
 };
 
 export const fetchSubCategoryId = async (sourceId: string) => {
-  let id = '';
-  await client
-    .query(subCategoryIdQuery(sourceId), [])
-    .then((res) => {
-      console.log(res);
-      id = res.rows[0]?.destination_id;
-    })
-    .catch((err) => {
-      Logger.warn('postgres error', err);
-    });
-  return id;
+  return await postgresFetchCall(subCategoryIdQuery(sourceId));
 };
 
 //                       <insert>
@@ -45,65 +26,23 @@ export const insertMasterCategoryId = async (
   sourceId: string,
   destinationId,
 ) => {
-  await client
-    .query(
-      insertMasterCategoryIdQuery(
-        sourceId,
-        destinationId.categoryCreate.category.id,
-      ),
-      [],
-    )
-    .then((res) => {
-      console.log(res);
-    })
-    .catch((err) => {
-      Logger.warn('postgres error', err);
-    });
-  return 'master category register finished';
+  return await postgresInsertCall(
+    insertMasterCategoryIdQuery(sourceId, destinationId),
+  );
 };
 
 export const insertSubCategoryId = async (sourceId: string, destinationId) => {
-  await client
-    .query(
-      insertSubCategoryIdQuery(
-        sourceId,
-        destinationId.categoryCreate.category.id,
-      ),
-      [],
-    )
-    .then((res) => {
-      console.log(res);
-    })
-    .catch((err) => {
-      Logger.warn('postgres error', err);
-    });
-  return 'sub category task finished';
+  return await postgresDeleteCall(
+    insertSubCategoryIdQuery(sourceId, destinationId),
+  );
 };
 
 //                       <delete>
 
 export const deleteMasterCategoryId = async (destinationId) => {
-  // console.log(destinationId.productCreate.errors);
-  await client
-    .query(deleteMasterCategoryIdQuery(destinationId), [])
-    .then((res) => {
-      console.log(res);
-    })
-    .catch((err) => {
-      Logger.warn('postgres error', err);
-    });
-  return 'category deleted';
+  return await postgresDeleteCall(deleteMasterCategoryIdQuery(destinationId));
 };
 
 export const deleteSubCategoryId = async (destinationId) => {
-  // console.log(destinationId.productCreate.errors);
-  await client
-    .query(deleteSubCategoryIdQuery(destinationId), [])
-    .then((res) => {
-      console.log(res);
-    })
-    .catch((err) => {
-      Logger.warn('postgres error', err);
-    });
-  return 'category deleted';
+  return await postgresDeleteCall(deleteSubCategoryIdQuery(destinationId));
 };

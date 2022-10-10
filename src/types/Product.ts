@@ -8,3 +8,9 @@ export interface productCDC {
   nItemDescription: string;
   TBItem_ID: string;
 }
+
+export interface productTransformed {
+  id?: string;
+  name?: string;
+  description?: string;
+}
