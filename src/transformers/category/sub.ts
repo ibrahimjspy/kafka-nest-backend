@@ -1,4 +1,5 @@
 import { subCategoryCDC, subCategoryTransformed } from 'src/types/Category';
+import { descriptionTransformer } from '../product/general';
 /**
  * transforms and validates categorySub responses and existence
  * @value id
@@ -15,7 +16,7 @@ export const subCategoryTransformer = async (
 
   subCategoryObject['id'] = object.TBStyleNo_OS_Category_Master_ID;
   subCategoryObject['name'] = object.CategorySubName;
-  subCategoryObject['description'] = object.Description;
+  subCategoryObject['description'] = descriptionTransformer(object.Description);
   subCategoryObject['seo_description'] = object.seo_description;
   subCategoryObject['seo_title'] = object.seo_description;
 

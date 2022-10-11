@@ -2,6 +2,7 @@ import {
   masterCategoryCDC,
   masterCategoryTransformed,
 } from 'src/types/Category';
+import { descriptionTransformer } from '../product/general';
 
 /**
  * transforms and validates categoryMaster responses and existence
@@ -19,7 +20,9 @@ export const masterCategoryTransformer = async (
 
   masterCategoryObject['id'] = object.TBStyleNo_OS_Category_Master_ID;
   masterCategoryObject['name'] = object.CategoryMasterName;
-  masterCategoryObject['description'] = object.Description;
+  masterCategoryObject['description'] = descriptionTransformer(
+    object.Description,
+  );
   masterCategoryObject['seo_description'] = object.seo_description;
   masterCategoryObject['seo_title'] = object.seo_description;
 

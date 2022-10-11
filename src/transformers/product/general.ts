@@ -14,7 +14,9 @@ export const productGeneralTransformer = async (
 
   productObject['id'] = object.TBItem_ID;
   productObject['name'] = await productNameValidator(object);
-  productObject['description'] = await productDescriptionTransformer(object);
+  productObject['description'] = await descriptionTransformer(
+    object.nItemDescription,
+  );
 
   return productObject;
 };
@@ -27,10 +29,13 @@ const productNameValidator = async (object: productCDC): Promise<string> => {
   return 'test_product';
 };
 
-// product description transformed from string format to richText(destination format)
-const productDescriptionTransformer = (object: productCDC) => {
-  if (object.nItemDescription) {
-    return `{\"time\": 1662995227870, \"blocks\": [{\"id\": \"cqWmV3MIPH\", \"data\": {\"text\": \"${object.nItemDescription}\"}, \"type\": \"paragraph\"}], \"version\": \"2.24.3\"}`;
+/**
+ * description transformed from string format to richText(destination format)
+ * @params string to be transformed
+ */
+export const descriptionTransformer = (string) => {
+  if (string) {
+    return `{\"time\": 1662995227870, \"blocks\": [{\"id\": \"cqWmV3MIPH\", \"data\": {\"text\": \"${string}\"}, \"type\": \"paragraph\"}], \"version\": \"2.24.3\"}`;
   }
   return `{\"time\": 1662995227870, \"blocks\": [{\"id\": \"cqWmV3MIPH\", \"data\": {\"text\": \"test product}\"}, \"type\": \"paragraph\"}], \"version\": \"2.24.3\"}`;
 };

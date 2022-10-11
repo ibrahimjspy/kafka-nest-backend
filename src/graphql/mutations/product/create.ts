@@ -6,12 +6,14 @@ export const createProductMutation = (productData) => {
   // parsing product data;
   // const testProductType = "UHJvZHVjdFR5cGU6MQ=="
   const { id, name, description } = productData;
+  const desc = `{\"time\": 1662995227870, \"blocks\": [{\"id\": \"cqWmV3MIPH\", \"data\": {\"text\": \"test product}\"}, \"type\": \"paragraph\"}], \"version\": \"2.24.3\"}`;
   return gql`
     mutation {
       productCreate(
         input: {
           productType: "UHJvZHVjdFR5cGU6MTc="
           name: "${name}"
+          description:${JSON.stringify(description)}
           seo: { title: "seo title", description: "demo description" }
           rating: 4
         }

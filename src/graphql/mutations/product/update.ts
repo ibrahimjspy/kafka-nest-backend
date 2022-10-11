@@ -11,6 +11,7 @@ export const updateProductQuery = (productData, destinationId) => {
         id:"${destinationId}" 
         input:{
         name:"${name}"
+        description:${JSON.stringify(description)}
         seo:{title:"seo title",description:"demo description"},
         rating:4
       }){
