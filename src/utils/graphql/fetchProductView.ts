@@ -1,5 +1,5 @@
 import sql from 'mssql';
-import { testProductData } from '../../test/product';
+import { testProductData } from '../../../test/product';
 
 /**
  * fetches source product and brand details against its product_id

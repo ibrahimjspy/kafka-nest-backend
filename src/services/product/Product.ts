@@ -25,11 +25,13 @@ export class ProductService {
     const productExistsInDestination: string = await fetchProductId(
       kafkaMessage.TBItem_ID,
     );
+    const productData = await this.transformerClass.generalTransformer(
+      kafkaMessage,
+    );
     if (productExistsInDestination) {
-      // await this.productModelTransformerClass.productTransformer(kafkaMessage);
-      return updateProductHandler(kafkaMessage, productExistsInDestination);
+      return updateProductHandler(productData, productExistsInDestination);
     }
-    return await createProductHandler(kafkaMessage);
+    return await createProductHandler(productData);
   }
 
   public async handleProductCDCDelete(

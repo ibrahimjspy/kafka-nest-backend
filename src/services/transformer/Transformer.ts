@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { productGeneralTransformer } from 'src/transformers/productGeneral';
-import { seoTransformer } from 'src/transformers/seo';
+import { masterCategoryTransformer } from 'src/transformers/category/master';
+import { subCategoryTransformer } from 'src/transformers/category/sub';
+import { productGeneralTransformer } from 'src/transformers/product/general';
 /**
  * Transformation class with utility methods performing specific
  *  transformations on product Object and its utilities
@@ -13,17 +14,36 @@ export class TransformerService {
    * @params productObject
    */
   public productTransformer(productObject) {
-    this.categoryTransformer(productObject);
+    this.masterCategoryTransformer(productObject);
     this.productMediaTransformer(productObject);
     this.reviewsTransformer(productObject);
     this.pricingTransformer(productObject);
-    this.seoTransformer(productObject);
     this.generalTransformer(productObject);
     return productObject;
   }
-  public categoryTransformer(categoryObject) {
-    return categoryObject;
+  /**
+   * master category transform and validate
+   * @returns category object ready to be mapped against Api interface
+   */
+  public masterCategoryTransformer(categoryObject) {
+    return masterCategoryTransformer(categoryObject);
   }
+  /**
+   * sub category transform and validate
+   * @returns category object ready to be mapped against Api interface
+   */
+  public subCategoryTransformer(categoryObject) {
+    return subCategoryTransformer(categoryObject);
+  }
+  /**
+   * product details transform and validate
+   * name, description, category
+   * @returns product information object ready to be mapped against Api interface
+   */
+  public generalTransformer(productObject) {
+    return productGeneralTransformer(productObject);
+  }
+
   public productMediaTransformer(mediaObject) {
     return mediaObject;
   }
@@ -32,12 +52,6 @@ export class TransformerService {
   }
   public pricingTransformer(pricingObject) {
     return pricingObject;
-  }
-  public seoTransformer(seoObject) {
-    return seoTransformer(seoObject);
-  }
-  public generalTransformer(productObject) {
-    return productGeneralTransformer(productObject);
   }
   public healthCheck(): string {
     return 'Service running';
