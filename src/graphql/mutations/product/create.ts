@@ -1,17 +1,18 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { gql } from 'graphql-request';
 
 export const createProductMutation = (productData) => {
   console.log(productData);
   // parsing product data;
   // const testProductType = "UHJvZHVjdFR5cGU6MQ=="
-  const productName = productData.nStyleName;
+  const { id, name, description } = productData;
   return gql`
     mutation {
       productCreate(
         input: {
           productType: "UHJvZHVjdFR5cGU6MTc="
-          name: "${productName}"
-          seo: { title: "seo title", description: "${productData.nItemDescription}" }
+          name: "${name}"
+          seo: { title: "seo title", description: "demo description" }
           rating: 4
         }
       ) {

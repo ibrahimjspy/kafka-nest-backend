@@ -17,7 +17,9 @@ export const fetchProductId = async (sourceId: string): Promise<string> => {
 export const insertProductId = async (sourceId: string, destinationId) => {
   // console.log(sourceId); // done
   // console.log(destinationId.productCreate.errors);
-  return await postgresFetchCall(insertProductIdQuery(sourceId, destinationId));
+  return await postgresFetchCall(
+    insertProductIdQuery(sourceId, destinationId.productCreate.product.id),
+  );
 };
 
 //                       <delete>
