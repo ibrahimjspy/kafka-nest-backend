@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { CategoryService } from './Category';
-import { TransformerService } from '../transformer/Transformer';
+import { CategoryService } from './Service';
+import { TransformerService } from '../transformer/Service';
 import {
   deleteMasterCategoryId,
   deleteSubCategoryId,

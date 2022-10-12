@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Test, TestingModule } from '@nestjs/testing';
-import { ProductService } from './Product';
-import { TransformerService } from '../transformer/Transformer';
+import { ProductService } from './Service';
+import { TransformerService } from '../transformer/Service';
 import {
   deleteProductId,
   fetchProductId,

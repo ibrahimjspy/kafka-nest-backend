@@ -1,8 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { createProductHandler } from './graphql/handlers/product';
 import { ProducerService } from './kafka/producer.service';
-import { CategoryService } from './services/category/Category';
-import { ProductService } from './services/product/Product';
+import { CategoryService } from './services/category/Service';
+import { ProductService } from './services/product/Service';
 @Injectable()
 export class AppService {
   constructor(

@@ -3,9 +3,9 @@ import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { KafkaModule } from './kafka/kafka.module';
-import { CategoryService } from './services/category/Category';
-import { ProductService } from './services/product/Product';
-import { TransformerService } from './services/transformer/Transformer';
+import { CategoryService } from './services/category/Service';
+import { ProductService } from './services/product/Service';
+import { TransformerService } from './services/transformer/Service';
 
 @Module({
   imports: [KafkaModule, ConfigModule.forRoot()],

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { masterCategoryTransformer } from 'src/services/transformer/transformers/category/master';
-import { subCategoryTransformer } from 'src/services/transformer/transformers/category/sub';
-import { productGeneralTransformer } from 'src/services/transformer/transformers/product/general';
+import { masterCategoryTransformer } from 'src/services/transformer/methods/category/master';
+import { subCategoryTransformer } from 'src/services/transformer/methods/category/sub';
+import { productGeneralTransformer } from 'src/services/transformer/methods/product/general';
 /**
  * Transformation class with utility methods performing specific
  *  transformations on product Object and its utilities

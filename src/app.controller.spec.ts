@@ -3,9 +3,9 @@ import { testQuery } from '../test/query';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { KafkaModule } from './kafka/kafka.module';
-import { ProductService } from './services/product/Product';
-import { TransformerService } from './services/transformer/Transformer';
-import { brandGeneralTransformer } from './services/transformer/transformers/brand/general';
+import { ProductService } from './services/product/Service';
+import { TransformerService } from './services/transformer/Service';
+import { brandGeneralTransformer } from './services/transformer/methods/brand/general';
 import { graphqlCall } from './utils/graphql/handler';
 // import { productGeneralTransformer } from './transformers/product/general';
 
