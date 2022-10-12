@@ -5,7 +5,7 @@ import { AppService } from './app.service';
 import { KafkaModule } from './kafka/kafka.module';
 import { ProductService } from './services/product/Product';
 import { TransformerService } from './services/transformer/Transformer';
-import { brandGeneralTransformer } from './transformers/brand/general';
+import { brandGeneralTransformer } from './services/transformer/transformers/brand/general';
 import { graphqlCall } from './utils/graphql/handler';
 // import { productGeneralTransformer } from './transformers/product/general';
 

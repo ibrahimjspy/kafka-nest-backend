@@ -12,19 +12,25 @@ import { descriptionTransformer } from '../product/general';
  * @value seo_description
  * @value seo_title
  * @params object,  Composite object containing cdc changeData, categoryMaster data
+ * @returns transformed object
  */
 export const masterCategoryTransformer = async (
   object: masterCategoryCDC,
 ): Promise<object> => {
   const masterCategoryObject: masterCategoryTransformed = {};
+  const {
+    TBStyleNo_OS_Category_Master_ID,
+    CategoryMasterName,
+    Description,
+    seo_description,
+    seo_title,
+  } = object;
 
-  masterCategoryObject['id'] = object.TBStyleNo_OS_Category_Master_ID;
-  masterCategoryObject['name'] = object.CategoryMasterName;
-  masterCategoryObject['description'] = descriptionTransformer(
-    object.Description,
-  );
-  masterCategoryObject['seo_description'] = object.seo_description;
-  masterCategoryObject['seo_title'] = object.seo_description;
+  masterCategoryObject['id'] = TBStyleNo_OS_Category_Master_ID.toString();
+  masterCategoryObject['name'] = CategoryMasterName.toString();
+  masterCategoryObject['description'] = descriptionTransformer(Description);
+  masterCategoryObject['seo_description'] = seo_description.toString();
+  masterCategoryObject['seo_title'] = seo_title.toString();
 
   return masterCategoryObject;
 };
