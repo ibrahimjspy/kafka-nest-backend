@@ -10,7 +10,7 @@ import {
 import { Logger } from '@nestjs/common';
 import { insertMasterCategoryId } from 'src/postgres/handlers/category';
 
-describe('TransformerController', () => {
+describe('product variant unit tests', () => {
   let service: ProductService;
 
   beforeEach(async () => {
