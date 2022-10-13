@@ -1,4 +1,4 @@
-import { Controller } from '@nestjs/common';
+import { Controller, Logger } from '@nestjs/common';
 import { MessagePattern, Payload } from '@nestjs/microservices';
 import { AppService } from './app.service';
 
@@ -23,6 +23,11 @@ export class AppController {
   handleProductUpdate(@Payload() message) {
     // Logger.log(message);
     return this.appService.handleProductCDC(message.value);
+  }
+  @MessagePattern('vendor') // topic name
+  handleVendorUpdate(@Payload() message) {
+    console.log(message.payload.after);
+    // return this.appService.handleProductCDC(message.value);
   }
   @MessagePattern('healthCheck') // topic name
   healthCheck() {

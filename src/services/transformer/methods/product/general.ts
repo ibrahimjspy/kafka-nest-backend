@@ -14,14 +14,16 @@ export const productGeneralTransformer = async (
   const { TBItem_ID, nStyleName, nItemDescription } = object;
 
   productObject['id'] = TBItem_ID.toString();
-  productObject['name'] = await productNameValidator(nStyleName).toString();
+  productObject['name'] = nStyleName.toString();
   productObject['description'] = await descriptionTransformer(nItemDescription);
 
   return productObject;
 };
 
 // validator to check if product name exists in object
-const productNameValidator = async (productName: string): Promise<string> => {
+export const productNameValidator = async (
+  productName: string,
+): Promise<string> => {
   if (productName) {
     return productName;
   }
