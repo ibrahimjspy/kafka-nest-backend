@@ -1,7 +1,7 @@
 import {
   masterCategoryCDC,
   masterCategoryTransformed,
-} from 'src/types/Category';
+} from 'src/types/category';
 import { descriptionTransformer } from '../product/general';
 
 /**

@@ -1,7 +1,7 @@
 import { gql } from 'graphql-request';
 import { shopTransformed } from 'src/types/brand';
 
-export const createShopMutation = (shopData: shopTransformed) => {
+export const updateShopMutation = (shopData: shopTransformed) => {
   const {
     name,
     description,
@@ -14,7 +14,8 @@ export const createShopMutation = (shopData: shopTransformed) => {
   } = shopData;
   return gql`
     mutation {
-      createMarketplaceShop(
+      updateMarketplaceShop(
+        id: "testId"
         input: {
           name: "${name}"
           user: "user id"

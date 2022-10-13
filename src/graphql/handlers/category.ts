@@ -7,7 +7,7 @@ import {
 import {
   masterCategoryTransformed,
   subCategoryTransformed,
-} from 'src/types/Category';
+} from 'src/types/category';
 import {
   graphqlCall,
   graphqlExceptionHandler,

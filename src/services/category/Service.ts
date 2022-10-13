@@ -13,7 +13,7 @@ import {
   fetchMasterCategoryId,
   fetchSubCategoryId,
 } from 'src/postgres/handlers/category';
-import { masterCategoryCDC, subCategoryCDC } from 'src/types/Category';
+import { masterCategoryCDC, subCategoryCDC } from 'src/types/category';
 import { TransformerService } from '../transformer/Service';
 /**
  *  Injectable class handling category and its relating tables CDC

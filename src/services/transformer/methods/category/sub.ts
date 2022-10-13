@@ -1,4 +1,4 @@
-import { subCategoryCDC, subCategoryTransformed } from 'src/types/Category';
+import { subCategoryCDC, subCategoryTransformed } from 'src/types/category';
 import { descriptionTransformer } from '../product/general';
 /**
  * transforms and validates categorySub responses and existence

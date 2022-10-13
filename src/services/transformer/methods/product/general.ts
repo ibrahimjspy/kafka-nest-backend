@@ -1,4 +1,4 @@
-import { productCDC, productTransformed } from 'src/types/Product';
+import { productCDC, productTransformed } from 'src/types/poduct';
 
 /**
  * transforms and validates productView responses and existence

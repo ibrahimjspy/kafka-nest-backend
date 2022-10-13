@@ -5,7 +5,7 @@ import {
   updateProductHandler,
 } from 'src/graphql/handlers/product';
 import { fetchProductId } from 'src/postgres/handlers/product';
-import { productCDC } from 'src/types/Product';
+import { productCDC } from 'src/types/poduct';
 import { TransformerService } from '../transformer/Service';
 /**
  *  Injectable class handling product variant and its relating tables CDC
