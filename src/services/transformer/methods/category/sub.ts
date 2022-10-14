@@ -22,11 +22,11 @@ export const subCategoryTransformer = async (
     seo_title,
   } = object;
 
-  subCategoryObject['id'] = TBStyleNo_OS_Category_Master_ID.toString();
-  subCategoryObject['name'] = CategorySubName.toString();
+  subCategoryObject['id'] = TBStyleNo_OS_Category_Master_ID?.toString();
+  subCategoryObject['name'] = CategorySubName?.toString();
   subCategoryObject['description'] = descriptionTransformer(Description);
-  subCategoryObject['seo_description'] = seo_description.toString();
-  subCategoryObject['seo_title'] = seo_title.toString();
+  subCategoryObject['seo_description'] = seo_description?.toString();
+  subCategoryObject['seo_title'] = seo_title?.toString();
 
   return subCategoryObject;
 };

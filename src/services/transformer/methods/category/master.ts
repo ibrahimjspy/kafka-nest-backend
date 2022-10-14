@@ -26,11 +26,11 @@ export const masterCategoryTransformer = async (
     seo_title,
   } = object;
 
-  masterCategoryObject['id'] = TBStyleNo_OS_Category_Master_ID.toString();
-  masterCategoryObject['name'] = CategoryMasterName.toString();
+  masterCategoryObject['id'] = TBStyleNo_OS_Category_Master_ID?.toString();
+  masterCategoryObject['name'] = CategoryMasterName?.toString();
   masterCategoryObject['description'] = descriptionTransformer(Description);
-  masterCategoryObject['seo_description'] = seo_description.toString();
-  masterCategoryObject['seo_title'] = seo_title.toString();
+  masterCategoryObject['seo_description'] = seo_description?.toString();
+  masterCategoryObject['seo_title'] = seo_title?.toString();
 
   return masterCategoryObject;
 };

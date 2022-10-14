@@ -22,17 +22,21 @@ export const shopTransformer = async (object): Promise<object> => {
     SEOTitle,
     SEODescription,
     VDName,
+    VDMadeIn,
+    VDReturnPolicy,
   } = object;
 
-  shopObject['id'] = TBVendor_ID.toString();
-  shopObject['name'] = VDName.toString();
-  shopObject['description'] = VDFrontDescription.toString();
-  shopObject['seo_description'] = SEODescription.toString();
-  shopObject['seo_title'] = SEOTitle.toString();
-  shopObject['email'] = VDEMail.toString();
-  shopObject['url'] = VDVendorURL.toString();
-  shopObject['minOrder'] = OSminOrderAMT.toString();
-  shopObject['storePolicy'] = VDStorePolicy.toString();
+  shopObject['id'] = TBVendor_ID?.toString();
+  shopObject['name'] = VDName?.toString();
+  shopObject['description'] = VDFrontDescription?.toString();
+  shopObject['seo_description'] = SEODescription?.toString();
+  shopObject['seo_title'] = SEOTitle?.toString();
+  shopObject['email'] = VDEMail?.toString();
+  shopObject['url'] = VDVendorURL?.toString();
+  shopObject['minOrder'] = OSminOrderAMT?.toString();
+  shopObject['storePolicy'] = VDStorePolicy?.toString();
+  shopObject['madeIn'] = VDMadeIn?.toString();
+  shopObject['returnPolicy'] = VDReturnPolicy?.toString();
 
   return shopObject;
 };

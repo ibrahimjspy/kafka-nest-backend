@@ -15,7 +15,7 @@ export const insertUserId = async (sourceId: string, destinationId) => {
   // console.log(sourceId); // done
   // console.log(destinationId.UserCreate.errors);
   return await postgresFetchCall(
-    insertUserIdQuery(sourceId, destinationId.UserCreate.User.id),
+    insertUserIdQuery(sourceId, destinationId.StaffCreate.User.id),
   );
 };
 

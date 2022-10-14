@@ -10,7 +10,7 @@ export const createProductMutation = (productData) => {
     mutation {
       productCreate(
         input: {
-          productType: "UHJvZHVjdFR5cGU6MTc="
+          productType: "UHJvZHVjdFR5cGU6Mg=="
           name: "${name}"
           description:${JSON.stringify(description)}
           seo: { title: "seo title", description: "demo description" }
