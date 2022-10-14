@@ -1,6 +1,6 @@
 import { gql } from 'graphql-request';
 
-export const updateShopMutation = (shopData) => {
+export const deleteShopMutation = (shopData) => {
   //   const { id, name, description } = vendorData;
   return gql`
     mutation {

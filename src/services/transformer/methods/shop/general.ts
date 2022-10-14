@@ -1,4 +1,4 @@
-import { shopTransformed } from 'src/types/brand';
+import { shopTransformed } from 'src/types/shop';
 
 /**
  * transforms and validates shop responses and existence
@@ -10,7 +10,7 @@ import { shopTransformed } from 'src/types/brand';
  * @params object,  Composite object containing cdc changeData, categoryMaster data
  * @returns transformed object
  */
-export const brandTransformer = async (object): Promise<object> => {
+export const shopTransformer = async (object): Promise<object> => {
   const shopObject: shopTransformed = {};
   const {
     TBVendor_ID,
