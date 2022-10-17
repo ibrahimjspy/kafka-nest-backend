@@ -9,13 +9,13 @@ export const updateUserMutation = (
   return gql`
       mutation {
         staffUpdate(
-          id:${shopId}
+          id:"${shopId}"
           input: {
             firstName: "${name}"
             email: "${email}"
             isActive: true
-            addGroups: ["fd"]
-            redirectUrl: "${url}"
+            # addGroups: ["fd"]
+            # redirectUrl: "${url}"
           }
         ) {
           user {

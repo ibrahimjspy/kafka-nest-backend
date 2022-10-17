@@ -9,12 +9,14 @@ import {
   productCdcMock,
   productTransformedExpected,
 } from 'src/mock/transformer/product';
-import { masterCategoryTransformer } from './methods/category/master';
-import { subCategoryTransformer } from './methods/category/sub';
+import { shopCdcMock, shopTransformedMock } from 'src/mock/transformer/shop';
+import { masterCategoryTransformerMethod } from './methods/category/master';
+import { subCategoryTransformerMethod } from './methods/category/sub';
 import {
   descriptionTransformer,
-  productGeneralTransformer,
+  productGeneralTransformerMethod,
 } from './methods/product/general';
+import { shopTransformerMethod } from './methods/shop/general';
 import { TransformerService } from './Service';
 
 describe('TransformerController', () => {
@@ -37,26 +39,37 @@ describe('TransformerController', () => {
     const description = descriptionTransformer('test description');
     expect(description).toBe(descriptionSmallText);
   });
+
   it('product object builder is working ', async () => {
-    const transformedProduct = await productGeneralTransformer(productCdcMock);
+    const transformedProduct = await productGeneralTransformerMethod(
+      productCdcMock,
+    );
     console.log(transformedProduct);
     expect(transformedProduct).toStrictEqual(productTransformedExpected);
   });
 
   it('master category object builder is working ', async () => {
-    const transformedMasterCategory = await masterCategoryTransformer(
+    const transformedMasterCategory = await masterCategoryTransformerMethod(
       masterCategoryCDCMock,
     );
     // console.log(transformedMasterCategory);
     expect(transformedMasterCategory).toBeDefined();
     expect(transformedMasterCategory).toStrictEqual(CategoryTransformedMock);
   });
+
   it('sub category object builder is working ', async () => {
-    const transformedSubCategory = await subCategoryTransformer(
+    const transformedSubCategory = await subCategoryTransformerMethod(
       subCategoryCDCMock,
     );
     // console.log(transformedSubCategory);
     expect(transformedSubCategory).toBeDefined();
     expect(transformedSubCategory).toStrictEqual(CategoryTransformedMock);
+  });
+
+  it('shop service builder is working ', async () => {
+    const transformedShop = await shopTransformerMethod(shopCdcMock);
+    // console.log(transformedShop);
+    expect(transformedShop).toBeDefined();
+    expect(transformedShop).toStrictEqual(shopTransformedMock);
   });
 });

@@ -10,7 +10,7 @@ export const createUserMutation = (shopData: shopTransformed) => {
             firstName: "${name}"
             email: "${email}"
             isActive: true
-            addGroups: ["fd"]
+            # addGroups: ["fd"]
             redirectUrl: "${url}"
           }
         ) {
@@ -25,4 +25,14 @@ export const createUserMutation = (shopData: shopTransformed) => {
         }
       }
     `;
+};
+
+export const createSessionToken = () => {
+  return gql`
+    mutation {
+      tokenCreate(email: "ibrahim@aiworks.ai", password: "123") {
+        token
+      }
+    }
+  `;
 };

@@ -11,3 +11,18 @@ export interface shopTransformed {
   madeIn?: string;
   returnPolicy?: string;
 }
+
+export interface shopCDC {
+  id: number;
+  TBVendor_ID: string;
+  VDName: string;
+  VDEMail: string;
+  VDFrontDescription: string;
+  SEODescription: string;
+  SEOTitle: string;
+  VDVendorURL: string;
+  OSminOrderAMT: string;
+  VDStorePolicy: string;
+  VDMadeIn: string;
+  VDReturnPolicy: string;
+}

@@ -1,16 +1,16 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { TransformerService } from 'src/services/transformer/Service';
-import { BrandService } from './Service';
+import { ShopService } from './Service';
 
 describe('Brand Service unit tests', () => {
-  let service: BrandService;
+  let service: ShopService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [BrandService, TransformerService],
+      providers: [ShopService, TransformerService],
     }).compile();
 
-    service = module.get<BrandService>(BrandService);
+    service = module.get<ShopService>(ShopService);
   });
   describe('root', () => {
     it('should return "Service running"', () => {

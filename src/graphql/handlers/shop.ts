@@ -1,4 +1,3 @@
-import { deleteShopId, insertShopId } from 'src/postgres/handlers/shop';
 import { shopTransformed } from 'src/types/shop';
 import {
   graphqlCall,
@@ -18,12 +17,16 @@ export const createShopHandler = async (
   userId,
 ): Promise<object> => {
   try {
-    const addShop = await graphqlCall(addUserToMarketplace(userId));
-    const createShop: object = await graphqlCall(
-      createShopMutation(shopData, userId.id),
+    console.log(userId.staffCreate);
+    // registers user id in shop service
+    const addShop = await graphqlCall(
+      addUserToMarketplace(userId.staffCreate.user.id),
     );
-    console.log(createShop);
-    insertShopId(shopData.id, createShop);
+    // creates shop against that user
+    const createShop: object = await graphqlCall(
+      createShopMutation(shopData, userId.staffCreate.user.id),
+    );
+    // console.log(createShop);
     return { ...addShop, createShop };
   } catch (err) {
     return graphqlExceptionHandler(err);
@@ -48,8 +51,7 @@ export const updateShopHandler = async (
 export const deleteShopHandler = async (shopId: string): Promise<object> => {
   try {
     const data = await graphqlCall(deleteShopMutation(shopId));
-    await deleteShopId(shopId);
-    console.log(data);
+    return data;
   } catch (err) {
     return graphqlExceptionHandler(err);
   }

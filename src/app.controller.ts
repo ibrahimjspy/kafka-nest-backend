@@ -26,8 +26,8 @@ export class AppController {
   }
   @MessagePattern('vendor') // topic name
   handleVendorUpdate(@Payload() message) {
-    console.log(message.payload.after);
-    // return this.appService.handleProductCDC(message.value);
+    // console.log(message.payload.after);
+    return this.appService.handleShopCDC(message.payload);
   }
   @MessagePattern('healthCheck') // topic name
   healthCheck() {

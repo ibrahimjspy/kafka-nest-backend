@@ -11,15 +11,12 @@ export const shopIdQuery = (sourceId: string): string => {
 
 //                       <insert>
 
-export const insertShopIdQuery = (
-  sourceId: string,
-  destinationId: string,
-): string => {
-  console.log(destinationId);
+export const insertShopIdQuery = (sourceId: string, destinationId): string => {
+  console.log(destinationId, 'in shop postgres query');
   return `
     INSERT INTO cdc.shop_id_mapping_table
     (source_id, destination_id)
-    VALUES(${sourceId}, '${destinationId}');
+    VALUES(${sourceId}, '${destinationId?.createMarketplaceShop?.id}');
   `;
 };
 

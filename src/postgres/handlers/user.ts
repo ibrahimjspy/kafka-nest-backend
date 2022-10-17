@@ -15,9 +15,7 @@ export const fetchUserId = async (sourceId: string): Promise<string> => {
 export const insertUserId = async (sourceId: string, destinationId) => {
   // console.log(sourceId); // done
   // console.log(destinationId.UserCreate.errors);
-  return await postgresFetchCall(
-    insertUserIdQuery(sourceId, destinationId.StaffCreate.User.id),
-  );
+  return await postgresFetchCall(insertUserIdQuery(sourceId, destinationId));
 };
 
 //                       <delete>

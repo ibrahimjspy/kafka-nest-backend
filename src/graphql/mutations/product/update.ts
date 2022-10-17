@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable prettier/prettier */
-import {gql} from 'graphql-request';
+import { gql } from 'graphql-request';
 
 export const updateProductMutation = (productData, destinationId) => {
-  console.log(destinationId,'in query');
+  console.log(destinationId, 'in query');
   const { id, name, description } = productData;
   return gql`
     mutation{

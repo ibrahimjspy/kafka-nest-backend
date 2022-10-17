@@ -9,7 +9,7 @@ export const createShopMutation = (
     name,
     description,
     storePolicy,
-    minOrder,
+    // minOrder,
     email,
     madeIn,
     returnPolicy,
@@ -21,9 +21,9 @@ export const createShopMutation = (
         input: {
           name: "${name}"
           user: "${userId}"
-          managerType: ${shopData}
+          managerType: "1"
           madeIn: "${madeIn}"
-          minOrder: "${minOrder}"
+          minOrder: 200
           about: "shop about"
           returnPolicy: "${returnPolicy}"
           storePolicy: "${storePolicy}"

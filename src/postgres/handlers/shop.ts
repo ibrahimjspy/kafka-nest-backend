@@ -2,6 +2,7 @@
 
 import { postgresDeleteCall } from 'src/utils/postgres/delete';
 import { postgresFetchCall } from 'src/utils/postgres/fetch';
+import { postgresInsertCall } from 'src/utils/postgres/insert';
 import {
   deleteShopIdQuery,
   insertShopIdQuery,
@@ -15,11 +16,10 @@ export const fetchShopId = async (sourceId: string): Promise<string> => {
 //                       <insert>
 
 export const insertShopId = async (sourceId: string, destinationId) => {
-  // console.log(sourceId); // done
+  console.log(sourceId); // done
+  console.log(destinationId, ' in shop service');
   // console.log(destinationId.ShopCreate.errors);
-  return await postgresFetchCall(
-    insertShopIdQuery(sourceId, destinationId.ShopCreate.Shop.id),
-  );
+  return await postgresInsertCall(insertShopIdQuery(sourceId, destinationId));
 };
 
 //                       <delete>
