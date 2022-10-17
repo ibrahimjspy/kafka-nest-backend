@@ -27,7 +27,7 @@ export const createCategorySubMutation = (categoryData, MasterId) => {
   return gql`
     mutation {
       categoryCreate(
-        parent:"Q2F0ZWdvcnk6NTE="
+        parent:"Q2F0ZWdvcnk6MTM="
         input: {
           name: "${name}"
           description:${JSON.stringify(description)}

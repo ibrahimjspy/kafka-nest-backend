@@ -29,7 +29,7 @@ export const insertMasterCategoryId = async (
   return await postgresInsertCall(
     insertMasterCategoryIdQuery(
       sourceId,
-      destinationId.categoryCreate.category.id,
+      destinationId?.categoryCreate?.category?.id,
     ),
   );
 };
@@ -38,7 +38,7 @@ export const insertSubCategoryId = async (sourceId: string, destinationId) => {
   return await postgresDeleteCall(
     insertSubCategoryIdQuery(
       sourceId,
-      destinationId.categoryCreate.category.id,
+      destinationId?.categoryCreate?.category?.id,
     ),
   );
 };

@@ -1,12 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { testQuery } from '../test/query';
+// import { testQuery } from '../test/query';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { KafkaModule } from './kafka/kafka.module';
 import { CategoryService } from './services/category/Service';
 import { ProductService } from './services/product/Service';
 import { TransformerService } from './services/transformer/Service';
-import { graphqlCall } from './utils/graphql/handler';
+// import { graphqlCall } from './utils/graphql/handler';
 // import { productGeneralTransformer } from './transformers/product/general';
 
 describe('AppController', () => {
