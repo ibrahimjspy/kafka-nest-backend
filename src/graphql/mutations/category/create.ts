@@ -3,12 +3,13 @@ import { gql } from 'graphql-request';
 
 export const createCategoryMasterMutation = (categoryData) => {
   // console.log(categoryData);
-  const { name, seo_title, seo_description } = categoryData;
+  const { name, seo_title, seo_description, description } = categoryData;
   return gql`
     mutation {
       categoryCreate(
         input: {
           name: "${name}"
+          description:${JSON.stringify(description)}
           seo: { title: "${seo_title}", description: "${seo_description}" }
         }
       ) {
@@ -22,13 +23,14 @@ export const createCategoryMasterMutation = (categoryData) => {
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const createCategorySubMutation = (categoryData, MasterId) => {
-  const { name, seo_title, seo_description } = categoryData;
+  const { name, seo_title, seo_description, description } = categoryData;
   return gql`
     mutation {
       categoryCreate(
         parent:"Q2F0ZWdvcnk6NTE="
         input: {
           name: "${name}"
+          description:${JSON.stringify(description)}
           seo: { title: "${seo_title}", description: "${seo_description}" }
         }
       ) {

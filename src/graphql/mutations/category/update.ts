@@ -4,7 +4,7 @@ export const updateMasterCategoryMutation = (
   categoryData,
   categoryId: string,
 ) => {
-  const { name, seo_title, seo_description } = categoryData;
+  const { name, seo_title, seo_description, description } = categoryData;
   // const categoryDescription = categoryData.description;
   return gql`
     mutation {
@@ -12,6 +12,7 @@ export const updateMasterCategoryMutation = (
         id:"${categoryId}"
         input: {
           name: "${name}"
+          description:${JSON.stringify(description)}
           seo: { title: "${seo_title}", description: "${seo_description}" }
         }
       ) {
@@ -24,7 +25,7 @@ export const updateMasterCategoryMutation = (
 };
 
 export const updateSubCategoryMutation = (categoryData, categoryId: string) => {
-  const { name, seo_title, seo_description } = categoryData;
+  const { name, seo_title, seo_description, description } = categoryData;
   // const categoryDescription = categoryData.description;
   return gql`
     mutation {
@@ -32,6 +33,7 @@ export const updateSubCategoryMutation = (categoryData, categoryId: string) => {
         id:"${categoryId}"
         input: {
           name: "${name}"
+          description:${JSON.stringify(description)}
           seo: { title: "${seo_title}", description: "${seo_description}" }
         }
       ) {

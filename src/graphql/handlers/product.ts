@@ -2,14 +2,14 @@ import {
   deleteProductId,
   insertProductId,
 } from 'src/postgres/handlers/product';
-import { productTransformed } from 'src/types/Product';
+import { productTransformed } from 'src/types/poduct';
 import {
   graphqlCall,
   graphqlExceptionHandler,
 } from 'src/utils/graphql/handler';
 import { createProductMutation } from '../mutations/product/create';
 import { deleteProductMutation } from '../mutations/product/delete';
-import { updateProductQuery } from '../mutations/product/update';
+import { updateProductMutation } from '../mutations/product/update';
 
 //  <-->  Create  <-->
 
@@ -36,7 +36,7 @@ export const updateProductHandler = async (
 ): Promise<object> => {
   try {
     return await graphqlCall(
-      updateProductQuery(productUpdateData, destinationId),
+      updateProductMutation(productUpdateData, destinationId),
     );
   } catch (err) {
     return graphqlExceptionHandler(err);

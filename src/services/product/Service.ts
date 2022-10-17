@@ -5,10 +5,10 @@ import {
   updateProductHandler,
 } from 'src/graphql/handlers/product';
 import { fetchProductId } from 'src/postgres/handlers/product';
-import { productCDC } from 'src/types/Product';
-import { TransformerService } from '../transformer/Transformer';
+import { productCDC } from 'src/types/poduct';
+import { TransformerService } from '../transformer/Service';
 /**
- *  Injectable class handling product and its relating tables CDC
+ *  Injectable class handling product variant and its relating tables CDC
  *  @Injected transformation class for CDC payload validations and transformations
  *  @requires Injectable in app scope or in kafka connection to reach kafka messages
  */

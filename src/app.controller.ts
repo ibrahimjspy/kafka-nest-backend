@@ -24,6 +24,11 @@ export class AppController {
     // Logger.log(message);
     return this.appService.handleProductCDC(message.value);
   }
+  @MessagePattern('vendor') // topic name
+  handleVendorUpdate(@Payload() message) {
+    // console.log(message.payload.after);
+    return this.appService.handleShopCDC(message.payload);
+  }
   @MessagePattern('healthCheck') // topic name
   healthCheck() {
     return 'service running';

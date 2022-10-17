@@ -1,5 +1,5 @@
 import { fetchProductId } from 'src/postgres/handlers/product';
-import { productExistingInterface } from 'src/types/product';
+import { productExistingInterface } from 'src/types/poduct';
 
 /**
  * This function checks whether given source product ID exists against Destination if so

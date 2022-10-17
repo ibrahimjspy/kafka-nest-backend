@@ -1,14 +1,16 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { createProductHandler } from './graphql/handlers/product';
 import { ProducerService } from './kafka/producer.service';
-import { CategoryService } from './services/category/Category';
-import { ProductService } from './services/product/Product';
+import { CategoryService } from './services/category/Service';
+import { ProductService } from './services/product/Service';
+import { ShopService } from './services/shop/Service';
 @Injectable()
 export class AppService {
   constructor(
     private readonly producerService: ProducerService,
     private readonly productService: ProductService,
     private readonly categoryService: CategoryService,
+    private readonly shopService: ShopService,
   ) {}
 
   handleProductCDC(kafkaMessage) {
@@ -44,6 +46,16 @@ export class AppService {
   }
   public addProductCatalog(kafkaMessage) {
     return createProductHandler(kafkaMessage);
+  }
+
+  handleShopCDC(kafkaMessage) {
+    try {
+      return kafkaMessage.op == 'd'
+        ? this.shopService.handleShopCDCDelete(kafkaMessage.before)
+        : this.shopService.handleShopCDC(kafkaMessage.after);
+    } catch (error) {
+      Logger.log('shop deleted');
+    }
   }
 
   //kafka streams api method
