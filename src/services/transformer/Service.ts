@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { masterCategoryTransformer } from 'src/services/transformer/methods/category/master';
-import { subCategoryTransformer } from 'src/services/transformer/methods/category/sub';
-import { productGeneralTransformer } from 'src/services/transformer/methods/product/general';
-import { shopTransformer } from './methods/shop/general';
+import { masterCategoryTransformerMethod } from 'src/services/transformer/methods/category/master';
+import { subCategoryTransformerMethod } from 'src/services/transformer/methods/category/sub';
+import { productGeneralTransformerMethod } from 'src/services/transformer/methods/product/general';
+import { shopTransformerMethod } from './methods/shop/general';
 /**
  * Transformation class with utility methods performing specific
  *  transformations on product Object and its utilities
@@ -27,14 +27,14 @@ export class TransformerService {
    * @returns category object ready to be mapped against Api interface
    */
   public masterCategoryTransformer(categoryObject) {
-    return masterCategoryTransformer(categoryObject);
+    return masterCategoryTransformerMethod(categoryObject);
   }
   /**
    * sub category transform and validate
    * @returns category object ready to be mapped against Api interface
    */
   public subCategoryTransformer(categoryObject) {
-    return subCategoryTransformer(categoryObject);
+    return subCategoryTransformerMethod(categoryObject);
   }
   /**
    * product details transform and validate
@@ -42,14 +42,14 @@ export class TransformerService {
    * @returns product information object ready to be mapped against Api interface
    */
   public generalTransformer(productObject) {
-    return productGeneralTransformer(productObject);
+    return productGeneralTransformerMethod(productObject);
   }
   /**
    * shop transform and validate
    * @returns shop object ready to be mapped against Api interface
    */
   public shopTransformer(shopObject) {
-    return shopTransformer(shopObject);
+    return shopTransformerMethod(shopObject);
   }
   public productMediaTransformer(mediaObject) {
     return mediaObject;

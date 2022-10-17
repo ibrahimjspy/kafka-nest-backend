@@ -10,7 +10,7 @@ import { shopTransformed } from 'src/types/shop';
  * @params object,  Composite object containing cdc changeData, categoryMaster data
  * @returns transformed object
  */
-export const shopTransformer = async (object): Promise<object> => {
+export const shopTransformerMethod = async (object): Promise<object> => {
   const shopObject: shopTransformed = {};
   const {
     TBVendor_ID,

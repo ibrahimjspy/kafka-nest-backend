@@ -1,3 +1,4 @@
+import { postgresDeleteCall } from 'src/utils/postgres/delete';
 import { postgresFetchCall } from 'src/utils/postgres/fetch';
 import {
   deleteUserIdQuery,
@@ -23,5 +24,5 @@ export const insertUserId = async (sourceId: string, destinationId) => {
 
 export const deleteUserId = async (destinationId) => {
   // console.log(destinationId.UserCreate.errors);
-  return await postgresFetchCall(deleteUserIdQuery(destinationId));
+  return await postgresDeleteCall(deleteUserIdQuery(destinationId));
 };

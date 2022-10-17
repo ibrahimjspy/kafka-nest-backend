@@ -21,7 +21,6 @@ export const updateShopMutation = (
         id: "${shopId}"
         input: {
           name: "${name}"
-          user: "user id"
           managerType: ${shopData}
           madeIn: "${madeIn}"
           minOrder: "${minOrder}"

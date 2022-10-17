@@ -1,7 +1,10 @@
 import { gql } from 'graphql-request';
 import { shopTransformed } from 'src/types/shop';
 
-export const createShopMutation = (shopData: shopTransformed) => {
+export const createShopMutation = (
+  shopData: shopTransformed,
+  userId: string,
+) => {
   const {
     name,
     description,
@@ -17,7 +20,7 @@ export const createShopMutation = (shopData: shopTransformed) => {
       createMarketplaceShop(
         input: {
           name: "${name}"
-          user: "user id"
+          user: "${userId}"
           managerType: ${shopData}
           madeIn: "${madeIn}"
           minOrder: "${minOrder}"

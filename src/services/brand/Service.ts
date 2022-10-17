@@ -3,6 +3,7 @@ import {
   createShopHandler,
   updateShopHandler,
 } from 'src/graphql/handlers/shop';
+import { createUserHandler } from 'src/graphql/handlers/user';
 import { fetchShopId } from 'src/postgres/handlers/shop';
 import { TransformerService } from 'src/services/transformer/Service';
 /**
@@ -21,7 +22,7 @@ export class BrandService {
   public async handleShopCDC(kafkaMessage): Promise<object> {
     // console.log(kafkaMessage);
     const shopExistsInDestination: string = await fetchShopId(
-      kafkaMessage.TBStyleNo_OS_Category_Master_ID,
+      kafkaMessage.TBVendor_ID,
     );
     const shopData = await this.transformerService.shopTransformer(
       kafkaMessage,
@@ -30,6 +31,7 @@ export class BrandService {
     if (shopExistsInDestination) {
       return updateShopHandler(shopData, shopExistsInDestination);
     }
-    return createShopHandler(shopData);
+    const user = await createUserHandler(shopData);
+    return createShopHandler(shopData, user);
   }
 }

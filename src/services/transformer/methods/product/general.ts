@@ -7,7 +7,7 @@ import { productCDC, productTransformed } from 'src/types/poduct';
  * @value name
  * @params object,  Composite object containing cdc changeData, productView data
  */
-export const productGeneralTransformer = async (
+export const productGeneralTransformerMethod = async (
   object: productCDC,
 ): Promise<productTransformed> => {
   const productObject: productTransformed = {};

@@ -4,7 +4,10 @@ import {
   graphqlCall,
   graphqlExceptionHandler,
 } from 'src/utils/graphql/handler';
-import { createShopMutation } from '../mutations/shop/create';
+import {
+  addUserToMarketplace,
+  createShopMutation,
+} from '../mutations/shop/create';
 import { deleteShopMutation } from '../mutations/shop/delete';
 import { updateShopMutation } from '../mutations/shop/update';
 
@@ -12,12 +15,16 @@ import { updateShopMutation } from '../mutations/shop/update';
 
 export const createShopHandler = async (
   shopData: shopTransformed,
+  userId,
 ): Promise<object> => {
   try {
-    const createShop: object = await graphqlCall(createShopMutation(shopData));
+    const addShop = await graphqlCall(addUserToMarketplace(userId));
+    const createShop: object = await graphqlCall(
+      createShopMutation(shopData, userId.id),
+    );
     console.log(createShop);
     insertShopId(shopData.id, createShop);
-    return { ...createShop };
+    return { ...addShop, createShop };
   } catch (err) {
     return graphqlExceptionHandler(err);
   }

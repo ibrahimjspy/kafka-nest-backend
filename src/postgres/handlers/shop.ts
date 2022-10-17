@@ -1,5 +1,6 @@
 //                       <fetch>
 
+import { postgresDeleteCall } from 'src/utils/postgres/delete';
 import { postgresFetchCall } from 'src/utils/postgres/fetch';
 import {
   deleteShopIdQuery,
@@ -25,5 +26,5 @@ export const insertShopId = async (sourceId: string, destinationId) => {
 
 export const deleteShopId = async (destinationId) => {
   // console.log(destinationId.ShopCreate.errors);
-  return await postgresFetchCall(deleteShopIdQuery(destinationId));
+  return await postgresDeleteCall(deleteShopIdQuery(destinationId));
 };

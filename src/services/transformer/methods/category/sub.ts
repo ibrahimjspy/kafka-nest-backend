@@ -10,7 +10,7 @@ import { descriptionTransformer } from '../product/general';
  * @params object,  Composite object containing cdc changeData, categorySub data
  * @returns transformed object
  */
-export const subCategoryTransformer = async (
+export const subCategoryTransformerMethod = async (
   object: subCategoryCDC,
 ): Promise<object> => {
   const subCategoryObject: subCategoryTransformed = {};
