@@ -19,9 +19,9 @@ export class AppController {
   subCategoryCDC(@Payload() message) {
     return this.appService.handleSubCategoryCDC(message.payload);
   }
-  @MessagePattern('TBStyleNo') // topic name
+  @MessagePattern('color_select') // topic name
   handleProductUpdate(@Payload() message) {
-    // Logger.log(message);
+    // console.log(message.payload);
     return this.appService.handleProductCDC(message.value);
   }
   @MessagePattern('vendor') // topic name

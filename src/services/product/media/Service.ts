@@ -17,9 +17,8 @@ export class ProductMediaService {
     const media = await this.transformerClass.productMediaTransformer(
       productMedia,
     );
-    console.log('I was called');
     const createMedia = await media.map(async (url) => {
-      console.log(url);
+      // console.log(url);
       await createProductMedia(url, productId);
     });
     return createMedia;

@@ -13,6 +13,7 @@ export const createProductMedia = async (
     const mediaCreate: productMediaCreate = await graphqlCall(
       mediaCreateMutation(mediaUrl, productId),
     );
+    // console.log(mediaCreate, 'media graphql object');
     const mediaId = mediaCreate.productMediaCreate?.media?.id;
     return mediaId;
   } catch (err) {
