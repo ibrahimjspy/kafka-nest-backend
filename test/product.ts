@@ -254,6 +254,7 @@ export const testProductData = {
         'https://dc964uidi8qge.cloudfront.net/OSFile/OS/Pictures/202202/Z/65d61a46-969d-11ec-849a-0626c5bd3ecf_Z.jpg',
         'https://dc964uidi8qge.cloudfront.net/OSFile/OS/Pictures/202202/Z/67972e7e-969d-11ec-849a-0626c5bd3ecf_Z.jpg',
       ],
+      // https://dc964uidi8qge.cloudfront.net/OSFile/OS/ColorSwatch/202202/757b5362-969d-11ec-849a-0626c5bd3ecf.jpg
     },
     size_chart: {
       pack: [1, 1, 1, 1, 1],

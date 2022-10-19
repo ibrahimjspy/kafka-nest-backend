@@ -4,6 +4,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { KafkaModule } from './kafka/kafka.module';
 import { CategoryService } from './services/category/Service';
+import { ProductMediaService } from './services/product/media/Service';
 import { ProductService } from './services/product/Service';
 import { ShopService } from './services/shop/Service';
 import { TransformerService } from './services/transformer/Service';
@@ -17,6 +18,7 @@ import { TransformerService } from './services/transformer/Service';
     TransformerService,
     CategoryService,
     ShopService,
+    ProductMediaService,
   ],
 })
 export class AppModule {}
