@@ -6,9 +6,10 @@
 export const productMediaTransformerMethod = async (
   mediaObject,
 ): Promise<string[]> => {
+  const { medium, tiny, large } = mediaObject;
   let media = [];
-  if (mediaObject) {
-    media = [...mediaObject.medium, ...mediaObject.tiny, ...mediaObject.large];
+  if (medium && tiny && large) {
+    media = [...medium, ...tiny, ...large];
   }
   return media;
 };

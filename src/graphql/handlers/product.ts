@@ -20,7 +20,7 @@ export const createProductHandler = async (
     const createProduct: object = await graphqlCall(
       createProductMutation(productData),
     );
-    console.log(createProduct);
+    // console.log(createProduct);
     insertProductId(productData.id, createProduct);
     return { ...createProduct };
   } catch (err) {

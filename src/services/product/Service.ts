@@ -5,7 +5,7 @@ import {
   updateProductHandler,
 } from 'src/graphql/handlers/product';
 import { mockMedia } from 'src/mock/product/media';
-import { fetchProductId, insertProductId } from 'src/postgres/handlers/product';
+import { fetchProductId } from 'src/postgres/handlers/product';
 import { productCDC, productCreate } from 'src/types/poduct';
 import { TransformerService } from '../transformer/Service';
 import { ProductMediaService } from './media/Service';
@@ -39,16 +39,14 @@ export class ProductService {
     }
     // creating new product and assigning it media
     const product: productCreate = await createProductHandler(productData);
-    // const productIdMapping = await insertProductId(
-    //   productData.id,
-    //   product.productCreate.product.id,
-    // );
-    const media = await this.productMediaClass.productMediaAssign(
-      mockMedia,
-      product.productCreate.product.id,
-    );
+    if (product.productCreate) {
+      await this.productMediaClass.productMediaAssign(
+        mockMedia,
+        product.productCreate.product.id,
+      );
+    }
 
-    return { product, media };
+    return { product };
   }
 
   public async handleProductCDCDelete(
