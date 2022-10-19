@@ -11,7 +11,7 @@ type GraphqlCall = (Query: string) => Promise<object>;
  */
 export const graphqlCall: GraphqlCall = async (Query: string): Promise<any> => {
   let data = {};
-  console.log(Query);
+  // console.log(Query);
   const graphQLClient = new GraphQLClient(
     process.env.DESTINATION_GRAPHQL_ENDPOINT,
     {

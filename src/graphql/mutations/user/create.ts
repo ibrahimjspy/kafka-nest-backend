@@ -10,7 +10,7 @@ export const createUserMutation = (shopData: shopTransformed) => {
             firstName: "${name}"
             email: "${email}"
             isActive: true
-            # addGroups: ["fd"]
+            addGroups: ["R3JvdXA6MQ=="]
             redirectUrl: "${url}"
           }
         ) {

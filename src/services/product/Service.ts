@@ -4,9 +4,11 @@ import {
   deleteProductHandler,
   updateProductHandler,
 } from 'src/graphql/handlers/product';
+import { mockMedia } from 'src/mock/product/media';
 import { fetchProductId } from 'src/postgres/handlers/product';
-import { productCDC } from 'src/types/poduct';
+import { productCDC, productCreate } from 'src/types/poduct';
 import { TransformerService } from '../transformer/Service';
+import { ProductMediaService } from './media/Service';
 /**
  *  Injectable class handling product variant and its relating tables CDC
  *  @Injected transformation class for CDC payload validations and transformations
@@ -14,7 +16,10 @@ import { TransformerService } from '../transformer/Service';
  */
 @Injectable()
 export class ProductService {
-  constructor(private readonly transformerClass: TransformerService) {}
+  constructor(
+    private readonly transformerClass: TransformerService,
+    private readonly productMediaClass: ProductMediaService,
+  ) {}
 
   public healthCheck(): string {
     return 'Service running';
@@ -28,10 +33,20 @@ export class ProductService {
     const productData = await this.transformerClass.generalTransformer(
       kafkaMessage,
     );
+    // updating product with cdc information
     if (productExistsInDestination) {
       return updateProductHandler(productData, productExistsInDestination);
     }
-    return await createProductHandler(productData);
+    // creating new product and assigning it media
+    const product: productCreate = await createProductHandler(productData);
+    if (product.productCreate) {
+      await this.productMediaClass.productMediaAssign(
+        mockMedia,
+        product.productCreate.product.id,
+      );
+    }
+
+    return { product };
   }
 
   public async handleProductCDCDelete(
