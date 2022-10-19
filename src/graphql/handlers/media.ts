@@ -1,4 +1,4 @@
-import { productMediaCreate } from 'src/types/poduct';
+import { productMediaCreate } from 'src/types/product';
 import {
   graphqlCall,
   graphqlExceptionHandler,

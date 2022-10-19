@@ -6,7 +6,7 @@ import {
 } from 'src/graphql/handlers/product';
 import { mockMedia } from 'src/mock/product/media';
 import { fetchProductId } from 'src/postgres/handlers/product';
-import { productCDC, productCreate } from 'src/types/poduct';
+import { productCDC, productCreate } from 'src/types/product';
 import { TransformerService } from '../transformer/Service';
 import { ProductMediaService } from './media/Service';
 /**

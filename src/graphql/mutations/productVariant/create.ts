@@ -1,26 +1,24 @@
 import { gql } from 'graphql-request';
 
-export const createProductMutation = (productData) => {
-  console.log(productData);
+export const createProductVariantMutation = (productVariantData, productId) => {
   // parsing product data;
-  // const testProductType = "UHJvZHVjdFR5cGU6MQ=="
-  //   const { name, description } = productData;
+  const { color, size } = productVariantData;
   return gql`
     mutation {
-      productVariantCreate(
-        input: {
-          attributes: { id: "QXR0cmlidXRlOjE=", values: ["Red"] }
-          product: "UHJvZHVjdDoyNA=="
+        mutation{
+        productVariantCreate(input:{
+            attributes:[{id:"QXR0cmlidXRlOjY="values:["${color}"]},
+            { id:"QXR0cmlidXRlOjY="values:["${size}"] }]
+            product:"${productId}"
+        }){
+            productVariant{
+            id
+            name
+            }
+            errors{
+            message
+            }
         }
-      ) {
-        productVariant {
-          id
-          name
-        }
-        errors {
-          message
-        }
-      }
-    }
+}
   `;
 };

@@ -2,7 +2,7 @@ import {
   deleteProductId,
   insertProductId,
 } from 'src/postgres/handlers/product';
-import { productTransformed } from 'src/types/poduct';
+import { productTransformed } from 'src/types/product';
 import {
   graphqlCall,
   graphqlExceptionHandler,

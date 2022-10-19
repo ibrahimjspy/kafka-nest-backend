@@ -3,6 +3,7 @@ import { masterCategoryTransformerMethod } from 'src/services/transformer/method
 import { subCategoryTransformerMethod } from 'src/services/transformer/methods/category/sub';
 import { productGeneralTransformerMethod } from 'src/services/transformer/methods/product/general';
 import { productMediaTransformerMethod } from './methods/product/media';
+import { colorVariantTransformerMethod } from './methods/product/variant';
 import { shopTransformerMethod } from './methods/shop/general';
 /**
  * Transformation class with utility methods performing specific
@@ -18,7 +19,6 @@ export class TransformerService {
   public productTransformer(productObject) {
     this.masterCategoryTransformer(productObject);
     this.productMediaTransformer(productObject);
-    this.reviewsTransformer(productObject);
     this.pricingTransformer(productObject);
     this.generalTransformer(productObject);
     return productObject;
@@ -59,8 +59,12 @@ export class TransformerService {
   public productMediaTransformer(mediaObject) {
     return productMediaTransformerMethod(mediaObject);
   }
-  public reviewsTransformer(reviewsObject) {
-    return reviewsObject;
+  /**
+   * color and size transformer for variant mapping
+   * @returns variants array ready to be mapped variant api with color and sizes against it
+   */
+  public productColorTransformer(color, sizes) {
+    return colorVariantTransformerMethod(color, sizes);
   }
   public pricingTransformer(pricingObject) {
     return pricingObject;

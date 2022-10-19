@@ -22,7 +22,7 @@ export class AppController {
   @MessagePattern('color_select') // topic name
   handleProductUpdate(@Payload() message) {
     // console.log(message.payload);
-    return this.appService.handleProductCDC(message.value);
+    return this.appService.handleSelectColorCDC(message.value);
   }
   @MessagePattern('vendor') // topic name
   handleVendorUpdate(@Payload() message) {
