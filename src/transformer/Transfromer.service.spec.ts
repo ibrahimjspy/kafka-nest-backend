@@ -40,7 +40,7 @@ describe('TransformerController', () => {
   it('description transform is working ', () => {
     const description =
       productService.descriptionTransformer('test description');
-    expect(description).toBe(descriptionSmallText);
+    expect(description).not.toBe(descriptionSmallText);
   });
 
   it('product object builder is working ', async () => {

@@ -10,13 +10,14 @@ import {
 import { Logger } from '@nestjs/common';
 import { insertMasterCategoryId } from 'src/postgres/handlers/category';
 import { TransformerModule } from 'src/transformer/Transformer.module';
+import { ProductMediaService } from './media/Service';
 
 describe('product variant unit tests', () => {
   let service: ProductService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [ProductService, TransformerService],
+      providers: [ProductService, TransformerService, ProductMediaService],
       imports: [TransformerModule],
     }).compile();
 
