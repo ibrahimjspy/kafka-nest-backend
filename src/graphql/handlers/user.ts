@@ -1,4 +1,5 @@
 // import { insertUserId } from 'src/postgres/handlers/user';
+import { Logger } from '@nestjs/common';
 import { shopTransformed } from 'src/types/shop';
 import {
   graphqlCall,
@@ -23,8 +24,7 @@ export const createUserHandler = async (
       createUserMutation(userData),
       createToken,
     );
-    console.log(createUser.staffCreate);
-    // await insertUserId(userData.id, createUser);
+    Logger.verbose(createUser.staffCreate);
     return { createUser };
   } catch (err) {
     return graphqlExceptionHandler(err);
@@ -43,6 +43,7 @@ export const updateUserHandler = async (
       updateUserMutation(userUpdateData, destinationId),
       createToken,
     );
+    Logger.log('user updated', updateUser);
     return updateUser;
   } catch (err) {
     return graphqlExceptionHandler(err);
@@ -58,7 +59,7 @@ export const deleteUserHandler = async (userId: string): Promise<object> => {
       deleteUserMutation(userId),
       createToken,
     );
-    // await deleteUserId(userId);
+    Logger.warn('user deleted', deleteUserHandler);
     return deleteUserId;
   } catch (err) {
     return graphqlExceptionHandler(err);

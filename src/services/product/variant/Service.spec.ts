@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { TransformerService } from 'src/services/transformer/Service';
+import { TransformerService } from 'src/transformer/Transformer.service';
 import { ProductVariantService } from './Service';
 
 describe('TransformerController', () => {

@@ -5,20 +5,24 @@ export const createProductVariantMutation = (productVariantData, productId) => {
   const { color, size } = productVariantData;
   return gql`
     mutation {
-        mutation{
-        productVariantCreate(input:{
-            attributes:[{id:"QXR0cmlidXRlOjY=" values:["${color}"] },
-            { id:"QXR0cmlidXRlOjY="values:["${size}"] }]
-            product:"${productId}"
-        }){
-            productVariant{
-            id
-            name
-            }
-            errors{
-            message
-            }
+      productVariantCreate(
+        input: {
+          attributes: [
+            { id: "QXR0cmlidXRlOjE3", values: ["${color}"] }
+            { id: "QXR0cmlidXRlOjE4", values: ["${size}"] }
+          ]
+          name: "product_variant"
+          product: "${productId}"
         }
-}
+      ) {
+        productVariant {
+          id
+          name
+        }
+        errors {
+          message
+        }
+      }
+    }
   `;
 };

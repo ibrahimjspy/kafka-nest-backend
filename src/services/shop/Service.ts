@@ -19,8 +19,9 @@ import {
   fetchUserId,
   insertUserId,
 } from 'src/postgres/handlers/user';
-import { TransformerService } from 'src/services/transformer/Service';
+import { TransformerService } from 'src/transformer/Transformer.service';
 import { shopCDC, shopTransformed } from 'src/types/shop';
+
 /**
  *  Injectable class handling brand and its relating tables CDC
  *  @Injected transformation class for CDC payload validations and transformations

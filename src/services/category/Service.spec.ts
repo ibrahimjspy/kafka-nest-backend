@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { CategoryService } from './Service';
-import { TransformerService } from '../transformer/Service';
+import { TransformerService } from '../../transformer/Transformer.service';
 // import {
 //   fetchMasterCategoryId,
 //   fetchSubCategoryId,

@@ -5,9 +5,13 @@ import {
   updateProductHandler,
 } from 'src/graphql/handlers/product';
 import { mediaMock } from 'src/mock/product/media';
-import { fetchProductId } from 'src/postgres/handlers/product';
-import { productCDC, productCreate } from 'src/types/product';
-import { TransformerService } from '../transformer/Service';
+import { fetchProductId, insertProductId } from 'src/postgres/handlers/product';
+import {
+  productCDC,
+  productCreate,
+  productTransformed,
+} from 'src/types/product';
+import { TransformerService } from '../../transformer/Transformer.service';
 import { ProductMediaService } from './media/Service';
 /**
  *  Injectable class handling product variant and its relating tables CDC
@@ -37,16 +41,8 @@ export class ProductService {
     if (productExistsInDestination) {
       return updateProductHandler(productData, productExistsInDestination);
     }
-    // creating new product and assigning it media
-    const product: productCreate = await createProductHandler(productData);
-    if (product.productCreate) {
-      await this.productMediaClass.productMediaAssign(
-        mediaMock,
-        product.productCreate.product.id,
-      );
-    }
 
-    return { product };
+    return this.createProduct(productData);
   }
 
   public async handleProductCDCDelete(
@@ -59,5 +55,20 @@ export class ProductService {
       return deleteProductHandler(kafkaMessage.TBItem_ID);
     }
     return;
+  }
+
+  private async createProduct(
+    productData: productTransformed,
+  ): Promise<object> {
+    // creating new product and assigning it media
+    const product: productCreate = await createProductHandler(productData);
+    const productIdMapping = await insertProductId(productData.id, product);
+    if (product.productCreate) {
+      await this.productMediaClass.productMediaAssign(
+        mediaMock,
+        product.productCreate.product.id,
+      );
+    }
+    return { product, productIdMapping };
   }
 }

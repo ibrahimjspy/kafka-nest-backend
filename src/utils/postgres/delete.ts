@@ -10,7 +10,7 @@ export const postgresDeleteCall = async (Query: string) => {
   await client
     .query(Query, [])
     .then((res) => {
-      console.log(res);
+      Logger.warn('Deleted from database', res);
     })
     .catch((err) => {
       Logger.warn('postgres error', err);

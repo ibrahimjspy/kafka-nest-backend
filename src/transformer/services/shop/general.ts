@@ -7,6 +7,12 @@ import { shopCDC, shopTransformed } from 'src/types/shop';
  * @value name
  * @value seo_description
  * @value seo_title
+ * @value url
+ * @value minOrder
+ * @value storePolicy
+ * @value madeIn
+ * @value returnPolicy
+ * @value email
  * @params object,  Composite object containing cdc changeData, categoryMaster data
  * @returns transformed object
  */

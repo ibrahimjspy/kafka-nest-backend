@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { createProductVariantHandler } from 'src/graphql/handlers/productVariant';
 import { mockColor, mockSize } from 'src/mock/product/variant';
 import { fetchProductId } from 'src/postgres/handlers/product';
-import { TransformerService } from 'src/services/transformer/Service';
+import { TransformerService } from 'src/transformer/Transformer.service';
 import { colorSelect } from 'src/types/product';
 /**
  *  Injectable class handling productVariant and its relating tables CDC
@@ -34,14 +34,16 @@ export class ProductVariantService {
     productSizes: string[],
     productId: string,
   ) {
-    const variants = this.transformerClass.productColorTransformer(
+    const variants = await this.transformerClass.productColorTransformer(
       productColor,
       productSizes,
     );
-    const createMedia = await variants.map(async (variant) => {
-      console.log(variant);
-      await createProductVariantHandler(variant, productId);
-    });
+    const createMedia = Promise.all(
+      variants.map(async (variant) => {
+        console.log(variant);
+        await createProductVariantHandler(variant, productId);
+      }),
+    );
     return createMedia;
   }
 }

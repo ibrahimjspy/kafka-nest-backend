@@ -10,17 +10,17 @@ import {
   productTransformedExpected,
 } from 'src/mock/transformer/product';
 import { shopCdcMock, shopTransformedMock } from 'src/mock/transformer/shop';
-import { masterCategoryTransformerMethod } from './methods/category/master';
-import { subCategoryTransformerMethod } from './methods/category/sub';
+import { masterCategoryTransformerMethod } from './services/category/master';
+import { subCategoryTransformerMethod } from './services/category/sub';
 import {
   descriptionTransformer,
   productGeneralTransformerMethod,
-} from './methods/product/general';
-import { productMediaTransformerMethod } from './methods/product/media';
-import { shopTransformerMethod } from './methods/shop/general';
-import { TransformerService } from './Service';
+} from './services/product/general';
+import { productMediaTransformerMethod } from './services/product/media';
+import { shopTransformerMethod } from './services/shop/general';
+import { TransformerService } from './Transformer.service';
 import { mediaMock, mockMediaTransformed } from 'src/mock/product/media';
-import { colorVariantTransformerMethod } from './methods/product/variant';
+import { colorVariantTransformerMethod } from './services/product/variant';
 import { mockColor, mockSize } from 'src/mock/product/variant';
 
 describe('TransformerController', () => {

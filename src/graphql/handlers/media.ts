@@ -1,3 +1,4 @@
+import { Logger } from '@nestjs/common';
 import { productMediaCreate } from 'src/types/product';
 import {
   graphqlCall,
@@ -5,7 +6,7 @@ import {
 } from 'src/utils/graphql/handler';
 import { mediaCreateMutation } from '../mutations/media/create';
 
-export const createProductMedia = async (
+export const createProductMediaHandler = async (
   mediaUrl: string,
   productId: string,
 ) => {
@@ -13,20 +14,9 @@ export const createProductMedia = async (
     const mediaCreate: productMediaCreate = await graphqlCall(
       mediaCreateMutation(mediaUrl, productId),
     );
-    // console.log(mediaCreate, 'media graphql object');
+    Logger.verbose('media created', mediaCreate);
     const mediaId = mediaCreate.productMediaCreate?.media?.id;
     return mediaId;
-  } catch (err) {
-    return graphqlExceptionHandler(err);
-  }
-};
-
-export const updateProductMedia = async (
-  productData: object,
-  productId: string,
-) => {
-  try {
-    return await graphqlCall(updateProductMedia(productData, productId));
   } catch (err) {
     return graphqlExceptionHandler(err);
   }

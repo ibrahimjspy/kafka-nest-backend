@@ -1,10 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { masterCategoryTransformerMethod } from 'src/services/transformer/methods/category/master';
-import { subCategoryTransformerMethod } from 'src/services/transformer/methods/category/sub';
-import { productGeneralTransformerMethod } from 'src/services/transformer/methods/product/general';
-import { productMediaTransformerMethod } from './methods/product/media';
-import { colorVariantTransformerMethod } from './methods/product/variant';
-import { shopTransformerMethod } from './methods/shop/general';
+import { CategoryTransformerService } from './services/category/Category.service';
+import { ProductTransformerService } from './services/product/Product.service';
+import { ShopTransformerService } from './services/shop/Shop.service';
+
 /**
  * Transformation class with utility methods performing specific
  *  transformations on product Object and its utilities
@@ -12,6 +10,11 @@ import { shopTransformerMethod } from './methods/shop/general';
  */
 @Injectable()
 export class TransformerService {
+  constructor(
+    private readonly productTransformerService: ProductTransformerService,
+    private readonly categoryTransformerService: CategoryTransformerService,
+    private readonly shopTransformerService: ShopTransformerService,
+  ) {}
   /**
    * complete product object transform
    * @params productObject
@@ -28,14 +31,18 @@ export class TransformerService {
    * @returns category object ready to be mapped against Api interface
    */
   public masterCategoryTransformer(categoryObject) {
-    return masterCategoryTransformerMethod(categoryObject);
+    return this.categoryTransformerService.masterCategoryTransformerMethod(
+      categoryObject,
+    );
   }
   /**
    * sub category transform and validate
    * @returns category object ready to be mapped against Api interface
    */
   public subCategoryTransformer(categoryObject) {
-    return subCategoryTransformerMethod(categoryObject);
+    return this.categoryTransformerService.subCategoryTransformerMethod(
+      categoryObject,
+    );
   }
   /**
    * product details transform and validate
@@ -43,28 +50,35 @@ export class TransformerService {
    * @returns product information object ready to be mapped against Api interface
    */
   public generalTransformer(productObject) {
-    return productGeneralTransformerMethod(productObject);
+    return this.productTransformerService.productGeneralTransformerMethod(
+      productObject,
+    );
   }
   /**
    * shop transform and validate
    * @returns shop object ready to be mapped against Api interface
    */
   public shopTransformer(shopObject) {
-    return shopTransformerMethod(shopObject);
+    return this.shopTransformerService.shopTransformerMethod(shopObject);
   }
   /**
    * media transform and validate
    * @returns media array ready to be mapped against Api media create api
    */
   public productMediaTransformer(mediaObject) {
-    return productMediaTransformerMethod(mediaObject);
+    return this.productTransformerService.productMediaTransformerMethod(
+      mediaObject,
+    );
   }
   /**
    * color and size transformer for variant mapping
    * @returns variants array ready to be mapped variant api with color and sizes against it
    */
   public productColorTransformer(color, sizes) {
-    return colorVariantTransformerMethod(color, sizes);
+    return this.productTransformerService.productColorTransformerMethod(
+      color,
+      sizes,
+    );
   }
   public pricingTransformer(pricingObject) {
     return pricingObject;
