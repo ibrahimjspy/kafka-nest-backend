@@ -5,12 +5,12 @@ import {
   subCategoryCDC,
   subCategoryTransformed,
 } from 'src/types/category';
-import { ProductTransformerService } from '../product/Product.service';
+import { ProductTransformerService } from '../product/Product.transformer';
 
 /**
- *  Injectable class handling media assign
- *  @Injected transformation class for CDC payload validations and transformations
- *  @requires Injectable in app scope or in kafka connection to reach kafka messages
+ *  Injectable class handling category transform ( sub and master)
+ *  @Injected product transformation class for description transformer
+ *  @requires Injectable in app scope or in kafka connection to access kafka messages
  */
 @Injectable()
 export class CategoryTransformerService {

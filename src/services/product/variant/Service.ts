@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { createProductVariantHandler } from 'src/graphql/handlers/productVariant';
 import { mockColor, mockSize } from 'src/mock/product/variant';
 import { fetchProductId } from 'src/postgres/handlers/product';
@@ -40,7 +40,7 @@ export class ProductVariantService {
     );
     const createMedia = Promise.all(
       variants.map(async (variant) => {
-        console.log(variant);
+        Logger.log(variant);
         await createProductVariantHandler(variant, productId);
       }),
     );

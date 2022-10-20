@@ -14,7 +14,7 @@ export const createProductMediaHandler = async (
     const mediaCreate: productMediaCreate = await graphqlCall(
       mediaCreateMutation(mediaUrl, productId),
     );
-    Logger.verbose('media created', mediaCreate);
+    Logger.verbose('media created');
     const mediaId = mediaCreate.productMediaCreate?.media?.id;
     return mediaId;
   } catch (err) {

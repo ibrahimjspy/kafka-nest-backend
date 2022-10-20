@@ -24,7 +24,7 @@ export const createUserHandler = async (
       createUserMutation(userData),
       createToken,
     );
-    Logger.verbose(createUser.staffCreate);
+    Logger.verbose('User created', createUser);
     return { createUser };
   } catch (err) {
     return graphqlExceptionHandler(err);

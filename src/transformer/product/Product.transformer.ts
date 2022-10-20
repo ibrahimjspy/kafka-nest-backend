@@ -2,8 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { productCDC, productTransformed } from 'src/types/product';
 /**
  *  Injectable class handling product transformation
- *  @Injected transformation class for CDC payload validations and transformations
- *  @requires Injectable in app scope or in kafka connection to reach kafka messages
+ *  @Injectable in app scope or in kafka connection to reach kafka messages
  */
 @Injectable()
 export class ProductTransformerService {

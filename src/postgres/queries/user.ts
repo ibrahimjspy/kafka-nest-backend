@@ -12,11 +12,10 @@ export const userIdQuery = (sourceId: string): string => {
 //                       <insert>
 
 export const insertUserIdQuery = (sourceId: string, destinationId): string => {
-  console.log(destinationId, ' in user table');
   return `
       INSERT INTO cdc.user_id_mapping_table
       (source_id, destination_id)
-      VALUES(${sourceId}, '${destinationId?.staffCreate?.user?.id}');
+      VALUES(${sourceId}, '${destinationId?.createUser.staffCreate?.user?.id}');
     `;
 };
 

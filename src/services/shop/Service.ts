@@ -36,11 +36,9 @@ export class ShopService {
   }
 
   public async handleShopCDC(kafkaMessage: shopCDC): Promise<object> {
-    console.log(kafkaMessage);
     const shopExistsInDestination: string = await fetchShopId(
       kafkaMessage.TBVendor_ID,
     );
-
     const shopData: shopTransformed =
       await this.transformerService.shopTransformer(kafkaMessage);
 

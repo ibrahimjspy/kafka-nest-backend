@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { shopCDC, shopTransformed } from 'src/types/shop';
 /**
- *  Injectable class handling media assign
- *  @Injected transformation class for CDC payload validations and transformations
+ *  Injectable class handling shop transformation\
  *  @requires Injectable in app scope or in kafka connection to reach kafka messages
  */
 @Injectable()

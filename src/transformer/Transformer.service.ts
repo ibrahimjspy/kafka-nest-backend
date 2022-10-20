@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { CategoryTransformerService } from './services/category/Category.service';
-import { ProductTransformerService } from './services/product/Product.service';
-import { ShopTransformerService } from './services/shop/Shop.service';
+import { CategoryTransformerService } from './category/Category.transformer';
+import { ProductTransformerService } from './product/Product.transformer';
+import { ShopTransformerService } from './shop/Shop.transformer';
 
 /**
  * Transformation class with utility methods performing specific
@@ -23,7 +23,7 @@ export class TransformerService {
     this.masterCategoryTransformer(productObject);
     this.productMediaTransformer(productObject);
     this.pricingTransformer(productObject);
-    this.generalTransformer(productObject);
+    this.productDetailsTransformer(productObject);
     return productObject;
   }
   /**
@@ -49,7 +49,7 @@ export class TransformerService {
    * name, description, category
    * @returns product information object ready to be mapped against Api interface
    */
-  public generalTransformer(productObject) {
+  public productDetailsTransformer(productObject) {
     return this.productTransformerService.productGeneralTransformerMethod(
       productObject,
     );

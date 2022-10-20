@@ -2,7 +2,6 @@ import { gql } from 'graphql-request';
 // import { descriptionTransformer } from 'src/transformers/productGeneral';
 
 export const createCategoryMasterMutation = (categoryData) => {
-  // console.log(categoryData);
   const { name, seo_title, seo_description, description } = categoryData;
   return gql`
     mutation {

@@ -5,6 +5,7 @@ import { AppService } from './app.service';
 import { KafkaModule } from './kafka/kafka.module';
 import { CategoryService } from './services/category/Service';
 import { ProductService } from './services/product/Service';
+import { TransformerModule } from './transformer/Transformer.module';
 import { TransformerService } from './transformer/Transformer.service';
 // import { graphqlCall } from './utils/graphql/handler';
 // import { productGeneralTransformer } from './transformers/product/general';
@@ -14,7 +15,7 @@ describe('AppController', () => {
   // const testObjectEmpty = {};
   beforeEach(async () => {
     const app: TestingModule = await Test.createTestingModule({
-      imports: [KafkaModule],
+      imports: [KafkaModule, TransformerModule],
       controllers: [AppController],
       providers: [
         AppService,

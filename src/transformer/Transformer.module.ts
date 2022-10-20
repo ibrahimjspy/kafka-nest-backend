@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
-import { CategoryTransformerService } from './services/category/Category.service';
-import { ProductTransformerService } from './services/product/Product.service';
-import { ShopTransformerService } from './services/shop/Shop.service';
+import { CategoryTransformerService } from './category/Category.transformer';
+import { ProductTransformerService } from './product/Product.transformer';
+import { ShopTransformerService } from './shop/Shop.transformer';
 import { TransformerService } from './Transformer.service';
 
 @Module({

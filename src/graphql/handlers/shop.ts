@@ -20,11 +20,11 @@ export const createShopHandler = async (
   try {
     // registers user id in shop service
     const addShop = await graphqlCall(
-      addUserToMarketplace(userId.staffCreate.user.id),
+      addUserToMarketplace(userId.createUser.staffCreate.user.id),
     );
     // creates shop against that user
     const createShop: object = await graphqlCall(
-      createShopMutation(shopData, userId.staffCreate.user.id),
+      createShopMutation(shopData, userId.createUser.staffCreate.user.id),
     );
     Logger.verbose('Marketplace shop created', createShop);
     return { ...addShop, createShop };

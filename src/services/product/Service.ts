@@ -30,11 +30,10 @@ export class ProductService {
   }
 
   public async handleProductCDC(kafkaMessage: productCDC): Promise<object> {
-    // console.log(kafkaMessage);
     const productExistsInDestination: string = await fetchProductId(
       kafkaMessage.TBItem_ID,
     );
-    const productData = await this.transformerClass.generalTransformer(
+    const productData = await this.transformerClass.productDetailsTransformer(
       kafkaMessage,
     );
     // updating product with cdc information
