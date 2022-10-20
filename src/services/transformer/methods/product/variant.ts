@@ -9,10 +9,15 @@ export const colorVariantTransformerMethod = (
   sizes: string[],
 ) => {
   const array = [];
-  sizes.map((s) => {
-    const object: any = { color: color };
-    object.size = s;
-    array.push(object);
-  });
+  try {
+    sizes.map((s) => {
+      const object: any = { color: color };
+      object.size = s;
+      array.push(object);
+    });
+  } catch (error) {
+    console.warn(error);
+  }
+
   return array;
 };

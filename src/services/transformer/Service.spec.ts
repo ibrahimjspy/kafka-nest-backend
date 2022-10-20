@@ -16,8 +16,12 @@ import {
   descriptionTransformer,
   productGeneralTransformerMethod,
 } from './methods/product/general';
+import { productMediaTransformerMethod } from './methods/product/media';
 import { shopTransformerMethod } from './methods/shop/general';
 import { TransformerService } from './Service';
+import { mediaMock, mockMediaTransformed } from 'src/mock/product/media';
+import { colorVariantTransformerMethod } from './methods/product/variant';
+import { mockColor, mockSize } from 'src/mock/product/variant';
 
 describe('TransformerController', () => {
   let service: TransformerService;
@@ -71,5 +75,22 @@ describe('TransformerController', () => {
     // console.log(transformedShop);
     expect(transformedShop).toBeDefined();
     expect(transformedShop).toStrictEqual(shopTransformedMock);
+  });
+
+  it('media array builder is working ', async () => {
+    const transformedMedia = await productMediaTransformerMethod(mediaMock);
+    expect(transformedMedia).toBeDefined();
+    expect(transformedMedia).toStrictEqual(mockMediaTransformed);
+  });
+
+  it('color variant array builder is working ', async () => {
+    const transformedColorInformation = await colorVariantTransformerMethod(
+      mockColor[0].name,
+      mockSize.size,
+    );
+    expect(transformedColorInformation).toBeDefined();
+    expect(transformedColorInformation).toStrictEqual([
+      { color: 'BLACK', size: 'ONE' },
+    ]);
   });
 });

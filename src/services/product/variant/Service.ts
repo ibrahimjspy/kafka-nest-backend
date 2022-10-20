@@ -5,7 +5,7 @@ import { fetchProductId } from 'src/postgres/handlers/product';
 import { TransformerService } from 'src/services/transformer/Service';
 import { colorSelect } from 'src/types/product';
 /**
- *  Injectable class handling product and its relating tables CDC
+ *  Injectable class handling productVariant and its relating tables CDC
  *  @Injected transformation class for CDC payload validations and transformations
  *  @requires Injectable in app scope or in kafka connection to reach kafka messages
  */

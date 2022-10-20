@@ -7,7 +7,7 @@ export const createProductVariantMutation = (productVariantData, productId) => {
     mutation {
         mutation{
         productVariantCreate(input:{
-            attributes:[{id:"QXR0cmlidXRlOjY="values:["${color}"]},
+            attributes:[{id:"QXR0cmlidXRlOjY=" values:["${color}"] },
             { id:"QXR0cmlidXRlOjY="values:["${size}"] }]
             product:"${productId}"
         }){

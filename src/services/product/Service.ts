@@ -4,7 +4,7 @@ import {
   deleteProductHandler,
   updateProductHandler,
 } from 'src/graphql/handlers/product';
-import { mockMedia } from 'src/mock/product/media';
+import { mediaMock } from 'src/mock/product/media';
 import { fetchProductId } from 'src/postgres/handlers/product';
 import { productCDC, productCreate } from 'src/types/product';
 import { TransformerService } from '../transformer/Service';
@@ -41,7 +41,7 @@ export class ProductService {
     const product: productCreate = await createProductHandler(productData);
     if (product.productCreate) {
       await this.productMediaClass.productMediaAssign(
-        mockMedia,
+        mediaMock,
         product.productCreate.product.id,
       );
     }

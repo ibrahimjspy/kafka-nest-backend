@@ -46,7 +46,10 @@ export class ShopService {
     if (shopExistsInDestination) {
       const userId = await fetchUserId(shopData.id);
       const updateUser = await updateUserHandler(shopData, userId);
-      const updateShop = updateShopHandler(shopData, shopExistsInDestination);
+      const updateShop = await updateShopHandler(
+        shopData,
+        shopExistsInDestination,
+      );
       return { updateUser, updateShop };
     }
 
