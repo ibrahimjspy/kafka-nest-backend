@@ -5,7 +5,11 @@ import {
   updateProductHandler,
 } from 'src/graphql/handlers/product';
 import { mediaMock } from 'src/mock/product/media';
-import { fetchProductId, insertProductId } from 'src/postgres/handlers/product';
+import {
+  deleteProductId,
+  fetchProductId,
+  insertProductId,
+} from 'src/postgres/handlers/product';
 import {
   productCDC,
   productCreate,
@@ -51,7 +55,11 @@ export class ProductService {
       kafkaMessage.TBItem_ID,
     );
     if (productExistsInDestination) {
-      return deleteProductHandler(kafkaMessage.TBItem_ID);
+      const productDelete = await deleteProductHandler(
+        productExistsInDestination,
+      );
+      const productIdDelete = await deleteProductId(kafkaMessage.TBItem_ID);
+      return { productDelete, productIdDelete };
     }
     return;
   }
