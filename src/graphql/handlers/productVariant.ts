@@ -13,7 +13,7 @@ export const createProductVariantHandler = async (
     const createProductVariant: object = await graphqlCall(
       createProductVariantMutation(productVariantData, productId),
     );
-    Logger.log('Product variant created', createProductVariant);
+    Logger.verbose('Product variant created', createProductVariant);
     return { ...createProductVariant };
   } catch (err) {
     return graphqlExceptionHandler(err);

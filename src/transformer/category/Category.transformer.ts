@@ -63,14 +63,14 @@ export class CategoryTransformerService {
   public async subCategoryTransformerMethod(object: subCategoryCDC) {
     const subCategoryObject: subCategoryTransformed = {};
     const {
-      TBStyleNo_OS_Category_Master_ID,
+      TBStyleNo_OS_Category_Sub_ID,
       CategorySubName,
       Description,
       seo_description,
       seo_title,
     } = object;
 
-    subCategoryObject['id'] = TBStyleNo_OS_Category_Master_ID?.toString();
+    subCategoryObject['id'] = TBStyleNo_OS_Category_Sub_ID?.toString();
     subCategoryObject['name'] = CategorySubName?.toString();
     subCategoryObject['description'] =
       await this.productTransformer.descriptionTransformer(Description);

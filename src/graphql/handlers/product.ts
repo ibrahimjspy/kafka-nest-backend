@@ -31,9 +31,11 @@ export const updateProductHandler = async (
   destinationId: string,
 ): Promise<object> => {
   try {
-    return await graphqlCall(
+    const productUpdate = await graphqlCall(
       updateProductMutation(productUpdateData, destinationId),
     );
+    Logger.verbose('Product updated', productUpdate);
+    return productUpdate;
   } catch (err) {
     return graphqlExceptionHandler(err);
   }

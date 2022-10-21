@@ -43,7 +43,7 @@ export const updateShopHandler = async (
     const updateShop = await graphqlCall(
       updateShopMutation(shopUpdateData, destinationId),
     );
-    Logger.log('MarketplaceShop updated', updateShop);
+    Logger.verbose('MarketplaceShop updated', updateShop);
     return updateShop;
   } catch (err) {
     return graphqlExceptionHandler(err);

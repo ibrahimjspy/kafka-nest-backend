@@ -13,6 +13,7 @@ import {
   fetchMasterCategoryId,
   fetchSubCategoryId,
   insertMasterCategoryId,
+  insertSubCategoryId,
 } from 'src/postgres/handlers/category';
 import {
   masterCategoryCDC,
@@ -116,11 +117,11 @@ export class CategoryService {
     const parentCategoryId = await fetchMasterCategoryId(
       categoryData.parent_id,
     );
-    const subCategory: subCategoryTransformed = await createCategorySubHandler(
+    const subCategory = await createCategorySubHandler(
       categoryData,
       parentCategoryId,
     );
-    const categoryIdMapping = await insertMasterCategoryId(
+    const categoryIdMapping = await insertSubCategoryId(
       categoryData.id,
       subCategory,
     );
