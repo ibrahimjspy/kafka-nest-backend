@@ -34,3 +34,12 @@ export interface productCreate {
     errors: any[];
   };
 }
+
+export interface colorSelect {
+  id: number;
+  TBColorSelect_ID: string;
+  TBItem_ID: string;
+  TBColor_ID: string;
+  ImageLink: string;
+  BrandActive: string;
+}

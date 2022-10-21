@@ -1,6 +1,6 @@
 export const mockSize = {
   pack: [4],
-  size: ['ONE'],
+  size: ['ONE', 'XL', 'L'],
   size_chart: {
     ONE: 4,
   },

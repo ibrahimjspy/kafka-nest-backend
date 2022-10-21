@@ -2,7 +2,6 @@
 import { gql } from 'graphql-request';
 
 export const createProductMutation = (productData) => {
-  console.log(productData);
   // parsing product data;
   // const testProductType = "UHJvZHVjdFR5cGU6MQ=="
   const { id, name, description } = productData;
@@ -37,7 +36,6 @@ export const addOrangeShineIdMutation = (
 ) => {
   const destinationId = destinationResponse.productCreate.product.id;
   const orangeShineId = productObject.id;
-  console.log({ destinationId, orangeShineId });
   return gql`
     mutation {
       updateMetadata(

@@ -10,7 +10,7 @@ export const postgresInsertCall = async (Query: string) => {
   await client
     .query(Query, [])
     .then((res) => {
-      console.log(res);
+      Logger.verbose('Successfully inserted', res);
     })
     .catch((err) => {
       Logger.warn('postgres error', err);

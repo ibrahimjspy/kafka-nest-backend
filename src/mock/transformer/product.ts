@@ -1,4 +1,4 @@
-import { productCDC, productTransformed } from 'src/types/poduct';
+import { productCDC, productTransformed } from 'src/types/product';
 
 export const descriptionSmallText =
   '{"time": 1662995227870, "blocks": [{"id": "cqWmV3MIPH", "data": {"text": "test description"}, "type": "paragraph"}], "version": "2.24.3"}';

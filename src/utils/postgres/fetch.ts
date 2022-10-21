@@ -11,7 +11,7 @@ export const postgresFetchCall = async (Query: string) => {
   await client
     .query(Query, [])
     .then((res) => {
-      console.log(res);
+      Logger.log('Successfully fetched from postgres database', res);
       data = res.rows[0]?.destination_id;
     })
     .catch((err) => {

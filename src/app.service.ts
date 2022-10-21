@@ -3,6 +3,7 @@ import { createProductHandler } from './graphql/handlers/product';
 import { ProducerService } from './kafka/producer.service';
 import { CategoryService } from './services/category/Service';
 import { ProductService } from './services/product/Service';
+import { ProductVariantService } from './services/product/variant/Service';
 import { ShopService } from './services/shop/Service';
 @Injectable()
 export class AppService {
@@ -11,6 +12,7 @@ export class AppService {
     private readonly productService: ProductService,
     private readonly categoryService: CategoryService,
     private readonly shopService: ShopService,
+    private readonly productVariantService: ProductVariantService,
   ) {}
 
   handleProductCDC(kafkaMessage) {
@@ -55,6 +57,16 @@ export class AppService {
         : this.shopService.handleShopCDC(kafkaMessage.after);
     } catch (error) {
       Logger.log('shop deleted');
+    }
+  }
+
+  handleSelectColorCDC(kafkaMessage) {
+    try {
+      return kafkaMessage.op !== 'd'
+        ? this.productVariantService.handleSelectColorCDC(kafkaMessage.after)
+        : '';
+    } catch (error) {
+      Logger.log('variant deleted');
     }
   }
 

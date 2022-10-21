@@ -15,7 +15,6 @@ export const insertProductIdQuery = (
   sourceId: string,
   destinationId: string,
 ): string => {
-  console.log(destinationId);
   return `
   INSERT INTO cdc.product_id_mapping_table
   (source_id, destination_id)

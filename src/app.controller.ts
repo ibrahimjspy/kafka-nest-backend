@@ -7,12 +7,11 @@ export class AppController {
   constructor(private readonly appService: AppService) {}
   @MessagePattern('products') // topic name
   productCDC(@Payload() message) {
-    // console.log(message.payload.after);
+    // Logger.log(message.payload.after);
     return this.appService.handleProductCDC(message.payload);
   }
   @MessagePattern('category_master') // topic name
   masterCategoryCDC(@Payload() message) {
-    // console.log(message.payload);
     return this.appService.handleMasterCategoryCDC(message.payload);
   }
   @MessagePattern('category_sub') // topic name
@@ -21,12 +20,10 @@ export class AppController {
   }
   @MessagePattern('color_select') // topic name
   handleProductUpdate(@Payload() message) {
-    // console.log(message.payload);
-    return this.appService.handleProductCDC(message.value);
+    return this.appService.handleSelectColorCDC(message.payload);
   }
   @MessagePattern('vendor') // topic name
   handleVendorUpdate(@Payload() message) {
-    // console.log(message.payload.after);
     return this.appService.handleShopCDC(message.payload);
   }
   @MessagePattern('healthCheck') // topic name

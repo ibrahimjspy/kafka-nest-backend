@@ -1,3 +1,4 @@
+import { Logger } from '@nestjs/common';
 import { shopTransformed } from 'src/types/shop';
 import {
   graphqlCall,
@@ -17,16 +18,15 @@ export const createShopHandler = async (
   userId,
 ): Promise<object> => {
   try {
-    console.log(userId.staffCreate);
     // registers user id in shop service
     const addShop = await graphqlCall(
-      addUserToMarketplace(userId.staffCreate.user.id),
+      addUserToMarketplace(userId.createUser.staffCreate.user.id),
     );
     // creates shop against that user
     const createShop: object = await graphqlCall(
-      createShopMutation(shopData, userId.staffCreate.user.id),
+      createShopMutation(shopData, userId.createUser.staffCreate.user.id),
     );
-    // console.log(createShop);
+    Logger.verbose('Marketplace shop created', createShop);
     return { ...addShop, createShop };
   } catch (err) {
     return graphqlExceptionHandler(err);
@@ -40,7 +40,11 @@ export const updateShopHandler = async (
   destinationId: string,
 ): Promise<object> => {
   try {
-    return await graphqlCall(updateShopMutation(shopUpdateData, destinationId));
+    const updateShop = await graphqlCall(
+      updateShopMutation(shopUpdateData, destinationId),
+    );
+    Logger.verbose('MarketplaceShop updated', updateShop);
+    return updateShop;
   } catch (err) {
     return graphqlExceptionHandler(err);
   }
@@ -50,8 +54,9 @@ export const updateShopHandler = async (
 
 export const deleteShopHandler = async (shopId: string): Promise<object> => {
   try {
-    const data = await graphqlCall(deleteShopMutation(shopId));
-    return data;
+    const deleteShop = await graphqlCall(deleteShopMutation(shopId));
+    Logger.warn('MarketplaceShop deleted', deleteShop);
+    return deleteShop;
   } catch (err) {
     return graphqlExceptionHandler(err);
   }

@@ -11,7 +11,6 @@ type GraphqlCall = (Query: string) => Promise<object>;
  */
 export const graphqlCall: GraphqlCall = async (Query: string): Promise<any> => {
   let data = {};
-  // console.log(Query);
   const graphQLClient = new GraphQLClient(
     process.env.DESTINATION_GRAPHQL_ENDPOINT,
     {
@@ -26,7 +25,7 @@ export const graphqlCall: GraphqlCall = async (Query: string): Promise<any> => {
       data = res;
     })
     .catch((error) => {
-      console.log(error);
+      Logger.error(error);
       return graphqlExceptionHandler(error);
     });
   return data;
@@ -43,9 +42,8 @@ export const graphqlCallDynamic = async (
   Query: string,
   Token,
 ): Promise<any> => {
-  console.log(Token);
   let data = {};
-  console.log(Query);
+  // console.dir(Query);
   const graphQLClient = new GraphQLClient('http://localhost:8000/graphql/', {
     headers: {
       authorization: `Bearer ${Token.tokenCreate.token}`,
@@ -57,7 +55,7 @@ export const graphqlCallDynamic = async (
       data = res;
     })
     .catch((error) => {
-      console.log(error);
+      Logger.log(error);
       return graphqlExceptionHandler(error);
     });
   return data;

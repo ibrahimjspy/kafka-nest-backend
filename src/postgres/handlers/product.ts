@@ -16,8 +16,6 @@ export const fetchProductId = async (sourceId: string): Promise<string> => {
 //                       <insert>
 
 export const insertProductId = async (sourceId: string, destinationId) => {
-  // console.log(sourceId); // done
-  // console.log(destinationId.productCreate.errors);
   return await postgresFetchCall(
     insertProductIdQuery(sourceId, destinationId.productCreate.product.id),
   );
@@ -26,6 +24,5 @@ export const insertProductId = async (sourceId: string, destinationId) => {
 //                       <delete>
 
 export const deleteProductId = async (destinationId) => {
-  // console.log(destinationId.productCreate.errors);
   return await postgresDeleteCall(deleteProductIdQuery(destinationId));
 };

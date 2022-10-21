@@ -1,5 +1,5 @@
 export interface masterCategoryCDC {
-  id: number;
+  id?: number;
   TBStyleNo_OS_Category_Master_ID: string;
   CategoryMasterName: string;
   Description: string;

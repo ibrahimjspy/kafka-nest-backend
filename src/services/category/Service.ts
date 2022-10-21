@@ -12,9 +12,16 @@ import {
   deleteSubCategoryId,
   fetchMasterCategoryId,
   fetchSubCategoryId,
+  insertMasterCategoryId,
+  insertSubCategoryId,
 } from 'src/postgres/handlers/category';
-import { masterCategoryCDC, subCategoryCDC } from 'src/types/category';
-import { TransformerService } from '../transformer/Service';
+import {
+  masterCategoryCDC,
+  masterCategoryTransformed,
+  subCategoryCDC,
+  subCategoryTransformed,
+} from 'src/types/category';
+import { TransformerService } from '../../transformer/Transformer.service';
 /**
  *  Injectable class handling category and its relating tables CDC
  *  @Injected transformation class for CDC payload validations and transformations
@@ -31,42 +38,39 @@ export class CategoryService {
   public async handleMasterCategoryCDC(
     kafkaMessage: masterCategoryCDC,
   ): Promise<object> {
-    // console.log(kafkaMessage);
     const categoryExistsInDestination: string = await fetchMasterCategoryId(
       kafkaMessage.TBStyleNo_OS_Category_Master_ID,
     );
     const categoryData =
       await this.transformerService.masterCategoryTransformer(kafkaMessage);
-    // console.log(categoryExistsInDestination);
+
     if (categoryExistsInDestination) {
       return updateMasterCategoryHandler(
         categoryData,
         categoryExistsInDestination,
       );
     }
-    return createCategoryMasterHandler(categoryData);
+    return this.masterCategoryCreate(categoryData);
   }
 
   public async handleSubCategoryCDC(
     kafkaMessage: subCategoryCDC,
   ): Promise<object> {
-    // console.log(kafkaMessage);
     const categoryExistsInDestination: string = await fetchSubCategoryId(
       kafkaMessage.TBStyleNo_OS_Category_Sub_ID,
     );
     const categoryData = await this.transformerService.subCategoryTransformer(
       kafkaMessage,
     );
+
     if (categoryExistsInDestination) {
       return updateSubCategoryHandler(
         categoryData,
         categoryExistsInDestination,
       );
     }
-    const parentCategoryId = await fetchMasterCategoryId(
-      kafkaMessage.TBStyleNo_OS_Category_Master_ID,
-    );
-    return createCategorySubHandler(categoryData, parentCategoryId);
+
+    return this.subCategoryCreate(categoryData);
   }
 
   public async handleMasterCategoryCDCDelete(
@@ -95,5 +99,32 @@ export class CategoryService {
       await deleteSubCategoryId(kafkaMessage.TBStyleNo_OS_Category_Sub_ID);
     }
     return;
+  }
+
+  private async masterCategoryCreate(categoryData) {
+    // creates new category and map its id in database
+    const category: masterCategoryTransformed =
+      await createCategoryMasterHandler(categoryData);
+    const categoryIdMapping = await insertMasterCategoryId(
+      categoryData.id,
+      category,
+    );
+    return { category, categoryIdMapping };
+  }
+
+  private async subCategoryCreate(categoryData: subCategoryTransformed) {
+    // creates new category and map its id in database
+    const parentCategoryId = await fetchMasterCategoryId(
+      categoryData.parent_id,
+    );
+    const subCategory = await createCategorySubHandler(
+      categoryData,
+      parentCategoryId,
+    );
+    const categoryIdMapping = await insertSubCategoryId(
+      categoryData.id,
+      subCategory,
+    );
+    return { subCategory, categoryIdMapping };
   }
 }

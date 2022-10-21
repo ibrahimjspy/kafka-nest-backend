@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { createProductMedia } from 'src/graphql/handlers/media';
-import { TransformerService } from 'src/services/transformer/Service';
+import { createProductMediaHandler } from 'src/graphql/handlers/media';
+import { TransformerService } from 'src/transformer/Transformer.service';
 /**
  *  Injectable class handling media assign
  *  @Injected transformation class for CDC payload validations and transformations
@@ -17,10 +17,11 @@ export class ProductMediaService {
     const media = await this.transformerClass.productMediaTransformer(
       productMedia,
     );
-    const createMedia = await media.map(async (url) => {
-      // console.log(url);
-      await createProductMedia(url, productId);
-    });
+    const createMedia = Promise.all(
+      media.map(async (url) => {
+        await createProductMediaHandler(url, productId);
+      }),
+    );
     return createMedia;
   }
 }

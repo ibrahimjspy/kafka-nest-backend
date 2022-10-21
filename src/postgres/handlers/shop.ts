@@ -16,15 +16,11 @@ export const fetchShopId = async (sourceId: string): Promise<string> => {
 //                       <insert>
 
 export const insertShopId = async (sourceId: string, destinationId) => {
-  console.log(sourceId); // done
-  console.log(destinationId, ' in shop service');
-  // console.log(destinationId.ShopCreate.errors);
   return await postgresInsertCall(insertShopIdQuery(sourceId, destinationId));
 };
 
 //                       <delete>
 
 export const deleteShopId = async (destinationId) => {
-  // console.log(destinationId.ShopCreate.errors);
   return await postgresDeleteCall(deleteShopIdQuery(destinationId));
 };

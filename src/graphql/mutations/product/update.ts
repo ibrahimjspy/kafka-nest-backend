@@ -3,7 +3,6 @@
 import { gql } from 'graphql-request';
 
 export const updateProductMutation = (productData, destinationId) => {
-  console.log(destinationId, 'in query');
   const { id, name, description } = productData;
   return gql`
     mutation{

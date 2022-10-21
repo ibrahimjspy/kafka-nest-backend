@@ -17,6 +17,7 @@ export const fetchMasterCategoryId = async (sourceId: string) => {
 };
 
 export const fetchSubCategoryId = async (sourceId: string) => {
+  console.log(sourceId);
   return await postgresFetchCall(subCategoryIdQuery(sourceId));
 };
 
@@ -35,7 +36,7 @@ export const insertMasterCategoryId = async (
 };
 
 export const insertSubCategoryId = async (sourceId: string, destinationId) => {
-  return await postgresDeleteCall(
+  return await postgresInsertCall(
     insertSubCategoryIdQuery(
       sourceId,
       destinationId?.categoryCreate?.category?.id,

@@ -1,8 +1,5 @@
-import {
-  deleteProductId,
-  insertProductId,
-} from 'src/postgres/handlers/product';
-import { productTransformed } from 'src/types/poduct';
+import { Logger } from '@nestjs/common';
+import { productTransformed } from 'src/types/product';
 import {
   graphqlCall,
   graphqlExceptionHandler,
@@ -20,8 +17,7 @@ export const createProductHandler = async (
     const createProduct: object = await graphqlCall(
       createProductMutation(productData),
     );
-    // console.log(createProduct);
-    insertProductId(productData.id, createProduct);
+    Logger.verbose('Product created', createProduct);
     return { ...createProduct };
   } catch (err) {
     return graphqlExceptionHandler(err);
@@ -35,9 +31,11 @@ export const updateProductHandler = async (
   destinationId: string,
 ): Promise<object> => {
   try {
-    return await graphqlCall(
+    const productUpdate = await graphqlCall(
       updateProductMutation(productUpdateData, destinationId),
     );
+    Logger.verbose('Product updated', productUpdate);
+    return productUpdate;
   } catch (err) {
     return graphqlExceptionHandler(err);
   }
@@ -50,8 +48,7 @@ export const deleteProductHandler = async (
 ): Promise<object> => {
   try {
     const data = await graphqlCall(deleteProductMutation(productId));
-    await deleteProductId(productId);
-    console.log(data);
+    Logger.warn('Product deleted', data);
   } catch (err) {
     return graphqlExceptionHandler(err);
   }

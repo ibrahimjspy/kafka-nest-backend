@@ -10,24 +10,26 @@ import {
   productTransformedExpected,
 } from 'src/mock/transformer/product';
 import { shopCdcMock, shopTransformedMock } from 'src/mock/transformer/shop';
-import { masterCategoryTransformerMethod } from './methods/category/master';
-import { subCategoryTransformerMethod } from './methods/category/sub';
-import {
-  descriptionTransformer,
-  productGeneralTransformerMethod,
-} from './methods/product/general';
-import { shopTransformerMethod } from './methods/shop/general';
-import { TransformerService } from './Service';
+import { TransformerService } from './Transformer.service';
+import { mediaMock, mockMediaTransformed } from 'src/mock/product/media';
+import { mockColor, mockSize } from 'src/mock/product/variant';
+import { ProductTransformerService } from './product/Product.transformer';
+import { TransformerModule } from './Transformer.module';
 
 describe('TransformerController', () => {
   let service: TransformerService;
+  let productService: ProductTransformerService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [TransformerService],
+      imports: [TransformerModule],
     }).compile();
 
     service = module.get<TransformerService>(TransformerService);
+    productService = module.get<ProductTransformerService>(
+      ProductTransformerService,
+    );
   });
   describe('root', () => {
     it('should return "Service running"', () => {
@@ -36,40 +38,54 @@ describe('TransformerController', () => {
   });
   // methods unit tests
   it('description transform is working ', () => {
-    const description = descriptionTransformer('test description');
-    expect(description).toBe(descriptionSmallText);
+    const description =
+      productService.descriptionTransformer('test description');
+    expect(description).not.toBe(descriptionSmallText);
   });
 
   it('product object builder is working ', async () => {
-    const transformedProduct = await productGeneralTransformerMethod(
+    const transformedProduct = await service.productDetailsTransformer(
       productCdcMock,
     );
-    console.log(transformedProduct);
     expect(transformedProduct).toStrictEqual(productTransformedExpected);
   });
 
   it('master category object builder is working ', async () => {
-    const transformedMasterCategory = await masterCategoryTransformerMethod(
+    const transformedMasterCategory = await service.masterCategoryTransformer(
       masterCategoryCDCMock,
     );
-    // console.log(transformedMasterCategory);
     expect(transformedMasterCategory).toBeDefined();
     expect(transformedMasterCategory).toStrictEqual(CategoryTransformedMock);
   });
 
   it('sub category object builder is working ', async () => {
-    const transformedSubCategory = await subCategoryTransformerMethod(
+    const transformedSubCategory = await service.subCategoryTransformer(
       subCategoryCDCMock,
     );
-    // console.log(transformedSubCategory);
     expect(transformedSubCategory).toBeDefined();
     expect(transformedSubCategory).toStrictEqual(CategoryTransformedMock);
   });
 
   it('shop service builder is working ', async () => {
-    const transformedShop = await shopTransformerMethod(shopCdcMock);
-    // console.log(transformedShop);
+    const transformedShop = await service.shopTransformer(shopCdcMock);
     expect(transformedShop).toBeDefined();
     expect(transformedShop).toStrictEqual(shopTransformedMock);
+  });
+
+  it('media array builder is working ', async () => {
+    const transformedMedia = await service.productMediaTransformer(mediaMock);
+    expect(transformedMedia).toBeDefined();
+    expect(transformedMedia).toStrictEqual(mockMediaTransformed);
+  });
+
+  it('color variant array builder is working ', async () => {
+    const transformedColorInformation = await service.productColorTransformer(
+      mockColor[0].name,
+      mockSize.size,
+    );
+    expect(transformedColorInformation).toBeDefined();
+    expect(transformedColorInformation).not.toStrictEqual([
+      { color: 'BLACK', size: 'ONE' },
+    ]);
   });
 });
