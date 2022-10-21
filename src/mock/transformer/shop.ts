@@ -1,6 +1,6 @@
-import { shopCDC, shopTransformed } from 'src/types/shop';
+import { shopDto, shopTransformed } from 'src/types/shop';
 
-export const shopCdcMock: shopCDC = {
+export const shopCdcMock: shopDto = {
   id: 10045,
   TBVendor_ID: '234',
   VDName: 'Snowpack fetradings 3d2s3',

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Param } from '@nestjs/common';
 import {
   createCategoryMasterHandler,
   createCategorySubHandler,
@@ -16,9 +16,9 @@ import {
   insertSubCategoryId,
 } from 'src/postgres/handlers/category';
 import {
-  masterCategoryCDC,
+  masterCategoryDto,
   masterCategoryTransformed,
-  subCategoryCDC,
+  subCategoryDto,
   subCategoryTransformed,
 } from 'src/types/category';
 import { TransformerService } from '../../transformer/Transformer.service';
@@ -36,7 +36,7 @@ export class CategoryService {
   }
 
   public async handleMasterCategoryCDC(
-    kafkaMessage: masterCategoryCDC,
+    @Param() kafkaMessage: masterCategoryDto,
   ): Promise<object> {
     const categoryExistsInDestination: string = await fetchMasterCategoryId(
       kafkaMessage.TBStyleNo_OS_Category_Master_ID,
@@ -54,7 +54,7 @@ export class CategoryService {
   }
 
   public async handleSubCategoryCDC(
-    kafkaMessage: subCategoryCDC,
+    @Param() kafkaMessage: subCategoryDto,
   ): Promise<object> {
     const categoryExistsInDestination: string = await fetchSubCategoryId(
       kafkaMessage.TBStyleNo_OS_Category_Sub_ID,
@@ -74,7 +74,7 @@ export class CategoryService {
   }
 
   public async handleMasterCategoryCDCDelete(
-    kafkaMessage: masterCategoryCDC,
+    @Param() kafkaMessage: masterCategoryDto,
   ): Promise<object> {
     const categoryExistsInDestination: string = await fetchMasterCategoryId(
       kafkaMessage.TBStyleNo_OS_Category_Master_ID,
@@ -89,7 +89,7 @@ export class CategoryService {
   }
 
   public async handleSubCategoryCDCDelete(
-    kafkaMessage: subCategoryCDC,
+    @Param() kafkaMessage: subCategoryDto,
   ): Promise<object> {
     const categoryExistsInDestination: string = await fetchSubCategoryId(
       kafkaMessage.TBStyleNo_OS_Category_Sub_ID,
@@ -101,7 +101,9 @@ export class CategoryService {
     return;
   }
 
-  private async masterCategoryCreate(categoryData) {
+  private async masterCategoryCreate(
+    @Param() categoryData: masterCategoryTransformed,
+  ) {
     // creates new category and map its id in database
     const category: masterCategoryTransformed =
       await createCategoryMasterHandler(categoryData);
@@ -112,7 +114,9 @@ export class CategoryService {
     return { category, categoryIdMapping };
   }
 
-  private async subCategoryCreate(categoryData: subCategoryTransformed) {
+  private async subCategoryCreate(
+    @Param() categoryData: subCategoryTransformed,
+  ) {
     // creates new category and map its id in database
     const parentCategoryId = await fetchMasterCategoryId(
       categoryData.parent_id,

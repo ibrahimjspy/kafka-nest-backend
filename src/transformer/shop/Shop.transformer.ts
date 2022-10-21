@@ -1,5 +1,5 @@
-import { Injectable } from '@nestjs/common';
-import { shopCDC, shopTransformed } from 'src/types/shop';
+import { Injectable, Param } from '@nestjs/common';
+import { shopDto, shopTransformed } from 'src/types/shop';
 /**
  *  Injectable class handling shop transformation\
  *  @requires Injectable in app scope or in kafka connection to reach kafka messages
@@ -26,7 +26,7 @@ export class ShopTransformerService {
    * @params object,  Composite object containing cdc changeData, categoryMaster data
    * @returns transformed object
    */
-  public async shopTransformerMethod(object: shopCDC) {
+  public async shopTransformerMethod(@Param() object: shopDto) {
     const shopObject: shopTransformed = {};
     const {
       TBVendor_ID,

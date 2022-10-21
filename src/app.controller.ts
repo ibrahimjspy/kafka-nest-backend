@@ -6,16 +6,16 @@ import { AppService } from './app.service';
 export class AppController {
   constructor(private readonly appService: AppService) {}
   @MessagePattern('products') // topic name
-  productCDC(@Payload() message) {
+  productDto(@Payload() message) {
     // Logger.log(message.payload.after);
     return this.appService.handleProductCDC(message.payload);
   }
   @MessagePattern('category_master') // topic name
-  masterCategoryCDC(@Payload() message) {
+  masterCategoryDto(@Payload() message) {
     return this.appService.handleMasterCategoryCDC(message.payload);
   }
   @MessagePattern('category_sub') // topic name
-  subCategoryCDC(@Payload() message) {
+  subCategoryDto(@Payload() message) {
     return this.appService.handleSubCategoryCDC(message.payload);
   }
   @MessagePattern('color_select') // topic name

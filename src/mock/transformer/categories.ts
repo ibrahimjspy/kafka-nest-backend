@@ -1,10 +1,10 @@
 import {
-  masterCategoryCDC,
+  masterCategoryDto,
   masterCategoryTransformed,
-  subCategoryCDC,
+  subCategoryDto,
 } from 'src/types/category';
 
-export const masterCategoryCDCMock: masterCategoryCDC = {
+export const masterCategoryCDCMock: masterCategoryDto = {
   CategoryMasterName: 'name',
   TBStyleNo_OS_Category_Master_ID: '3',
   seo_title: 'seo title',
@@ -23,7 +23,7 @@ export const CategoryTransformedMock: masterCategoryTransformed = {
   seo_title: 'seo title',
 };
 
-export const subCategoryCDCMock: subCategoryCDC = {
+export const subCategoryCDCMock: subCategoryDto = {
   CategorySubName: 'name',
   TBStyleNo_OS_Category_Master_ID: '3',
   TBStyleNo_OS_Category_Sub_ID: '5',
