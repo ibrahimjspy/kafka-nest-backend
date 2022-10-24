@@ -23,6 +23,6 @@ export const insertProductId = async (sourceId: string, destinationId) => {
 
 //                       <delete>
 
-export const deleteProductId = async (destinationId) => {
-  return await postgresDeleteCall(deleteProductIdQuery(destinationId));
+export const deleteProductId = async (sourceId) => {
+  return await postgresDeleteCall(deleteProductIdQuery(sourceId));
 };

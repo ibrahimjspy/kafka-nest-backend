@@ -1,5 +1,5 @@
-import { Injectable } from '@nestjs/common';
-import { productCDC, productTransformed } from 'src/types/product';
+import { Injectable, Param } from '@nestjs/common';
+import { productDto, productTransformed } from 'src/types/product';
 /**
  *  Injectable class handling product transformation
  *  @Injectable in app scope or in kafka connection to reach kafka messages
@@ -16,7 +16,7 @@ export class ProductTransformerService {
    * @value name
    * @params object,  Composite object containing cdc changeData, productView data
    */
-  public async productGeneralTransformerMethod(object: productCDC) {
+  public async productGeneralTransformerMethod(@Param() object: productDto) {
     const productObject: productTransformed = {};
     const { TBItem_ID, nStyleName, nItemDescription } = object;
 
@@ -33,7 +33,7 @@ export class ProductTransformerService {
    * description transformed from string format to richText(destination format)
    * @params string to be transformed
    */
-  public async descriptionTransformer(description: string) {
+  public async descriptionTransformer(@Param() description: string) {
     if (description) {
       return `{\"time\": 1662995227870, \"blocks\": [{\"id\": \"cqWmV3MIPH\", \"data\": {\"text\": \"${description}\"}, \"type\": \"paragraph\"}], \"version\": \"2.24.3\"}`;
     }
@@ -45,7 +45,7 @@ export class ProductTransformerService {
    * @params object to be transformed and mapped
    * @returns media composite array
    */
-  public async productMediaTransformerMethod(mediaObject) {
+  public async productMediaTransformerMethod(@Param() mediaObject) {
     const { medium, tiny, large } = mediaObject;
     let media = [];
     if (medium && tiny && large) {

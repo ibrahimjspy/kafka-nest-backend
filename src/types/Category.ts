@@ -1,4 +1,4 @@
-export interface masterCategoryCDC {
+export interface masterCategoryDto {
   id?: number;
   TBStyleNo_OS_Category_Master_ID: string;
   CategoryMasterName: string;
@@ -8,7 +8,7 @@ export interface masterCategoryCDC {
   seo_title: string;
 }
 
-export interface subCategoryCDC {
+export interface subCategoryDto {
   id: number;
   TBStyleNo_OS_Category_Sub_ID: string;
   TBStyleNo_OS_Category_Master_ID: string;
