@@ -1,5 +1,5 @@
 import { postgresDeleteCall } from 'src/utils/postgres/delete';
-import { postgresFetchCall } from 'src/utils/postgres/fetch';
+import { postgresFetchIdCall } from 'src/utils/postgres/fetch';
 import { postgresInsertCall } from 'src/utils/postgres/insert';
 import {
   deleteUserIdQuery,
@@ -8,7 +8,7 @@ import {
 } from '../queries/user';
 
 export const fetchUserId = async (sourceId: string): Promise<string> => {
-  return await postgresFetchCall(userIdQuery(sourceId));
+  return await postgresFetchIdCall(userIdQuery(sourceId));
 };
 
 //                       <insert>

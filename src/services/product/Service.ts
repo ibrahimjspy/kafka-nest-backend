@@ -2,10 +2,15 @@ import { Injectable } from '@nestjs/common';
 import {
   createProductHandler,
   deleteProductHandler,
+  fetchProductSlugById,
   updateProductHandler,
 } from 'src/graphql/handlers/product';
-import { mediaMock } from 'src/mock/product/media';
-import { fetchProductId, insertProductId } from 'src/postgres/handlers/product';
+import { mediaMockSmall } from 'src/mock/product/media';
+import {
+  fetchProductId,
+  fetchProductSerialIdBySlug,
+  insertProductId,
+} from 'src/postgres/handlers/product';
 import {
   productCDC,
   productCreate,
@@ -62,12 +67,28 @@ export class ProductService {
     // creating new product and assigning it media
     const product: productCreate = await createProductHandler(productData);
     const productIdMapping = await insertProductId(productData.id, product);
+
+    // product created successfully
     if (product.productCreate) {
-      await this.productMediaClass.productMediaAssign(
-        mediaMock,
+      const productSerialId = await this.getProductSerialId(
         product.productCreate.product.id,
       );
+      // product serial id fetched successfully
+      if (productSerialId) {
+        await this.productMediaClass.productMediaAssign(
+          mediaMockSmall,
+          productSerialId,
+        );
+      }
     }
+
     return { product, productIdMapping };
+  }
+
+  public async getProductSerialId(uuid: string) {
+    // fetches serialId against uuid <productId>
+    const productSlug = await fetchProductSlugById(uuid);
+    const productSerialId = await fetchProductSerialIdBySlug(productSlug); // postgres call
+    return productSerialId;
   }
 }
