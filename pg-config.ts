@@ -1,5 +1,6 @@
 import { Client } from 'pg';
 
+// postgres configurations to establish connection
 const client = new Client({
   host: 'localhost', // Postgres ip address[s] or domain name[s]
   port: 5433, // Postgres server port[s]

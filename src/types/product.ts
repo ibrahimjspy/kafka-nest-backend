@@ -43,3 +43,18 @@ export interface colorSelect {
   ImageLink: string;
   BrandActive: string;
 }
+
+export interface productDetails {
+  product?: {
+    name: string;
+    media: {
+      url: string;
+    }[];
+    slug: string;
+    description: any;
+    updatedAt: string;
+    variants: {
+      id: string;
+    }[];
+  };
+}

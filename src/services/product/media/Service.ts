@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { createProductMediaHandler } from 'src/graphql/handlers/media';
+import { insertProductMediaById } from 'src/postgres/handlers/media';
 import { TransformerService } from 'src/transformer/Transformer.service';
 /**
  *  Injectable class handling media assign
@@ -19,7 +19,8 @@ export class ProductMediaService {
     );
     const createMedia = Promise.all(
       media.map(async (url) => {
-        await createProductMediaHandler(url, productId);
+        const splitUrl = url.split('OS/');
+        await insertProductMediaById(splitUrl[1], productId);
       }),
     );
     return createMedia;

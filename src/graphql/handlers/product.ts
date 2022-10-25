@@ -1,5 +1,5 @@
 import { Logger } from '@nestjs/common';
-import { productTransformed } from 'src/types/product';
+import { productDetails, productTransformed } from 'src/types/product';
 import {
   graphqlCall,
   graphqlExceptionHandler,
@@ -7,6 +7,22 @@ import {
 import { createProductMutation } from '../mutations/product/create';
 import { deleteProductMutation } from '../mutations/product/delete';
 import { updateProductMutation } from '../mutations/product/update';
+import { productDetailsByIdQuery } from '../queries/product';
+
+//  <-->  fetch  <-->
+
+export const fetchProductSlugById = async (productId: string) => {
+  try {
+    const product: productDetails = await graphqlCall(
+      productDetailsByIdQuery(productId),
+    );
+    Logger.verbose('Product fetched', product);
+    return product.product.slug;
+  } catch (err) {
+    Logger.warn('Product fetch call failed', err);
+    return null;
+  }
+};
 
 //  <-->  Create  <-->
 

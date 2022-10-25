@@ -1,10 +1,9 @@
 import { Logger } from '@nestjs/common';
-import client from 'src/postgres/config';
+import client from '../../../pg-config';
 
 /**
- * inserts source product and brand details against its product_id
- * @params postgres database query for inserting id
- * @warn currently only compatible with source and destination id
+ * inserts in database
+ * @params postgres database query for inserting
  */
 export const postgresInsertCall = async (Query: string) => {
   await client
@@ -13,7 +12,7 @@ export const postgresInsertCall = async (Query: string) => {
       Logger.verbose('Successfully inserted', res);
     })
     .catch((err) => {
-      Logger.warn('postgres error', err);
+      console.warn('postgres error', err);
     });
   return 'Successfully registered';
 };

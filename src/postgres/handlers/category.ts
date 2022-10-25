@@ -1,5 +1,5 @@
 import { postgresDeleteCall } from 'src/utils/postgres/delete';
-import { postgresFetchCall } from 'src/utils/postgres/fetch';
+import { postgresFetchIdCall } from 'src/utils/postgres/fetch';
 import { postgresInsertCall } from 'src/utils/postgres/insert';
 import {
   deleteMasterCategoryIdQuery,
@@ -13,12 +13,11 @@ import {
 //                       <fetch>
 
 export const fetchMasterCategoryId = async (sourceId: string) => {
-  return await postgresFetchCall(masterCategoryIdQuery(sourceId));
+  return await postgresFetchIdCall(masterCategoryIdQuery(sourceId));
 };
 
 export const fetchSubCategoryId = async (sourceId: string) => {
-  console.log(sourceId);
-  return await postgresFetchCall(subCategoryIdQuery(sourceId));
+  return await postgresFetchIdCall(subCategoryIdQuery(sourceId));
 };
 
 //                       <insert>

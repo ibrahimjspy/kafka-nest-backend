@@ -1,22 +1,29 @@
 import { postgresDeleteCall } from 'src/utils/postgres/delete';
-import { postgresFetchCall } from 'src/utils/postgres/fetch';
+import { postgresFetchIdCall } from 'src/utils/postgres/fetch';
 
 import {
   deleteProductIdQuery,
   insertProductIdQuery,
   productIdQuery,
+  productSerialIdQuery,
 } from '../queries/product';
 
 //                       <fetch>
 
 export const fetchProductId = async (sourceId: string): Promise<string> => {
-  return await postgresFetchCall(productIdQuery(sourceId));
+  return await postgresFetchIdCall(productIdQuery(sourceId));
+};
+
+export const fetchProductSerialIdBySlug = async (
+  slug: string,
+): Promise<string> => {
+  return await postgresFetchIdCall(productSerialIdQuery(slug));
 };
 
 //                       <insert>
 
 export const insertProductId = async (sourceId: string, destinationId) => {
-  return await postgresFetchCall(
+  return await postgresFetchIdCall(
     insertProductIdQuery(sourceId, destinationId.productCreate.product.id),
   );
 };

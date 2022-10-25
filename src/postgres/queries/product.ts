@@ -9,6 +9,16 @@ export const productIdQuery = (sourceId: string): string => {
 `;
 };
 
+// fetches serial4 type id by product slug
+
+export const productSerialIdQuery = (slug: string): string => {
+  return `
+  SELECT id
+  FROM saleor.product_product
+  WHERE slug='${slug}';
+`;
+};
+
 //                       <insert>
 
 export const insertProductIdQuery = (
