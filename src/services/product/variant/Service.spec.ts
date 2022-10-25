@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { getProductObject } from '../../../productAxiosCall';
 import { TransformerModule } from 'src/transformer/Transformer.module';
 import { TransformerService } from 'src/transformer/Transformer.service';
 import { ProductVariantService } from './Service';
@@ -15,8 +16,16 @@ describe('TransformerController', () => {
     service = module.get<ProductVariantService>(ProductVariantService);
   });
   describe('root', () => {
-    it('should return "Service running"', () => {
-      expect(service.healthCheck()).toBe('Service running');
+    it('productDetails call is working', async () => {
+      const data = await getProductObject(
+        '91628651',
+        'ethnic-print-brim-panama-hat',
+        'urbanista',
+      );
+      expect(data).toThrowError();
+    });
+    it('service is running', async () => {
+      expect(service.healthCheck()).toBeDefined();
     });
   });
 });
