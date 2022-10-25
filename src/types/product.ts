@@ -2,7 +2,7 @@ export interface productExistingInterface {
   exists: boolean;
   destinationId: string;
 }
-export interface productCDC {
+export interface productDto {
   id: number;
   nStyleName: string;
   nItemDescription: string;

@@ -7,6 +7,9 @@ export const deleteProductMutation = (productId) => {
         product{
         name
         }
+        errors{
+         message
+        }
     }
     }
 `;

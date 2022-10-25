@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Param } from '@nestjs/common';
 import {
   createShopHandler,
   deleteShopHandler,
@@ -20,7 +20,7 @@ import {
   insertUserId,
 } from 'src/postgres/handlers/user';
 import { TransformerService } from 'src/transformer/Transformer.service';
-import { shopCDC, shopTransformed } from 'src/types/shop';
+import { shopDto, shopTransformed } from 'src/types/shop';
 
 /**
  *  Injectable class handling brand and its relating tables CDC
@@ -35,7 +35,7 @@ export class ShopService {
     return 'Service running';
   }
 
-  public async handleShopCDC(kafkaMessage: shopCDC): Promise<object> {
+  public async handleShopCDC(@Param() kafkaMessage: shopDto): Promise<object> {
     const shopExistsInDestination: string = await fetchShopId(
       kafkaMessage.TBVendor_ID,
     );
@@ -51,7 +51,9 @@ export class ShopService {
     return this.createShop(shopData);
   }
 
-  public async handleShopCDCDelete(kafkaMessage: shopCDC): Promise<object> {
+  public async handleShopCDCDelete(
+    @Param() kafkaMessage: shopDto,
+  ): Promise<object> {
     const shopExistsInDestination: string = await fetchShopId(
       kafkaMessage.TBVendor_ID,
     );
@@ -70,7 +72,9 @@ export class ShopService {
     return;
   }
 
-  private async createShop(shopData: shopTransformed): Promise<object> {
+  private async createShop(
+    @Param() shopData: shopTransformed,
+  ): Promise<object> {
     // creating new user and map its id in database
     const user = await createUserHandler(shopData);
     const userIdMapping = await insertUserId(shopData.id, user);

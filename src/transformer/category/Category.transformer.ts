@@ -1,8 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Param } from '@nestjs/common';
 import {
-  masterCategoryCDC,
+  masterCategoryDto,
   masterCategoryTransformed,
-  subCategoryCDC,
+  subCategoryDto,
   subCategoryTransformed,
 } from 'src/types/category';
 import { ProductTransformerService } from '../product/Product.transformer';
@@ -30,7 +30,9 @@ export class CategoryTransformerService {
    * @params object,  Composite object containing cdc changeData, categoryMaster data
    * @returns transformed object
    */
-  public async masterCategoryTransformerMethod(object: masterCategoryCDC) {
+  public async masterCategoryTransformerMethod(
+    @Param() object: masterCategoryDto,
+  ) {
     const masterCategoryObject: masterCategoryTransformed = {};
     const {
       TBStyleNo_OS_Category_Master_ID,
@@ -60,7 +62,7 @@ export class CategoryTransformerService {
    * @params object,  Composite object containing cdc changeData, categorySub data
    * @returns transformed object
    */
-  public async subCategoryTransformerMethod(object: subCategoryCDC) {
+  public async subCategoryTransformerMethod(@Param() object: subCategoryDto) {
     const subCategoryObject: subCategoryTransformed = {};
     const {
       TBStyleNo_OS_Category_Sub_ID,

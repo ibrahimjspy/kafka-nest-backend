@@ -12,7 +12,7 @@ export interface shopTransformed {
   returnPolicy?: string;
 }
 
-export interface shopCDC {
+export interface shopDto {
   id: number;
   TBVendor_ID: string;
   VDName: string;

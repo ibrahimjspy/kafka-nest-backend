@@ -11,8 +11,9 @@ import {
   fetchProductSerialIdBySlug,
   insertProductId,
 } from 'src/postgres/handlers/product';
+import { deleteProductId } from 'src/postgres/handlers/product';
 import {
-  productCDC,
+  productDto,
   productCreate,
   productTransformed,
 } from 'src/types/product';
@@ -34,7 +35,7 @@ export class ProductService {
     return 'Service running';
   }
 
-  public async handleProductCDC(kafkaMessage: productCDC): Promise<object> {
+  public async handleProductCDC(kafkaMessage: productDto): Promise<object> {
     const productExistsInDestination: string = await fetchProductId(
       kafkaMessage.TBItem_ID,
     );
@@ -50,13 +51,17 @@ export class ProductService {
   }
 
   public async handleProductCDCDelete(
-    kafkaMessage: productCDC,
+    kafkaMessage: productDto,
   ): Promise<object> {
     const productExistsInDestination: string = await fetchProductId(
       kafkaMessage.TBItem_ID,
     );
     if (productExistsInDestination) {
-      return deleteProductHandler(kafkaMessage.TBItem_ID);
+      const productDelete = await deleteProductHandler(
+        productExistsInDestination,
+      );
+      const productIdDelete = await deleteProductId(kafkaMessage.TBItem_ID);
+      return { productDelete, productIdDelete };
     }
     return;
   }
