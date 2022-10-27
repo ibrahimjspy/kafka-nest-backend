@@ -40,7 +40,6 @@ export const getProductDetailsFromDb = async (
 };
 
 const productVariantObjectTransform = (recordset) => {
-  console.log(recordset);
   const productVariantData = {};
   const viewResponse: productDatabaseView = recordset.recordset[0];
   const { price, regular_price, item_sizes } = viewResponse;

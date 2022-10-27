@@ -15,7 +15,7 @@ export const insertShopIdQuery = (sourceId: string, destinationId): string => {
   return `
     INSERT INTO cdc.shop_id_mapping_table
     (source_id, destination_id)
-    VALUES(${sourceId}, '${destinationId?.createShop.createMarketplaceShop?.id}');
+    VALUES(${sourceId}, '${destinationId?.createShop?.createMarketplaceShop?.id}');
   `;
 };
 
