@@ -25,6 +25,7 @@ export class ProductTransformerService {
     productObject['description'] = await this.descriptionTransformer(
       nItemDescription,
     );
+    productObject['media'] = await this.productMediaTransformerMethod(object);
 
     return productObject;
   }
@@ -45,13 +46,20 @@ export class ProductTransformerService {
    * @params object to be transformed and mapped
    * @returns media composite array
    */
-  public async productMediaTransformerMethod(@Param() mediaObject) {
-    const { medium, tiny, large } = mediaObject;
-    let media = [];
-    if (medium && tiny && large) {
-      media = [...medium, ...tiny, ...large];
-    }
-    return media;
+  public async productMediaTransformerMethod(
+    @Param() productObject: productDto,
+  ) {
+    return [
+      productObject.Picture1,
+      productObject.Picture2,
+      productObject.Picture3,
+      productObject.Picture4,
+      productObject.Picture5,
+      productObject.Picture6,
+      productObject.Picture7,
+      productObject.Picture8,
+      productObject.Picture9,
+    ];
   }
 
   /**

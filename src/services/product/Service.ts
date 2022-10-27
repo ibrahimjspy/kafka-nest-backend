@@ -5,7 +5,6 @@ import {
   getProductSlugById,
   updateProductHandler,
 } from 'src/graphql/handlers/product';
-import { mediaMockSmall } from 'src/mock/product/media';
 import {
   fetchProductId,
   fetchProductSerialIdBySlug,
@@ -75,7 +74,10 @@ export class ProductService {
 
     // creates product variants and its media
 
-    const productMediaCreate = this.createProductMedia(productId);
+    const productMediaCreate = this.createProductMedia(
+      productId,
+      productData.media,
+    );
     const productVariantsCreate = this.createProductVariants(
       productData,
       productId,
@@ -110,14 +112,14 @@ export class ProductService {
     return productSerialId;
   }
 
-  public async createProductMedia(productId: string) {
+  public async createProductMedia(productId: string, productMedia: string[]) {
     // fetches product database id
     const productSerialId = await this.getProductSerialId(productId);
 
     if (productSerialId) {
       // creates product media directly in database
       await this.productMediaClass.productMediaAssign(
-        mediaMockSmall,
+        productMedia,
         productSerialId,
       );
     }
