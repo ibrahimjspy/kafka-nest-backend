@@ -12,10 +12,10 @@ import {
 } from 'src/postgres/handlers/product';
 import { deleteProductId } from 'src/postgres/handlers/product';
 import { productDto, productTransformed } from 'src/types/transformers/product';
-import { getProductDetailsFromDb } from 'src/mssql/fetch';
+import { getProductDetailsFromDb } from 'src/mssql/product.fetch';
 import { TransformerService } from '../../transformer/Transformer.service';
-import { ProductMediaService } from './media/Service';
-import { ProductVariantService } from './variant/Service';
+import { ProductMediaService } from './media/Product.Media.Service';
+import { ProductVariantService } from './variant/Product.Variant.Service';
 /**
  *  Injectable class handling product variant and its relating tables CDC
  *  @Injected transformation class for CDC payload validations and transformations

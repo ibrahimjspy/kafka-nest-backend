@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Test, TestingModule } from '@nestjs/testing';
-import { ProductService } from './Service';
+import { ProductService } from './Product.Service';
 import { TransformerService } from '../../transformer/Transformer.service';
 import {
   deleteProductId,
@@ -10,7 +10,7 @@ import {
 import { Logger } from '@nestjs/common';
 import { insertMasterCategoryId } from 'src/postgres/handlers/category';
 import { TransformerModule } from 'src/transformer/Transformer.module';
-import { ProductMediaService } from './media/Service';
+import { ProductMediaService } from './media/Product.Media.Service';
 
 describe('product variant unit tests', () => {
   let service: ProductService;

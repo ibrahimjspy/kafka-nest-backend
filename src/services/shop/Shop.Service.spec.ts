@@ -1,21 +1,18 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { CategoryService } from './Service';
-import { TransformerService } from '../../transformer/Transformer.service';
 import { TransformerModule } from 'src/transformer/Transformer.module';
-// import {
-//   fetchMasterCategoryId,
-//   fetchSubCategoryId,
-// } from 'src/postgres/handlers/category';
+import { TransformerService } from 'src/transformer/Transformer.service';
+import { ShopService } from './Shop.Service';
 
-describe('CategoriesController', () => {
-  let service: CategoryService;
+describe('Brand Service unit tests', () => {
+  let service: ShopService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [CategoryService, TransformerService],
+      providers: [ShopService, TransformerService],
       imports: [TransformerModule],
     }).compile();
-    service = module.get<CategoryService>(CategoryService);
+
+    service = module.get<ShopService>(ShopService);
   });
   describe('root', () => {
     it('should return "Service running"', () => {

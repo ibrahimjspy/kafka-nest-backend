@@ -7,7 +7,7 @@ import { fetchProductId } from 'src/postgres/handlers/product';
 import { TransformerService } from 'src/transformer/Transformer.service';
 import { productVariantDatabase } from 'src/types/mssql/product';
 import { colorSelectDto } from 'src/types/transformers/product';
-import { getProductDetailsFromDb } from 'src/mssql/fetch';
+import { getProductDetailsFromDb } from 'src/mssql/product.fetch';
 /**
  *  Injectable class handling productVariant and its relating tables CDC
  *  @Injected transformation class for CDC payload validations and transformations

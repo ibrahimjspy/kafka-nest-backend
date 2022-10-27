@@ -3,7 +3,7 @@ import { connect, Request } from 'mssql';
 import delay from 'delay';
 import { config } from '../../mssql-config';
 import { productDatabaseView } from 'src/types/mssql/product';
-import { TBStyleSearchUniqueQuery } from './query';
+import { TBStyleSearchUniqueQuery } from './product.query';
 
 export const getProductDetailsFromDb = async (
   productId: string,
