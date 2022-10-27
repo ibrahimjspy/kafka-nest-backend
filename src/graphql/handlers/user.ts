@@ -1,9 +1,10 @@
 // import { insertUserId } from 'src/postgres/handlers/user';
 import { Logger } from '@nestjs/common';
-import { shopTransformed } from 'src/types/shop';
+import { createTokenInterface } from 'src/types/graphql/shop';
+import { shopTransformed } from 'src/types/transformers/shop';
 import {
   graphqlCall,
-  graphqlCallDynamic,
+  graphqlCallByToken,
   graphqlExceptionHandler,
 } from 'src/utils/graphql/handler';
 import {
@@ -19,10 +20,13 @@ export const createUserHandler = async (
   userData: shopTransformed,
 ): Promise<object> => {
   try {
-    const createToken = await graphqlCall(createSessionToken());
-    const createUser = await graphqlCallDynamic(
+    const createToken: createTokenInterface = await graphqlCall(
+      createSessionToken(),
+    );
+    const token = createToken.tokenCreate.token;
+    const createUser = await graphqlCallByToken(
       createUserMutation(userData),
-      createToken,
+      token,
     );
     Logger.verbose('User created', createUser);
     return { createUser };
@@ -38,10 +42,13 @@ export const updateUserHandler = async (
   destinationId: string,
 ): Promise<object> => {
   try {
-    const createToken = await graphqlCall(createSessionToken());
-    const updateUser = await graphqlCallDynamic(
+    const createToken: createTokenInterface = await graphqlCall(
+      createSessionToken(),
+    );
+    const token = createToken.tokenCreate.token;
+    const updateUser = await graphqlCallByToken(
       updateUserMutation(userUpdateData, destinationId),
-      createToken,
+      token,
     );
     Logger.log('user updated', updateUser);
     return updateUser;
@@ -54,10 +61,13 @@ export const updateUserHandler = async (
 
 export const deleteUserHandler = async (userId: string): Promise<object> => {
   try {
-    const createToken = await graphqlCall(createSessionToken());
-    const deleteUserId = await graphqlCallDynamic(
+    const createToken: createTokenInterface = await graphqlCall(
+      createSessionToken(),
+    );
+    const token = createToken.tokenCreate.token;
+    const deleteUserId = await graphqlCallByToken(
       deleteUserMutation(userId),
-      createToken,
+      token,
     );
     Logger.warn('user deleted', deleteUserHandler);
     return deleteUserId;

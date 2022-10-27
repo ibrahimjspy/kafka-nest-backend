@@ -1,4 +1,4 @@
-import { productDto, productTransformed } from 'src/types/product';
+import { productDto, productTransformed } from 'src/types/transformers/product';
 
 export const descriptionSmallText =
   '{"time": 1662995227870, "blocks": [{"id": "cqWmV3MIPH", "data": {"text": "test description"}, "type": "paragraph"}], "version": "2.24.3"}';

@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import {
   createProductHandler,
   deleteProductHandler,
-  fetchProductSlugById,
+  getProductSlugById,
   updateProductHandler,
 } from 'src/graphql/handlers/product';
 import { mediaMockSmall } from 'src/mock/product/media';
@@ -12,12 +12,8 @@ import {
   insertProductId,
 } from 'src/postgres/handlers/product';
 import { deleteProductId } from 'src/postgres/handlers/product';
-import {
-  productDto,
-  productCreate,
-  productTransformed,
-} from 'src/types/product';
-import { getProductDetails } from 'src/utils/mssql/fetch';
+import { productDto, productTransformed } from 'src/types/transformers/product';
+import { getProductDetailsFromDb } from 'src/mssql/fetch';
 import { TransformerService } from '../../transformer/Transformer.service';
 import { ProductMediaService } from './media/Service';
 import { ProductVariantService } from './variant/Service';
@@ -73,24 +69,24 @@ export class ProductService {
     productData: productTransformed,
   ): Promise<object> {
     // creating new product and assigning it media
-    const product: productCreate = await createProductHandler(productData);
-    const productIdMapping = await insertProductId(productData.id, product);
 
-    // product created successfully
-    if (product.productCreate) {
-      const productId = product.productCreate.product.id;
-      const productSerialId = await this.getProductSerialId(productId);
-      // product serial id fetched successfully
-      if (productSerialId) {
-        await this.productMediaClass.productMediaAssign(
-          mediaMockSmall,
-          productSerialId,
-        );
-      }
-      await this.createProductVariants(productData, productId);
-    }
+    const productId = await createProductHandler(productData);
+    const productIdMapping = await insertProductId(productData.id, productId);
 
-    return { product, productIdMapping };
+    // creates product variants and its media
+
+    const productMediaCreate = this.createProductMedia(productId);
+    const productVariantsCreate = this.createProductVariants(
+      productData,
+      productId,
+    );
+
+    return {
+      productId,
+      productIdMapping,
+      productMediaCreate,
+      productVariantsCreate,
+    };
   }
 
   private async createProductVariants(
@@ -98,7 +94,7 @@ export class ProductService {
     productId: string,
   ) {
     // fetches product variant information
-    const productVariantData = await getProductDetails(productData.id);
+    const productVariantData = await getProductDetailsFromDb(productData.id);
 
     // creating product variant against color and sizes , assigns product variant price
     return await this.productVariantService.productVariantAssign(
@@ -109,8 +105,21 @@ export class ProductService {
 
   public async getProductSerialId(uuid: string) {
     // fetches serialId against uuid <productId>
-    const productSlug = await fetchProductSlugById(uuid);
+    const productSlug = await getProductSlugById(uuid);
     const productSerialId = await fetchProductSerialIdBySlug(productSlug); // postgres call
     return productSerialId;
+  }
+
+  public async createProductMedia(productId: string) {
+    // fetches product database id
+    const productSerialId = await this.getProductSerialId(productId);
+
+    if (productSerialId) {
+      // creates product media directly in database
+      await this.productMediaClass.productMediaAssign(
+        mediaMockSmall,
+        productSerialId,
+      );
+    }
   }
 }

@@ -5,7 +5,7 @@ export const productIdQuery = (sourceId: string): string => {
   select
   destination_id
   from cdc.product_id_mapping_table
-  where source_id = ${sourceId}
+  where source_id = '${sourceId}'
 `;
 };
 

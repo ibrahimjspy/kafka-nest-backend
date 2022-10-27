@@ -32,23 +32,26 @@ export const graphqlCall: GraphqlCall = async (Query: string): Promise<any> => {
 };
 
 /**
- * This is graphql call with dynamic authorization token to handle user creation
+ * This is graphql call with dynamic authorization token
  * @params Query ,  It must be in string format and no query based
  * logic should be transferred to graphqlHandler
  * @params Auth token {string} ,  It must be in string format and no query based
  * @returns an object with data or graphql error
  */
-export const graphqlCallDynamic = async (
+export const graphqlCallByToken = async (
   Query: string,
-  Token,
+  Token: string,
 ): Promise<any> => {
   let data = {};
   // console.dir(Query);
-  const graphQLClient = new GraphQLClient('http://localhost:8000/graphql/', {
-    headers: {
-      authorization: `Bearer ${Token.tokenCreate.token}`,
+  const graphQLClient = new GraphQLClient(
+    process.env.DESTINATION_SALEOR_ENDPOINT,
+    {
+      headers: {
+        authorization: `Bearer ${Token}`,
+      },
     },
-  });
+  );
   await graphQLClient
     .request(Query)
     .then((res) => {

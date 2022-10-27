@@ -4,11 +4,12 @@ export const updateProductVariantPricingMutation = (
   productVariantId,
   priceAmount,
 ) => {
+  const DEFAULT_CHANNEL_ID = 'Q2hhbm5lbDox';
   return gql`
       mutation {
         productVariantChannelListingUpdate(
           id: "${productVariantId}"
-          input: { channelId: "Q2hhbm5lbDox", price: ${priceAmount} }
+          input: { channelId: "${DEFAULT_CHANNEL_ID}", price: ${priceAmount} }
         ) {
           variant {
             id

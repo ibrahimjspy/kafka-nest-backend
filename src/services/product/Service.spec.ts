@@ -27,28 +27,5 @@ describe('product variant unit tests', () => {
     it('should return "Service running"', () => {
       expect(service.healthCheck()).toBe('Service running');
     });
-    //                       < fetch tests >
-    // it('checking whether product id sql connection is working', async () => {
-    //   const data = await fetchProductId('3');
-    //   Logger.log(data);
-    //   expect(data).toBeDefined();
-    // });
-    //                       < insert tests >
-    // it('checking whether product id sql connection is working', async () => {
-    //   const data = await insertProductId('30', '7860');
-    //   Logger.log(data);
-    //   expect(data).toBeDefined();
-    // });
-
-    // it('checking whether master category id insert sql connection is working', async () => {
-    //   const data = await insertMasterCategoryId('40', '4');
-    //   expect(data).toBeDefined();
-    // });
   });
-  //                       < insert tests >
-  // it('checking if delete is working', async () => {
-  //   const testId = 3;
-  //   const data = await deleteProductId(testId);
-  //   expect(data).toBeDefined();
-  // });
 });

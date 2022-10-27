@@ -20,27 +20,3 @@ export const mediaCreateMutation = (productMedia, productId) => {
 } 
 `;
 };
-
-// {
-//     "data": {
-//       "productMediaCreate": {
-//         "media": {
-//           "id": "UHJvZHVjdE1lZGlhOjE="
-//         }
-//       }
-//     }
-//   }
-
-// const data = {
-//     "productMediaCreate": {
-//       "media": {
-//         "id": "UHJvZHVjdE1lZGlhOjE="
-//       }
-//     }
-//   }
-// const id = productId;
-// const mediaUrls = [];
-
-// mediaUrls.map((n) => {
-//   productMediaCreate(n, id);
-// });

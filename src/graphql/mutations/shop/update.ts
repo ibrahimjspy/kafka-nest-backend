@@ -1,20 +1,12 @@
 import { gql } from 'graphql-request';
-import { shopTransformed } from 'src/types/shop';
+import { shopTransformed } from 'src/types/transformers/shop';
 
 export const updateShopMutation = (
   shopData: shopTransformed,
   shopId: string,
 ) => {
-  const {
-    name,
-    description,
-    storePolicy,
-    // minOrder,
-    email,
-    madeIn,
-    returnPolicy,
-    url,
-  } = shopData;
+  const { name, description, storePolicy, email, madeIn, returnPolicy, url } =
+    shopData;
   return gql`
     mutation {
       updateMarketplaceShop(

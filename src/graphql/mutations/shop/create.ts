@@ -1,43 +1,5 @@
 import { gql } from 'graphql-request';
-import { shopTransformed } from 'src/types/shop';
-
-export const createShopMutation = (
-  shopData: shopTransformed,
-  userId: string,
-) => {
-  const {
-    name,
-    description,
-    storePolicy,
-    // minOrder,
-    email,
-    madeIn,
-    returnPolicy,
-    url,
-  } = shopData;
-  return gql`
-    mutation {
-      createMarketplaceShop(
-        input: {
-          name: "${name}"
-          user: "${userId}"
-          managerType: "1"
-          madeIn: "${madeIn}"
-          minOrder: 200
-          about: "shop about"
-          returnPolicy: "${returnPolicy}"
-          storePolicy: "${storePolicy}"
-          email: "${email}"
-          url: "${url}"
-          description: "${description}"
-        }
-      ) {
-        id
-        name
-      }
-    }
-  `;
-};
+import { shopTransformed } from 'src/types/transformers/shop';
 
 export const createUserMutation = (shopData: shopTransformed) => {
   const { name, email, url } = shopData;
@@ -74,5 +36,35 @@ export const addUserToMarketplace = (userId: string) => {
     firstName
   }
 }
+  `;
+};
+
+export const createShopMutation = (
+  shopData: shopTransformed,
+  userId: string,
+) => {
+  const { name, description, storePolicy, email, madeIn, returnPolicy, url } =
+    shopData;
+  return gql`
+    mutation {
+      createMarketplaceShop(
+        input: {
+          name: "${name}"
+          user: "${userId}"
+          managerType: "1"
+          madeIn: "${madeIn}"
+          minOrder: 200
+          about: "shop about"
+          returnPolicy: "${returnPolicy}"
+          storePolicy: "${storePolicy}"
+          email: "${email}"
+          url: "${url}"
+          description: "${description}"
+        }
+      ) {
+        id
+        name
+      }
+    }
   `;
 };

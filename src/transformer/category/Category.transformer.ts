@@ -4,7 +4,7 @@ import {
   masterCategoryTransformed,
   subCategoryDto,
   subCategoryTransformed,
-} from 'src/types/category';
+} from 'src/types/transformers/category';
 import { ProductTransformerService } from '../product/Product.transformer';
 
 /**

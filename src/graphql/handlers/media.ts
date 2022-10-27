@@ -1,10 +1,12 @@
 import { Logger } from '@nestjs/common';
-import { productMediaCreate } from 'src/types/product';
+import { productMediaCreate } from 'src/types/graphql/product';
 import {
   graphqlCall,
   graphqlExceptionHandler,
 } from 'src/utils/graphql/handler';
 import { mediaCreateMutation } from '../mutations/media/create';
+
+//  <-->  Create  <-->
 
 export const createProductMediaHandler = async (
   mediaUrl: string,

@@ -1,5 +1,6 @@
 import { Logger } from '@nestjs/common';
-import { productDetails, productTransformed } from 'src/types/product';
+import { getProductDetails, productCreate } from 'src/types/graphql/product';
+import { productTransformed } from 'src/types/transformers/product';
 import {
   graphqlCall,
   graphqlExceptionHandler,
@@ -10,40 +11,40 @@ import {
 } from '../mutations/product/create';
 import { deleteProductMutation } from '../mutations/product/delete';
 import { updateProductMutation } from '../mutations/product/update';
-import { productDetailsByIdQuery } from '../queries/product';
+import { getProductDetailsQuery } from '../queries/product';
 
-//  <-->  fetch  <-->
+//  <-->  Create  <-->
 
-export const fetchProductSlugById = async (productId: string) => {
+export const createProductHandler = async (
+  productData: productTransformed,
+): Promise<string> => {
   try {
-    const product: productDetails = await graphqlCall(
-      productDetailsByIdQuery(productId),
+    const createProduct: productCreate = await graphqlCall(
+      createProductMutation(productData),
+    );
+    await graphqlCall(productChannelListingMutation(createProduct));
+    const productId = createProduct?.productCreate?.product?.id;
+
+    Logger.verbose('Product created', createProduct);
+    return productId;
+  } catch (err) {
+    Logger.warn('Product create call failed', err);
+    return null;
+  }
+};
+
+//  <-->  Read  <-->
+
+export const getProductSlugById = async (productId: string) => {
+  try {
+    const product: getProductDetails = await graphqlCall(
+      getProductDetailsQuery(productId),
     );
     Logger.verbose('Product fetched', product);
     return product.product.slug;
   } catch (err) {
     Logger.warn('Product fetch call failed', err);
     return null;
-  }
-};
-
-//  <-->  Create  <-->
-
-export const createProductHandler = async (
-  productData: productTransformed,
-): Promise<object> => {
-  try {
-    const createProduct: object = await graphqlCall(
-      createProductMutation(productData),
-    );
-    const addProductToChannel = await graphqlCall(
-      productChannelListingMutation(createProduct),
-    );
-
-    Logger.verbose('Product created', createProduct);
-    return { ...createProduct, addProductToChannel };
-  } catch (err) {
-    return graphqlExceptionHandler(err);
   }
 };
 

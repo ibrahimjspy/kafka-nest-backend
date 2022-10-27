@@ -1,10 +1,10 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { gql } from 'graphql-request';
+import { productTransformed } from 'src/types/transformers/product';
 
-export const createProductMutation = (productData) => {
+export const createProductMutation = (productData: productTransformed) => {
   // parsing product data;
   // const testProductType = "UHJvZHVjdFR5cGU6MQ=="
-  const { id, name, description } = productData;
+  const { name, description } = productData;
   return gql`
     mutation {
       productCreate(

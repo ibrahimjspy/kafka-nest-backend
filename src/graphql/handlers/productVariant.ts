@@ -1,5 +1,5 @@
 import { Logger } from '@nestjs/common';
-import { productVariantCreate } from 'src/types/product';
+import { productVariantCreate } from 'src/types/graphql/product';
 import {
   graphqlCall,
   graphqlExceptionHandler,
@@ -18,7 +18,11 @@ export const createProductVariantHandler = async (
       createProductVariantMutation(productVariantData, productId),
     );
     Logger.verbose('Product variant created', createProductVariant);
-    return createProductVariant.productVariantCreate?.productVariant?.id;
+
+    const productVariantId =
+      createProductVariant.productVariantCreate?.productVariant?.id;
+
+    return productVariantId;
   } catch (err) {
     return graphqlExceptionHandler(err);
   }
