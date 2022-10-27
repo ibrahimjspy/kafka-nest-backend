@@ -4,7 +4,10 @@ import {
   graphqlCall,
   graphqlExceptionHandler,
 } from 'src/utils/graphql/handler';
-import { createProductMutation } from '../mutations/product/create';
+import {
+  createProductMutation,
+  productChannelListingMutation,
+} from '../mutations/product/create';
 import { deleteProductMutation } from '../mutations/product/delete';
 import { updateProductMutation } from '../mutations/product/update';
 import { productDetailsByIdQuery } from '../queries/product';
@@ -33,8 +36,12 @@ export const createProductHandler = async (
     const createProduct: object = await graphqlCall(
       createProductMutation(productData),
     );
+    const addProductToChannel = await graphqlCall(
+      productChannelListingMutation(createProduct),
+    );
+
     Logger.verbose('Product created', createProduct);
-    return { ...createProduct };
+    return { ...createProduct, addProductToChannel };
   } catch (err) {
     return graphqlExceptionHandler(err);
   }

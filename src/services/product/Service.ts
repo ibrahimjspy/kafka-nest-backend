@@ -17,8 +17,10 @@ import {
   productCreate,
   productTransformed,
 } from 'src/types/product';
+import { getProductDetails } from 'src/utils/mssql/fetch';
 import { TransformerService } from '../../transformer/Transformer.service';
 import { ProductMediaService } from './media/Service';
+import { ProductVariantService } from './variant/Service';
 /**
  *  Injectable class handling product variant and its relating tables CDC
  *  @Injected transformation class for CDC payload validations and transformations
@@ -29,6 +31,7 @@ export class ProductService {
   constructor(
     private readonly transformerClass: TransformerService,
     private readonly productMediaClass: ProductMediaService,
+    private readonly productVariantService: ProductVariantService,
   ) {}
 
   public healthCheck(): string {
@@ -75,9 +78,8 @@ export class ProductService {
 
     // product created successfully
     if (product.productCreate) {
-      const productSerialId = await this.getProductSerialId(
-        product.productCreate.product.id,
-      );
+      const productId = product.productCreate.product.id;
+      const productSerialId = await this.getProductSerialId(productId);
       // product serial id fetched successfully
       if (productSerialId) {
         await this.productMediaClass.productMediaAssign(
@@ -85,9 +87,24 @@ export class ProductService {
           productSerialId,
         );
       }
+      await this.createProductVariants(productData, productId);
     }
 
     return { product, productIdMapping };
+  }
+
+  private async createProductVariants(
+    productData: productTransformed,
+    productId: string,
+  ) {
+    // fetches product variant information
+    const productVariantData = await getProductDetails(productData.id);
+
+    // creating product variant against color and sizes , assigns product variant price
+    return await this.productVariantService.productVariantAssign(
+      productVariantData,
+      productId,
+    );
   }
 
   public async getProductSerialId(uuid: string) {

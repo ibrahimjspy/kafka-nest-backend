@@ -1,7 +1,7 @@
 import { gql } from 'graphql-request';
 
 export const createProductVariantMutation = (productVariantData, productId) => {
-  // parsing product data;
+  // parsing product variant data;
   const { color, size } = productVariantData;
   return gql`
     mutation {
