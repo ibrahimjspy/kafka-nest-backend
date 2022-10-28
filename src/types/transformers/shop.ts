@@ -1,17 +1,3 @@
-export interface shopTransformed {
-  id?: string;
-  name?: string;
-  description?: string;
-  seo_description?: string;
-  seo_title?: string;
-  email?: string;
-  url?: string;
-  minOrder?: string;
-  storePolicy?: string;
-  madeIn?: string;
-  returnPolicy?: string;
-}
-
 export interface shopDto {
   id: number;
   TBVendor_ID: string;
@@ -25,4 +11,18 @@ export interface shopDto {
   VDStorePolicy: string;
   VDMadeIn: string;
   VDReturnPolicy: string;
+}
+
+export interface shopTransformed {
+  id?: string;
+  name?: string;
+  description?: string;
+  seo_description?: string;
+  seo_title?: string;
+  email?: string;
+  url?: string;
+  minOrder?: string;
+  storePolicy?: string;
+  madeIn?: string;
+  returnPolicy?: string;
 }

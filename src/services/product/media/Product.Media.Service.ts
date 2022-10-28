@@ -14,13 +14,11 @@ export class ProductMediaService {
     return 'Service running';
   }
   public async productMediaAssign(productMedia, productId) {
-    const media = await this.transformerClass.productMediaTransformer(
-      productMedia,
-    );
     const createMedia = Promise.all(
-      media.map(async (url) => {
-        const splitUrl = url.split('OS/');
-        await insertProductMediaById(splitUrl[1], productId);
+      productMedia.map(async (url) => {
+        if (url) {
+          await insertProductMediaById(url, productId);
+        }
       }),
     );
     return createMedia;

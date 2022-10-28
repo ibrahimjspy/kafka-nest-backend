@@ -1,5 +1,5 @@
 import { Logger } from '@nestjs/common';
-import { shopTransformed } from 'src/types/shop';
+import { shopTransformed } from 'src/types/transformers/shop';
 import {
   graphqlCall,
   graphqlExceptionHandler,

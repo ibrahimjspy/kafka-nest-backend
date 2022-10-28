@@ -20,7 +20,7 @@ import {
   insertUserId,
 } from 'src/postgres/handlers/user';
 import { TransformerService } from 'src/transformer/Transformer.service';
-import { shopDto, shopTransformed } from 'src/types/shop';
+import { shopDto, shopTransformed } from 'src/types/transformers/shop';
 
 /**
  *  Injectable class handling brand and its relating tables CDC

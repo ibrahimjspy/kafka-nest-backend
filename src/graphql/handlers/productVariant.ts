@@ -1,20 +1,46 @@
 import { Logger } from '@nestjs/common';
+import { productVariantCreate } from 'src/types/graphql/product';
 import {
   graphqlCall,
   graphqlExceptionHandler,
 } from 'src/utils/graphql/handler';
 import { createProductVariantMutation } from '../mutations/productVariant/create';
+import { updateProductVariantPricingMutation } from '../mutations/productVariant/update';
+
+//  <-->  Create  <-->
 
 export const createProductVariantHandler = async (
   productVariantData,
   productId,
-): Promise<object> => {
+): Promise<string | object> => {
   try {
-    const createProductVariant: object = await graphqlCall(
+    const createProductVariant: productVariantCreate = await graphqlCall(
       createProductVariantMutation(productVariantData, productId),
     );
     Logger.verbose('Product variant created', createProductVariant);
-    return { ...createProductVariant };
+
+    const productVariantId =
+      createProductVariant.productVariantCreate?.productVariant?.id;
+
+    return productVariantId;
+  } catch (err) {
+    return graphqlExceptionHandler(err);
+  }
+};
+
+//  <-->  Update  <-->
+
+export const updateProductVariantPricingHandler = async (
+  productVariantId,
+  priceAmount,
+): Promise<object> => {
+  try {
+    console.log(productVariantId, ' variant id');
+    const updateProductVariantPricing: object = await graphqlCall(
+      updateProductVariantPricingMutation(productVariantId, priceAmount),
+    );
+    Logger.log('Product variant price updated', updateProductVariantPricing);
+    return { ...updateProductVariantPricing };
   } catch (err) {
     return graphqlExceptionHandler(err);
   }

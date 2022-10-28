@@ -5,7 +5,7 @@ export const productIdQuery = (sourceId: string): string => {
   select
   destination_id
   from cdc.product_id_mapping_table
-  where source_id = ${sourceId}
+  where source_id = '${sourceId}'
 `;
 };
 
@@ -28,7 +28,7 @@ export const insertProductIdQuery = (
   return `
   INSERT INTO cdc.product_id_mapping_table
   (source_id, destination_id)
-  VALUES(${sourceId}, '${destinationId}');
+  VALUES('${sourceId}', '${destinationId}');
 `;
 };
 
@@ -37,6 +37,6 @@ export const insertProductIdQuery = (
 export const deleteProductIdQuery = (sourceId: string): string => {
   return `
   DELETE FROM cdc.product_id_mapping_table
-  WHERE source_id=${sourceId};
+  WHERE source_id='${sourceId}';
 `;
 };

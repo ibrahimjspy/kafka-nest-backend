@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable prettier/prettier */
 import { gql } from 'graphql-request';
+import { productTransformed } from 'src/types/transformers/product';
 
-export const updateProductMutation = (productData, destinationId) => {
+export const updateProductMutation = (productData: productTransformed, destinationId) => {
   const { id, name, description } = productData;
   return gql`
     mutation{
@@ -11,7 +12,6 @@ export const updateProductMutation = (productData, destinationId) => {
         input:{
         name:"${name}"
         description:${JSON.stringify(description)}
-        seo:{title:"seo title",description:"demo description"},
         rating:4
       }){
     product{

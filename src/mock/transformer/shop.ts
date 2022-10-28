@@ -1,4 +1,4 @@
-import { shopDto, shopTransformed } from 'src/types/shop';
+import { shopDto, shopTransformed } from 'src/types/transformers/shop';
 
 export const shopCdcMock: shopDto = {
   id: 10045,

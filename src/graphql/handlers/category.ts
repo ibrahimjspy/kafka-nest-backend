@@ -2,7 +2,7 @@ import { Logger } from '@nestjs/common';
 import {
   masterCategoryTransformed,
   subCategoryTransformed,
-} from 'src/types/category';
+} from 'src/types/transformers/category';
 import {
   graphqlCall,
   graphqlExceptionHandler,

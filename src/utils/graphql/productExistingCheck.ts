@@ -1,5 +1,4 @@
 import { fetchProductId } from 'src/postgres/handlers/product';
-import { productExistingInterface } from 'src/types/product';
 
 /**
  * This function checks whether given source product ID exists against Destination if so
@@ -7,7 +6,7 @@ import { productExistingInterface } from 'src/types/product';
  * @params cdc debezium payload
  */
 export const productExistenceCheckHandler = async (changeData) => {
-  let productIdResponse: productExistingInterface = {
+  let productIdResponse = {
     exists: false,
     destinationId: '',
   };
@@ -26,7 +25,7 @@ export const productExistenceCheckHandler = async (changeData) => {
  */
 export const productIdResponseCheckValidation = (response) => {
   const productDestinationId: string = response;
-  let objectResponse: productExistingInterface = {
+  let objectResponse = {
     exists: false,
     destinationId: '',
   };

@@ -8,6 +8,15 @@ export interface masterCategoryDto {
   seo_title: string;
 }
 
+export interface masterCategoryTransformed {
+  id?: string;
+  name?: string;
+  description?: string;
+  url?: string;
+  seo_description?: string;
+  seo_title?: string;
+}
+
 export interface subCategoryDto {
   id: number;
   TBStyleNo_OS_Category_Sub_ID: string;
@@ -17,15 +26,6 @@ export interface subCategoryDto {
   url: any;
   seo_description: string;
   seo_title: string;
-}
-
-export interface masterCategoryTransformed {
-  id?: string;
-  name?: string;
-  description?: string;
-  url?: string;
-  seo_description?: string;
-  seo_title?: string;
 }
 
 export interface subCategoryTransformed {

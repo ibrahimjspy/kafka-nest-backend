@@ -20,8 +20,9 @@ import {
   masterCategoryTransformed,
   subCategoryDto,
   subCategoryTransformed,
-} from 'src/types/category';
+} from 'src/types/transformers/category';
 import { TransformerService } from '../../transformer/Transformer.service';
+
 /**
  *  Injectable class handling category and its relating tables CDC
  *  @Injected transformation class for CDC payload validations and transformations
