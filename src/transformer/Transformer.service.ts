@@ -66,9 +66,7 @@ export class TransformerService {
    * @returns media array ready to be mapped against Api media create api
    */
   public productMediaTransformer(mediaObject) {
-    return this.productTransformerService.productMediaTransformerMethod(
-      mediaObject,
-    );
+    return this.productTransformerService.mediaTransformerMethod(mediaObject);
   }
   /**
    * color and size transformer for variant mapping
