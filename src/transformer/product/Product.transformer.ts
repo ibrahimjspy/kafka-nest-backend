@@ -1,5 +1,9 @@
 import { Injectable, Param } from '@nestjs/common';
 import { productDto, productTransformed } from 'src/types/transformers/product';
+import {
+  fetchMasterCategoryId,
+  fetchSubCategoryId,
+} from 'src/postgres/handlers/category';
 /**
  *  Injectable class handling product transformation
  *  @Injectable in app scope or in kafka connection to reach kafka messages
@@ -18,14 +22,24 @@ export class ProductTransformerService {
    */
   public async productGeneralTransformerMethod(@Param() object: productDto) {
     const productObject: productTransformed = {};
-    const { TBItem_ID, nStyleName, nItemDescription } = object;
+    const {
+      TBItem_ID,
+      nStyleName,
+      nItemDescription,
+      TBStyleNo_OS_Category_Master_ID,
+      TBStyleNo_OS_Category_Sub_ID,
+    } = object;
 
     productObject['id'] = TBItem_ID.toString();
     productObject['name'] = nStyleName.toString();
     productObject['description'] = await this.descriptionTransformer(
       nItemDescription,
     );
-    productObject['media'] = await this.productMediaTransformerMethod(object);
+    productObject['media'] = await this.mediaTransformerMethod(object);
+    productObject['categoryId'] = await this.categoryIdTransformer(
+      TBStyleNo_OS_Category_Master_ID,
+      TBStyleNo_OS_Category_Sub_ID,
+    );
 
     return productObject;
   }
@@ -46,9 +60,7 @@ export class ProductTransformerService {
    * @params object to be transformed and mapped
    * @returns media composite array
    */
-  public async productMediaTransformerMethod(
-    @Param() productObject: productDto,
-  ) {
+  public async mediaTransformerMethod(@Param() productObject: productDto) {
     return [
       productObject.Picture1,
       productObject.Picture2,
@@ -60,6 +72,36 @@ export class ProductTransformerService {
       productObject.Picture8,
       productObject.Picture9,
     ];
+  }
+
+  /**
+   * This function returns variants based on color and its sizes
+   * @params masterCategoryId
+   * @params subCategoryId
+   * @returns category id for destination
+   */
+  public async categoryIdTransformer(
+    sourceMasterCategoryId: string,
+    sourceSubCategoryId: string,
+  ) {
+    const DEFAULT_CATEGORY_ID =
+      process.env.DEFAULT_CATEGORY_ID || 'Q2F0ZWdvcnk6MQ==';
+
+    const destinationSubCategoryId: string = await fetchSubCategoryId(
+      sourceSubCategoryId,
+    );
+    if (destinationSubCategoryId) {
+      return destinationSubCategoryId;
+    }
+
+    const destinationMasterCategoryId: string = await fetchMasterCategoryId(
+      sourceMasterCategoryId,
+    );
+    if (destinationMasterCategoryId) {
+      return destinationMasterCategoryId;
+    }
+
+    return DEFAULT_CATEGORY_ID;
   }
 
   /**

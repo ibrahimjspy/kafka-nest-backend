@@ -12,6 +12,8 @@ export interface productDto {
   Picture7?: string;
   Picture8?: string;
   Picture9?: string;
+  TBStyleNo_OS_Category_Master_ID?: string;
+  TBStyleNo_OS_Category_Sub_ID?: string;
 }
 
 export interface productTransformed {
@@ -19,6 +21,7 @@ export interface productTransformed {
   name?: string;
   description?: string;
   media?: string[];
+  categoryId?: string;
 }
 
 export interface colorSelectDto {
