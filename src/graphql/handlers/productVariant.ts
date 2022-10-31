@@ -12,7 +12,7 @@ import { updateProductVariantPricingMutation } from '../mutations/productVariant
 export const createProductVariantHandler = async (
   productVariantData,
   productId,
-): Promise<string | object> => {
+): Promise<string> => {
   try {
     const createProductVariant: productVariantCreate = await graphqlCall(
       createProductVariantMutation(productVariantData, productId),
@@ -21,10 +21,9 @@ export const createProductVariantHandler = async (
 
     const productVariantId =
       createProductVariant.productVariantCreate?.productVariant?.id;
-
     return productVariantId;
   } catch (err) {
-    return graphqlExceptionHandler(err);
+    Logger.warn('product variant call failed', err);
   }
 };
 

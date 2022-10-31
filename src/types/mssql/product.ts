@@ -1,13 +1,14 @@
-export interface productVariantDatabase {
+export interface productVariantInterface {
   price?: {
     price: number;
     regular_price: number;
   };
   sizes?: string[];
   color_list?: any;
+  pack_name?: string;
 }
 
-export interface productDatabaseView {
+export interface productDatabaseViewInterface {
   product_id?: string;
   group_id?: number;
   style_name?: string;

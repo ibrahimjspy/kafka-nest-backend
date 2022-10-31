@@ -11,8 +11,8 @@ export const createProductVariantMutation = (productVariantData, productId) => {
       productVariantCreate(
         input: {
           attributes: [
-            { id: "${COLOR_ATTRIBUTE_ID}", values: ["${color}"] }
-            { id: "${SIZE_ATTRIBUTE_ID}", values: ["${size}"] }
+            { id: "${COLOR_ATTRIBUTE_ID}", plainText:"${color}" }
+            { id: "${SIZE_ATTRIBUTE_ID}", plainText:"${size}" }
           ]
           name: "product_variant"
           product: "${productId}"

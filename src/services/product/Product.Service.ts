@@ -16,6 +16,8 @@ import { getProductDetailsFromDb } from 'src/mssql/product.fetch';
 import { TransformerService } from '../../transformer/Transformer.service';
 import { ProductMediaService } from './media/Product.Media.Service';
 import { ProductVariantService } from './variant/Product.Variant.Service';
+import { productVariantInterface } from 'src/types/mssql/product';
+
 /**
  *  Injectable class handling product variant and its relating tables CDC
  *  @Injected transformation class for CDC payload validations and transformations
@@ -96,15 +98,17 @@ export class ProductService {
     productId: string,
   ) {
     // fetches product variant information
-    const productVariantData = await getProductDetailsFromDb(productData.id);
-
-    // creating product variant against color and sizes , assigns product variant price
+    const productVariantData: productVariantInterface =
+      await getProductDetailsFromDb(productData.id);
+    // creating product variant and its bundles against color and sizes , assigns product variant price
     return await this.productVariantService.productVariantAssign(
       productVariantData,
       productId,
+      productData.shopId,
     );
   }
 
+  // source ID = 1234 =>  destination UUID = QXR0cmlidXRlOjE4 => serialId = 234
   public async getProductSerialId(uuid: string) {
     // fetches serialId against uuid <productId>
     const productSlug = await getProductSlugById(uuid);

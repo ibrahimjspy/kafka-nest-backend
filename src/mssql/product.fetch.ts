@@ -2,13 +2,16 @@ import { Logger } from '@nestjs/common';
 import { connect, Request } from 'mssql';
 import delay from 'delay';
 import { config } from '../../mssql-config';
-import { productDatabaseView } from 'src/types/mssql/product';
+import {
+  productDatabaseViewInterface,
+  productVariantInterface,
+} from 'src/types/mssql/product';
 import { TBStyleSearchUniqueQuery } from './product.query';
 
 export const getProductDetailsFromDb = async (
   productId: string,
   wait?: number,
-) => {
+): Promise<productVariantInterface> => {
   let data = {};
   const sqlTransaction = delay(wait || 10000, { value: 'Done' }); //setting up sql transaction
 
@@ -39,9 +42,9 @@ export const getProductDetailsFromDb = async (
   return data;
 };
 
-const productVariantObjectTransform = (recordset) => {
+const productVariantObjectTransform = (recordset): productVariantInterface => {
   const productVariantData = {};
-  const viewResponse: productDatabaseView = recordset.recordset[0];
+  const viewResponse: productDatabaseViewInterface = recordset.recordset[0];
   const { price, regular_price, item_sizes } = viewResponse;
   if (price && item_sizes) {
     productVariantData['price'] = {
@@ -50,6 +53,7 @@ const productVariantObjectTransform = (recordset) => {
     };
     productVariantData['sizes'] = item_sizes?.split('-');
     productVariantData['color_list'] = ['Red', 'Green'];
+    productVariantData['pack_name'] = viewResponse.pack_name;
   }
   return productVariantData;
 };
