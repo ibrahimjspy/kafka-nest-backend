@@ -45,14 +45,16 @@ export const getProductDetailsFromDb = async (
 const productVariantObjectTransform = (recordset): productVariantInterface => {
   const productVariantData = {};
   const viewResponse: productDatabaseViewInterface = recordset.recordset[0];
-  const { price, regular_price, item_sizes } = viewResponse;
+  const { price, regular_price, item_sizes, color_list } = viewResponse;
   if (price && item_sizes) {
     productVariantData['price'] = {
       price: price,
       regular_price: regular_price,
     };
     productVariantData['sizes'] = item_sizes?.split('-');
-    productVariantData['color_list'] = ['Red', 'Green'];
+    productVariantData['color_list'] = color_list.split(',')
+      ? color_list.split(',')
+      : [];
     productVariantData['pack_name'] = viewResponse.pack_name;
   }
   return productVariantData;

@@ -5,6 +5,7 @@ import { CategoryService } from './services/category/Category.Service';
 import { ProductService } from './services/product/Product.Service';
 import { ProductVariantService } from './services/product/variant/Product.Variant.Service';
 import { ShopService } from './services/shop/Shop.Service';
+import { PromisePool } from '@supercharge/promise-pool';
 @Injectable()
 export class AppService {
   constructor(
@@ -70,17 +71,39 @@ export class AppService {
     }
   }
 
-  //kafka streams api method
-  async addSeoStreamService(kafkaMessage) {
-    Logger.log(kafkaMessage);
-    await this.producerService.produce({
-      topic: 'seo_details',
-      messages: [
-        {
-          value: 'test',
-        },
-      ],
-    });
-    return 'seo stream method called';
+  // big data import methods dividing data in batches and running them in pools
+  async productBulkCreate(bulkArray, batchSize = 3) {
+    // this.productService.handleProductCDC(bulkArray);
+    try {
+      const { results } = await PromisePool.withConcurrency(2)
+        .for(bulkArray)
+        .withConcurrency(batchSize)
+        .process(async (data: any) => {
+          const create = await this.productService.handleProductCDC(data);
+
+          return create;
+        });
+      Logger.verbose('bulk created');
+      return results;
+    } catch (error) {
+      Logger.warn(error);
+    }
+  }
+  async ShopBulkCreate(bulkArray, batchSize = 3) {
+    // this.productService.handleProductCDC(bulkArray);
+    try {
+      const { results } = await PromisePool.withConcurrency(2)
+        .for(bulkArray)
+        .withConcurrency(batchSize)
+        .process(async (data: any) => {
+          const create = await this.productService.handleProductCDC(data);
+
+          return create;
+        });
+      Logger.verbose('bulk created');
+      return results;
+    } catch (error) {
+      Logger.warn(error);
+    }
   }
 }

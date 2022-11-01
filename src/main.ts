@@ -14,13 +14,12 @@ async function bootstrap() {
         client: {
           brokers: [process.env.KAFKA_BROKER],
         },
-        // consumer: {
-        //   groupId: 'my-kafka-consumer',
-        // },
+        consumer: {
+          groupId: process.env.KAFKA_CONSUMER_GROUP || 'my-kafka-consumer1',
+        },
       },
     },
   );
-  // await client.connect();
   // <!.> connecting to kafka server as a consumer
   app
     .listen()

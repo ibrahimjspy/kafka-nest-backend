@@ -43,7 +43,7 @@ export class ProductVariantService {
     const bundlesObject: any = {};
     if (color_list) {
       await Promise.all(
-        color_list?.map(async (color) => {
+        color_list.map(async (color) => {
           bundlesObject[color] = [];
           const variants =
             await this.transformerClass.productVariantTransformer(color, sizes);
@@ -70,9 +70,8 @@ export class ProductVariantService {
           );
         }),
       );
+      return await this.createBundles(color_list, bundlesObject, shopId);
     }
-    console.log(bundlesObject);
-    return await this.createBundles(color_list, bundlesObject, shopId);
   }
 
   private async createBundles(color_list, bundlesObject, shopId) {

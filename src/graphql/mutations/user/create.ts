@@ -1,5 +1,7 @@
 import { gql } from 'graphql-request';
 import { shopTransformed } from 'src/types/transformers/shop';
+import * as dotenv from 'dotenv';
+dotenv.config();
 
 export const createUserMutation = (shopData: shopTransformed) => {
   const { name, email, url } = shopData;
@@ -30,7 +32,7 @@ export const createUserMutation = (shopData: shopTransformed) => {
 export const createSessionToken = () => {
   return gql`
     mutation {
-      tokenCreate(email: "ibrahim@aiworks.ai", password: "123") {
+      tokenCreate(email: "${process.env.DESTINATION_SUPERUSER_EMAIL}", password: "${process.env.DESTINATION_SUPERUSER_PASSWORD}") {
         token
       }
     }

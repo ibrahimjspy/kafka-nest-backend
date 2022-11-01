@@ -23,9 +23,11 @@ export const fetchProductSerialIdBySlug = async (
 //                       <insert>
 
 export const insertProductId = async (sourceId: string, destinationId) => {
-  return await postgresFetchIdCall(
-    insertProductIdQuery(sourceId, destinationId),
-  );
+  if (destinationId) {
+    return await postgresFetchIdCall(
+      insertProductIdQuery(sourceId, destinationId),
+    );
+  }
 };
 
 //                       <delete>

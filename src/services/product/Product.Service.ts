@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import {
   createProductHandler,
   deleteProductHandler,
@@ -76,14 +76,15 @@ export class ProductService {
 
     // creates product variants and its media
 
-    const productMediaCreate = this.createProductMedia(
+    const productMediaCreate = await this.createProductMedia(
       productId,
       productData.media,
     );
-    const productVariantsCreate = this.createProductVariants(
+    const productVariantsCreate = await this.createProductVariants(
       productData,
       productId,
     );
+    Logger.verbose('product flow completed');
 
     return {
       productId,
