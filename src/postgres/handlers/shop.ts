@@ -1,5 +1,6 @@
 //                       <fetch>
 
+import { Logger } from '@nestjs/common';
 import { postgresDeleteCall } from 'src/utils/postgres/delete';
 import { postgresFetchIdCall } from 'src/utils/postgres/fetch';
 import { postgresInsertCall } from 'src/utils/postgres/insert';
@@ -16,7 +17,15 @@ export const fetchShopId = async (sourceId: string): Promise<string> => {
 //                       <insert>
 
 export const insertShopId = async (sourceId: string, destinationId) => {
-  return await postgresInsertCall(insertShopIdQuery(sourceId, destinationId));
+  try {
+    if (destinationId.createShop.createMarketplaceShop.id) {
+      return await postgresInsertCall(
+        insertShopIdQuery(sourceId, destinationId),
+      );
+    }
+  } catch (error) {
+    Logger.log('error');
+  }
 };
 
 //                       <delete>

@@ -54,6 +54,7 @@ export class ProductVariantService {
               const productVariant = await createProductVariantHandler(
                 variant,
                 productId,
+                shopId,
               );
               if (productVariant) {
                 // assign variant pricing

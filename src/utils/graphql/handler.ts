@@ -10,6 +10,7 @@ type GraphqlCall = (Query: string) => Promise<object>;
  * @returns an object with data or graphql error
  */
 export const graphqlCall: GraphqlCall = async (Query: string): Promise<any> => {
+  console.log(Query);
   let data = {};
   const graphQLClient = new GraphQLClient(
     process.env.DESTINATION_GRAPHQL_ENDPOINT,
@@ -19,15 +20,9 @@ export const graphqlCall: GraphqlCall = async (Query: string): Promise<any> => {
       },
     },
   );
-  await graphQLClient
-    .request(Query)
-    .then((res) => {
-      data = res;
-    })
-    .catch((error) => {
-      Logger.error(error);
-      return graphqlExceptionHandler(error);
-    });
+  await graphQLClient.request(Query).then((res) => {
+    data = res;
+  });
   return data;
 };
 
@@ -43,7 +38,7 @@ export const graphqlCallByToken = async (
   Token: string,
 ): Promise<any> => {
   let data = {};
-  // console.dir(Query);
+  console.dir(Query);
   const graphQLClient = new GraphQLClient(
     process.env.DESTINATION_SALEOR_ENDPOINT,
     {

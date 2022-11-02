@@ -46,6 +46,6 @@ export const deleteProductIdByDestinationIdQuery = (
 ): string => {
   return `
   DELETE FROM cdc.product_id_mapping_table
-  WHERE destinationId='${destinationId}';
+  WHERE destination_id='${destinationId}';
 `;
 };

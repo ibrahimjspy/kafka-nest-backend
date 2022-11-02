@@ -74,16 +74,13 @@ export class AppService {
   }
 
   // big data import methods dividing data in batches and running them in pools
-  async productBulkCreate(bulkArray, batchSize = 3) {
+  async productBulkCreate(bulkArray, batchSize = 6) {
     // this.productService.handleProductCDC(bulkArray);
     try {
-      const { results } = await PromisePool.withConcurrency(2)
+      const { results } = await PromisePool.withConcurrency(batchSize)
         .for(bulkArray)
-        .withConcurrency(batchSize)
         .process(async (data: any) => {
-          const create = await this.productService.handleProductCDCDelete(
-            data.TBItem_ID,
-          );
+          const create = await this.productService.handleProductCDC(data);
           return create;
         });
       Logger.verbose('bulk created');
@@ -92,16 +89,13 @@ export class AppService {
       Logger.warn(error);
     }
   }
-  async ShopBulkCreate(bulkArray, batchSize = 3) {
+  async ShopBulkCreate(bulkArray, batchSize = 40) {
     // this.productService.handleProductCDC(bulkArray);
     try {
-      const { results } = await PromisePool.withConcurrency(2)
-        .for(bulkArray)
+      const { results } = await PromisePool.for(bulkArray)
         .withConcurrency(batchSize)
         .process(async (data: any) => {
-          const create = await this.productService.handleProductCDCDelete(
-            data.TBItem_ID,
-          );
+          const create = await this.shopService.handleShopCDC(data);
 
           return create;
         });

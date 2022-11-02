@@ -7,12 +7,14 @@ import {
 } from 'src/utils/graphql/handler';
 import { createProductVariantMutation } from '../mutations/productVariant/create';
 import { updateProductVariantPricingMutation } from '../mutations/productVariant/update';
+import { addProductVariantToShop } from '../mutations/shop/create';
 
 //  <-->  Create  <-->
 
 export const createProductVariantHandler = async (
   productVariantData,
   productId,
+  shopId,
 ): Promise<string> => {
   try {
     const createProductVariant: productVariantCreate = await graphqlCall(
@@ -22,10 +24,15 @@ export const createProductVariantHandler = async (
 
     const productVariantId =
       createProductVariant.productVariantCreate?.productVariant?.id;
+    const addVariantToShop = await graphqlCall(
+      addProductVariantToShop(productVariantId, shopId),
+    );
+    Logger.verbose('Product variant added to shop', addVariantToShop);
+
     return productVariantId;
   } catch (err) {
     await productDeleteById(productId);
-    Logger.warn('product variant call failed', err);
+    Logger.warn('product variant call failed', graphqlExceptionHandler(err));
   }
 };
 

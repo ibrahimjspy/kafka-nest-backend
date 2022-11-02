@@ -11,7 +11,7 @@ export const createUserMutation = (shopData: shopTransformed) => {
           email: "${email}"
           isActive: true
           addGroups: ["fd"]
-          redirectUrl: "${url}"
+          # redirectUrl: "${url}"
         }
       ) {
         user {
@@ -23,6 +23,21 @@ export const createUserMutation = (shopData: shopTransformed) => {
           field
         }
       }
+    }
+  `;
+};
+
+export const addProductVariantToShop = (variantId, shopId) => {
+  return gql`
+    mutation {
+      addProductVariantToShop(
+        input: {
+          productVariantId: "${variantId}"
+          shopId: "${shopId}"
+        }
+      ) {
+         name
+       }
     }
   `;
 };
@@ -59,7 +74,7 @@ export const createShopMutation = (
           storePolicy: "${storePolicy}"
           email: "${email}"
           url: "${url}"
-          description: "${description}"
+          description: "${description.slice(0, 50)}"
         }
       ) {
         id
