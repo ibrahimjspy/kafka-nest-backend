@@ -16,6 +16,7 @@ export class AppService {
     private readonly productVariantService: ProductVariantService,
   ) {}
 
+  // ChangeDataCapture methods
   handleProductCDC(kafkaMessage) {
     try {
       return kafkaMessage.op == 'd'
@@ -74,8 +75,7 @@ export class AppService {
   }
 
   // big data import methods dividing data in batches and running them in pools
-  async productBulkCreate(bulkArray, batchSize = 6) {
-    // this.productService.handleProductCDC(bulkArray);
+  async productBulkCreate(bulkArray, batchSize = 2) {
     try {
       const { results } = await PromisePool.withConcurrency(batchSize)
         .for(bulkArray)
@@ -83,14 +83,14 @@ export class AppService {
           const create = await this.productService.handleProductCDC(data);
           return create;
         });
-      Logger.verbose('bulk created');
+      Logger.verbose(`${bulkArray.length} products created`);
       return results;
     } catch (error) {
       Logger.warn(error);
     }
   }
+
   async ShopBulkCreate(bulkArray, batchSize = 40) {
-    // this.productService.handleProductCDC(bulkArray);
     try {
       const { results } = await PromisePool.for(bulkArray)
         .withConcurrency(batchSize)
@@ -99,7 +99,7 @@ export class AppService {
 
           return create;
         });
-      Logger.verbose('bulk created');
+      Logger.verbose(`${bulkArray.length} shops created`);
       return results;
     } catch (error) {
       Logger.warn(error);

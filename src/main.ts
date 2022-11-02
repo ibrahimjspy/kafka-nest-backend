@@ -6,26 +6,24 @@ import { AppModule } from './app.module';
 // import client from './postgres/config';
 
 async function bootstrap() {
-  const app = await NestFactory.createMicroservice<MicroserviceOptions>(
-    AppModule,
-    {
-      transport: Transport.KAFKA,
-      options: {
-        client: {
-          brokers: [process.env.KAFKA_BROKER],
-        },
+  const app = await NestFactory.create(AppModule);
+  app.connectMicroservice<MicroserviceOptions>({
+    transport: Transport.KAFKA,
+    options: {
+      client: {
+        brokers: [process.env.KAFKA_BROKER],
+      },
 
-        consumer: {
-          // sessionTimeout: 200007,
+      consumer: {
+        // sessionTimeout: 200007,
 
-          groupId: process.env.KAFKA_CONSUMER_GROUP || 'my-kafka-consumer2',
-        },
+        groupId: process.env.KAFKA_CONSUMER_GROUP || 'my-kafka-consumer3',
       },
     },
-  );
-  // <!.> connecting to kafka server as a consumer
+  });
+  await app.startAllMicroservices();
   app
-    .listen()
+    .listen(process.env.SERVER_PORT || 6003)
     .then(() => {
       Logger.verbose('kafka client connected');
     })

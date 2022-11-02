@@ -71,7 +71,7 @@ export const createShopMutation = (
           minOrder: 200
           about: "shop about"
           returnPolicy: "${returnPolicy}"
-          storePolicy: "${storePolicy}"
+          # storePolicy: "${storePolicy}"
           email: "${email}"
           url: "${url}"
           description: "${description.slice(0, 50)}"
