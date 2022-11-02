@@ -1,5 +1,6 @@
 import { Logger } from '@nestjs/common';
 import { productVariantCreate } from 'src/types/graphql/product';
+import { productDeleteById } from 'src/utils/core/productDelete';
 import {
   graphqlCall,
   graphqlExceptionHandler,
@@ -23,6 +24,7 @@ export const createProductVariantHandler = async (
       createProductVariant.productVariantCreate?.productVariant?.id;
     return productVariantId;
   } catch (err) {
+    await productDeleteById(productId);
     Logger.warn('product variant call failed', err);
   }
 };

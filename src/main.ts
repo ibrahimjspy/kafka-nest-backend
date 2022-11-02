@@ -14,8 +14,11 @@ async function bootstrap() {
         client: {
           brokers: [process.env.KAFKA_BROKER],
         },
+
         consumer: {
-          groupId: process.env.KAFKA_CONSUMER_GROUP || 'my-kafka-consumer1',
+          // sessionTimeout: 200007,
+
+          groupId: process.env.KAFKA_CONSUMER_GROUP || 'my-kafka-consumer2',
         },
       },
     },

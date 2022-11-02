@@ -2,6 +2,7 @@ import { postgresDeleteCall } from 'src/utils/postgres/delete';
 import { postgresFetchIdCall } from 'src/utils/postgres/fetch';
 
 import {
+  deleteProductIdByDestinationIdQuery,
   deleteProductIdQuery,
   insertProductIdQuery,
   productIdQuery,
@@ -34,4 +35,10 @@ export const insertProductId = async (sourceId: string, destinationId) => {
 
 export const deleteProductId = async (sourceId) => {
   return await postgresDeleteCall(deleteProductIdQuery(sourceId));
+};
+
+export const deleteProductByDestinationId = async (destinationId) => {
+  return await postgresDeleteCall(
+    deleteProductIdByDestinationIdQuery(destinationId),
+  );
 };

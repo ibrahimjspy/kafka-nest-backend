@@ -30,6 +30,7 @@ export const getProductDetailsFromDb = async (
           sqlTransaction.clear(); // aborting sql transaction
         }
         // send records as a response
+        console.log(recordset);
         if (recordset.recordset[0]) {
           data = productVariantObjectTransform(recordset);
           sqlTransaction.clear(); // aborting sql transaction
@@ -46,6 +47,7 @@ const productVariantObjectTransform = (recordset): productVariantInterface => {
   const productVariantData = {};
   const viewResponse: productDatabaseViewInterface = recordset.recordset[0];
   const { price, regular_price, item_sizes, color_list } = viewResponse;
+  console.log({ price, regular_price, item_sizes, color_list });
   if (price && item_sizes) {
     productVariantData['price'] = {
       price: price,

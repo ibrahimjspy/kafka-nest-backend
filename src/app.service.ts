@@ -19,7 +19,9 @@ export class AppService {
   handleProductCDC(kafkaMessage) {
     try {
       return kafkaMessage.op == 'd'
-        ? this.productService.handleProductCDCDelete(kafkaMessage.before)
+        ? this.productService.handleProductCDCDelete(
+            kafkaMessage.before.TBItem_ID,
+          )
         : this.productService.handleProductCDC(kafkaMessage.after);
     } catch (error) {
       Logger.log('product deleted');
@@ -79,8 +81,9 @@ export class AppService {
         .for(bulkArray)
         .withConcurrency(batchSize)
         .process(async (data: any) => {
-          const create = await this.productService.handleProductCDC(data);
-
+          const create = await this.productService.handleProductCDCDelete(
+            data.TBItem_ID,
+          );
           return create;
         });
       Logger.verbose('bulk created');
@@ -96,7 +99,9 @@ export class AppService {
         .for(bulkArray)
         .withConcurrency(batchSize)
         .process(async (data: any) => {
-          const create = await this.productService.handleProductCDC(data);
+          const create = await this.productService.handleProductCDCDelete(
+            data.TBItem_ID,
+          );
 
           return create;
         });

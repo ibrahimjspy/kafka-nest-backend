@@ -11,7 +11,7 @@ export const updateProductMutation = (productData: productTransformed, destinati
         id:"${destinationId}" 
         input:{
         name:"${name}"
-        # description:${JSON.stringify(description)}
+        description:${JSON.stringify(description)}
         rating:4
       }){
     product{

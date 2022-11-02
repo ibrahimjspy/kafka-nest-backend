@@ -51,8 +51,9 @@ export class ProductTransformerService {
    * @params string to be transformed
    */
   public async descriptionTransformer(@Param() description: string) {
-    if (description) {
-      return `{\"time\": 1662995227870, \"blocks\": [{\"id\": \"cqWmV3MIPH\", \"data\": {\"text\": \"${description}\"}, \"type\": \"paragraph\"}], \"version\": \"2.24.3\"}`;
+    const validString = description.replace(/[\r\n]+/g, ' ');
+    if (validString) {
+      return `{\"time\": 1662995227870, \"blocks\": [{\"id\": \"cqWmV3MIPH\", \"data\": {\"text\": \"${validString}\"}, \"type\": \"paragraph\"}], \"version\": \"2.24.3\"}`;
     }
     return `{\"time\": 1662995227870, \"blocks\": [{\"id\": \"cqWmV3MIPH\", \"data\": {\"text\": \"test product\"}, \"type\": \"paragraph\"}], \"version\": \"2.24.3\"}`;
   }

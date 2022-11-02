@@ -31,7 +31,8 @@ export class AppController {
   @MessagePattern('product_bulk_create') // topic name
   async productBulkCreate(@Payload() message) {
     const data = await getBulkProductsData();
-    await this.appService.productBulkCreate(data.slice(30, 70));
+    console.log(data.length);
+    await this.appService.productBulkCreate(data.slice(5, 15));
   }
   @MessagePattern('healthCheck') // topic name
   healthCheck() {

@@ -12,7 +12,7 @@ export const createProductMutation = (productData: productTransformed) => {
           productType: "UHJvZHVjdFR5cGU6Mg=="
           name: "${name}"
           category:"${categoryId}"
-          # description:${JSON.stringify(description)}
+          description:${JSON.stringify(description)}
           seo: { title: "seo title", description: "demo description" }
           rating: 4
         }
