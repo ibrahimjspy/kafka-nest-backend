@@ -6,7 +6,7 @@ import {
   productDatabaseViewInterface,
   productVariantInterface,
 } from 'src/types/mssql/product';
-import { TBStyleSearchUniqueQuery } from './product.query';
+import { TBStyleSearchUniqueQuery } from './query';
 
 export const getProductDetailsFromDb = async (
   productId: string,

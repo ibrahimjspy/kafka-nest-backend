@@ -3,13 +3,14 @@ import { productTransformed } from 'src/types/transformers/product';
 
 export const createProductMutation = (productData: productTransformed) => {
   // parsing product data;
-  // const testProductType = "UHJvZHVjdFR5cGU6MQ=="
+  const DEFAULT_PRODUCT_TYPE =
+    process.env.DEFAULT_PRODUCT_TYPE || 'UHJvZHVjdFR5cGU6Mg==';
   const { name, description, categoryId } = productData;
   return gql`
     mutation {
       productCreate(
         input: {
-          productType: "UHJvZHVjdFR5cGU6Mg=="
+          productType: "${DEFAULT_PRODUCT_TYPE}"
           name: "${name}"
           category:"${categoryId}"
           description:${JSON.stringify(description)}

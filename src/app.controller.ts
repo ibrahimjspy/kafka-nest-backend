@@ -2,8 +2,7 @@
 import { Controller, Get } from '@nestjs/common';
 import { MessagePattern, Payload } from '@nestjs/microservices';
 import { AppService } from './app.service';
-import { getBulkProductsData } from './mssql/import/tbStyleNo.fetch';
-import { getBulkVendors } from './mssql/import/tbVendor.fetch';
+import { fetchBulkProductsData } from './mssql/import';
 
 @Controller()
 export class AppController {
@@ -31,8 +30,8 @@ export class AppController {
   }
   @MessagePattern('product_bulk_create') // topic name
   async productBulkCreate(@Payload() message) {
-    const data = await getBulkVendors();
-    await this.appService.productBulkCreate(data.slice(90, 100));
+    const data = await fetchBulkProductsData();
+    await this.appService.productBulkCreate(data);
   }
   @MessagePattern('healthCheck') // topic name
   healthCheck() {

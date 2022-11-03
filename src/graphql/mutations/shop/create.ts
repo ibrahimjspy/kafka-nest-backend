@@ -60,13 +60,14 @@ export const createShopMutation = (
 ) => {
   const { name, description, storePolicy, email, madeIn, returnPolicy, url } =
     shopData;
+  const MANAGER_TYPE = process.env.DEFAULT_MANAGER_TYPE || '1';
   return gql`
     mutation {
       createMarketplaceShop(
         input: {
           name: "${name}"
           user: "${userId}"
-          managerType: "1"
+          managerType: "${MANAGER_TYPE}"
           madeIn: "${madeIn}"
           minOrder: 200
           about: "shop about"

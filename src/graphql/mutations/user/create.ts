@@ -5,6 +5,7 @@ dotenv.config();
 
 export const createUserMutation = (shopData: shopTransformed) => {
   const { name, email, url } = shopData;
+  const GROUP_ID = process.env.DEFAULT_GROUP_ID || 'R3JvdXA6MQ==';
   return gql`
       mutation {
         staffCreate(
@@ -12,7 +13,7 @@ export const createUserMutation = (shopData: shopTransformed) => {
             firstName: "${name}"
             email: "${email}"
             isActive: true
-            addGroups: ["R3JvdXA6MQ=="]
+            addGroups: ["${GROUP_ID}"]
             # redirectUrl: "${url}"
           }
         ) {

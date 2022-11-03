@@ -3,8 +3,10 @@ import { gql } from 'graphql-request';
 export const createProductVariantMutation = (productVariantData, productId) => {
   // parsing product variant data;
   const { color, size } = productVariantData;
-  const COLOR_ATTRIBUTE_ID = 'QXR0cmlidXRlOjE3';
-  const SIZE_ATTRIBUTE_ID = 'QXR0cmlidXRlOjE4';
+  const COLOR_ATTRIBUTE_ID =
+    process.env.DEFAULT_COLOR_ATTRIBUTE_ID || 'QXR0cmlidXRlOjE3';
+  const SIZE_ATTRIBUTE_ID =
+    process.env.DEFAULT_SIZE_ATTRIBUTE_ID || 'QXR0cmlidXRlOjE4';
 
   return gql`
     mutation {

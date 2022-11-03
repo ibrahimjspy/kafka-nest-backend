@@ -4,7 +4,7 @@ export const updateProductVariantPricingMutation = (
   productVariantId,
   priceAmount,
 ) => {
-  const DEFAULT_CHANNEL_ID = 'Q2hhbm5lbDox';
+  const DEFAULT_CHANNEL_ID = process.env.DEFAULT_CHANNEL_ID || 'Q2hhbm5lbDox';
   return gql`
       mutation {
         productVariantChannelListingUpdate(

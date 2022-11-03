@@ -112,7 +112,7 @@ export class ProductTransformerService {
    * @params TBVendor_ID as input
    */
   public async shopIdTransformer(vendorId: string) {
-    const DEFAULT_SHOP_ID = process.env.DEFAULT_CATEGORY_ID || '1';
+    const DEFAULT_SHOP_ID = process.env.DEFAULT_SHOP_ID || '1';
 
     const destinationShopId = await fetchShopId(vendorId);
     if (destinationShopId) {

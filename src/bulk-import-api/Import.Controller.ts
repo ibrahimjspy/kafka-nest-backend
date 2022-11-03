@@ -1,7 +1,6 @@
 import { Controller, Get } from '@nestjs/common';
 import { AppService } from 'src/app.service';
-import { getBulkProductsData } from 'src/mssql/import/tbStyleNo.fetch';
-import { getBulkVendors } from 'src/mssql/import/tbVendor.fetch';
+import { fetchBulkProductsData, fetchBulkVendors } from 'src/mssql/import';
 
 // endpoints to trigger data bulk imports
 @Controller()
@@ -14,14 +13,14 @@ export class BulkImportController {
 
   @Get('products')
   async createProducts() {
-    const data = await getBulkProductsData();
+    const data: any = await fetchBulkProductsData();
     await this.appService.productBulkCreate(data.slice(891, 892));
     return `${data.length} products created`;
   }
 
   @Get('shops')
   async createShops() {
-    const data = await getBulkVendors();
+    const data: any = await fetchBulkVendors();
     await this.appService.ShopBulkCreate(data);
     return `${data.length} shops created`;
   }
