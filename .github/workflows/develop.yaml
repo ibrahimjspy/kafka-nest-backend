@@ -15,8 +15,8 @@ jobs:
 steps:
     - uses: actions/checkout@v2
     - name: Use Node.js ${{ matrix.node-version }}
-    uses: actions/setup-node@v2
-    with:
+    - uses: actions/setup-node@v2
+    - with:
       node-version: ${{ matrix.node-version }}
       cache: 'npm'
     - run: npm ci
@@ -25,14 +25,14 @@ steps:
     - run: npm run format
 
           # Delete old .env file
-    - name: delete old .env
-      run: rm -rf .env
+  #   - name: delete old .env
+  #     run: rm -rf .env
 
-    # Create and Update .env file values
-    - name: Create .env file
-      run: | 
-        (echo "DESTINATION_SALEOR_ENDPOINT=${{ secrets.DESTINATION_SALEOR_ENDPOINT }}") >> .env
-  deploy: ## <-- this is the new stuff
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
+  #   # Create and Update .env file values
+  #   - name: Create .env file
+  #     run: | 
+  #       (echo "DESTINATION_SALEOR_ENDPOINT=${{ secrets.DESTINATION_SALEOR_ENDPOINT }}") >> .env
+  # deploy: ## <-- this is the new stuff
+  #   needs: build
+  #   runs-on: ubuntu-latest
+  #   steps:
