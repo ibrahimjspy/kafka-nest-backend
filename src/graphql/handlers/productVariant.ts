@@ -20,7 +20,7 @@ export const createProductVariantHandler = async (
 ): Promise<string> => {
   try {
     if (retry !== 0) {
-      Logger.warn(`I am starting ${retry} to retry the job`, {
+      Logger.warn(`${retry} in product variant retry call`, {
         productVariantData,
       });
     }
@@ -85,8 +85,8 @@ export const addProductVariantToShopHandler = async (
 //  <-->  Update  <-->
 
 export const updateProductVariantPricingHandler = async (
-  productVariantId,
-  priceAmount,
+  productVariantId: string,
+  priceAmount: number,
   retry = 0,
 ): Promise<object> => {
   try {

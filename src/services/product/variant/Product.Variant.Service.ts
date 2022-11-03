@@ -42,7 +42,7 @@ export class ProductVariantService {
     shopId?: string,
   ) {
     const { sizes, price, color_list, pack_name } = productVariantData;
-    const bundlesObject: any = {};
+    const bundlesObject = {};
     if (color_list) {
       await PromisePool.for(color_list)
         .withConcurrency(2)
@@ -54,7 +54,7 @@ export class ProductVariantService {
             `product variant finished tasks: ${pool.processedCount()}`,
           );
         })
-        .process(async (color: any) => {
+        .process(async (color: string) => {
           bundlesObject[color] = [];
           const variants =
             await this.transformerClass.productVariantTransformer(color, sizes);

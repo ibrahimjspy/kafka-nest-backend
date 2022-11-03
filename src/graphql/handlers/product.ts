@@ -30,7 +30,6 @@ export const createProductHandler = async (
     const createProduct: productCreate = await graphqlCall(
       createProductMutation(productData),
     );
-    await graphqlCallSaleor(productChannelListingMutation(createProduct));
     const productId = createProduct?.productCreate?.product?.id;
     await productChannelListing(productId);
 

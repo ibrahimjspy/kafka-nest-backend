@@ -47,7 +47,6 @@ const productVariantObjectTransform = (recordset): productVariantInterface => {
   const productVariantData = {};
   const viewResponse: productDatabaseViewInterface = recordset.recordset[0];
   const { price, regular_price, item_sizes, color_list } = viewResponse;
-  console.log({ price, regular_price, item_sizes, color_list });
   if (price && item_sizes) {
     productVariantData['price'] = {
       price: price,
