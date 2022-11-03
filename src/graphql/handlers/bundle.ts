@@ -10,14 +10,24 @@ import { createBundleMutation } from '../mutations/bundles/create';
 export const createBundleHandler = async (
   bundleVariants: string,
   shopId: string,
+  retry = 0,
 ) => {
   try {
+    if (retry !== 0) {
+      Logger.warn(`${retry} retry in create bundles call`, {
+        bundleVariants,
+      });
+    }
+
     const bundles = await graphqlCall(
       createBundleMutation(bundleVariants, shopId).replace(/'/g, '"'),
     );
     Logger.verbose('Bundle created', bundles);
     return bundles;
   } catch (err) {
-    return graphqlExceptionHandler(err);
+    if (retry) {
+      return graphqlExceptionHandler(err);
+    }
+    return await createBundleHandler(bundleVariants, shopId, retry + 1);
   }
 };

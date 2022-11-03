@@ -35,7 +35,7 @@ export const productChannelListingMutation = (productId) => {
   return gql`
     mutation {
       productChannelListingUpdate(
-        id: "${productId?.productCreate?.product?.id}"
+        id: "${productId}"
         input: {
           updateChannels: {
             channelId: "Q2hhbm5lbDox"

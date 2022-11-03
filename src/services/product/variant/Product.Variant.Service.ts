@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import {
   createProductVariantHandler,
   updateProductVariantPricingHandler,
@@ -10,6 +10,8 @@ import { colorSelectDto } from 'src/types/transformers/product';
 import { getProductDetailsFromDb } from 'src/mssql/product.fetch';
 import { createBundleHandler } from 'src/graphql/handlers/bundle';
 import { bundleVariantInterface } from 'src/types/graphql/bundles';
+import { PromisePool } from '@supercharge/promise-pool';
+
 /**
  *  Injectable class handling productVariant and its relating tables CDC
  *  @Injected transformation class for CDC payload validations and transformations
@@ -42,12 +44,20 @@ export class ProductVariantService {
     const { sizes, price, color_list, pack_name } = productVariantData;
     const bundlesObject: any = {};
     if (color_list) {
-      await Promise.all(
-        color_list.map(async (color) => {
+      await PromisePool.for(color_list)
+        .withConcurrency(2)
+        .onTaskStarted((color, pool) => {
+          Logger.log(
+            `product variant progress: ${pool.processedPercentage()}%`,
+          );
+          Logger.log(
+            `product variant finished tasks: ${pool.processedCount()}`,
+          );
+        })
+        .process(async (color: any) => {
           bundlesObject[color] = [];
           const variants =
             await this.transformerClass.productVariantTransformer(color, sizes);
-
           await Promise.all(
             variants.map(async (variant, key) => {
               const bundle: bundleVariantInterface = {};
@@ -69,8 +79,7 @@ export class ProductVariantService {
               }
             }),
           );
-        }),
-      );
+        });
       return await this.createBundles(color_list, bundlesObject, shopId);
     }
   }

@@ -39,6 +39,8 @@ export interface productVariantCreate {
       id: string;
       name: string;
     };
-    errors: any[];
+    errors: {
+      message: string;
+    };
   };
 }

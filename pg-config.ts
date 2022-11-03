@@ -1,5 +1,6 @@
 import { Client } from 'pg';
 import * as dotenv from 'dotenv';
+import { Logger } from '@nestjs/common';
 dotenv.config();
 // postgres configurations to establish connection
 const client = new Client({
@@ -9,6 +10,9 @@ const client = new Client({
   user: process.env.POSTGRES_USER, // Username of database user
   password: process.env.POSTGRES_PASSWORD, // Password of database user
 });
-
-client.connect();
+try {
+  client.connect();
+} catch (error) {
+  Logger.warn(`Postgres connection failed ${process.env.POSTGRES_PORT}`);
+}
 export default client;

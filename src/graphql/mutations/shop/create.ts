@@ -27,7 +27,7 @@ export const createUserMutation = (shopData: shopTransformed) => {
   `;
 };
 
-export const addProductVariantToShop = (variantId, shopId) => {
+export const addProductVariantToShopMutation = (variantId, shopId) => {
   return gql`
     mutation {
       addProductVariantToShop(

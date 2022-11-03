@@ -72,25 +72,17 @@ export class ProductService {
     // creating new product and assigning it media
 
     const productId = await createProductHandler(productData);
-    const productIdMapping = await insertProductId(productData.id, productId);
+    if (productId) {
+      await insertProductId(productData.id, productId);
 
-    // creates product variants and its media
+      // creates product variants and its media
 
-    const productMediaCreate = await this.createProductMedia(
-      productId,
-      productData.media,
-    );
-    const productVariantsCreate = await this.createProductVariants(
-      productData,
-      productId,
-    );
-    Logger.verbose('product flow completed');
-
+      await this.createProductMedia(productId, productData.media);
+      await this.createProductVariants(productData, productId);
+      Logger.verbose(`product flow completed against ${productId}`);
+    }
     return {
       productId,
-      productIdMapping,
-      productMediaCreate,
-      productVariantsCreate,
     };
   }
 

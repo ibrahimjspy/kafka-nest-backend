@@ -15,7 +15,7 @@ export class BulkImportController {
   @Get('products')
   async createProducts() {
     const data = await getBulkProductsData();
-    await this.appService.productBulkCreate(data.slice(210, 280));
+    await this.appService.productBulkCreate(data.slice(891, 892));
     return `${data.length} products created`;
   }
 
@@ -23,6 +23,6 @@ export class BulkImportController {
   async createShops() {
     const data = await getBulkVendors();
     await this.appService.ShopBulkCreate(data);
-    return `${data.length} products created`;
+    return `${data.length} shops created`;
   }
 }

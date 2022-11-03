@@ -27,10 +27,10 @@ export const getProductDetailsFromDb = async (
       function (err, recordset) {
         if (err) {
           Logger.warn(err);
+          Logger.warn('retry needed');
           sqlTransaction.clear(); // aborting sql transaction
         }
         // send records as a response
-        console.log(recordset);
         if (recordset.recordset[0]) {
           data = productVariantObjectTransform(recordset);
           sqlTransaction.clear(); // aborting sql transaction
@@ -54,9 +54,7 @@ const productVariantObjectTransform = (recordset): productVariantInterface => {
       regular_price: regular_price,
     };
     productVariantData['sizes'] = item_sizes?.split('-');
-    productVariantData['color_list'] = color_list.split(',')
-      ? color_list.split(',')
-      : [];
+    productVariantData['color_list'] = color_list ? color_list.split(',') : [];
     productVariantData['pack_name'] = viewResponse.pack_name;
   }
   return productVariantData;

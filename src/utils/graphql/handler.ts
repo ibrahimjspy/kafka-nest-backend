@@ -10,13 +10,38 @@ type GraphqlCall = (Query: string) => Promise<object>;
  * @returns an object with data or graphql error
  */
 export const graphqlCall: GraphqlCall = async (Query: string): Promise<any> => {
-  console.log(Query);
   let data = {};
   const graphQLClient = new GraphQLClient(
     process.env.DESTINATION_GRAPHQL_ENDPOINT,
     {
       headers: {
         authorization: process.env.AUTHORIZATION_HEADER,
+      },
+    },
+  );
+  await graphQLClient.request(Query).then((res) => {
+    data = res;
+  });
+  return data;
+};
+
+/**
+ * This is top level function which handles graphql requests , exceptions and logic
+ * @params Query ,  It must be in string format and no query based
+ * logic should be transferred to graphqlHandler
+ * @note This function determines its endpoint logic through another public method graphqlHandler() which
+ * is based on env files content .
+ * @returns an object with data or graphql error
+ */
+export const graphqlCallSaleor: GraphqlCall = async (
+  Query: string,
+): Promise<any> => {
+  let data = {};
+  const graphQLClient = new GraphQLClient(
+    process.env.DESTINATION_SALEOR_ENDPOINT,
+    {
+      headers: {
+        authorization: `Bearer ${process.env.AUTHORIZATION_HEADER_APP}`,
       },
     },
   );
@@ -60,6 +85,7 @@ export const graphqlCallByToken = async (
 };
 // TODO apply custom error handling taking whole catch thing at functional level
 export const graphqlExceptionHandler = (error): object => {
+  console.log(error);
   const system_error = 'system error (graphql server not running)';
   const federation_response = error?.response?.error
     ? system_error
