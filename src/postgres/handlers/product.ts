@@ -2,6 +2,7 @@ import { postgresDeleteCall } from 'src/utils/postgres/delete';
 import { postgresFetchIdCall } from 'src/utils/postgres/fetch';
 
 import {
+  deleteProductIdByDestinationIdQuery,
   deleteProductIdQuery,
   insertProductIdQuery,
   productIdQuery,
@@ -23,13 +24,21 @@ export const fetchProductSerialIdBySlug = async (
 //                       <insert>
 
 export const insertProductId = async (sourceId: string, destinationId) => {
-  return await postgresFetchIdCall(
-    insertProductIdQuery(sourceId, destinationId),
-  );
+  if (destinationId) {
+    return await postgresFetchIdCall(
+      insertProductIdQuery(sourceId, destinationId),
+    );
+  }
 };
 
 //                       <delete>
 
 export const deleteProductId = async (sourceId) => {
   return await postgresDeleteCall(deleteProductIdQuery(sourceId));
+};
+
+export const deleteProductByDestinationId = async (destinationId) => {
+  return await postgresDeleteCall(
+    deleteProductIdByDestinationIdQuery(destinationId),
+  );
 };

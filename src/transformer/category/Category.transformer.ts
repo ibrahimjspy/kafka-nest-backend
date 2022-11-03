@@ -1,4 +1,5 @@
 import { Injectable, Param } from '@nestjs/common';
+import { fetchMasterCategoryId } from 'src/postgres/handlers/category';
 import {
   masterCategoryDto,
   masterCategoryTransformed,
@@ -37,7 +38,7 @@ export class CategoryTransformerService {
     const {
       TBStyleNo_OS_Category_Master_ID,
       CategoryMasterName,
-      Description,
+      Description50,
       seo_description,
       seo_title,
     } = object;
@@ -45,9 +46,9 @@ export class CategoryTransformerService {
     masterCategoryObject['id'] = TBStyleNo_OS_Category_Master_ID?.toString();
     masterCategoryObject['name'] = CategoryMasterName?.toString();
     masterCategoryObject['description'] =
-      await this.productTransformer.descriptionTransformer(Description);
+      await this.productTransformer.descriptionTransformer(Description50);
     masterCategoryObject['seo_description'] = seo_description?.toString();
-    masterCategoryObject['seo_title'] = seo_title?.toString();
+    masterCategoryObject['seo_title'] = seo_title?.toString().slice(0, 65);
 
     return masterCategoryObject;
   }
@@ -67,18 +68,34 @@ export class CategoryTransformerService {
     const {
       TBStyleNo_OS_Category_Sub_ID,
       CategorySubName,
-      Description,
+      Description50,
       seo_description,
       seo_title,
+      TBStyleNo_OS_Category_Master_ID,
     } = object;
 
     subCategoryObject['id'] = TBStyleNo_OS_Category_Sub_ID?.toString();
+    subCategoryObject['parentId'] = await this.masterCategoryIdTransformer(
+      TBStyleNo_OS_Category_Master_ID,
+    );
     subCategoryObject['name'] = CategorySubName?.toString();
     subCategoryObject['description'] =
-      await this.productTransformer.descriptionTransformer(Description);
+      await this.productTransformer.descriptionTransformer(Description50);
     subCategoryObject['seo_description'] = seo_description?.toString();
     subCategoryObject['seo_title'] = seo_title?.toString();
 
     return subCategoryObject;
+  }
+
+  public async masterCategoryIdTransformer(category_id: string) {
+    const DEFAULT_MASTER_CATEGORY_ID =
+      process.env.DEFAULT_CATEGORY_ID || 'Q2F0ZWdvcnk6MTM=';
+
+    const destinationCategoryId = await fetchMasterCategoryId(category_id);
+    if (destinationCategoryId) {
+      return destinationCategoryId;
+    }
+
+    return DEFAULT_MASTER_CATEGORY_ID;
   }
 }

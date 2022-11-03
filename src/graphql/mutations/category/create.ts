@@ -14,18 +14,20 @@ export const createCategoryMasterMutation = (categoryData) => {
         category {
           id
         }
+        errors{
+          message
+        }
       }
     }
   `;
 };
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const createCategorySubMutation = (categoryData, MasterId) => {
   const { name, seo_title, seo_description, description } = categoryData;
   return gql`
     mutation {
       categoryCreate(
-        parent:"Q2F0ZWdvcnk6MTM="
+        parent:"${MasterId}"
         input: {
           name: "${name}"
           description:${JSON.stringify(description)}

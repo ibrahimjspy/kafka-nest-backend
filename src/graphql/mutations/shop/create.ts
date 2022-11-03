@@ -11,7 +11,7 @@ export const createUserMutation = (shopData: shopTransformed) => {
           email: "${email}"
           isActive: true
           addGroups: ["fd"]
-          redirectUrl: "${url}"
+          # redirectUrl: "${url}"
         }
       ) {
         user {
@@ -23,6 +23,21 @@ export const createUserMutation = (shopData: shopTransformed) => {
           field
         }
       }
+    }
+  `;
+};
+
+export const addProductVariantToShopMutation = (variantId, shopId) => {
+  return gql`
+    mutation {
+      addProductVariantToShop(
+        input: {
+          productVariantId: "${variantId}"
+          shopId: "${shopId}"
+        }
+      ) {
+         name
+       }
     }
   `;
 };
@@ -45,21 +60,22 @@ export const createShopMutation = (
 ) => {
   const { name, description, storePolicy, email, madeIn, returnPolicy, url } =
     shopData;
+  const MANAGER_TYPE = process.env.DEFAULT_MANAGER_TYPE || '1';
   return gql`
     mutation {
       createMarketplaceShop(
         input: {
           name: "${name}"
           user: "${userId}"
-          managerType: "1"
+          managerType: "${MANAGER_TYPE}"
           madeIn: "${madeIn}"
           minOrder: 200
           about: "shop about"
           returnPolicy: "${returnPolicy}"
-          storePolicy: "${storePolicy}"
+          # storePolicy: "${storePolicy}"
           email: "${email}"
           url: "${url}"
-          description: "${description}"
+          description: "${description.slice(0, 50)}"
         }
       ) {
         id

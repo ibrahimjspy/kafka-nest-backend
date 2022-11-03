@@ -14,7 +14,6 @@ export const updateUserMutation = (
             firstName: "${name}"
             email: "${email}"
             isActive: true
-            # addGroups: ["fd"]
             # redirectUrl: "${url}"
           }
         ) {

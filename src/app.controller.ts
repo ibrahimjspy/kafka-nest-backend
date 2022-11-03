@@ -1,6 +1,8 @@
-import { Controller } from '@nestjs/common';
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { Controller, Get } from '@nestjs/common';
 import { MessagePattern, Payload } from '@nestjs/microservices';
 import { AppService } from './app.service';
+import { fetchBulkProductsData } from './mssql/import';
 
 @Controller()
 export class AppController {
@@ -15,7 +17,7 @@ export class AppController {
     return this.appService.handleMasterCategoryCDC(message.payload);
   }
   @MessagePattern('category_sub') // topic name
-  subCategoryCdc(@Payload() message) {
+  async subCategoryCdc(@Payload() message) {
     return this.appService.handleSubCategoryCDC(message.payload);
   }
   @MessagePattern('color_select') // topic name
@@ -25,6 +27,11 @@ export class AppController {
   @MessagePattern('vendor') // topic name
   vendorCdc(@Payload() message) {
     return this.appService.handleShopCDC(message.payload);
+  }
+  @MessagePattern('product_bulk_create') // topic name
+  async productBulkCreate(@Payload() message) {
+    const data = await fetchBulkProductsData();
+    await this.appService.productBulkCreate(data);
   }
   @MessagePattern('healthCheck') // topic name
   healthCheck() {

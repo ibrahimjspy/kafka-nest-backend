@@ -6,6 +6,7 @@ export interface masterCategoryDto {
   url: any;
   seo_description: string;
   seo_title: string;
+  Description50?: string;
 }
 
 export interface masterCategoryTransformed {
@@ -26,11 +27,12 @@ export interface subCategoryDto {
   url: any;
   seo_description: string;
   seo_title: string;
+  Description50?: string;
 }
 
 export interface subCategoryTransformed {
   id?: string;
-  parent_id?: string;
+  parentId?: string;
   name?: string;
   description?: string;
   url?: string;

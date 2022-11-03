@@ -46,12 +46,26 @@ export class ShopTransformerService {
     shopObject['description'] = VDFrontDescription?.toString();
     shopObject['seo_description'] = SEODescription?.toString();
     shopObject['seo_title'] = SEOTitle?.toString();
-    shopObject['email'] = VDEMail?.toString();
-    shopObject['url'] = VDVendorURL?.toString();
+    shopObject['email'] = await this.shopEmailTransformer(VDEMail, VDName);
+    shopObject['url'] = await this.shopUrlTransformer(VDVendorURL, VDName);
     shopObject['minOrder'] = OSminOrderAMT?.toString();
     shopObject['storePolicy'] = VDStorePolicy?.toString();
     shopObject['madeIn'] = VDMadeIn?.toString();
     shopObject['returnPolicy'] = VDReturnPolicy?.toString();
     return shopObject;
+  }
+
+  public async shopEmailTransformer(@Param() email, name) {
+    if (email.length) {
+      return email;
+    }
+    const emailTransformed = name.replace(/ /g, '_');
+    return `${emailTransformed.toLowerCase()}@gmail.com`;
+  }
+  public async shopUrlTransformer(@Param() url, name) {
+    if (url.length) {
+      return url;
+    }
+    return `${name.toLowerCase()}.com`;
   }
 }

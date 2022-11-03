@@ -79,7 +79,7 @@ describe('TransformerController', () => {
   });
 
   it('color variant array builder is working ', async () => {
-    const transformedColorInformation = await service.productColorTransformer(
+    const transformedColorInformation = await service.productVariantTransformer(
       mockColor[0].name,
       mockSize.size,
     );

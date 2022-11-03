@@ -40,3 +40,12 @@ export const deleteProductIdQuery = (sourceId: string): string => {
   WHERE source_id='${sourceId}';
 `;
 };
+
+export const deleteProductIdByDestinationIdQuery = (
+  destinationId: string,
+): string => {
+  return `
+  DELETE FROM cdc.product_id_mapping_table
+  WHERE destination_id='${destinationId}';
+`;
+};

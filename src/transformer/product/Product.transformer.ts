@@ -4,6 +4,7 @@ import {
   fetchMasterCategoryId,
   fetchSubCategoryId,
 } from 'src/postgres/handlers/category';
+import { fetchShopId } from 'src/postgres/handlers/shop';
 /**
  *  Injectable class handling product transformation
  *  @Injectable in app scope or in kafka connection to reach kafka messages
@@ -40,6 +41,7 @@ export class ProductTransformerService {
       TBStyleNo_OS_Category_Master_ID,
       TBStyleNo_OS_Category_Sub_ID,
     );
+    productObject['shopId'] = await this.shopIdTransformer('236');
 
     return productObject;
   }
@@ -49,8 +51,9 @@ export class ProductTransformerService {
    * @params string to be transformed
    */
   public async descriptionTransformer(@Param() description: string) {
-    if (description) {
-      return `{\"time\": 1662995227870, \"blocks\": [{\"id\": \"cqWmV3MIPH\", \"data\": {\"text\": \"${description}\"}, \"type\": \"paragraph\"}], \"version\": \"2.24.3\"}`;
+    const validString = description.replace(/[\r\n]+/g, ' ');
+    if (validString) {
+      return `{\"time\": 1662995227870, \"blocks\": [{\"id\": \"cqWmV3MIPH\", \"data\": {\"text\": \"${validString}\"}, \"type\": \"paragraph\"}], \"version\": \"2.24.3\"}`;
     }
     return `{\"time\": 1662995227870, \"blocks\": [{\"id\": \"cqWmV3MIPH\", \"data\": {\"text\": \"test product\"}, \"type\": \"paragraph\"}], \"version\": \"2.24.3\"}`;
   }
@@ -75,7 +78,7 @@ export class ProductTransformerService {
   }
 
   /**
-   * This function returns variants based on color and its sizes
+   * This function returns category id of destination to be mapped
    * @params masterCategoryId
    * @params subCategoryId
    * @returns category id for destination
@@ -105,12 +108,26 @@ export class ProductTransformerService {
   }
 
   /**
+   * This function returns shop id in destination
+   * @params TBVendor_ID as input
+   */
+  public async shopIdTransformer(vendorId: string) {
+    const DEFAULT_SHOP_ID = process.env.DEFAULT_SHOP_ID || '1';
+
+    const destinationShopId = await fetchShopId(vendorId);
+    if (destinationShopId) {
+      return destinationShopId;
+    }
+
+    return DEFAULT_SHOP_ID;
+  }
+  /**
    * This function returns variants based on color and its sizes
    * @params color to be created as variant
    * @params array of sizes to be mapped with color
    * @returns collection of variants to be created <Array>
    */
-  public async productColorTransformerMethod(color: string, sizes: string[]) {
+  public async productVariantTransformer(color: string, sizes: string[]) {
     const array = [];
     try {
       sizes.map((s) => {

@@ -108,23 +108,20 @@ export class CategoryService {
     // creates new category and map its id in database
     const category: masterCategoryTransformed =
       await createCategoryMasterHandler(categoryData);
-    const categoryIdMapping = await insertMasterCategoryId(
-      categoryData.id,
-      category,
-    );
-    return { category, categoryIdMapping };
+
+    if (category) {
+      await insertMasterCategoryId(categoryData.id, category);
+    }
+
+    return { category };
   }
 
   private async subCategoryCreate(
     @Param() categoryData: subCategoryTransformed,
   ) {
-    // creates new category and map its id in database
-    const parentCategoryId = await fetchMasterCategoryId(
-      categoryData.parent_id,
-    );
     const subCategory = await createCategorySubHandler(
       categoryData,
-      parentCategoryId,
+      categoryData.parentId,
     );
     const categoryIdMapping = await insertSubCategoryId(
       categoryData.id,

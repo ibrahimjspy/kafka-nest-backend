@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { BulkImportController } from './bulk-import-api/Import.Controller';
 import { KafkaModule } from './kafka/kafka.module';
 import { CategoryService } from './services/category/Category.Service';
 import { ProductMediaService } from './services/product/media/Product.Media.Service';
@@ -13,7 +14,7 @@ import { TransformerService } from './transformer/Transformer.service';
 
 @Module({
   imports: [KafkaModule, ConfigModule.forRoot(), TransformerModule],
-  controllers: [AppController],
+  controllers: [AppController, BulkImportController],
   providers: [
     AppService,
     ProductService,

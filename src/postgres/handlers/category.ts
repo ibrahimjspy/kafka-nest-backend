@@ -26,21 +26,31 @@ export const insertMasterCategoryId = async (
   sourceId: string,
   destinationId,
 ) => {
-  return await postgresInsertCall(
-    insertMasterCategoryIdQuery(
-      sourceId,
-      destinationId?.categoryCreate?.category?.id,
-    ),
-  );
+  try {
+    if (destinationId.categoryCreate.category.id) {
+      return await postgresInsertCall(
+        insertMasterCategoryIdQuery(
+          sourceId,
+          destinationId?.categoryCreate?.category?.id,
+        ),
+      );
+    }
+  } catch (error) {
+    console.log('error');
+  }
 };
 
 export const insertSubCategoryId = async (sourceId: string, destinationId) => {
-  return await postgresInsertCall(
-    insertSubCategoryIdQuery(
-      sourceId,
-      destinationId?.categoryCreate?.category?.id,
-    ),
-  );
+  try {
+    if (destinationId.categoryCreate.category.id) {
+      return await postgresInsertCall(
+        insertSubCategoryIdQuery(
+          sourceId,
+          destinationId?.categoryCreate?.category?.id,
+        ),
+      );
+    }
+  } catch (error) {}
 };
 
 //                       <delete>
