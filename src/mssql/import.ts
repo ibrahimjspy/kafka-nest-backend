@@ -7,11 +7,11 @@ import {
 } from './query';
 
 export const fetchBulkSubCategoriesData = async () => {
-  return await mssqlCall(masterCategoryQuery());
+  return await mssqlCall(subCategoryQuery());
 };
 
 export const fetchBulkMasterCategoriesData = async () => {
-  return await mssqlCall(subCategoryQuery());
+  return await mssqlCall(masterCategoryQuery());
 };
 
 export const fetchBulkProductsData = async () => {

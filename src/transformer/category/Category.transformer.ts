@@ -1,4 +1,5 @@
 import { Injectable, Param } from '@nestjs/common';
+import { groupIds } from 'src/mock/category/groupIds';
 import { fetchMasterCategoryId } from 'src/postgres/handlers/category';
 import {
   masterCategoryDto,
@@ -41,9 +42,11 @@ export class CategoryTransformerService {
       Description50,
       seo_description,
       seo_title,
+      DisplayGroup,
     } = object;
 
     masterCategoryObject['id'] = TBStyleNo_OS_Category_Master_ID?.toString();
+    masterCategoryObject['groupId'] = this.groupIdTransformer(DisplayGroup);
     masterCategoryObject['name'] = CategoryMasterName?.toString();
     masterCategoryObject['description'] =
       await this.productTransformer.descriptionTransformer(Description50);
@@ -97,5 +100,9 @@ export class CategoryTransformerService {
     }
 
     return DEFAULT_MASTER_CATEGORY_ID;
+  }
+
+  public async groupIdTransformer(groupName: string) {
+    return groupIds[groupName] ? groupIds[groupName] : 'Q2F0ZWdvcnk6NjQx';
   }
 }

@@ -7,6 +7,7 @@ export interface masterCategoryDto {
   seo_description: string;
   seo_title: string;
   Description50?: string;
+  DisplayGroup?: string;
 }
 
 export interface masterCategoryTransformed {

@@ -7,8 +7,7 @@ export const TBStyleSearchUniqueQuery = (styleId: string): string => {
 
 export const masterCategoryQuery = (): string => {
   return `SELECT TBStyleNo_OS_Category_Master_ID, CategoryMasterName, Description, Active, mainTopCategory, DisplayGroup, DisplayOrder, DisplayGroupOrder, url, Description50, seo_title, seo_description, Description_tmpl, h1_tag
-  FROM testDB.dbo.TBStyleNo_OS_Category_Master
-  WHERE TBStyleNo_OS_Category_Master_ID=2;`;
+  FROM testDB.dbo.TBStyleNo_OS_Category_Master`;
 };
 
 export const tbStyleNoQuery = (): string => {
