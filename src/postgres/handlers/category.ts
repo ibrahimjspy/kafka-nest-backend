@@ -16,8 +16,13 @@ export const fetchMasterCategoryId = async (sourceId: string) => {
   return await postgresFetchIdCall(masterCategoryIdQuery(sourceId));
 };
 
-export const fetchSubCategoryId = async (sourceId: string) => {
-  return await postgresFetchIdCall(subCategoryIdQuery(sourceId));
+export const fetchSubCategoryId = async (
+  sourceId: string,
+  sourceMasterId: string,
+) => {
+  return await postgresFetchIdCall(
+    subCategoryIdQuery(sourceId, sourceMasterId),
+  );
 };
 
 //                       <insert>
@@ -40,13 +45,18 @@ export const insertMasterCategoryId = async (
   }
 };
 
-export const insertSubCategoryId = async (sourceId: string, destinationId) => {
+export const insertSubCategoryId = async (
+  sourceId: string,
+  destinationId,
+  sourceMasterId,
+) => {
   try {
     if (destinationId.categoryCreate.category.id) {
       return await postgresInsertCall(
         insertSubCategoryIdQuery(
           sourceId,
           destinationId?.categoryCreate?.category?.id,
+          sourceMasterId,
         ),
       );
     }

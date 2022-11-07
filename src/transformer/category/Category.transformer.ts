@@ -78,6 +78,7 @@ export class CategoryTransformerService {
     } = object;
 
     subCategoryObject['id'] = TBStyleNo_OS_Category_Sub_ID?.toString();
+    subCategoryObject['sourceParentId'] = TBStyleNo_OS_Category_Master_ID;
     subCategoryObject['parentId'] = await this.masterCategoryIdTransformer(
       TBStyleNo_OS_Category_Master_ID,
     );
@@ -86,7 +87,6 @@ export class CategoryTransformerService {
       await this.productTransformer.descriptionTransformer(Description50);
     subCategoryObject['seo_description'] = seo_description?.toString();
     subCategoryObject['seo_title'] = seo_title?.toString();
-
     return subCategoryObject;
   }
 
@@ -102,7 +102,7 @@ export class CategoryTransformerService {
     return DEFAULT_MASTER_CATEGORY_ID;
   }
 
-  public async groupIdTransformer(groupName: string) {
+  public groupIdTransformer(groupName: string) {
     return groupIds[groupName] ? groupIds[groupName] : 'Q2F0ZWdvcnk6NjQx';
   }
 }

@@ -39,4 +39,5 @@ export interface subCategoryTransformed {
   url?: string;
   seo_description?: string;
   seo_title?: string;
+  sourceParentId?: string; // from database
 }

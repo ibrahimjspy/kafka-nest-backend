@@ -59,6 +59,7 @@ export class CategoryService {
   ): Promise<object> {
     const categoryExistsInDestination: string = await fetchSubCategoryId(
       kafkaMessage.TBStyleNo_OS_Category_Sub_ID,
+      kafkaMessage.TBStyleNo_OS_Category_Master_ID,
     );
     const categoryData = await this.transformerService.subCategoryTransformer(
       kafkaMessage,
@@ -94,6 +95,7 @@ export class CategoryService {
   ): Promise<object> {
     const categoryExistsInDestination: string = await fetchSubCategoryId(
       kafkaMessage.TBStyleNo_OS_Category_Sub_ID,
+      kafkaMessage.TBStyleNo_OS_Category_Master_ID,
     );
     if (categoryExistsInDestination) {
       await deleteSubCategoryHandler(categoryExistsInDestination);
@@ -126,6 +128,7 @@ export class CategoryService {
     const categoryIdMapping = await insertSubCategoryId(
       categoryData.id,
       subCategory,
+      categoryData.sourceParentId,
     );
     return { subCategory, categoryIdMapping };
   }

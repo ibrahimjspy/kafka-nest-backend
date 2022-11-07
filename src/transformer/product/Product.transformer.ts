@@ -92,6 +92,7 @@ export class ProductTransformerService {
 
     const destinationSubCategoryId: string = await fetchSubCategoryId(
       sourceSubCategoryId,
+      sourceMasterCategoryId,
     );
     if (destinationSubCategoryId) {
       return destinationSubCategoryId;

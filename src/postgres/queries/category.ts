@@ -9,12 +9,15 @@ export const masterCategoryIdQuery = (sourceId: string): string => {
     `;
 };
 
-export const subCategoryIdQuery = (sourceId: string): string => {
+export const subCategoryIdQuery = (
+  sourceId: string,
+  sourceMasterId: string,
+): string => {
   return `
       select
       destination_id
       from cdc.product_category_sub_id_mapping
-      where source_id = ${sourceId}
+      where source_id = ${sourceId} and master_id = ${sourceMasterId}
     `;
 };
 
@@ -34,11 +37,12 @@ export const insertMasterCategoryIdQuery = (
 export const insertSubCategoryIdQuery = (
   sourceId: string,
   destinationId: string,
+  sourceMasterId: string,
 ): string => {
   return `
   INSERT INTO cdc.product_category_sub_id_mapping
-  (source_id, destination_id)
-  VALUES(${sourceId}, '${destinationId}');
+  (source_id, destination_id, master_id)
+  VALUES(${sourceId}, '${destinationId}', ${sourceMasterId});
     `;
 };
 
