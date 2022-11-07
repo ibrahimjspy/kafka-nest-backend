@@ -58,7 +58,7 @@ services:
      - OFFSET_STORAGE_TOPIC=my_connect_offsets
      - STATUS_STORAGE_TOPIC=my_connect_statuses
      
-  nest:
+  client:
     ports:
       - 4001:5000
     build:
@@ -67,40 +67,7 @@ services:
     restart: unless-stopped
     extra_hosts:
       - "host.docker.internal:host-gateway"
-    command: npm run start
 
-#   sqlserver:
-#     image: mcr.microsoft.com/mssql/server:2019-latest
-#     ports:
-#      - 1433:1433 
-#     environment:
-#      - ACCEPT_EULA=Y
-#      - MSSQL_PID=Standard
-#      - SA_PASSWORD=Password!
-#      - MSSQL_AGENT_ENABLED=true
-    # networks:
-    #   - webnet
-# For testing newer connector versions, unpack the connector archive into this
-# directory and uncomment the lines below
-#    volumes:
-#     - ./debezium-connector-sqlserver:/kafka/connect/debezium-connector-sqlserver
 
-# Make sure ports in your debzium source connectors are 29092,29093 
-
-# POST  http://localhost:8083/connectors --> To register the kafka connector
-# {
-#   "name": "inventory-connector",
-#   "config": {
-#     "connector.class": "io.debezium.connector.postgresql.PostgresConnector",
-#     "database.hostname": "postgres",
-#     "database.port": "5432",
-#     "database.user": "postgres",
-#     "database.password": "postgres",
-#     "database.dbname" : "postgres",
-#     "database.server.name": "dbserver1",
-#     "table.include.list": "inventory.customers"
-#
-#   }
-# }      
 
 

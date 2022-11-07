@@ -8,8 +8,9 @@ import { createBundleMutation } from '../mutations/bundles/create';
 //  <-->  Create  <-->
 
 export const createBundleHandler = async (
-  bundleVariants: string,
-  shopId: string,
+  bundleVariants,
+  bundleQuantities,
+  shopId,
   retry = 0,
 ) => {
   try {
@@ -20,7 +21,10 @@ export const createBundleHandler = async (
     }
 
     const bundles = await graphqlCall(
-      createBundleMutation(bundleVariants, shopId).replace(/'/g, '"'),
+      createBundleMutation(bundleVariants, bundleQuantities, shopId).replace(
+        /'/g,
+        '"',
+      ),
     );
     Logger.verbose('Bundle created', bundles);
     return bundles;

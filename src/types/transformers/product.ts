@@ -14,6 +14,7 @@ export interface productDto {
   Picture9?: string;
   TBStyleNo_OS_Category_Master_ID?: string;
   TBStyleNo_OS_Category_Sub_ID?: string;
+  TBVendor_ID?: string;
 }
 
 export interface productTransformed {

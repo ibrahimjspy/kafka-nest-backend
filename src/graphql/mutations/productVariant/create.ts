@@ -1,28 +1,48 @@
 import { gql } from 'graphql-request';
 
-export const createProductVariantMutation = (productVariantData, productId) => {
+export const productVariantBulkCreateMutation = (
+  productVariantData,
+  productId,
+) => {
   // parsing product variant data;
-  const { color, size } = productVariantData;
+  const DEFAULT_WAREHOUSE_ID =
+    process.env.DEFAULT_WAREHOUSE_ID ||
+    ' V2FyZWhvdXNlOjFlYTNkZGEzLTU4MTgtNGQ5OS05NjkyLWNhMWViM2YyMDNmNg==';
   const COLOR_ATTRIBUTE_ID =
     process.env.DEFAULT_COLOR_ATTRIBUTE_ID || 'QXR0cmlidXRlOjE3';
   const SIZE_ATTRIBUTE_ID =
     process.env.DEFAULT_SIZE_ATTRIBUTE_ID || 'QXR0cmlidXRlOjE4';
+  const DEFAULT_CHANNEL_ID = process.env.DEFAULT_CHANNEL_ID || 'Q2hhbm5lbDox';
 
   return gql`
     mutation {
-      productVariantCreate(
-        input: {
-          attributes: [
-            { id: "${COLOR_ATTRIBUTE_ID}", plainText:"${color}" }
-            { id: "${SIZE_ATTRIBUTE_ID}", plainText:"${size}" }
+      productVariantBulkCreate(
+        product: "${productId}"
+        variants: [${productVariantData.map((variant) => {
+          return `
+          {
+            attributes: [
+            { id: "${COLOR_ATTRIBUTE_ID}", values:["${variant.color}"] }
+            { id: "${SIZE_ATTRIBUTE_ID}", values:["${variant.size}"] }
           ]
-          name: "product_variant"
-          product: "${productId}"
-        }
+            channelListings: { channelId: "${DEFAULT_CHANNEL_ID}", price: ${variant.price} }
+            stocks: { warehouse:"${DEFAULT_WAREHOUSE_ID}"  quantity: 1000 }
+          }
+        `;
+        })}]
       ) {
-        productVariant {
+        productVariants {
           id
-          name
+          attributes {
+            attribute {
+              id
+              name
+            }
+            values {
+              value
+              name
+            }
+          }
         }
         errors {
           message

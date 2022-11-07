@@ -12,7 +12,6 @@ import {
 import { shopCdcMock, shopTransformedMock } from 'src/mock/transformer/shop';
 import { TransformerService } from './Transformer.service';
 import { mediaMock, mockMediaTransformed } from 'src/mock/product/media';
-import { mockColor, mockSize } from 'src/mock/product/variant';
 import { ProductTransformerService } from './product/Product.transformer';
 import { TransformerModule } from './Transformer.module';
 
@@ -78,14 +77,14 @@ describe('TransformerController', () => {
     expect(transformedMedia).toStrictEqual(mockMediaTransformed);
   });
 
-  it('color variant array builder is working ', async () => {
-    const transformedColorInformation = await service.productVariantTransformer(
-      mockColor[0].name,
-      mockSize.size,
-    );
-    expect(transformedColorInformation).toBeDefined();
-    expect(transformedColorInformation).not.toStrictEqual([
-      { color: 'BLACK', size: 'ONE' },
-    ]);
-  });
+  // it('color variant array builder is working ', async () => {
+  //   const transformedColorInformation = await service.productVariantTransformer(
+  //     mockColor[0].name,
+  //     mockSize.size,
+  //   );
+  //   expect(transformedColorInformation).toBeDefined();
+  //   expect(transformedColorInformation).not.toStrictEqual([
+  //     { color: 'BLACK', size: 'ONE' },
+  //   ]);
+  // });
 });

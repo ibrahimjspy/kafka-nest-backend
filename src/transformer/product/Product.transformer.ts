@@ -29,8 +29,8 @@ export class ProductTransformerService {
       nItemDescription,
       TBStyleNo_OS_Category_Master_ID,
       TBStyleNo_OS_Category_Sub_ID,
+      TBVendor_ID,
     } = object;
-
     productObject['id'] = TBItem_ID.toString();
     productObject['name'] = nStyleName.toString();
     productObject['description'] = await this.descriptionTransformer(
@@ -41,7 +41,7 @@ export class ProductTransformerService {
       TBStyleNo_OS_Category_Master_ID,
       TBStyleNo_OS_Category_Sub_ID,
     );
-    productObject['shopId'] = await this.shopIdTransformer('236');
+    productObject['shopId'] = await this.shopIdTransformer(TBVendor_ID);
 
     return productObject;
   }
@@ -113,9 +113,10 @@ export class ProductTransformerService {
    * @params TBVendor_ID as input
    */
   public async shopIdTransformer(vendorId: string) {
-    const DEFAULT_SHOP_ID = process.env.DEFAULT_SHOP_ID || '1';
+    const DEFAULT_SHOP_ID = process.env.DEFAULT_SHOP_ID || '16';
 
     const destinationShopId = await fetchShopId(vendorId);
+    console.log(destinationShopId);
     if (destinationShopId) {
       return destinationShopId;
     }
@@ -128,12 +129,17 @@ export class ProductTransformerService {
    * @params array of sizes to be mapped with color
    * @returns collection of variants to be created <Array>
    */
-  public async productVariantTransformer(color: string, sizes: string[]) {
+  public async productVariantTransformer(
+    color: string,
+    sizes: string[],
+    price: string,
+  ) {
     const array = [];
     try {
       sizes.map((s) => {
         const object: any = { color: color };
         object.size = s;
+        object.price = price;
         array.push(object);
       });
     } catch (error) {
