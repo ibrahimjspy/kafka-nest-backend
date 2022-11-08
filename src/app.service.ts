@@ -77,7 +77,7 @@ export class AppService {
   // big data import methods dividing data in batches and running them in pools
   async productBulkCreate(bulkArray) {
     try {
-      const { results } = await PromisePool.withConcurrency(6)
+      const { results } = await PromisePool.withConcurrency(10)
         .for(bulkArray)
         .onTaskStarted((product, pool) => {
           Logger.log(`Progress: ${pool.processedPercentage()}%`);

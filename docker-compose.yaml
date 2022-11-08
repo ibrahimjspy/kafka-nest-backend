@@ -50,7 +50,6 @@ services:
      - 5005:5005
     links:
      - kafka1
-     - sqlserver
     environment:
      - BOOTSTRAP_SERVERS=kafka1:29092
      - GROUP_ID=1
@@ -67,6 +66,8 @@ services:
     restart: unless-stopped
     extra_hosts:
       - "host.docker.internal:host-gateway"
+    depends_on:
+      - kafka1
 
 
 

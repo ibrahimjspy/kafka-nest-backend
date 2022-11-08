@@ -3,7 +3,7 @@ import { connect, Request } from 'mssql';
 import delay from 'delay';
 import { config } from '../../../mssql-config';
 
-export const mssqlCall = async (query: string, wait = 1000) => {
+export const mssqlCall = async (query: string, wait = 100000) => {
   let data = {};
   const sqlTransaction = delay(wait, { value: 'Done' }); //setting up sql transaction
 
