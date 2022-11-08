@@ -31,7 +31,7 @@ export class ShopTransformerService {
     const shopObject: shopTransformed = {};
     const {
       TBVendor_ID,
-      VDEMail,
+      VDVendorEmail,
       VDFrontDescription,
       VDVendorURL,
       OSminOrderAMT,
@@ -47,9 +47,7 @@ export class ShopTransformerService {
     shopObject['description'] = VDFrontDescription?.toString();
     shopObject['seo_description'] = SEODescription?.toString();
     shopObject['seo_title'] = SEOTitle?.toString();
-    shopObject['email'] = VDEMail
-      ? this.shopEmailTransformer(VDEMail, VDName)
-      : `${VDName.toLowerCase().replace(/ /g, '_')}@gmail.com`;
+    shopObject['email'] = VDVendorEmail;
     shopObject['url'] = this.shopUrlTransformer(VDVendorURL, VDName);
     shopObject['minOrder'] = OSminOrderAMT?.toString();
     shopObject['storePolicy'] = VDStorePolicy?.toString()

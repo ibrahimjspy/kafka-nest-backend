@@ -11,6 +11,7 @@ export interface shopDto {
   VDStorePolicy: string;
   VDMadeIn: string;
   VDReturnPolicy: string;
+  VDVendorEmail?: string;
 }
 
 export interface shopTransformed {

@@ -21,7 +21,7 @@ export class BulkImportController {
   @Get('shops')
   async createShops() {
     const data: any = await fetchBulkVendors();
-    await this.appService.ShopBulkCreate(data.slice(180, 186));
+    // await this.appService.ShopBulkCreate(data.slice(180, 186));
     return `${data.length} shops created`;
   }
 }
