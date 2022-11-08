@@ -27,6 +27,7 @@ export class ShopTransformerService {
    * @returns transformed object
    */
   public async shopTransformerMethod(@Param() object: shopDto) {
+    // console.log(object);
     const shopObject: shopTransformed = {};
     const {
       TBVendor_ID,
@@ -46,23 +47,27 @@ export class ShopTransformerService {
     shopObject['description'] = VDFrontDescription?.toString();
     shopObject['seo_description'] = SEODescription?.toString();
     shopObject['seo_title'] = SEOTitle?.toString();
-    shopObject['email'] = await this.shopEmailTransformer(VDEMail, VDName);
-    shopObject['url'] = await this.shopUrlTransformer(VDVendorURL, VDName);
+    shopObject['email'] = VDEMail
+      ? this.shopEmailTransformer(VDEMail, VDName)
+      : `${VDName.toLowerCase().replace(/ /g, '_')}@gmail.com`;
+    shopObject['url'] = this.shopUrlTransformer(VDVendorURL, VDName);
     shopObject['minOrder'] = OSminOrderAMT?.toString();
-    shopObject['storePolicy'] = VDStorePolicy?.toString();
+    shopObject['storePolicy'] = VDStorePolicy?.toString()
+      .replace(/[\r\n]/gm, '')
+      .replace(/"/g, "'");
     shopObject['madeIn'] = VDMadeIn?.toString();
     shopObject['returnPolicy'] = VDReturnPolicy?.toString();
     return shopObject;
   }
 
-  public async shopEmailTransformer(@Param() email, name) {
+  public shopEmailTransformer(@Param() email, name) {
     if (email.length) {
       return email;
     }
     const emailTransformed = name.replace(/ /g, '_');
     return `${emailTransformed.toLowerCase()}@gmail.com`;
   }
-  public async shopUrlTransformer(@Param() url, name) {
+  public shopUrlTransformer(@Param() url, name) {
     if (url.length) {
       return url;
     }

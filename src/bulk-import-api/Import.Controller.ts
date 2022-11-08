@@ -14,14 +14,14 @@ export class BulkImportController {
   @Get('products')
   async createProducts() {
     const data: any = await fetchBulkProductsData();
-    await this.appService.productBulkCreate(data.slice(50, 70));
+    await this.appService.productBulkCreate(data.slice(147, 150));
     return `${data.length} products created`;
   }
 
   @Get('shops')
   async createShops() {
     const data: any = await fetchBulkVendors();
-    await this.appService.ShopBulkCreate(data);
+    await this.appService.ShopBulkCreate(data.slice(180, 186));
     return `${data.length} shops created`;
   }
 }

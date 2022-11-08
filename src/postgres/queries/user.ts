@@ -5,7 +5,7 @@ export const userIdQuery = (sourceId: string): string => {
       select
       destination_id
       from cdc.user_id_mapping_table
-      where source_id = ${sourceId}
+      where source_id = '${sourceId}'
     `;
 };
 
@@ -15,7 +15,7 @@ export const insertUserIdQuery = (sourceId: string, destinationId): string => {
   return `
       INSERT INTO cdc.user_id_mapping_table
       (source_id, destination_id)
-      VALUES(${sourceId}, '${destinationId?.createUser.staffCreate?.user?.id}');
+      VALUES('${sourceId}', '${destinationId?.createUser.staffCreate?.user?.id}');
     `;
 };
 
@@ -24,6 +24,6 @@ export const insertUserIdQuery = (sourceId: string, destinationId): string => {
 export const deleteUserIdQuery = (sourceId: string): string => {
   return `
       DELETE FROM cdc.user_id_mapping_table
-      WHERE source_id=${sourceId};
+      WHERE source_id='${sourceId}';
     `;
 };

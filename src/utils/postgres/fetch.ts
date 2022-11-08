@@ -8,14 +8,13 @@ import client from '../../../pg-config';
  * @returns uuid || serial 4 id
  */
 export const postgresFetchIdCall = async (Query: string) => {
+  console.log(Query);
   let data = null;
   await client
     .query(Query, [])
     .then((res) => {
       Logger.log('Successfully fetched from postgres database', res);
-      data = res.rows[0]?.destination_id
-        ? res.rows[0]?.destination_id
-        : res.rows[0]?.id;
+      data = res.rows[0]?.destination_id ? res.rows[0]?.destination_id : null;
     })
     .catch((err) => {
       Logger.warn('postgres error', err);

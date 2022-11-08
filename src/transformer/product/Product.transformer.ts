@@ -52,6 +52,7 @@ export class ProductTransformerService {
    */
   public async descriptionTransformer(@Param() description: string) {
     const validString = description.replace(/[\r\n]+/g, ' ');
+    validString.replace('"', '');
     if (validString) {
       return `{\"time\": 1662995227870, \"blocks\": [{\"id\": \"cqWmV3MIPH\", \"data\": {\"text\": \"${validString}\"}, \"type\": \"paragraph\"}], \"version\": \"2.24.3\"}`;
     }

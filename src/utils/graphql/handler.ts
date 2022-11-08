@@ -13,11 +13,6 @@ export const graphqlCall: GraphqlCall = async (Query: string): Promise<any> => {
   let data = {};
   const graphQLClient = new GraphQLClient(
     process.env.DESTINATION_GRAPHQL_ENDPOINT,
-    {
-      headers: {
-        authorization: process.env.AUTHORIZATION_HEADER,
-      },
-    },
   );
   await graphQLClient.request(Query).then((res) => {
     data = res;
@@ -63,7 +58,6 @@ export const graphqlCallByToken = async (
   Token: string,
 ): Promise<any> => {
   let data = {};
-  console.dir(Query);
   const graphQLClient = new GraphQLClient(
     process.env.DESTINATION_SALEOR_ENDPOINT,
     {

@@ -45,6 +45,7 @@ export class ProductVariantService {
     if (color_list) {
       // TRANSFORM PRODUCT VARIANTS
       await color_list.map(async (color) => {
+        console.log(color);
         const variants = await this.transformerClass.productVariantTransformer(
           color,
           sizes,
@@ -52,22 +53,25 @@ export class ProductVariantService {
         );
         productVariants = [...productVariants, ...variants];
       });
+      console.log(productVariants);
 
-      // CREATE VARIANTS
-      const variantIds = await createBulkVariantsHandler(
-        productVariants,
-        productId,
-      );
+      if (productVariants.length > 0) {
+        // CREATE VARIANTS
+        const variantIds = await createBulkVariantsHandler(
+          productVariants,
+          productId,
+        );
 
-      // CREATE BUNDLES
-      await this.createBundles(variantIds, pack_name.split('-'), shopId);
+        // CREATE BUNDLES
+        await this.createBundles(variantIds, pack_name.split('-'), shopId);
 
-      // ADD PRODUCT VARIANTS TO SHOP
-      await Promise.all(
-        variantIds.map(async (id) => {
-          await addProductVariantToShopHandler(id, shopId);
-        }),
-      );
+        // ADD PRODUCT VARIANTS TO SHOP
+        await Promise.all(
+          variantIds.map(async (id) => {
+            await addProductVariantToShopHandler(id, shopId);
+          }),
+        );
+      }
     }
     return;
   }

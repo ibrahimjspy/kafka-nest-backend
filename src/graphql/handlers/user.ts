@@ -5,6 +5,7 @@ import { shopTransformed } from 'src/types/transformers/shop';
 import {
   graphqlCall,
   graphqlCallByToken,
+  graphqlCallSaleor,
   graphqlExceptionHandler,
 } from 'src/utils/graphql/handler';
 import {
@@ -20,10 +21,12 @@ export const createUserHandler = async (
   userData: shopTransformed,
 ): Promise<object> => {
   try {
-    const createToken: createTokenInterface = await graphqlCall(
+    const createToken: createTokenInterface = await graphqlCallByToken(
       createSessionToken(),
+      '',
     );
     const token = createToken.tokenCreate.token;
+    console.log(token);
     const createUser = await graphqlCallByToken(
       createUserMutation(userData),
       token,
@@ -42,10 +45,11 @@ export const updateUserHandler = async (
   destinationId: string,
 ): Promise<object> => {
   try {
-    const createToken: createTokenInterface = await graphqlCall(
+    const createToken: createTokenInterface = await graphqlCallSaleor(
       createSessionToken(),
     );
     const token = createToken.tokenCreate.token;
+    console.log(token);
     const updateUser = await graphqlCallByToken(
       updateUserMutation(userUpdateData, destinationId),
       token,

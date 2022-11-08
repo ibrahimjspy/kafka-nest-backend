@@ -96,7 +96,7 @@ export class AppService {
     }
   }
 
-  async ShopBulkCreate(bulkArray, batchSize = 40) {
+  async ShopBulkCreate(bulkArray, batchSize = 5) {
     try {
       const { results } = await PromisePool.for(bulkArray)
         .withConcurrency(batchSize)

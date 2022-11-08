@@ -5,17 +5,18 @@ export const shopIdQuery = (sourceId: string): string => {
     select
     destination_id
     from cdc.shop_id_mapping_table
-    where source_id = ${sourceId}
+    where source_id = '${sourceId}'
   `;
 };
 
 //                       <insert>
 
 export const insertShopIdQuery = (sourceId: string, destinationId): string => {
+  console.log(sourceId);
   return `
     INSERT INTO cdc.shop_id_mapping_table
     (source_id, destination_id)
-    VALUES(${sourceId}, '${destinationId?.createShop?.createMarketplaceShop?.id}');
+    VALUES('${sourceId}', '${destinationId?.createShop?.createMarketplaceShop?.id}');
   `;
 };
 
@@ -24,6 +25,6 @@ export const insertShopIdQuery = (sourceId: string, destinationId): string => {
 export const deleteShopIdQuery = (sourceId: string): string => {
   return `
     DELETE FROM cdc.shop_id_mapping_table
-    WHERE source_id=${sourceId};
+    WHERE source_id='${sourceId}';
   `;
 };
