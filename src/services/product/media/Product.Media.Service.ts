@@ -17,7 +17,9 @@ export class ProductMediaService {
     const createMedia = Promise.all(
       productMedia.map(async (url) => {
         if (url) {
-          await insertProductMediaById(url, productId);
+          if (url.length > 2) {
+            await insertProductMediaById(url, productId);
+          }
         }
       }),
     );

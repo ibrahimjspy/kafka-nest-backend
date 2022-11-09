@@ -5,14 +5,17 @@ import client from '../../../pg-config';
  * inserts in database
  * @params postgres database query for inserting
  */
-export const postgresInsertCall = async (Query: string) => {
+export const postgresInsertCall = async (Query: string, retry = 0) => {
   await client
     .query(Query, [])
     .then((res) => {
-      Logger.verbose('Successfully inserted', res);
+      // Logger.verbose('Successfully inserted', res);
     })
-    .catch((err) => {
-      console.warn('postgres error', err);
+    .catch(async (err) => {
+      if (retry > 4) {
+        console.warn('postgres error', err);
+      }
+      return await postgresInsertCall(Query, retry + 1);
     });
   return 'Successfully registered';
 };

@@ -26,10 +26,11 @@ export const createBundleHandler = async (
         '"',
       ),
     );
-    Logger.verbose('Bundle created', bundles);
+    // Logger.verbose('Bundle created', bundles);
     return bundles;
   } catch (err) {
-    if (retry) {
+    if (retry > 4) {
+      Logger.error('add to bundle call failed');
       return graphqlExceptionHandler(err);
     }
     return await createBundleHandler(bundleVariants, shopId, retry + 1);

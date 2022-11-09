@@ -1,5 +1,8 @@
 import { postgresDeleteCall } from 'src/utils/postgres/delete';
-import { postgresFetchIdCall } from 'src/utils/postgres/fetch';
+import {
+  postgresFetchIdCall,
+  postgresFetchMediaIdCall,
+} from 'src/utils/postgres/fetch';
 
 import {
   deleteProductIdByDestinationIdQuery,
@@ -18,7 +21,7 @@ export const fetchProductId = async (sourceId: string): Promise<string> => {
 export const fetchProductSerialIdBySlug = async (
   slug: string,
 ): Promise<string> => {
-  return await postgresFetchIdCall(productSerialIdQuery(slug));
+  return await postgresFetchMediaIdCall(productSerialIdQuery(slug));
 };
 
 //                       <insert>

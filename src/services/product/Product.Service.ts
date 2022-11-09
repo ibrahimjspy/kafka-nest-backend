@@ -35,7 +35,7 @@ export class ProductService {
     return 'Service running';
   }
 
-  public async handleProductCDC(kafkaMessage: productDto): Promise<object> {
+  public async handleProductCDC(kafkaMessage: productDto) {
     const productExistsInDestination: string = await fetchProductId(
       kafkaMessage.TBItem_ID,
     );
@@ -46,8 +46,7 @@ export class ProductService {
     if (productExistsInDestination) {
       return updateProductHandler(productData, productExistsInDestination);
     }
-
-    return this.createProduct(productData);
+    return await this.createProduct(productData);
   }
 
   public async handleProductCDCDelete(
@@ -79,7 +78,7 @@ export class ProductService {
 
       await this.createProductMedia(productId, productData.media);
       await this.createProductVariants(productData, productId);
-      Logger.verbose(`product flow completed against ${productId}`);
+      Logger.verbose(`product flow completed against ${productId}`); 
     }
     return {
       productId,

@@ -53,7 +53,9 @@ const productVariantObjectTransform = (recordset): productVariantInterface => {
       regular_price: regular_price,
     };
     productVariantData['sizes'] = item_sizes?.split('-');
-    productVariantData['color_list'] = color_list ? color_list.split(',') : [];
+    productVariantData['color_list'] = color_list
+      ? color_list.split(',')
+      : ['ONE'];
     productVariantData['pack_name'] = viewResponse.pack_name;
   }
   return productVariantData;

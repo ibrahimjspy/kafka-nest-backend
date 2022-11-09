@@ -9,7 +9,7 @@ export const createBundleMutation = (
     mutation {
       createBundle(
         Input: {
-          name: "test bundle"
+          name: "product variant bundle"
           description: "bundle description"
           shopId: "${shopId}"
           variants: [${bundleVariants.map((variantId, key) => {

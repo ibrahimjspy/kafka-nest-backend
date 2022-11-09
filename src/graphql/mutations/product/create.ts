@@ -13,7 +13,6 @@ export const createProductMutation = (productData: productTransformed) => {
           productType: "${DEFAULT_PRODUCT_TYPE}"
           name: "${name}"
           category:"${categoryId}"
-          description:${JSON.stringify(description)}
           seo: { title: "seo title", description: "demo description" }
           rating: 4
         }

@@ -43,18 +43,20 @@ export class ShopTransformerService {
       VDReturnPolicy,
     } = object;
     shopObject['id'] = TBVendor_ID?.toString();
-    shopObject['name'] = VDName?.toString();
+    shopObject['name'] = `${VDName?.toString()}`;
     shopObject['description'] = VDFrontDescription?.toString();
     shopObject['seo_description'] = SEODescription?.toString();
     shopObject['seo_title'] = SEOTitle?.toString();
-    shopObject['email'] = VDVendorEmail;
-    shopObject['url'] = this.shopUrlTransformer(VDVendorURL, VDName);
+    shopObject['email'] = `${VDVendorEmail}`;
+    shopObject['url'] = `${this.shopUrlTransformer(VDVendorURL, VDName)}`;
     shopObject['minOrder'] = OSminOrderAMT?.toString();
     shopObject['storePolicy'] = VDStorePolicy?.toString()
       .replace(/[\r\n]/gm, '')
       .replace(/"/g, "'");
     shopObject['madeIn'] = VDMadeIn?.toString();
-    shopObject['returnPolicy'] = VDReturnPolicy?.toString();
+    shopObject['returnPolicy'] = VDReturnPolicy?.toString()
+      .replace(/[\r\n]/gm, '')
+      .replace(/"/g, "'");
     return shopObject;
   }
 

@@ -37,10 +37,16 @@ export class ProductTransformerService {
       nItemDescription,
     );
     productObject['media'] = await this.mediaTransformerMethod(object);
-    productObject['categoryId'] = await this.categoryIdTransformer(
-      TBStyleNo_OS_Category_Master_ID,
-      TBStyleNo_OS_Category_Sub_ID,
-    );
+    productObject['categoryId'] = TBStyleNo_OS_Category_Sub_ID
+      ? await this.categoryIdTransformer(
+          TBStyleNo_OS_Category_Master_ID,
+          TBStyleNo_OS_Category_Sub_ID,
+        )
+      : await this.categoryIdTransformer(
+          TBStyleNo_OS_Category_Master_ID,
+          100000,
+        );
+
     productObject['shopId'] = await this.shopIdTransformer(TBVendor_ID);
 
     return productObject;
@@ -51,8 +57,7 @@ export class ProductTransformerService {
    * @params string to be transformed
    */
   public async descriptionTransformer(@Param() description: string) {
-    const validString = description.replace(/[\r\n]+/g, ' ');
-    validString.replace('"', '');
+    const validString = description.replace(/"/g, "'").replace(/[\r\n]+/g, ' ');
     if (validString) {
       return `{\"time\": 1662995227870, \"blocks\": [{\"id\": \"cqWmV3MIPH\", \"data\": {\"text\": \"${validString}\"}, \"type\": \"paragraph\"}], \"version\": \"2.24.3\"}`;
     }
@@ -86,7 +91,7 @@ export class ProductTransformerService {
    */
   public async categoryIdTransformer(
     sourceMasterCategoryId: string,
-    sourceSubCategoryId: string,
+    sourceSubCategoryId,
   ) {
     const DEFAULT_CATEGORY_ID =
       process.env.DEFAULT_CATEGORY_ID || 'Q2F0ZWdvcnk6MQ==';
@@ -96,6 +101,7 @@ export class ProductTransformerService {
       sourceMasterCategoryId,
     );
     if (destinationSubCategoryId) {
+      // console.log(destinationSubCategoryId, 'sub category passed');
       return destinationSubCategoryId;
     }
 
@@ -103,9 +109,12 @@ export class ProductTransformerService {
       sourceMasterCategoryId,
     );
     if (destinationMasterCategoryId) {
+      // console.log(
+      //   'I was called to fetch master category',
+      //   destinationMasterCategoryId,
+      // );
       return destinationMasterCategoryId;
     }
-
     return DEFAULT_CATEGORY_ID;
   }
 
@@ -117,7 +126,6 @@ export class ProductTransformerService {
     const DEFAULT_SHOP_ID = process.env.DEFAULT_SHOP_ID || '16';
 
     const destinationShopId = await fetchShopId(vendorId);
-    console.log(destinationShopId);
     if (destinationShopId) {
       return destinationShopId;
     }

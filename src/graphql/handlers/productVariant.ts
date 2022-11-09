@@ -3,7 +3,6 @@ import { bulkVariantCreate } from 'src/types/graphql/product';
 import { productDeleteById } from 'src/utils/core/productDelete';
 import {
   graphqlCall,
-  graphqlCallSaleor,
   graphqlExceptionHandler,
 } from 'src/utils/graphql/handler';
 import { productVariantBulkCreateMutation } from '../mutations/productVariant/create';
@@ -23,17 +22,17 @@ export const createBulkVariantsHandler = async (
       });
     }
 
-    const createProductVariants: bulkVariantCreate = await graphqlCallSaleor(
+    const createProductVariants: bulkVariantCreate = await graphqlCall(
       productVariantBulkCreateMutation(productVariantData, productId),
     );
     createProductVariants.productVariantBulkCreate.productVariants.map(
       (variant) => [variantIds.push(variant.id)],
     );
-    Logger.verbose('Product variants bulk created', createProductVariants);
+    // Logger.verbose('Product variants bulk created', createProductVariants);
 
     return variantIds;
   } catch (err) {
-    if (retry == 2) {
+    if (retry == 4) {
       Logger.warn('product variant call failed', graphqlExceptionHandler(err));
       await productDeleteById(productId);
       return;
@@ -61,12 +60,12 @@ export const addProductVariantToShopHandler = async (
       const addVariantToShop = await graphqlCall(
         addProductVariantToShopMutation(productVariantId, shopId),
       );
-      Logger.verbose('Product variant added to shop', addVariantToShop);
+      // Logger.verbose('Product variant added to shop', addVariantToShop);
     }
   } catch (err) {
-    if (retry == 2) {
-      Logger.warn(
-        'product channel update call failed',
+    if (retry > 4) {
+      Logger.error(
+        'product variant add to shop call failed',
         graphqlExceptionHandler(err),
       );
       return;

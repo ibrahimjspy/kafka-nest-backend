@@ -11,7 +11,7 @@ export const masterCategoryQuery = (): string => {
 };
 
 export const tbStyleNoQuery = (): string => {
-  return `SELECT TOP 10 PERCENT * FROM testDB.dbo.TBStyleNo_New;`;
+  return `SELECT * FROM testDB.dbo.TBStyleNo_New;`;
 };
 
 export const tbStyleNoNewQuery = (): string => {

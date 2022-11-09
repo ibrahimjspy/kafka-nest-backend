@@ -45,7 +45,7 @@ export class ProductVariantService {
     if (color_list) {
       // TRANSFORM PRODUCT VARIANTS
       await color_list.map(async (color) => {
-        console.log(color);
+        // console.log(color);
         const variants = await this.transformerClass.productVariantTransformer(
           color,
           sizes,
@@ -53,7 +53,7 @@ export class ProductVariantService {
         );
         productVariants = [...productVariants, ...variants];
       });
-      console.log(productVariants);
+      // console.log(productVariants);
 
       if (productVariants.length > 0) {
         // CREATE VARIANTS
@@ -68,7 +68,7 @@ export class ProductVariantService {
         // ADD PRODUCT VARIANTS TO SHOP
         await Promise.all(
           variantIds.map(async (id) => {
-            await addProductVariantToShopHandler(id, shopId);
+            addProductVariantToShopHandler(id, shopId);
           }),
         );
       }
