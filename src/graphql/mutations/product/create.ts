@@ -5,7 +5,7 @@ export const createProductMutation = (productData: productTransformed) => {
   // parsing product data;
   const DEFAULT_PRODUCT_TYPE =
     process.env.DEFAULT_PRODUCT_TYPE || 'UHJvZHVjdFR5cGU6Mg==';
-  const { name, description, categoryId } = productData;
+  const { name, categoryId } = productData;
   return gql`
     mutation {
       productCreate(

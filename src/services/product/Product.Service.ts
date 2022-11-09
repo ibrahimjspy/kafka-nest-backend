@@ -78,7 +78,7 @@ export class ProductService {
 
       await this.createProductMedia(productId, productData.media);
       await this.createProductVariants(productData, productId);
-      Logger.verbose(`product flow completed against ${productId}`); 
+      Logger.verbose(`product flow completed against ${productId}`);
     }
     return {
       productId,

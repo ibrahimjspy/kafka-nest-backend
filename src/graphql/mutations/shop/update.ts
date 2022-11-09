@@ -5,7 +5,7 @@ export const updateShopMutation = (
   shopData: shopTransformed,
   shopId: string,
 ) => {
-  const { description, storePolicy, madeIn, returnPolicy, url } = shopData;
+  const { description, storePolicy, madeIn, returnPolicy } = shopData;
   return gql`
     mutation {
       updateMarketplaceShop(

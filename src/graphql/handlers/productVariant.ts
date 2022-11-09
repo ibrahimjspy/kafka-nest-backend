@@ -57,7 +57,7 @@ export const addProductVariantToShopHandler = async (
       });
     }
     if (productVariantId) {
-      const addVariantToShop = await graphqlCall(
+      await graphqlCall(
         addProductVariantToShopMutation(productVariantId, shopId),
       );
       // Logger.verbose('Product variant added to shop', addVariantToShop);
