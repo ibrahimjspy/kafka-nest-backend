@@ -63,7 +63,7 @@ export const addProductVariantToShopHandler = async (
       // Logger.verbose('Product variant added to shop', addVariantToShop);
     }
   } catch (err) {
-    if (retry > 4) {
+    if (retry > 7) {
       Logger.error(
         'product variant add to shop call failed',
         graphqlExceptionHandler(err),

@@ -1,5 +1,8 @@
 import { Logger } from '@nestjs/common';
-import { getProductDetails, productCreate } from 'src/types/graphql/product';
+import {
+  getProductDetailsInterface,
+  productCreate,
+} from 'src/types/graphql/product';
 import { productTransformed } from 'src/types/transformers/product';
 import {
   graphqlCall,
@@ -32,7 +35,7 @@ export const createProductHandler = async (
     const productId = createProduct?.productCreate?.product?.id;
     await productChannelListing(productId);
 
-    // Logger.verbose('Product created', createProduct);
+    Logger.verbose('Product created', createProduct);
     return productId;
   } catch (err) {
     if (retry == 3) {
@@ -64,18 +67,22 @@ export const productChannelListing = async (productId, retry = 0) => {
 };
 //  <-->  Read  <-->
 
-export const getProductSlugById = async (productId: string, retry = 0) => {
+export const getProductDetailsHandler = async (
+  productId: string,
+  retry = 0,
+) => {
   try {
     if (retry !== 0) {
       Logger.warn(`${retry} retry in product details get call`, {
         productId,
       });
     }
-    const product: getProductDetails = await graphqlCall(
+    const product: getProductDetailsInterface = await graphqlCall(
       getProductDetailsQuery(productId),
     );
+    const { slug, variants, media } = product.product;
     // Logger.verbose('Product fetched', product);
-    return product.product.slug;
+    return { slug, variants, media };
   } catch (err) {
     if (retry == 4) {
       Logger.warn('Product fetch call failed', graphqlExceptionHandler(err));
@@ -101,10 +108,10 @@ export const updateProductHandler = async (
     const productUpdate = await graphqlCall(
       updateProductMutation(productUpdateData, destinationId),
     );
-    // Logger.verbose('Product updated', productUpdate);
+    Logger.verbose('Product updated', productUpdate);
     return productUpdate;
   } catch (err) {
-    if (retry == 4) {
+    if (retry == 6) {
       Logger.warn('Product update call failed', graphqlExceptionHandler(err));
       return;
     }

@@ -109,10 +109,6 @@ export class ProductTransformerService {
       sourceMasterCategoryId,
     );
     if (destinationMasterCategoryId) {
-      // console.log(
-      //   'I was called to fetch master category',
-      //   destinationMasterCategoryId,
-      // );
       return destinationMasterCategoryId;
     }
     return DEFAULT_CATEGORY_ID;

@@ -26,7 +26,7 @@ export const createBundleHandler = async (
         '"',
       ),
     );
-    // Logger.verbose('Bundle created', bundles);
+    // Logger.verbose('Bundle created');
     return bundles;
   } catch (err) {
     if (retry > 4) {

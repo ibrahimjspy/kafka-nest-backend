@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import {
   createProductHandler,
   deleteProductHandler,
-  getProductSlugById,
+  getProductDetailsHandler,
   updateProductHandler,
 } from 'src/graphql/handlers/product';
 import {
@@ -42,9 +42,8 @@ export class ProductService {
     const productData = await this.transformerClass.productDetailsTransformer(
       kafkaMessage,
     );
-    // updating product with cdc information
     if (productExistsInDestination) {
-      return updateProductHandler(productData, productExistsInDestination);
+      return await this.productUpdate(productExistsInDestination, productData);
     }
     return await this.createProduct(productData);
   }
@@ -72,20 +71,20 @@ export class ProductService {
 
     const productId = await createProductHandler(productData);
     if (productId) {
-      await insertProductId(productData.id, productId);
-
       // creates product variants and its media
 
       await this.createProductMedia(productId, productData.media);
       await this.createProductVariants(productData, productId);
       Logger.verbose(`product flow completed against ${productId}`);
+
+      await insertProductId(productData.id, productId);
     }
     return {
       productId,
     };
   }
 
-  private async createProductVariants(
+  public async createProductVariants(
     productData: productTransformed,
     productId: string,
   ) {
@@ -103,8 +102,8 @@ export class ProductService {
   // source ID = 1234 =>  destination UUID = QXR0cmlidXRlOjE4 => serialId = 234
   public async getProductSerialId(uuid: string) {
     // fetches serialId against uuid <productId>
-    const productSlug = await getProductSlugById(uuid);
-    const productSerialId = await fetchProductSerialIdBySlug(productSlug); // postgres call
+    const productSlug = await getProductDetailsHandler(uuid);
+    const productSerialId = await fetchProductSerialIdBySlug(productSlug.slug); // postgres call
     return productSerialId;
   }
 
@@ -119,5 +118,18 @@ export class ProductService {
         productSerialId,
       );
     }
+  }
+  public async productUpdate(
+    productId: string,
+    productData: productTransformed,
+  ) {
+    const productDetails = await getProductDetailsHandler(productId);
+    if (productDetails.media.length === 0) {
+      await this.createProductMedia(productId, productData.media);
+    }
+    if (productDetails.variants.length === 0) {
+      await this.createProductVariants(productData, productId);
+    }
+    return await updateProductHandler(productData, productId);
   }
 }

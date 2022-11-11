@@ -18,7 +18,7 @@ export interface productMediaCreate {
   };
 }
 
-export interface getProductDetails {
+export interface getProductDetailsInterface {
   product?: {
     name: string;
     media: {
