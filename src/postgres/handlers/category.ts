@@ -1,3 +1,4 @@
+import { Logger } from '@nestjs/common';
 import { postgresDeleteCall } from 'src/utils/postgres/delete';
 import { postgresFetchIdCall } from 'src/utils/postgres/fetch';
 import { postgresInsertCall } from 'src/utils/postgres/insert';
@@ -41,7 +42,7 @@ export const insertMasterCategoryId = async (
       );
     }
   } catch (error) {
-    console.log('error');
+    Logger.log('error');
   }
 };
 

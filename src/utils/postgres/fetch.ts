@@ -18,8 +18,6 @@ export const postgresFetchIdCall = async (Query: string, retry = 0) => {
     .catch(async (err) => {
       if (retry > 4) {
         Logger.warn('postgres error', err);
-        console.log(err);
-        console.log(Query);
       }
       return await postgresFetchIdCall(Query, retry + 1);
     });
@@ -43,8 +41,6 @@ export const postgresFetchMediaIdCall = async (Query: string, retry = 0) => {
     .catch(async (err) => {
       if (retry > 4) {
         Logger.warn('postgres error', err);
-        console.log(err);
-        console.log(Query);
       }
       return await postgresFetchMediaIdCall(Query, retry + 1);
     });

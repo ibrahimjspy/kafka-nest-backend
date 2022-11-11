@@ -45,7 +45,6 @@ export class ProductVariantService {
     if (color_list) {
       // TRANSFORM PRODUCT VARIANTS
       await color_list.map(async (color) => {
-        // console.log(color);
         const variants = await this.transformerClass.productVariantTransformer(
           color,
           sizes,
@@ -53,7 +52,6 @@ export class ProductVariantService {
         );
         productVariants = [...productVariants, ...variants];
       });
-      // console.log(productVariants);
 
       if (productVariants.length > 0) {
         // CREATE VARIANTS

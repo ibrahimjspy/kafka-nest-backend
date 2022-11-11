@@ -21,7 +21,6 @@ export const mssqlCall = async (query: string, wait = 100000) => {
       }
       // send records as a response
       if (recordset.recordset[0]) {
-        //   console.log(recordset);
         data = recordset.recordset;
         sqlTransaction.clear(); // aborting sql transaction
         return data;

@@ -26,7 +26,6 @@ export const createUserHandler = async (
       '',
     );
     const token = createToken.tokenCreate.token;
-    console.log(token);
     const createUser = await graphqlCallByToken(
       createUserMutation(userData),
       token,
@@ -49,7 +48,6 @@ export const updateUserHandler = async (
       createSessionToken(),
     );
     const token = createToken.tokenCreate.token;
-    console.log(token);
     const updateUser = await graphqlCallByToken(
       updateUserMutation(userUpdateData, destinationId),
       token,

@@ -27,7 +27,6 @@ export class ShopTransformerService {
    * @returns transformed object
    */
   public async shopTransformerMethod(@Param() object: shopDto) {
-    // console.log(object);
     const shopObject: shopTransformed = {};
     const {
       TBVendor_ID,

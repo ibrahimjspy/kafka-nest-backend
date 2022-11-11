@@ -5,8 +5,10 @@ import {
   graphqlCall,
   graphqlExceptionHandler,
 } from 'src/utils/graphql/handler';
-import { productVariantBulkCreateMutation } from '../mutations/productVariant/create';
-import { addProductVariantToShopMutation } from '../mutations/shop/create';
+import {
+  addProductVariantToShopMutation,
+  productVariantBulkCreateMutation,
+} from '../mutations/productVariant/create';
 
 //  <-->  Create  <-->
 export const createBulkVariantsHandler = async (
@@ -28,7 +30,6 @@ export const createBulkVariantsHandler = async (
     createProductVariants.productVariantBulkCreate.productVariants.map(
       (variant) => [variantIds.push(variant.id)],
     );
-    // Logger.verbose('Product variants bulk created', createProductVariants);
 
     return variantIds;
   } catch (err) {
@@ -60,7 +61,6 @@ export const addProductVariantToShopHandler = async (
       await graphqlCall(
         addProductVariantToShopMutation(productVariantId, shopId),
       );
-      // Logger.verbose('Product variant added to shop', addVariantToShop);
     }
   } catch (err) {
     if (retry > 7) {

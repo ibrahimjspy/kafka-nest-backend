@@ -77,11 +77,10 @@ export const getProductDetailsHandler = async (
         productId,
       });
     }
-    const product: getProductDetailsInterface = await graphqlCall(
+    const getProductDetails: getProductDetailsInterface = await graphqlCall(
       getProductDetailsQuery(productId),
     );
-    const { slug, variants, media } = product.product;
-    // Logger.verbose('Product fetched', product);
+    const { slug, variants, media } = getProductDetails.product;
     return { slug, variants, media };
   } catch (err) {
     if (retry == 4) {
