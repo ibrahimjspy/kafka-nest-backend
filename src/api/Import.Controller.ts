@@ -1,27 +1,26 @@
 import { Controller, Get } from '@nestjs/common';
 import { AppService } from 'src/app.service';
-import { fetchBulkProductsData, fetchBulkVendors } from 'src/mssql/import';
+import { BulkImportService } from './import.service';
 
 // endpoints to trigger data bulk imports
 @Controller()
 export class BulkImportController {
-  constructor(private readonly appService: AppService) {}
+  constructor(
+    private readonly appService: AppService,
+    private readonly importService: BulkImportService,
+  ) {}
   @Get()
   async app() {
-    return 'Application running';
+    return await this.importService.healthCheck();
   }
 
   @Get('products')
   async createProducts() {
-    const data: any = await fetchBulkProductsData();
-    await this.appService.productBulkCreate(data.slice(8500, 9000));
-    return `${data.length} products created`;
+    return await this.importService.createBulkProducts();
   }
 
   @Get('shops')
   async createShops() {
-    const data: any = await fetchBulkVendors();
-    await this.appService.ShopBulkCreate(data.slice(180, 186));
-    return `${data.length} shops created`;
+    return await this.importService.createBulkShops();
   }
 }

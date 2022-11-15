@@ -8,7 +8,6 @@ import { PromisePool } from '@supercharge/promise-pool';
 @Injectable()
 export class AppService {
   constructor(
-    // private readonly producerService: ProducerService,
     private readonly productService: ProductService,
     private readonly categoryService: CategoryService,
     private readonly shopService: ShopService,
