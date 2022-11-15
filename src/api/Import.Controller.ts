@@ -14,7 +14,7 @@ export class BulkImportController {
   @Get('products')
   async createProducts() {
     const data: any = await fetchBulkProductsData();
-    await this.appService.productBulkCreate(data.slice(5100, 5150));
+    await this.appService.productBulkCreate(data.slice(8500, 9000));
     return `${data.length} products created`;
   }
 

@@ -23,12 +23,6 @@ export const createProductHandler = async (
   retry = 0,
 ): Promise<string> => {
   try {
-    if (retry !== 0) {
-      Logger.warn(`${retry} retry in create product call`, {
-        productData,
-      });
-    }
-
     const createProduct: productCreate = await graphqlCall(
       createProductMutation(productData),
     );
@@ -42,18 +36,16 @@ export const createProductHandler = async (
       Logger.error('Product create call failed', graphqlExceptionHandler(err));
       return;
     }
+    Logger.warn(`${retry + 1} retry in create product call`, {
+      productData,
+    });
     return await createProductHandler(productData, retry + 1);
   }
 };
 
 export const productChannelListing = async (productId, retry = 0) => {
   try {
-    if (retry !== 0) {
-      Logger.warn(`${retry} retry in product channel listing update`, {
-        productId,
-      });
-    }
-    await graphqlCall(productChannelListingMutation(productId));
+    return await graphqlCall(productChannelListingMutation(productId));
   } catch (err) {
     if (retry == 4) {
       Logger.warn(
@@ -62,6 +54,9 @@ export const productChannelListing = async (productId, retry = 0) => {
       );
       return;
     }
+    Logger.warn(`${retry + 1} retry in product channel listing update`, {
+      productId,
+    });
     return await productChannelListing(productId, retry + 1);
   }
 };
@@ -72,11 +67,6 @@ export const getProductDetailsHandler = async (
   retry = 0,
 ) => {
   try {
-    if (retry !== 0) {
-      Logger.warn(`${retry} retry in product details get call`, {
-        productId,
-      });
-    }
     const getProductDetails: getProductDetailsInterface = await graphqlCall(
       getProductDetailsQuery(productId),
     );
@@ -87,6 +77,9 @@ export const getProductDetailsHandler = async (
       Logger.warn('Product fetch call failed', graphqlExceptionHandler(err));
       return;
     }
+    Logger.warn(`${retry + 1} retry in product details get call`, {
+      productId,
+    });
     return await productChannelListing(productId, retry + 1);
   }
 };
@@ -99,11 +92,6 @@ export const updateProductHandler = async (
   retry = 0,
 ): Promise<object> => {
   try {
-    if (retry !== 0) {
-      Logger.warn(`${retry} retry in product update  call`, {
-        destinationId,
-      });
-    }
     const productUpdate = await graphqlCall(
       updateProductMutation(productUpdateData, destinationId),
     );
@@ -114,6 +102,9 @@ export const updateProductHandler = async (
       Logger.warn('Product update call failed', graphqlExceptionHandler(err));
       return;
     }
+    Logger.warn(`${retry + 1} retry in product update  call`, {
+      destinationId,
+    });
     return await updateProductHandler(
       productUpdateData,
       destinationId,

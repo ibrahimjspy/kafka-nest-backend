@@ -14,25 +14,21 @@ export const createBundleHandler = async (
   retry = 0,
 ) => {
   try {
-    if (retry !== 0) {
-      Logger.warn(`${retry} retry in create bundles call`, {
-        bundleVariants,
-      });
-    }
-
     const bundles = await graphqlCall(
       createBundleMutation(bundleVariants, bundleQuantities, shopId).replace(
         /'/g,
         '"',
       ),
     );
-    // Logger.verbose('Bundle created');
     return bundles;
   } catch (err) {
     if (retry > 4) {
       Logger.error('add to bundle call failed');
       return graphqlExceptionHandler(err);
     }
+    Logger.warn(`${retry + 1} retry in create bundles call`, {
+      bundleVariants,
+    });
     return await createBundleHandler(bundleVariants, shopId, retry + 1);
   }
 };

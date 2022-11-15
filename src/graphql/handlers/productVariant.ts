@@ -18,11 +18,6 @@ export const createBulkVariantsHandler = async (
 ) => {
   try {
     const variantIds = [];
-    if (retry !== 0) {
-      Logger.warn(`${retry} in product variant retry call`, {
-        productVariantData,
-      });
-    }
 
     const createProductVariants: bulkVariantCreate = await graphqlCall(
       productVariantBulkCreateMutation(productVariantData, productId),
@@ -38,6 +33,9 @@ export const createBulkVariantsHandler = async (
       await productDeleteById(productId);
       return;
     }
+    Logger.warn(`${retry + 1} in product variant retry call`, {
+      productVariantData,
+    });
     return await createBulkVariantsHandler(
       productVariantData,
       productId,
@@ -52,24 +50,22 @@ export const addProductVariantToShopHandler = async (
   retry = 0,
 ) => {
   try {
-    if (retry !== 0) {
-      Logger.warn(`${retry} retry in product variant add to Shop`, {
-        productVariantId,
-      });
-    }
     if (productVariantId) {
       await graphqlCall(
         addProductVariantToShopMutation(productVariantId, shopId),
       );
     }
   } catch (err) {
-    if (retry > 7) {
+    if (retry > 10) {
       Logger.error(
         'product variant add to shop call failed',
         graphqlExceptionHandler(err),
       );
       return;
     }
+    Logger.warn(`${retry + 1} retry in product variant add to Shop`, {
+      productVariantId,
+    });
     return await addProductVariantToShopHandler(
       productVariantId,
       shopId,

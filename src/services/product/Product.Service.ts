@@ -17,6 +17,7 @@ import { TransformerService } from '../../transformer/Transformer.service';
 import { ProductMediaService } from './media/Product.Media.Service';
 import { ProductVariantService } from './variant/Product.Variant.Service';
 import { productVariantInterface } from 'src/types/mssql/product';
+import { productDeleteById } from 'src/utils/core/productDelete';
 
 /**
  *  Injectable class handling product variant and its relating tables CDC
@@ -71,17 +72,33 @@ export class ProductService {
 
     const productId = await createProductHandler(productData);
     if (productId) {
+      // inserts product id into id mapping table
+      await insertProductId(productData.id, productId);
       // creates product variants and its media
-
       await this.createProductMedia(productId, productData.media);
       await this.createProductVariants(productData, productId);
       Logger.verbose(`product flow completed against ${productId}`);
-
-      await insertProductId(productData.id, productId);
     }
     return {
       productId,
     };
+  }
+
+  public async productUpdate(
+    productId: string,
+    productData: productTransformed,
+  ) {
+    const productDetails = await getProductDetailsHandler(productId);
+    if (productDetails.variants.length === 0) {
+      await this.createProductVariants(productData, productId);
+    }
+    if (productDetails.media.length === 0) {
+      await this.createProductMedia(productId, productData.media);
+      if (productData.media.length === 0) {
+        return await productDeleteById(productId);
+      }
+    }
+    return await updateProductHandler(productData, productId);
   }
 
   public async createProductVariants(
@@ -108,7 +125,7 @@ export class ProductService {
   }
 
   public async createProductMedia(productId: string, productMedia: string[]) {
-    // fetches product database id
+    // fetches product serial id
     const productSerialId = await this.getProductSerialId(productId);
 
     if (productSerialId) {
@@ -118,18 +135,5 @@ export class ProductService {
         productSerialId,
       );
     }
-  }
-  public async productUpdate(
-    productId: string,
-    productData: productTransformed,
-  ) {
-    const productDetails = await getProductDetailsHandler(productId);
-    if (productDetails.media.length === 0) {
-      await this.createProductMedia(productId, productData.media);
-    }
-    if (productDetails.variants.length === 0) {
-      await this.createProductVariants(productData, productId);
-    }
-    return await updateProductHandler(productData, productId);
   }
 }

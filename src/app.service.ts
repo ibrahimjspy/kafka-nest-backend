@@ -1,6 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { createProductHandler } from './graphql/handlers/product';
-import { ProducerService } from './kafka/producer.service';
 import { CategoryService } from './services/category/Category.Service';
 import { ProductService } from './services/product/Product.Service';
 import { ProductVariantService } from './services/product/variant/Product.Variant.Service';
@@ -9,7 +8,7 @@ import { PromisePool } from '@supercharge/promise-pool';
 @Injectable()
 export class AppService {
   constructor(
-    private readonly producerService: ProducerService,
+    // private readonly producerService: ProducerService,
     private readonly productService: ProductService,
     private readonly categoryService: CategoryService,
     private readonly shopService: ShopService,
@@ -77,7 +76,7 @@ export class AppService {
   // big data import methods dividing data in batches and running them in pools
   async productBulkCreate(bulkArray) {
     try {
-      const { results } = await PromisePool.withConcurrency(3)
+      const { results } = await PromisePool.withConcurrency(100)
         .for(bulkArray)
         .onTaskStarted((product, pool) => {
           Logger.log(`Progress: ${pool.processedPercentage()}%`);

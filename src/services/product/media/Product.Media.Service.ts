@@ -14,6 +14,7 @@ export class ProductMediaService {
     return 'Service running';
   }
   public async productMediaAssign(productMedia, productId) {
+    // Validating media url and inserting it to DB
     const createMedia = Promise.all(
       productMedia.map(async (url) => {
         if (url) {

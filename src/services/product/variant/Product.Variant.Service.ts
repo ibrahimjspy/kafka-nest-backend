@@ -75,9 +75,10 @@ export class ProductVariantService {
   }
 
   private async createBundles(variantIds, bundle, shopId) {
-    const bundleVariants = chunkArray(variantIds, bundle.length);
+    // Filters variantIds array according to bundles
+    const bundleVariantIds = chunkArray(variantIds, bundle.length);
     const createBundles = await Promise.all(
-      bundleVariants.map(async (variants) => {
+      bundleVariantIds.map(async (variants) => {
         await createBundleHandler(variants, bundle, shopId);
       }),
     );
