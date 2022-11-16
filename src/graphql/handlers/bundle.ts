@@ -2,7 +2,7 @@ import { Logger } from '@nestjs/common';
 import {
   graphqlCall,
   graphqlExceptionHandler,
-} from 'src/utils/graphql/handler';
+} from 'src/graphql/graphql.utils';
 import { createBundleMutation } from '../mutations/bundles/create';
 
 //  <-->  Create  <-->

@@ -1,4 +1,4 @@
-import { postgresInsertCall } from 'src/utils/postgres/insert';
+import { postgresInsertCall } from 'src/database/postgres/call/insert';
 import { insertMediaQuery } from '../queries/media';
 
 //                       <insert>

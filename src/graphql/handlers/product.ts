@@ -2,12 +2,12 @@ import { Logger } from '@nestjs/common';
 import {
   getProductDetailsInterface,
   productCreate,
-} from 'src/types/graphql/product';
-import { productTransformed } from 'src/types/transformers/product';
+} from 'src/graphql/types/product';
+import { productTransformed } from 'src/transformer/types/product';
 import {
   graphqlCall,
   graphqlExceptionHandler,
-} from 'src/utils/graphql/handler';
+} from 'src/graphql/graphql.utils';
 import {
   createProductMutation,
   productChannelListingMutation,

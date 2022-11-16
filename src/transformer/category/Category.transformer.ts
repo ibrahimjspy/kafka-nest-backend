@@ -1,12 +1,12 @@
 import { Injectable, Param } from '@nestjs/common';
-import { groupIds } from 'src/mock/category/groupIds';
-import { fetchMasterCategoryId } from 'src/postgres/handlers/category';
+import { groupIds } from 'mock/category/groupIds';
+import { fetchMasterCategoryId } from 'src/database/postgres/handlers/category';
 import {
   masterCategoryDto,
   masterCategoryTransformed,
   subCategoryDto,
   subCategoryTransformed,
-} from 'src/types/transformers/category';
+} from 'src/transformer/types/category';
 import { ProductTransformerService } from '../product/Product.transformer';
 
 /**

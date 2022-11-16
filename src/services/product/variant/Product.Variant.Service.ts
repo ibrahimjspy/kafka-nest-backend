@@ -3,11 +3,11 @@ import {
   addProductVariantToShopHandler,
   createBulkVariantsHandler,
 } from 'src/graphql/handlers/productVariant';
-import { fetchProductId } from 'src/postgres/handlers/product';
+import { fetchProductId } from 'src/database/postgres/handlers/product';
 import { TransformerService } from 'src/transformer/Transformer.service';
-import { productVariantInterface } from 'src/types/mssql/product';
-import { colorSelectDto } from 'src/types/transformers/product';
-import { getProductDetailsFromDb } from 'src/mssql/product.fetch';
+import { productVariantInterface } from 'src/database/mssql/types/product';
+import { colorSelectDto } from 'src/transformer/types/product';
+import { getProductDetailsFromDb } from 'src/database/mssql/product-view/fetch';
 import { createBundleHandler } from 'src/graphql/handlers/bundle';
 
 /**

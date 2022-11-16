@@ -1,8 +1,8 @@
-import { postgresDeleteCall } from 'src/utils/postgres/delete';
+import { postgresDeleteCall } from 'src/database/postgres/call/delete';
 import {
   postgresFetchIdCall,
   postgresFetchMediaIdCall,
-} from 'src/utils/postgres/fetch';
+} from 'src/database/postgres/call/fetch';
 
 import {
   deleteProductIdByDestinationIdQuery,

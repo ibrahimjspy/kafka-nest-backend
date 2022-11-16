@@ -1,10 +1,10 @@
 import { Injectable, Param } from '@nestjs/common';
-import { productDto, productTransformed } from 'src/types/transformers/product';
+import { productDto, productTransformed } from 'src/transformer/types/product';
 import {
   fetchMasterCategoryId,
   fetchSubCategoryId,
-} from 'src/postgres/handlers/category';
-import { fetchShopId } from 'src/postgres/handlers/shop';
+} from 'src/database/postgres/handlers/category';
+import { fetchShopId } from 'src/database/postgres/handlers/shop';
 /**
  *  Injectable class handling product transformation
  *  @Injectable in app scope or in kafka connection to reach kafka messages

@@ -1,14 +1,14 @@
 import { Logger } from '@nestjs/common';
-import { bulkVariantCreate } from 'src/types/graphql/product';
-import { productDeleteById } from 'src/utils/core/productDelete';
+import { bulkVariantCreate } from 'src/graphql/types/product';
 import {
   graphqlCall,
   graphqlExceptionHandler,
-} from 'src/utils/graphql/handler';
+} from 'src/graphql/graphql.utils';
 import {
   addProductVariantToShopMutation,
   productVariantBulkCreateMutation,
 } from '../mutations/productVariant/create';
+import { productDeleteById } from 'src/services/product/Product.utils';
 
 //  <-->  Create  <-->
 export const createBulkVariantsHandler = async (

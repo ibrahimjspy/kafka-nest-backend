@@ -14,13 +14,13 @@ import {
   fetchSubCategoryId,
   insertMasterCategoryId,
   insertSubCategoryId,
-} from 'src/postgres/handlers/category';
+} from 'src/database/postgres/handlers/category';
 import {
   masterCategoryDto,
   masterCategoryTransformed,
   subCategoryDto,
   subCategoryTransformed,
-} from 'src/types/transformers/category';
+} from 'src/transformer/types/category';
 import { TransformerService } from '../../transformer/Transformer.service';
 
 /**

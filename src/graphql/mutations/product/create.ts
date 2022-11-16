@@ -1,5 +1,5 @@
 import { gql } from 'graphql-request';
-import { productTransformed } from 'src/types/transformers/product';
+import { productTransformed } from 'src/transformer/types/product';
 
 export const createProductMutation = (productData: productTransformed) => {
   // parsing product data;

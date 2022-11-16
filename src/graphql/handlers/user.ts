@@ -1,13 +1,13 @@
 // import { insertUserId } from 'src/postgres/handlers/user';
 import { Logger } from '@nestjs/common';
-import { createTokenInterface } from 'src/types/graphql/shop';
-import { shopTransformed } from 'src/types/transformers/shop';
+import { createTokenInterface } from 'src/graphql/types/shop';
+import { shopTransformed } from 'src/transformer/types/shop';
 import {
   graphqlCall,
   graphqlCallByToken,
   graphqlCallSaleor,
   graphqlExceptionHandler,
-} from 'src/utils/graphql/handler';
+} from 'src/graphql/graphql.utils';
 import {
   createSessionToken,
   createUserMutation,

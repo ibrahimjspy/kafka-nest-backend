@@ -1,5 +1,5 @@
 import { Injectable, Param } from '@nestjs/common';
-import { shopDto, shopTransformed } from 'src/types/transformers/shop';
+import { shopDto, shopTransformed } from 'src/transformer/types/shop';
 /**
  *  Injectable class handling shop transformation\
  *  @requires Injectable in app scope or in kafka connection to reach kafka messages

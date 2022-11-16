@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { insertProductMediaById } from 'src/postgres/handlers/media';
+import { insertProductMediaById } from 'src/database/postgres/handlers/media';
 import { TransformerService } from 'src/transformer/Transformer.service';
 /**
  *  Injectable class handling media assign

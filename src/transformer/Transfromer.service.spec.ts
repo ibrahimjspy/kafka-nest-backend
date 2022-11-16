@@ -3,15 +3,15 @@ import {
   CategoryTransformedMock,
   masterCategoryCDCMock,
   subCategoryCDCMock,
-} from 'src/mock/transformer/categories';
+} from 'mock/transformer/categories';
 import {
   descriptionSmallText,
   productCdcMock,
   productTransformedExpected,
-} from 'src/mock/transformer/product';
-import { shopCdcMock, shopTransformedMock } from 'src/mock/transformer/shop';
+} from 'mock/transformer/product';
+import { shopCdcMock, shopTransformedMock } from 'mock/transformer/shop';
 import { TransformerService } from './Transformer.service';
-import { mediaMock, mockMediaTransformed } from 'src/mock/product/media';
+import { mediaMock, mockMediaTransformed } from 'mock/product/media';
 import { ProductTransformerService } from './product/Product.transformer';
 import { TransformerModule } from './Transformer.module';
 

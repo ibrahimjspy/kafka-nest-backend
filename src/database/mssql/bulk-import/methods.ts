@@ -1,10 +1,10 @@
-import { mssqlCall } from 'src/utils/core/mssqlFetch';
+import { mssqlCall } from 'src/database/mssql/bulk-import/fetch';
 import {
   masterCategoryQuery,
   subCategoryQuery,
   tbStyleNoNewQuery,
   tbVendorQuery,
-} from './query';
+} from '../query';
 
 export const fetchBulkSubCategoriesData = async () => {
   return await mssqlCall(subCategoryQuery());

@@ -9,15 +9,15 @@ import {
   fetchProductId,
   fetchProductSerialIdBySlug,
   insertProductId,
-} from 'src/postgres/handlers/product';
-import { deleteProductId } from 'src/postgres/handlers/product';
-import { productDto, productTransformed } from 'src/types/transformers/product';
-import { getProductDetailsFromDb } from 'src/mssql/product.fetch';
+} from 'src/database/postgres/handlers/product';
+import { deleteProductId } from 'src/database/postgres/handlers/product';
+import { productDto, productTransformed } from 'src/transformer/types/product';
+import { getProductDetailsFromDb } from 'src/database/mssql/product-view/fetch';
 import { TransformerService } from '../../transformer/Transformer.service';
 import { ProductMediaService } from './media/Product.Media.Service';
 import { ProductVariantService } from './variant/Product.Variant.Service';
-import { productVariantInterface } from 'src/types/mssql/product';
-import { productDeleteById } from 'src/utils/core/productDelete';
+import { productVariantInterface } from 'src/database/mssql/types/product';
+import { productDeleteById } from './Product.utils';
 
 /**
  *  Injectable class handling product variant and its relating tables CDC

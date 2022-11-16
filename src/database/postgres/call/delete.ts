@@ -1,5 +1,5 @@
 import { Logger } from '@nestjs/common';
-import client from '../../../pg-config';
+import client from '../../../../pg-config';
 
 /**
  * inserts source product and brand details against its product_id

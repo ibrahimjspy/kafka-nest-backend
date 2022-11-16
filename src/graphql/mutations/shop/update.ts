@@ -1,5 +1,5 @@
 import { gql } from 'graphql-request';
-import { shopTransformed } from 'src/types/transformers/shop';
+import { shopTransformed } from 'src/transformer/types/shop';
 
 export const updateShopMutation = (
   shopData: shopTransformed,

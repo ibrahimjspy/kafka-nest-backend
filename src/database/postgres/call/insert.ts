@@ -1,4 +1,4 @@
-import client from '../../../pg-config';
+import client from '../../../../pg-config';
 
 /**
  * inserts in database

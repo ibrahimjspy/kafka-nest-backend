@@ -6,9 +6,9 @@ import {
   deleteProductId,
   fetchProductId,
   insertProductId,
-} from 'src/postgres/handlers/product';
+} from 'src/database/postgres/handlers/product';
 import { Logger } from '@nestjs/common';
-import { insertMasterCategoryId } from 'src/postgres/handlers/category';
+import { insertMasterCategoryId } from 'src/database/postgres/handlers/category';
 import { TransformerModule } from 'src/transformer/Transformer.module';
 import { ProductMediaService } from './media/Product.Media.Service';
 

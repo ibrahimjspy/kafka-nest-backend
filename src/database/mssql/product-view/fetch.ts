@@ -1,12 +1,12 @@
 import { Logger } from '@nestjs/common';
 import { connect, Request } from 'mssql';
 import delay from 'delay';
-import { config } from '../../mssql-config';
+import { config } from '../../../../mssql-config';
 import {
   productDatabaseViewInterface,
   productVariantInterface,
-} from 'src/types/mssql/product';
-import { TBStyleSearchUniqueQuery } from './query';
+} from 'src/database/mssql/types/product';
+import { TBStyleSearchUniqueQuery } from '../query';
 
 export const getProductDetailsFromDb = async (
   productId: string,

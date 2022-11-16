@@ -1,7 +1,7 @@
 import { Logger } from '@nestjs/common';
-import { postgresDeleteCall } from 'src/utils/postgres/delete';
-import { postgresFetchIdCall } from 'src/utils/postgres/fetch';
-import { postgresInsertCall } from 'src/utils/postgres/insert';
+import { postgresDeleteCall } from 'src/database/postgres/call/delete';
+import { postgresFetchIdCall } from 'src/database/postgres/call/fetch';
+import { postgresInsertCall } from 'src/database/postgres/call/insert';
 import {
   deleteMasterCategoryIdQuery,
   deleteSubCategoryIdQuery,

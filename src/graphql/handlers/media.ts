@@ -1,9 +1,9 @@
 import { Logger } from '@nestjs/common';
-import { productMediaCreate } from 'src/types/graphql/product';
+import { productMediaCreate } from 'src/graphql/types/product';
 import {
   graphqlCall,
   graphqlExceptionHandler,
-} from 'src/utils/graphql/handler';
+} from 'src/graphql/graphql.utils';
 import { mediaCreateMutation } from '../mutations/media/create';
 
 //  <-->  Create  <-->

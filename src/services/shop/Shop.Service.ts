@@ -13,14 +13,14 @@ import {
   deleteShopId,
   fetchShopId,
   insertShopId,
-} from 'src/postgres/handlers/shop';
+} from 'src/database/postgres/handlers/shop';
 import {
   deleteUserId,
   fetchUserId,
   insertUserId,
-} from 'src/postgres/handlers/user';
+} from 'src/database/postgres/handlers/user';
 import { TransformerService } from 'src/transformer/Transformer.service';
-import { shopDto, shopTransformed } from 'src/types/transformers/shop';
+import { shopDto, shopTransformed } from 'src/transformer/types/shop';
 
 /**
  *  Injectable class handling brand and its relating tables CDC

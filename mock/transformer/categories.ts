@@ -2,7 +2,7 @@ import {
   masterCategoryDto,
   masterCategoryTransformed,
   subCategoryDto,
-} from 'src/types/transformers/category';
+} from 'src/transformer/types/category';
 
 export const masterCategoryCDCMock: masterCategoryDto = {
   CategoryMasterName: 'name',

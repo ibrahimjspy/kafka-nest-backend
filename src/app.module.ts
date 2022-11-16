@@ -10,8 +10,8 @@ import { ProductVariantService } from './services/product/variant/Product.Varian
 import { ShopService } from './services/shop/Shop.Service';
 import { TransformerModule } from './transformer/Transformer.module';
 import { TransformerService } from './transformer/Transformer.service';
-import { ProducerService } from './kafka/producer.service';
-import { KafkaModule } from './kafka/kafka.module';
+import { ProducerService } from './api/producer/producer.service';
+import { KafkaModule } from './api/producer/kafka.module';
 import { BulkImportService } from './api/import.service';
 
 @Module({

@@ -1,7 +1,7 @@
 import { Logger } from '@nestjs/common';
 import { connect, Request } from 'mssql';
 import delay from 'delay';
-import { config } from '../../../mssql-config';
+import { config } from '../../../../mssql-config';
 
 export const mssqlCall = async (query: string, wait = 100000) => {
   let data = {};

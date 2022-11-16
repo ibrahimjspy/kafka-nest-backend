@@ -1,5 +1,5 @@
 import { deleteProductHandler } from 'src/graphql/handlers/product';
-import { deleteProductByDestinationId } from 'src/postgres/handlers/product';
+import { deleteProductByDestinationId } from 'src/database/postgres/handlers/product';
 
 export const productDeleteById = async (destinationId): Promise<object> => {
   if (destinationId) {

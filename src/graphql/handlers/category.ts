@@ -2,11 +2,11 @@ import { Logger } from '@nestjs/common';
 import {
   masterCategoryTransformed,
   subCategoryTransformed,
-} from 'src/types/transformers/category';
+} from 'src/transformer/types/category';
 import {
   graphqlCall,
   graphqlExceptionHandler,
-} from 'src/utils/graphql/handler';
+} from 'src/graphql/graphql.utils';
 import {
   createCategoryMasterMutation,
   createCategorySubMutation,
