@@ -11,14 +11,14 @@ services:
       - 2888:2888
       - 3888:3888
 
-#  # kafka multi node     
+# #  # kafka multi node     
   kafka1:
     image: wurstmeister/kafka:latest
     restart: "no"
     links:
       - zookeeper
     ports:
-      - 9092:9092
+      - 29092:9092
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
@@ -26,7 +26,7 @@ services:
       KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka1:29092,EXTERNAL://localhost:9092
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
-      #https://github.com/wurstmeister/kafka-docker/issues/553
+
 #kafdrop for topic/msg visualization
   kafdrop:
     image: obsidiandynamics/kafdrop
@@ -62,7 +62,7 @@ services:
       - 4001:5000
     build:
       context: .
-      dockerfile: ./DockerFile
+      dockerfile: ./Dockerfile
     restart: unless-stopped
     extra_hosts:
       - "host.docker.internal:host-gateway"
