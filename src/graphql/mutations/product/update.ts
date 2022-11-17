@@ -3,7 +3,10 @@
 import { gql } from 'graphql-request';
 import { productTransformed } from 'src/transformer/types/product';
 
-export const updateProductMutation = (productData: productTransformed, destinationId) => {
+export const updateProductMutation = (
+  productData: productTransformed,
+  destinationId,
+) => {
   const { id, name, description, categoryId } = productData;
   return gql`
     mutation{

@@ -1,6 +1,6 @@
 import { Logger } from '@nestjs/common';
 import { GraphQLClient } from 'graphql-request';
-type GraphqlCall = (Query: string) => Promise<object>;
+type GraphqlCall = (Query: string, retries?: number) => Promise<object>;
 /**
  * This is top level function which handles graphql requests , exceptions and logic
  * @params Query ,  It must be in string format and no query based
@@ -9,14 +9,26 @@ type GraphqlCall = (Query: string) => Promise<object>;
  * is based on env files content .
  * @returns an object with data or graphql error
  */
-export const graphqlCall: GraphqlCall = async (Query: string): Promise<any> => {
+export const graphqlCall: GraphqlCall = async (
+  Query: string,
+  retries = 5,
+): Promise<any> => {
   let data = {};
   const graphQLClient = new GraphQLClient(
     process.env.DESTINATION_GRAPHQL_ENDPOINT,
   );
-  await graphQLClient.request(Query).then((res) => {
-    data = res;
-  });
+  try {
+    await graphQLClient.request(Query).then((res) => {
+      data = res;
+    });
+  } catch (error) {
+    if (retries === 0) {
+      Logger.error(`retries call finished`);
+      throw error;
+    }
+    Logger.warn('retrying', Query.split('(')[0]);
+    await graphqlCall(Query, retries - 1);
+  }
   return data;
 };
 
@@ -30,6 +42,7 @@ export const graphqlCall: GraphqlCall = async (Query: string): Promise<any> => {
  */
 export const graphqlCallSaleor: GraphqlCall = async (
   Query: string,
+  retries = 5,
 ): Promise<any> => {
   let data = {};
   const graphQLClient = new GraphQLClient(
@@ -40,9 +53,18 @@ export const graphqlCallSaleor: GraphqlCall = async (
       },
     },
   );
-  await graphQLClient.request(Query).then((res) => {
-    data = res;
-  });
+  try {
+    await graphQLClient.request(Query).then((res) => {
+      data = res;
+    });
+  } catch (error) {
+    if (retries === 0) {
+      Logger.error(`retries call finished`);
+      throw error;
+    }
+    Logger.warn('retrying', Query.split('(')[0]);
+    await graphqlCall(Query, retries - 1);
+  }
   return data;
 };
 
@@ -66,18 +88,12 @@ export const graphqlCallByToken = async (
       },
     },
   );
-  await graphQLClient
-    .request(Query)
-    .then((res) => {
-      data = res;
-    })
-    .catch((error) => {
-      Logger.log(error);
-      return graphqlExceptionHandler(error);
-    });
+  await graphQLClient.request(Query).then((res) => {
+    data = res;
+  });
   return data;
 };
-// TODO apply custom error handling taking whole catch thing at functional level
+
 export const graphqlExceptionHandler = (error): object => {
   console.log(error);
   const system_error = 'system error (graphql server not running)';
@@ -89,7 +105,6 @@ export const graphqlExceptionHandler = (error): object => {
   };
   const error_message = error_response ? error_response : 'server side';
   const error_code: number = error.type ? 500 : error?.response?.status;
-  Logger.error(error_message);
   return {
     status: error_code == 200 ? 405 : error_code,
     graphql_error: error_message,

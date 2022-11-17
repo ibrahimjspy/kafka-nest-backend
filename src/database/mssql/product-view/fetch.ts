@@ -27,7 +27,6 @@ export const getProductDetailsFromDb = async (
       function (err, recordset) {
         if (err) {
           Logger.warn(err);
-          Logger.warn('retry needed');
           sqlTransaction.clear(); // aborting sql transaction
         }
         // send records as a response

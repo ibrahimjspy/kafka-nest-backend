@@ -11,7 +11,6 @@ export const createBundleHandler = async (
   bundleVariants,
   bundleQuantities,
   shopId,
-  retry = 0,
 ) => {
   try {
     const bundles = await graphqlCall(
@@ -22,13 +21,7 @@ export const createBundleHandler = async (
     );
     return bundles;
   } catch (err) {
-    if (retry > 4) {
-      Logger.error('add to bundle call failed');
-      return graphqlExceptionHandler(err);
-    }
-    Logger.warn(`${retry + 1} retry in create bundles call`, {
-      bundleVariants,
-    });
-    return await createBundleHandler(bundleVariants, shopId, retry + 1);
+    Logger.error('add to bundle call failed');
+    return graphqlExceptionHandler(err);
   }
 };
