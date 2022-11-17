@@ -6,10 +6,6 @@ import { shopDto, shopTransformed } from 'src/transformer/types/shop';
  */
 @Injectable()
 export class ShopTransformerService {
-  public healthCheck(): string {
-    return 'Service running';
-  }
-
   /**
    * transforms and validates shop responses and existence
    * @value id

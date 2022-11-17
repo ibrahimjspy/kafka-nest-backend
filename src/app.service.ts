@@ -84,8 +84,10 @@ export class AppService {
           Logger.log(`Finished tasks: ${pool.processedCount()}`);
         })
         .process(async (data: any) => {
-          const create = await this.productService.handleProductCDC(data);
-          return create;
+          const productCreate = await this.productService.handleProductCDC(
+            data,
+          );
+          return productCreate;
         });
       Logger.verbose(`${bulkArray.length} products created`);
       return results;
@@ -99,9 +101,9 @@ export class AppService {
       const { results } = await PromisePool.for(bulkArray)
         .withConcurrency(batchSize)
         .process(async (data: any) => {
-          const create = await this.shopService.handleShopCDC(data);
+          const shopCreate = await this.shopService.handleShopCDC(data);
 
-          return create;
+          return shopCreate;
         });
       Logger.verbose(`${bulkArray.length} shops created`);
       return results;

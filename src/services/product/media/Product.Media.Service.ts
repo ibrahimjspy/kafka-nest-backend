@@ -10,9 +10,6 @@ import { TransformerService } from 'src/transformer/Transformer.service';
 export class ProductMediaService {
   constructor(private readonly transformerClass: TransformerService) {}
 
-  public healthCheck(): string {
-    return 'Service running';
-  }
   public async productMediaAssign(productMedia, productId) {
     // Validating media url and inserting it to DB
     const createMedia = Promise.all(

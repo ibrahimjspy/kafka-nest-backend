@@ -31,10 +31,6 @@ import { shopDto, shopTransformed } from 'src/transformer/types/shop';
 export class ShopService {
   constructor(private readonly transformerService: TransformerService) {}
 
-  public healthCheck(): string {
-    return 'Service running';
-  }
-
   public async handleShopCDC(@Param() kafkaMessage: shopDto): Promise<object> {
     const shopExistsInDestination: string = await fetchShopId(
       kafkaMessage.TBVendor_ID,

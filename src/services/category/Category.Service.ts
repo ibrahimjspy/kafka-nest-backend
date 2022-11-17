@@ -32,10 +32,6 @@ import { TransformerService } from '../../transformer/Transformer.service';
 export class CategoryService {
   constructor(private readonly transformerService: TransformerService) {}
 
-  public healthCheck(): string {
-    return 'Service running';
-  }
-
   public async handleMasterCategoryCDC(
     @Param() kafkaMessage: masterCategoryDto,
   ): Promise<object> {

@@ -19,9 +19,6 @@ import { createBundleHandler } from 'src/graphql/handlers/bundle';
 export class ProductVariantService {
   constructor(private readonly transformerClass: TransformerService) {}
 
-  public healthCheck(): string {
-    return 'Service running';
-  }
   public async handleSelectColorCDC(productColorData: colorSelectDto) {
     const sourceId = productColorData.TBItem_ID;
 

@@ -32,10 +32,6 @@ export class ProductService {
     private readonly productVariantService: ProductVariantService,
   ) {}
 
-  public healthCheck(): string {
-    return 'Service running';
-  }
-
   public async handleProductCDC(kafkaMessage: productDto) {
     const productExistsInDestination: string = await fetchProductId(
       kafkaMessage.TBItem_ID,

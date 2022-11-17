@@ -1,26 +1,30 @@
 import { Controller, Get } from '@nestjs/common';
 import { AppService } from 'src/app.service';
-import { BulkImportService } from './import.service';
+import {
+  fetchBulkProductsData,
+  fetchBulkVendors,
+} from 'src/database/mssql/bulk-import/methods';
 
 // endpoints to trigger data bulk imports
 @Controller()
 export class BulkImportController {
-  constructor(
-    private readonly appService: AppService,
-    private readonly importService: BulkImportService,
-  ) {}
+  constructor(private readonly appService: AppService) {}
   @Get()
   async app() {
-    return await this.importService.healthCheck();
+    return 'kafka client service running';
   }
 
   @Get('products')
   async createProducts() {
-    return await this.importService.createBulkProducts();
+    const data: any = await fetchBulkProductsData();
+    await this.appService.productBulkCreate(data.slice(850, 855));
+    return `${data.length} products created`;
   }
 
   @Get('shops')
   async createShops() {
-    return await this.importService.createBulkShops();
+    const data: any = await fetchBulkVendors();
+    await this.appService.ShopBulkCreate(data.slice(180, 186));
+    return `${data.length} shops created`;
   }
 }

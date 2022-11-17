@@ -11,9 +11,6 @@ import { fetchShopId } from 'src/database/postgres/handlers/shop';
  */
 @Injectable()
 export class ProductTransformerService {
-  public healthCheck(): string {
-    return 'Service running';
-  }
   /**
    * transforms and validates productView responses and existence
    * @value id

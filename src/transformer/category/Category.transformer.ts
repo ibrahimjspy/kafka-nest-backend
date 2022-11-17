@@ -18,10 +18,6 @@ import { ProductTransformerService } from '../product/Product.transformer';
 export class CategoryTransformerService {
   constructor(private readonly productTransformer: ProductTransformerService) {}
 
-  public healthCheck(): string {
-    return 'Service running';
-  }
-
   /**
    * transforms and validates categoryMaster responses and existence
    * @value id
