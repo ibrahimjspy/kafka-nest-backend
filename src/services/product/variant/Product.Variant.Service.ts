@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import {
   addProductVariantToShopHandler,
   createBulkVariantsHandler,
@@ -10,6 +10,7 @@ import { colorSelectDto } from 'src/transformer/types/product';
 import { getProductDetailsFromDb } from 'src/database/mssql/product-view/fetch';
 import { createBundleHandler } from 'src/graphql/handlers/bundle';
 import { chunkArray } from '../Product.utils';
+import { ProductService } from '../Product.Service';
 
 /**
  *  Injectable class handling productVariant and its relating tables CDC
@@ -18,7 +19,11 @@ import { chunkArray } from '../Product.utils';
  */
 @Injectable()
 export class ProductVariantService {
-  constructor(private readonly transformerClass: TransformerService) {}
+  constructor(
+    private readonly transformerClass: TransformerService,
+    @Inject(forwardRef(() => ProductService))
+    private readonly productClass: ProductService,
+  ) {}
 
   public async handleSelectColorCDC(productColorData: colorSelectDto) {
     const sourceId = productColorData.TBItem_ID;

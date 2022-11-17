@@ -24,6 +24,8 @@ export const productVariantQueryTransformer = (variantIds) => {
     process.env.DEFAULT_COLOR_ATTRIBUTE_ID || 'QXR0cmlidXRlOjE3';
   const SIZE_ATTRIBUTE_ID =
     process.env.DEFAULT_SIZE_ATTRIBUTE_ID || 'QXR0cmlidXRlOjE4';
+  const COMMISSION_ATTRIBUTE_ID =
+    process.env.DEFAULT_COMMISSION_ATTRIBUTE_ID || 'QXR0cmlidXRlOjQ=';
   const DEFAULT_CHANNEL_ID = process.env.DEFAULT_CHANNEL_ID || 'Q2hhbm5lbDox';
 
   return variantIds.map((variant) => {
@@ -32,6 +34,7 @@ export const productVariantQueryTransformer = (variantIds) => {
       attributes: [
       { id: "${COLOR_ATTRIBUTE_ID}", values:["${variant.color}"] }
       { id: "${SIZE_ATTRIBUTE_ID}", values:["${variant.size}"] }
+      { id: "${COMMISSION_ATTRIBUTE_ID}", values:["10"] }
     ]
       channelListings: { channelId: "${DEFAULT_CHANNEL_ID}", price: ${variant.price} }
       stocks: { warehouse:"${DEFAULT_WAREHOUSE_ID}"  quantity: 1000 }
