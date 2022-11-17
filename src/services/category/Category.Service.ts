@@ -14,13 +14,13 @@ import {
   fetchSubCategoryId,
   insertMasterCategoryId,
   insertSubCategoryId,
-} from 'src/postgres/handlers/category';
+} from 'src/database/postgres/handlers/category';
 import {
   masterCategoryDto,
   masterCategoryTransformed,
   subCategoryDto,
   subCategoryTransformed,
-} from 'src/types/transformers/category';
+} from 'src/transformer/types/category';
 import { TransformerService } from '../../transformer/Transformer.service';
 
 /**
@@ -31,10 +31,6 @@ import { TransformerService } from '../../transformer/Transformer.service';
 @Injectable()
 export class CategoryService {
   constructor(private readonly transformerService: TransformerService) {}
-
-  public healthCheck(): string {
-    return 'Service running';
-  }
 
   public async handleMasterCategoryCDC(
     @Param() kafkaMessage: masterCategoryDto,
@@ -59,6 +55,7 @@ export class CategoryService {
   ): Promise<object> {
     const categoryExistsInDestination: string = await fetchSubCategoryId(
       kafkaMessage.TBStyleNo_OS_Category_Sub_ID,
+      kafkaMessage.TBStyleNo_OS_Category_Master_ID,
     );
     const categoryData = await this.transformerService.subCategoryTransformer(
       kafkaMessage,
@@ -94,6 +91,7 @@ export class CategoryService {
   ): Promise<object> {
     const categoryExistsInDestination: string = await fetchSubCategoryId(
       kafkaMessage.TBStyleNo_OS_Category_Sub_ID,
+      kafkaMessage.TBStyleNo_OS_Category_Master_ID,
     );
     if (categoryExistsInDestination) {
       await deleteSubCategoryHandler(categoryExistsInDestination);
@@ -126,6 +124,7 @@ export class CategoryService {
     const categoryIdMapping = await insertSubCategoryId(
       categoryData.id,
       subCategory,
+      categoryData.sourceParentId,
     );
     return { subCategory, categoryIdMapping };
   }

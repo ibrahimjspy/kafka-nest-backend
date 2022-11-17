@@ -1,33 +1,25 @@
 import { Logger } from '@nestjs/common';
-import {
-  graphqlCall,
-  graphqlExceptionHandler,
-} from 'src/utils/graphql/handler';
+import { graphqlCall, graphqlExceptionHandler } from 'src/graphql/utils/call';
 import { createBundleMutation } from '../mutations/bundles/create';
+import { bundleQueryTransformer } from '../utils/transformers';
 
 //  <-->  Create  <-->
 
 export const createBundleHandler = async (
-  bundleVariants: string,
-  shopId: string,
-  retry = 0,
+  bundleVariants,
+  bundleQuantities,
+  shopId,
 ) => {
   try {
-    if (retry !== 0) {
-      Logger.warn(`${retry} retry in create bundles call`, {
-        bundleVariants,
-      });
-    }
-
     const bundles = await graphqlCall(
-      createBundleMutation(bundleVariants, shopId).replace(/'/g, '"'),
+      createBundleMutation(
+        bundleQueryTransformer(bundleVariants, bundleQuantities),
+        shopId,
+      ).replace(/'/g, '"'),
     );
-    Logger.verbose('Bundle created', bundles);
     return bundles;
   } catch (err) {
-    if (retry) {
-      return graphqlExceptionHandler(err);
-    }
-    return await createBundleHandler(bundleVariants, shopId, retry + 1);
+    Logger.error('add to bundle call failed');
+    return graphqlExceptionHandler(err);
   }
 };

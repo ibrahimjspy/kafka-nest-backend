@@ -1,16 +1,16 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import {
-  createProductVariantHandler,
-  updateProductVariantPricingHandler,
+  addProductVariantToShopHandler,
+  createBulkVariantsHandler,
 } from 'src/graphql/handlers/productVariant';
-import { fetchProductId } from 'src/postgres/handlers/product';
+import { fetchProductId } from 'src/database/postgres/handlers/product';
 import { TransformerService } from 'src/transformer/Transformer.service';
-import { productVariantInterface } from 'src/types/mssql/product';
-import { colorSelectDto } from 'src/types/transformers/product';
-import { getProductDetailsFromDb } from 'src/mssql/product.fetch';
+import { productVariantInterface } from 'src/database/mssql/types/product';
+import { colorSelectDto } from 'src/transformer/types/product';
+import { getProductDetailsFromDb } from 'src/database/mssql/product-view/fetch';
 import { createBundleHandler } from 'src/graphql/handlers/bundle';
-import { bundleVariantInterface } from 'src/types/graphql/bundles';
-import { PromisePool } from '@supercharge/promise-pool';
+import { chunkArray } from '../Product.utils';
+import { ProductService } from '../Product.Service';
 
 /**
  *  Injectable class handling productVariant and its relating tables CDC
@@ -19,11 +19,12 @@ import { PromisePool } from '@supercharge/promise-pool';
  */
 @Injectable()
 export class ProductVariantService {
-  constructor(private readonly transformerClass: TransformerService) {}
+  constructor(
+    private readonly transformerClass: TransformerService,
+    @Inject(forwardRef(() => ProductService))
+    private readonly productClass: ProductService,
+  ) {}
 
-  public healthCheck(): string {
-    return 'Service running';
-  }
   public async handleSelectColorCDC(productColorData: colorSelectDto) {
     const sourceId = productColorData.TBItem_ID;
 
@@ -42,52 +43,46 @@ export class ProductVariantService {
     shopId?: string,
   ) {
     const { sizes, price, color_list, pack_name } = productVariantData;
-    const bundlesObject = {};
+    let productVariants = [];
+
     if (color_list) {
-      await PromisePool.for(color_list)
-        .withConcurrency(2)
-        .onTaskStarted((color, pool) => {
-          Logger.log(
-            `product variant progress: ${pool.processedPercentage()}%`,
-          );
-          Logger.log(
-            `product variant finished tasks: ${pool.processedCount()}`,
-          );
-        })
-        .process(async (color: string) => {
-          bundlesObject[color] = [];
-          const variants =
-            await this.transformerClass.productVariantTransformer(color, sizes);
-          await Promise.all(
-            variants.map(async (variant, key) => {
-              const bundle: bundleVariantInterface = {};
-              const productVariant = await createProductVariantHandler(
-                variant,
-                productId,
-                shopId,
-              );
-              if (productVariant) {
-                // assign variant pricing
-                await updateProductVariantPricingHandler(
-                  productVariant,
-                  price.regular_price,
-                );
-                // assign bundle information
-                bundle.variantId = productVariant;
-                bundle.quantity = Number(pack_name.split('-')[key]);
-                bundlesObject[color].push(bundle);
-              }
-            }),
-          );
-        });
-      return await this.createBundles(color_list, bundlesObject, shopId);
+      // TRANSFORM PRODUCT VARIANTS
+      await color_list.map(async (color) => {
+        const variants = await this.transformerClass.productVariantTransformer(
+          color,
+          sizes,
+          price.regular_price,
+        );
+        productVariants = [...productVariants, ...variants];
+      });
+
+      if (productVariants.length > 0) {
+        // CREATE VARIANTS
+        const variantIds = await createBulkVariantsHandler(
+          productVariants,
+          productId,
+        );
+
+        // CREATE BUNDLES
+        await this.createBundles(variantIds, pack_name.split('-'), shopId);
+
+        // ADD PRODUCT VARIANTS TO SHOP
+        await Promise.all(
+          variantIds.map(async (id) => {
+            addProductVariantToShopHandler(id, shopId);
+          }),
+        );
+      }
     }
+    return;
   }
 
-  private async createBundles(color_list, bundlesObject, shopId) {
+  private async createBundles(variantIds, bundle, shopId) {
+    // Filters variantIds array according to bundles
+    const bundleVariantIds = chunkArray(variantIds, bundle.length);
     const createBundles = await Promise.all(
-      color_list.map(async (c) => {
-        await createBundleHandler(bundlesObject[c], shopId);
+      bundleVariantIds.map(async (variants) => {
+        await createBundleHandler(variants, bundle, shopId);
       }),
     );
     return createBundles;

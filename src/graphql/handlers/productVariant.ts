@@ -1,112 +1,54 @@
 import { Logger } from '@nestjs/common';
-import { productVariantCreate } from 'src/types/graphql/product';
-import { productDeleteById } from 'src/utils/core/productDelete';
+import { bulkVariantCreate } from 'src/graphql/types/product';
+import { graphqlCall, graphqlExceptionHandler } from 'src/graphql/utils/call';
 import {
-  graphqlCall,
-  graphqlCallSaleor,
-  graphqlExceptionHandler,
-} from 'src/utils/graphql/handler';
-import { createProductVariantMutation } from '../mutations/productVariant/create';
-import { updateProductVariantPricingMutation } from '../mutations/productVariant/update';
-import { addProductVariantToShopMutation } from '../mutations/shop/create';
+  addProductVariantToShopMutation,
+  productVariantBulkCreateMutation,
+} from '../mutations/productVariant/create';
+import { productDeleteById } from 'src/services/product/Product.utils';
+import { productVariantQueryTransformer } from '../utils/transformers';
 
 //  <-->  Create  <-->
-
-export const createProductVariantHandler = async (
+export const createBulkVariantsHandler = async (
   productVariantData,
   productId,
-  shopId,
-  retry = 0,
-): Promise<string> => {
+) => {
   try {
-    if (retry !== 0) {
-      Logger.warn(`${retry} in product variant retry call`, {
-        productVariantData,
-      });
-    }
+    const variantIds = [];
 
-    const createProductVariant: productVariantCreate = await graphqlCallSaleor(
-      createProductVariantMutation(productVariantData, productId),
+    const createProductVariants: bulkVariantCreate = await graphqlCall(
+      productVariantBulkCreateMutation(
+        productVariantQueryTransformer(productVariantData),
+        productId,
+      ),
     );
-    const productVariantId =
-      createProductVariant.productVariantCreate?.productVariant?.id;
-    await addProductVariantToShopHandler(productVariantId, shopId);
-    Logger.verbose('Product variant created', createProductVariant);
+    createProductVariants.productVariantBulkCreate.productVariants.map(
+      (variant) => [variantIds.push(variant.id)],
+    );
 
-    return productVariantId;
+    return variantIds;
   } catch (err) {
-    if (retry == 2) {
-      Logger.warn('product variant call failed', graphqlExceptionHandler(err));
-      await productDeleteById(productId);
-      return;
-    }
-    return await createProductVariantHandler(
-      productVariantData,
-      productId,
-      shopId,
-      retry + 1,
-    );
+    Logger.warn('product variant call failed', graphqlExceptionHandler(err));
+    await productDeleteById(productId);
+    return;
   }
 };
 
 export const addProductVariantToShopHandler = async (
   productVariantId,
   shopId,
-  retry = 0,
 ) => {
   try {
-    if (retry !== 0) {
-      Logger.warn(`${retry} retry in product variant add to Shop`, {
-        productVariantId,
-      });
-    }
     if (productVariantId) {
-      const addVariantToShop = await graphqlCall(
+      await graphqlCall(
         addProductVariantToShopMutation(productVariantId, shopId),
       );
-      Logger.verbose('Product variant added to shop', addVariantToShop);
     }
   } catch (err) {
-    if (retry == 2) {
-      Logger.warn(
-        'product channel update call failed',
-        graphqlExceptionHandler(err),
-      );
-      return;
-    }
-    return await addProductVariantToShopHandler(
-      productVariantId,
-      shopId,
-      retry + 1,
+    Logger.error(
+      'product variant add to shop call failed',
+      graphqlExceptionHandler(err),
     );
-  }
-};
-
-//  <-->  Update  <-->
-
-export const updateProductVariantPricingHandler = async (
-  productVariantId: string,
-  priceAmount: number,
-  retry = 0,
-): Promise<object> => {
-  try {
-    const updateProductVariantPricing: object = await graphqlCall(
-      updateProductVariantPricingMutation(productVariantId, priceAmount),
-    );
-    Logger.log('Product variant price updated', updateProductVariantPricing);
-    return { ...updateProductVariantPricing };
-  } catch (err) {
-    if (retry == 2) {
-      Logger.warn(
-        'product variant pricing call failed',
-        graphqlExceptionHandler(err),
-      );
-      return;
-    }
-    return await updateProductVariantPricingHandler(
-      productVariantId,
-      priceAmount,
-      retry + 1,
-    );
+    return;
   }
 };

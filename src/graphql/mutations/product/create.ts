@@ -1,11 +1,11 @@
 import { gql } from 'graphql-request';
-import { productTransformed } from 'src/types/transformers/product';
+import { productTransformed } from 'src/transformer/types/product';
 
 export const createProductMutation = (productData: productTransformed) => {
   // parsing product data;
   const DEFAULT_PRODUCT_TYPE =
     process.env.DEFAULT_PRODUCT_TYPE || 'UHJvZHVjdFR5cGU6Mg==';
-  const { name, description, categoryId } = productData;
+  const { name, categoryId } = productData;
   return gql`
     mutation {
       productCreate(
@@ -13,15 +13,13 @@ export const createProductMutation = (productData: productTransformed) => {
           productType: "${DEFAULT_PRODUCT_TYPE}"
           name: "${name}"
           category:"${categoryId}"
-          description:${JSON.stringify(description)}
-          seo: { title: "seo title", description: "demo description" }
           rating: 4
         }
       ) {
         product {
           name
           id
-          seoTitle
+          description
         }
         errors {
           field

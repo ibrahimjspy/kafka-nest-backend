@@ -1,10 +1,12 @@
 import { gql } from 'graphql-request';
 
 export const createCategoryMasterMutation = (categoryData) => {
-  const { name, seo_title, seo_description, description } = categoryData;
+  const { name, seo_title, seo_description, description, groupId } =
+    categoryData;
   return gql`
     mutation {
       categoryCreate(
+        parent:"${groupId}"
         input: {
           name: "${name}"
           description:${JSON.stringify(description)}

@@ -1,6 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { createProductHandler } from './graphql/handlers/product';
-import { ProducerService } from './kafka/producer.service';
 import { CategoryService } from './services/category/Category.Service';
 import { ProductService } from './services/product/Product.Service';
 import { ProductVariantService } from './services/product/variant/Product.Variant.Service';
@@ -9,7 +8,6 @@ import { PromisePool } from '@supercharge/promise-pool';
 @Injectable()
 export class AppService {
   constructor(
-    private readonly producerService: ProducerService,
     private readonly productService: ProductService,
     private readonly categoryService: CategoryService,
     private readonly shopService: ShopService,
@@ -77,7 +75,7 @@ export class AppService {
   // big data import methods dividing data in batches and running them in pools
   async productBulkCreate(bulkArray) {
     try {
-      const { results } = await PromisePool.withConcurrency(6)
+      const { results } = await PromisePool.withConcurrency(100)
         .for(bulkArray)
         .onTaskStarted((product, pool) => {
           Logger.log(`Progress: ${pool.processedPercentage()}%`);
@@ -86,8 +84,10 @@ export class AppService {
           Logger.log(`Finished tasks: ${pool.processedCount()}`);
         })
         .process(async (data: any) => {
-          const create = await this.productService.handleProductCDC(data);
-          return create;
+          const productCreate = await this.productService.handleProductCDC(
+            data,
+          );
+          return productCreate;
         });
       Logger.verbose(`${bulkArray.length} products created`);
       return results;
@@ -96,14 +96,14 @@ export class AppService {
     }
   }
 
-  async ShopBulkCreate(bulkArray, batchSize = 40) {
+  async ShopBulkCreate(bulkArray, batchSize = 5) {
     try {
       const { results } = await PromisePool.for(bulkArray)
         .withConcurrency(batchSize)
         .process(async (data: any) => {
-          const create = await this.shopService.handleShopCDC(data);
+          const shopCreate = await this.shopService.handleShopCDC(data);
 
-          return create;
+          return shopCreate;
         });
       Logger.verbose(`${bulkArray.length} shops created`);
       return results;

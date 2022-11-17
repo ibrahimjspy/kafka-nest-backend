@@ -1,12 +1,13 @@
 // import { insertUserId } from 'src/postgres/handlers/user';
 import { Logger } from '@nestjs/common';
-import { createTokenInterface } from 'src/types/graphql/shop';
-import { shopTransformed } from 'src/types/transformers/shop';
+import { createTokenInterface } from 'src/graphql/types/shop';
+import { shopTransformed } from 'src/transformer/types/shop';
 import {
   graphqlCall,
   graphqlCallByToken,
+  graphqlCallSaleor,
   graphqlExceptionHandler,
-} from 'src/utils/graphql/handler';
+} from 'src/graphql/utils/call';
 import {
   createSessionToken,
   createUserMutation,
@@ -20,8 +21,9 @@ export const createUserHandler = async (
   userData: shopTransformed,
 ): Promise<object> => {
   try {
-    const createToken: createTokenInterface = await graphqlCall(
+    const createToken: createTokenInterface = await graphqlCallByToken(
       createSessionToken(),
+      '',
     );
     const token = createToken.tokenCreate.token;
     const createUser = await graphqlCallByToken(
@@ -42,7 +44,7 @@ export const updateUserHandler = async (
   destinationId: string,
 ): Promise<object> => {
   try {
-    const createToken: createTokenInterface = await graphqlCall(
+    const createToken: createTokenInterface = await graphqlCallSaleor(
       createSessionToken(),
     );
     const token = createToken.tokenCreate.token;

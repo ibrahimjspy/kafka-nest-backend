@@ -1,19 +1,16 @@
 import { Injectable, Param } from '@nestjs/common';
-import { productDto, productTransformed } from 'src/types/transformers/product';
+import { productDto, productTransformed } from 'src/transformer/types/product';
 import {
   fetchMasterCategoryId,
   fetchSubCategoryId,
-} from 'src/postgres/handlers/category';
-import { fetchShopId } from 'src/postgres/handlers/shop';
+} from 'src/database/postgres/handlers/category';
+import { fetchShopId } from 'src/database/postgres/handlers/shop';
 /**
  *  Injectable class handling product transformation
  *  @Injectable in app scope or in kafka connection to reach kafka messages
  */
 @Injectable()
 export class ProductTransformerService {
-  public healthCheck(): string {
-    return 'Service running';
-  }
   /**
    * transforms and validates productView responses and existence
    * @value id
@@ -29,19 +26,25 @@ export class ProductTransformerService {
       nItemDescription,
       TBStyleNo_OS_Category_Master_ID,
       TBStyleNo_OS_Category_Sub_ID,
+      TBVendor_ID,
     } = object;
-
     productObject['id'] = TBItem_ID.toString();
     productObject['name'] = nStyleName.toString();
     productObject['description'] = await this.descriptionTransformer(
       nItemDescription,
     );
     productObject['media'] = await this.mediaTransformerMethod(object);
-    productObject['categoryId'] = await this.categoryIdTransformer(
-      TBStyleNo_OS_Category_Master_ID,
-      TBStyleNo_OS_Category_Sub_ID,
-    );
-    productObject['shopId'] = await this.shopIdTransformer('236');
+    productObject['categoryId'] = TBStyleNo_OS_Category_Sub_ID
+      ? await this.categoryIdTransformer(
+          TBStyleNo_OS_Category_Master_ID,
+          TBStyleNo_OS_Category_Sub_ID,
+        )
+      : await this.categoryIdTransformer(
+          TBStyleNo_OS_Category_Master_ID,
+          100000,
+        );
+
+    productObject['shopId'] = await this.shopIdTransformer(TBVendor_ID);
 
     return productObject;
   }
@@ -51,7 +54,7 @@ export class ProductTransformerService {
    * @params string to be transformed
    */
   public async descriptionTransformer(@Param() description: string) {
-    const validString = description.replace(/[\r\n]+/g, ' ');
+    const validString = description.replace(/"/g, "'").replace(/[\r\n]+/g, ' ');
     if (validString) {
       return `{\"time\": 1662995227870, \"blocks\": [{\"id\": \"cqWmV3MIPH\", \"data\": {\"text\": \"${validString}\"}, \"type\": \"paragraph\"}], \"version\": \"2.24.3\"}`;
     }
@@ -85,15 +88,17 @@ export class ProductTransformerService {
    */
   public async categoryIdTransformer(
     sourceMasterCategoryId: string,
-    sourceSubCategoryId: string,
+    sourceSubCategoryId,
   ) {
     const DEFAULT_CATEGORY_ID =
       process.env.DEFAULT_CATEGORY_ID || 'Q2F0ZWdvcnk6MQ==';
 
     const destinationSubCategoryId: string = await fetchSubCategoryId(
       sourceSubCategoryId,
+      sourceMasterCategoryId,
     );
     if (destinationSubCategoryId) {
+      // console.log(destinationSubCategoryId, 'sub category passed');
       return destinationSubCategoryId;
     }
 
@@ -103,7 +108,6 @@ export class ProductTransformerService {
     if (destinationMasterCategoryId) {
       return destinationMasterCategoryId;
     }
-
     return DEFAULT_CATEGORY_ID;
   }
 
@@ -112,7 +116,7 @@ export class ProductTransformerService {
    * @params TBVendor_ID as input
    */
   public async shopIdTransformer(vendorId: string) {
-    const DEFAULT_SHOP_ID = process.env.DEFAULT_SHOP_ID || '1';
+    const DEFAULT_SHOP_ID = process.env.DEFAULT_SHOP_ID || '16';
 
     const destinationShopId = await fetchShopId(vendorId);
     if (destinationShopId) {
@@ -127,12 +131,17 @@ export class ProductTransformerService {
    * @params array of sizes to be mapped with color
    * @returns collection of variants to be created <Array>
    */
-  public async productVariantTransformer(color: string, sizes: string[]) {
+  public async productVariantTransformer(
+    color: string,
+    sizes: string[],
+    price: string,
+  ) {
     const array = [];
     try {
       sizes.map((s) => {
         const object: any = { color: color };
         object.size = s;
+        object.price = price;
         array.push(object);
       });
     } catch (error) {

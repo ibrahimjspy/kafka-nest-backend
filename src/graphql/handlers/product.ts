@@ -1,11 +1,13 @@
 import { Logger } from '@nestjs/common';
-import { getProductDetails, productCreate } from 'src/types/graphql/product';
-import { productTransformed } from 'src/types/transformers/product';
+import {
+  getProductDetailsInterface,
+  productCreate,
+} from 'src/graphql/types/product';
+import { productTransformed } from 'src/transformer/types/product';
 import {
   graphqlCall,
-  graphqlCallSaleor,
   graphqlExceptionHandler,
-} from 'src/utils/graphql/handler';
+} from 'src/graphql/utils/call';
 import {
   createProductMutation,
   productChannelListingMutation,
@@ -18,15 +20,8 @@ import { getProductDetailsQuery } from '../queries/product';
 
 export const createProductHandler = async (
   productData: productTransformed,
-  retry = 0,
 ): Promise<string> => {
   try {
-    if (retry !== 0) {
-      Logger.warn(`${retry} retry in create product call`, {
-        productData,
-      });
-    }
-
     const createProduct: productCreate = await graphqlCall(
       createProductMutation(productData),
     );
@@ -36,53 +31,33 @@ export const createProductHandler = async (
     Logger.verbose('Product created', createProduct);
     return productId;
   } catch (err) {
-    if (retry == 3) {
-      Logger.warn('Product create call failed', graphqlExceptionHandler(err));
-      return;
-    }
-    return await createProductHandler(productData, retry + 1);
+    Logger.error('Product create call failed', graphqlExceptionHandler(err));
+    return;
   }
 };
 
-export const productChannelListing = async (productId, retry = 0) => {
+export const productChannelListing = async (productId) => {
   try {
-    if (retry !== 0) {
-      Logger.warn(`${retry} retry in product channel listing update`, {
-        productId,
-      });
-    }
-    await graphqlCallSaleor(productChannelListingMutation(productId));
+    return await graphqlCall(productChannelListingMutation(productId));
   } catch (err) {
-    if (retry == 2) {
-      Logger.warn(
-        'product channel update call failed',
-        graphqlExceptionHandler(err),
-      );
-      return;
-    }
-    return await productChannelListing(productId, retry + 1);
+    Logger.warn(
+      'product channel update call failed',
+      graphqlExceptionHandler(err),
+    );
+    return;
   }
 };
 //  <-->  Read  <-->
 
-export const getProductSlugById = async (productId: string, retry = 0) => {
+export const getProductDetailsHandler = async (productId: string) => {
   try {
-    if (retry !== 0) {
-      Logger.warn(`${retry} retry in product details get call`, {
-        productId,
-      });
-    }
-    const product: getProductDetails = await graphqlCallSaleor(
+    const getProductDetails: getProductDetailsInterface = await graphqlCall(
       getProductDetailsQuery(productId),
     );
-    Logger.verbose('Product fetched', product);
-    return product.product.slug;
+    const { slug, variants, media } = getProductDetails.product;
+    return { slug, variants, media };
   } catch (err) {
-    if (retry == 2) {
-      Logger.warn('Product fetch call failed', graphqlExceptionHandler(err));
-      return;
-    }
-    return await productChannelListing(productId, retry + 1);
+    Logger.warn('Product fetch call failed', graphqlExceptionHandler(err));
   }
 };
 
@@ -93,13 +68,14 @@ export const updateProductHandler = async (
   destinationId: string,
 ): Promise<object> => {
   try {
-    const productUpdate = await graphqlCallSaleor(
+    const productUpdate = await graphqlCall(
       updateProductMutation(productUpdateData, destinationId),
     );
     Logger.verbose('Product updated', productUpdate);
     return productUpdate;
   } catch (err) {
-    return graphqlExceptionHandler(err);
+    Logger.warn('Product update call failed', graphqlExceptionHandler(err));
+    return;
   }
 };
 
@@ -109,7 +85,7 @@ export const deleteProductHandler = async (
   productId: string,
 ): Promise<object> => {
   try {
-    const data = await graphqlCallSaleor(deleteProductMutation(productId));
+    const data = await graphqlCall(deleteProductMutation(productId));
     Logger.warn('Product deleted', data);
   } catch (err) {
     return graphqlExceptionHandler(err);

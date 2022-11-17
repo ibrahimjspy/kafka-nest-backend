@@ -13,14 +13,14 @@ import {
   deleteShopId,
   fetchShopId,
   insertShopId,
-} from 'src/postgres/handlers/shop';
+} from 'src/database/postgres/handlers/shop';
 import {
   deleteUserId,
   fetchUserId,
   insertUserId,
-} from 'src/postgres/handlers/user';
+} from 'src/database/postgres/handlers/user';
 import { TransformerService } from 'src/transformer/Transformer.service';
-import { shopDto, shopTransformed } from 'src/types/transformers/shop';
+import { shopDto, shopTransformed } from 'src/transformer/types/shop';
 
 /**
  *  Injectable class handling brand and its relating tables CDC
@@ -30,10 +30,6 @@ import { shopDto, shopTransformed } from 'src/types/transformers/shop';
 @Injectable()
 export class ShopService {
   constructor(private readonly transformerService: TransformerService) {}
-
-  public healthCheck(): string {
-    return 'Service running';
-  }
 
   public async handleShopCDC(@Param() kafkaMessage: shopDto): Promise<object> {
     const shopExistsInDestination: string = await fetchShopId(

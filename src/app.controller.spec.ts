@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 // import { testQuery } from '../test/query';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { KafkaModule } from './kafka/kafka.module';
+import { KafkaModule } from './api/producer/kafka.module';
 import { CategoryService } from './services/category/Category.Service';
 import { ProductMediaService } from './services/product/media/Product.Media.Service';
 import { ProductService } from './services/product/Product.Service';

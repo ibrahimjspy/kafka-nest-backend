@@ -1,11 +1,12 @@
 import { Injectable, Param } from '@nestjs/common';
-import { fetchMasterCategoryId } from 'src/postgres/handlers/category';
+import { groupIds } from 'mock/category/groupIds';
+import { fetchMasterCategoryId } from 'src/database/postgres/handlers/category';
 import {
   masterCategoryDto,
   masterCategoryTransformed,
   subCategoryDto,
   subCategoryTransformed,
-} from 'src/types/transformers/category';
+} from 'src/transformer/types/category';
 import { ProductTransformerService } from '../product/Product.transformer';
 
 /**
@@ -16,10 +17,6 @@ import { ProductTransformerService } from '../product/Product.transformer';
 @Injectable()
 export class CategoryTransformerService {
   constructor(private readonly productTransformer: ProductTransformerService) {}
-
-  public healthCheck(): string {
-    return 'Service running';
-  }
 
   /**
    * transforms and validates categoryMaster responses and existence
@@ -41,9 +38,11 @@ export class CategoryTransformerService {
       Description50,
       seo_description,
       seo_title,
+      DisplayGroup,
     } = object;
 
     masterCategoryObject['id'] = TBStyleNo_OS_Category_Master_ID?.toString();
+    masterCategoryObject['groupId'] = this.groupIdTransformer(DisplayGroup);
     masterCategoryObject['name'] = CategoryMasterName?.toString();
     masterCategoryObject['description'] =
       await this.productTransformer.descriptionTransformer(Description50);
@@ -75,6 +74,7 @@ export class CategoryTransformerService {
     } = object;
 
     subCategoryObject['id'] = TBStyleNo_OS_Category_Sub_ID?.toString();
+    subCategoryObject['sourceParentId'] = TBStyleNo_OS_Category_Master_ID;
     subCategoryObject['parentId'] = await this.masterCategoryIdTransformer(
       TBStyleNo_OS_Category_Master_ID,
     );
@@ -83,7 +83,6 @@ export class CategoryTransformerService {
       await this.productTransformer.descriptionTransformer(Description50);
     subCategoryObject['seo_description'] = seo_description?.toString();
     subCategoryObject['seo_title'] = seo_title?.toString();
-
     return subCategoryObject;
   }
 
@@ -97,5 +96,9 @@ export class CategoryTransformerService {
     }
 
     return DEFAULT_MASTER_CATEGORY_ID;
+  }
+
+  public groupIdTransformer(groupName: string) {
+    return groupIds[groupName] ? groupIds[groupName] : 'Q2F0ZWdvcnk6NjQx';
   }
 }

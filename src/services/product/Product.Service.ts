@@ -2,21 +2,22 @@ import { Injectable, Logger } from '@nestjs/common';
 import {
   createProductHandler,
   deleteProductHandler,
-  getProductSlugById,
+  getProductDetailsHandler,
   updateProductHandler,
 } from 'src/graphql/handlers/product';
 import {
+  deleteProductByDestinationId,
   fetchProductId,
   fetchProductSerialIdBySlug,
   insertProductId,
-} from 'src/postgres/handlers/product';
-import { deleteProductId } from 'src/postgres/handlers/product';
-import { productDto, productTransformed } from 'src/types/transformers/product';
-import { getProductDetailsFromDb } from 'src/mssql/product.fetch';
+} from 'src/database/postgres/handlers/product';
+import { deleteProductId } from 'src/database/postgres/handlers/product';
+import { productDto, productTransformed } from 'src/transformer/types/product';
+import { getProductDetailsFromDb } from 'src/database/mssql/product-view/fetch';
 import { TransformerService } from '../../transformer/Transformer.service';
 import { ProductMediaService } from './media/Product.Media.Service';
 import { ProductVariantService } from './variant/Product.Variant.Service';
-import { productVariantInterface } from 'src/types/mssql/product';
+import { productVariantInterface } from 'src/database/mssql/types/product';
 
 /**
  *  Injectable class handling product variant and its relating tables CDC
@@ -31,23 +32,17 @@ export class ProductService {
     private readonly productVariantService: ProductVariantService,
   ) {}
 
-  public healthCheck(): string {
-    return 'Service running';
-  }
-
-  public async handleProductCDC(kafkaMessage: productDto): Promise<object> {
+  public async handleProductCDC(kafkaMessage: productDto) {
     const productExistsInDestination: string = await fetchProductId(
       kafkaMessage.TBItem_ID,
     );
     const productData = await this.transformerClass.productDetailsTransformer(
       kafkaMessage,
     );
-    // updating product with cdc information
     if (productExistsInDestination) {
-      return updateProductHandler(productData, productExistsInDestination);
+      return await this.productUpdate(productExistsInDestination, productData);
     }
-
-    return this.createProduct(productData);
+    return await this.createProduct(productData);
   }
 
   public async handleProductCDCDelete(
@@ -73,10 +68,9 @@ export class ProductService {
 
     const productId = await createProductHandler(productData);
     if (productId) {
+      // inserts product id into id mapping table
       await insertProductId(productData.id, productId);
-
       // creates product variants and its media
-
       await this.createProductMedia(productId, productData.media);
       await this.createProductVariants(productData, productId);
       Logger.verbose(`product flow completed against ${productId}`);
@@ -86,7 +80,31 @@ export class ProductService {
     };
   }
 
-  private async createProductVariants(
+  public async productUpdate(
+    productId: string,
+    productData: productTransformed,
+  ) {
+    const productDetails = await getProductDetailsHandler(productId);
+    if (productDetails.variants.length === 0) {
+      await this.createProductVariants(productData, productId);
+    }
+    if (productDetails.media.length === 0) {
+      await this.createProductMedia(productId, productData.media);
+      if (productData.media.length === 0) {
+        return await this.productDelete(productId);
+      }
+    }
+    return await updateProductHandler(productData, productId);
+  }
+  public async productDelete(destinationId: string) {
+    if (destinationId) {
+      const productDelete = await deleteProductHandler(destinationId);
+      const productIdDelete = await deleteProductByDestinationId(destinationId);
+      return { productDelete, productIdDelete };
+    }
+  }
+
+  public async createProductVariants(
     productData: productTransformed,
     productId: string,
   ) {
@@ -104,13 +122,13 @@ export class ProductService {
   // source ID = 1234 =>  destination UUID = QXR0cmlidXRlOjE4 => serialId = 234
   public async getProductSerialId(uuid: string) {
     // fetches serialId against uuid <productId>
-    const productSlug = await getProductSlugById(uuid);
-    const productSerialId = await fetchProductSerialIdBySlug(productSlug); // postgres call
+    const productSlug = await getProductDetailsHandler(uuid);
+    const productSerialId = await fetchProductSerialIdBySlug(productSlug.slug); // postgres call
     return productSerialId;
   }
 
   public async createProductMedia(productId: string, productMedia: string[]) {
-    // fetches product database id
+    // fetches product serial id
     const productSerialId = await this.getProductSerialId(productId);
 
     if (productSerialId) {

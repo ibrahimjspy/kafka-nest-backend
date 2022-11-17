@@ -1,33 +1,47 @@
 import { gql } from 'graphql-request';
 
-export const createProductVariantMutation = (productVariantData, productId) => {
-  // parsing product variant data;
-  const { color, size } = productVariantData;
-  const COLOR_ATTRIBUTE_ID =
-    process.env.DEFAULT_COLOR_ATTRIBUTE_ID || 'QXR0cmlidXRlOjE3';
-  const SIZE_ATTRIBUTE_ID =
-    process.env.DEFAULT_SIZE_ATTRIBUTE_ID || 'QXR0cmlidXRlOjE4';
-
+export const productVariantBulkCreateMutation = (
+  productVariantData,
+  productId,
+) => {
   return gql`
     mutation {
-      productVariantCreate(
-        input: {
-          attributes: [
-            { id: "${COLOR_ATTRIBUTE_ID}", plainText:"${color}" }
-            { id: "${SIZE_ATTRIBUTE_ID}", plainText:"${size}" }
-          ]
-          name: "product_variant"
-          product: "${productId}"
-        }
+      productVariantBulkCreate(
+        product: "${productId}"
+        variants: [${productVariantData}]
       ) {
-        productVariant {
+        productVariants {
           id
-          name
+          attributes {
+            attribute {
+              id
+              name
+            }
+            values {
+              value
+              name
+            }
+          }
         }
         errors {
           message
         }
       }
+    }
+  `;
+};
+
+export const addProductVariantToShopMutation = (variantId, shopId) => {
+  return gql`
+    mutation {
+      addProductVariantToShop(
+        input: {
+          productVariantId: "${variantId}"
+          shopId: "${shopId}"
+        }
+      ) {
+         name
+       }
     }
   `;
 };

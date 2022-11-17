@@ -72,10 +72,11 @@ export class TransformerService {
    * color and size transformer for variant mapping
    * @returns variants array ready to be mapped variant api with color and sizes against it
    */
-  public productVariantTransformer(color, sizes) {
+  public productVariantTransformer(color, sizes, price) {
     return this.productTransformerService.productVariantTransformer(
       color,
       sizes,
+      price,
     );
   }
   public pricingTransformer(pricingObject) {

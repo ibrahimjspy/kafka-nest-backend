@@ -11,14 +11,14 @@ services:
       - 2888:2888
       - 3888:3888
 
-#  # kafka multi node     
+# #  # kafka multi node     
   kafka1:
     image: wurstmeister/kafka:latest
     restart: "no"
     links:
       - zookeeper
     ports:
-      - 9092:9092
+      - 29092:9092
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
@@ -26,7 +26,7 @@ services:
       KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka1:29092,EXTERNAL://localhost:9092
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
-      #https://github.com/wurstmeister/kafka-docker/issues/553
+
 #kafdrop for topic/msg visualization
   kafdrop:
     image: obsidiandynamics/kafdrop
@@ -50,7 +50,6 @@ services:
      - 5005:5005
     links:
      - kafka1
-     - sqlserver
     environment:
      - BOOTSTRAP_SERVERS=kafka1:29092
      - GROUP_ID=1
@@ -58,49 +57,18 @@ services:
      - OFFSET_STORAGE_TOPIC=my_connect_offsets
      - STATUS_STORAGE_TOPIC=my_connect_statuses
      
-  nest:
+  client:
     ports:
       - 4001:5000
     build:
       context: .
-      dockerfile: ./DockerFile
+      dockerfile: ./Dockerfile
     restart: unless-stopped
     extra_hosts:
       - "host.docker.internal:host-gateway"
-    command: npm run start
+    depends_on:
+      - kafka1
 
-#   sqlserver:
-#     image: mcr.microsoft.com/mssql/server:2019-latest
-#     ports:
-#      - 1433:1433 
-#     environment:
-#      - ACCEPT_EULA=Y
-#      - MSSQL_PID=Standard
-#      - SA_PASSWORD=Password!
-#      - MSSQL_AGENT_ENABLED=true
-    # networks:
-    #   - webnet
-# For testing newer connector versions, unpack the connector archive into this
-# directory and uncomment the lines below
-#    volumes:
-#     - ./debezium-connector-sqlserver:/kafka/connect/debezium-connector-sqlserver
 
-# Make sure ports in your debzium source connectors are 29092,29093 
-
-# POST  http://localhost:8083/connectors --> To register the kafka connector
-# {
-#   "name": "inventory-connector",
-#   "config": {
-#     "connector.class": "io.debezium.connector.postgresql.PostgresConnector",
-#     "database.hostname": "postgres",
-#     "database.port": "5432",
-#     "database.user": "postgres",
-#     "database.password": "postgres",
-#     "database.dbname" : "postgres",
-#     "database.server.name": "dbserver1",
-#     "table.include.list": "inventory.customers"
-#
-#   }
-# }      
 
 
