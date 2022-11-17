@@ -6,6 +6,7 @@ import {
   updateProductHandler,
 } from 'src/graphql/handlers/product';
 import {
+  deleteProductByDestinationId,
   fetchProductId,
   fetchProductSerialIdBySlug,
   insertProductId,
@@ -17,7 +18,6 @@ import { TransformerService } from '../../transformer/Transformer.service';
 import { ProductMediaService } from './media/Product.Media.Service';
 import { ProductVariantService } from './variant/Product.Variant.Service';
 import { productVariantInterface } from 'src/database/mssql/types/product';
-import { productDeleteById } from './Product.utils';
 
 /**
  *  Injectable class handling product variant and its relating tables CDC
@@ -91,10 +91,17 @@ export class ProductService {
     if (productDetails.media.length === 0) {
       await this.createProductMedia(productId, productData.media);
       if (productData.media.length === 0) {
-        return await productDeleteById(productId);
+        return await this.productDelete(productId);
       }
     }
     return await updateProductHandler(productData, productId);
+  }
+  public async productDelete(destinationId: string) {
+    if (destinationId) {
+      const productDelete = await deleteProductHandler(destinationId);
+      const productIdDelete = await deleteProductByDestinationId(destinationId);
+      return { productDelete, productIdDelete };
+    }
   }
 
   public async createProductVariants(

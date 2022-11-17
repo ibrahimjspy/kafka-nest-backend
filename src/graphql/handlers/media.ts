@@ -3,7 +3,7 @@ import { productMediaCreate } from 'src/graphql/types/product';
 import {
   graphqlCall,
   graphqlExceptionHandler,
-} from 'src/graphql/graphql.utils';
+} from 'src/graphql/utils/call';
 import { mediaCreateMutation } from '../mutations/media/create';
 
 //  <-->  Create  <-->

@@ -1,14 +1,12 @@
 import { Logger } from '@nestjs/common';
 import { bulkVariantCreate } from 'src/graphql/types/product';
-import {
-  graphqlCall,
-  graphqlExceptionHandler,
-} from 'src/graphql/graphql.utils';
+import { graphqlCall, graphqlExceptionHandler } from 'src/graphql/utils/call';
 import {
   addProductVariantToShopMutation,
   productVariantBulkCreateMutation,
 } from '../mutations/productVariant/create';
 import { productDeleteById } from 'src/services/product/Product.utils';
+import { productVariantQueryTransformer } from '../utils/transformers';
 
 //  <-->  Create  <-->
 export const createBulkVariantsHandler = async (
@@ -19,7 +17,10 @@ export const createBulkVariantsHandler = async (
     const variantIds = [];
 
     const createProductVariants: bulkVariantCreate = await graphqlCall(
-      productVariantBulkCreateMutation(productVariantData, productId),
+      productVariantBulkCreateMutation(
+        productVariantQueryTransformer(productVariantData),
+        productId,
+      ),
     );
     createProductVariants.productVariantBulkCreate.productVariants.map(
       (variant) => [variantIds.push(variant.id)],

@@ -7,7 +7,7 @@ import { productTransformed } from 'src/transformer/types/product';
 import {
   graphqlCall,
   graphqlExceptionHandler,
-} from 'src/graphql/graphql.utils';
+} from 'src/graphql/utils/call';
 import {
   createProductMutation,
   productChannelListingMutation,

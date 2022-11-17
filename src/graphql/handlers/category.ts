@@ -6,7 +6,7 @@ import {
 import {
   graphqlCall,
   graphqlExceptionHandler,
-} from 'src/graphql/graphql.utils';
+} from 'src/graphql/utils/call';
 import {
   createCategoryMasterMutation,
   createCategorySubMutation,

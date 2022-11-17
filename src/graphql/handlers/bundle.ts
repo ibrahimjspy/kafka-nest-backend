@@ -1,9 +1,7 @@
 import { Logger } from '@nestjs/common';
-import {
-  graphqlCall,
-  graphqlExceptionHandler,
-} from 'src/graphql/graphql.utils';
+import { graphqlCall, graphqlExceptionHandler } from 'src/graphql/utils/call';
 import { createBundleMutation } from '../mutations/bundles/create';
+import { bundleQueryTransformer } from '../utils/transformers';
 
 //  <-->  Create  <-->
 
@@ -14,10 +12,10 @@ export const createBundleHandler = async (
 ) => {
   try {
     const bundles = await graphqlCall(
-      createBundleMutation(bundleVariants, bundleQuantities, shopId).replace(
-        /'/g,
-        '"',
-      ),
+      createBundleMutation(
+        bundleQueryTransformer(bundleVariants, bundleQuantities),
+        shopId,
+      ).replace(/'/g, '"'),
     );
     return bundles;
   } catch (err) {

@@ -7,7 +7,7 @@ import {
   graphqlCallByToken,
   graphqlCallSaleor,
   graphqlExceptionHandler,
-} from 'src/graphql/graphql.utils';
+} from 'src/graphql/utils/call';
 import {
   createSessionToken,
   createUserMutation,

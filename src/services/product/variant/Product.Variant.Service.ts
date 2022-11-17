@@ -9,6 +9,7 @@ import { productVariantInterface } from 'src/database/mssql/types/product';
 import { colorSelectDto } from 'src/transformer/types/product';
 import { getProductDetailsFromDb } from 'src/database/mssql/product-view/fetch';
 import { createBundleHandler } from 'src/graphql/handlers/bundle';
+import { chunkArray } from '../Product.utils';
 
 /**
  *  Injectable class handling productVariant and its relating tables CDC
@@ -82,9 +83,3 @@ export class ProductVariantService {
     return createBundles;
   }
 }
-
-// convert array into smaller chunks  [ab, bc, cd] =>  [[ab,bc],[cd]]
-const chunkArray = (arr, size) =>
-  arr.length > size
-    ? [arr.slice(0, size), ...chunkArray(arr.slice(size), size)]
-    : [arr];

@@ -3,7 +3,7 @@ import { shopTransformed } from 'src/transformer/types/shop';
 import {
   graphqlCall,
   graphqlExceptionHandler,
-} from 'src/graphql/graphql.utils';
+} from 'src/graphql/utils/call';
 import {
   addUserToMarketplace,
   createShopMutation,
