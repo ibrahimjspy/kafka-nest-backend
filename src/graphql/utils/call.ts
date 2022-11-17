@@ -1,4 +1,5 @@
 import { Logger } from '@nestjs/common';
+import { FEDERATION_ENDPOINT, SALEOR_ENDPOINT } from 'common.env';
 import { GraphQLClient } from 'graphql-request';
 type GraphqlCall = (Query: string, retries?: number) => Promise<object>;
 /**
@@ -14,9 +15,7 @@ export const graphqlCall: GraphqlCall = async (
   retries = 5,
 ): Promise<any> => {
   let data = {};
-  const graphQLClient = new GraphQLClient(
-    process.env.DESTINATION_GRAPHQL_ENDPOINT,
-  );
+  const graphQLClient = new GraphQLClient(FEDERATION_ENDPOINT);
   try {
     await graphQLClient.request(Query).then((res) => {
       data = res;
@@ -45,14 +44,11 @@ export const graphqlCallSaleor: GraphqlCall = async (
   retries = 5,
 ): Promise<any> => {
   let data = {};
-  const graphQLClient = new GraphQLClient(
-    process.env.DESTINATION_SALEOR_ENDPOINT,
-    {
-      headers: {
-        authorization: `Bearer ${process.env.AUTHORIZATION_HEADER_APP}`,
-      },
+  const graphQLClient = new GraphQLClient(SALEOR_ENDPOINT, {
+    headers: {
+      authorization: `Bearer ${process.env.AUTHORIZATION_HEADER_APP}`,
     },
-  );
+  });
   try {
     await graphQLClient.request(Query).then((res) => {
       data = res;
@@ -80,14 +76,11 @@ export const graphqlCallByToken = async (
   Token: string,
 ): Promise<any> => {
   let data = {};
-  const graphQLClient = new GraphQLClient(
-    process.env.DESTINATION_SALEOR_ENDPOINT,
-    {
-      headers: {
-        authorization: `Bearer ${Token}`,
-      },
+  const graphQLClient = new GraphQLClient(SALEOR_ENDPOINT, {
+    headers: {
+      authorization: `Bearer ${Token}`,
     },
-  );
+  });
   await graphQLClient.request(Query).then((res) => {
     data = res;
   });

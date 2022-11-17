@@ -1,0 +1,6 @@
+import * as dotenv from 'dotenv';
+dotenv.config();
+// file storing common env configurations
+export const SALEOR_ENDPOINT = process.env.DESTINATION_SALEOR_ENDPOINT;
+export const FEDERATION_ENDPOINT = process.env.DESTINATION_FEDERATION_ENDPOINT;
+export const KAFKA_BROKER_ENDPOINT = process.env.KAFKA_BROKER;

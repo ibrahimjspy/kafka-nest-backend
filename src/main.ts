@@ -1,9 +1,9 @@
 import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { Transport, MicroserviceOptions } from '@nestjs/microservices';
+import { KAFKA_BROKER_ENDPOINT } from 'common.env';
 
 import { AppModule } from './app.module';
-// import client from './postgres/config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -11,7 +11,7 @@ async function bootstrap() {
     transport: Transport.KAFKA,
     options: {
       client: {
-        brokers: [process.env.KAFKA_BROKER],
+        brokers: [KAFKA_BROKER_ENDPOINT],
       },
 
       consumer: {
