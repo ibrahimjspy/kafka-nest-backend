@@ -7,7 +7,7 @@ import {
 } from '../mutations/productVariant/create';
 import { productVariantQueryTransformer } from '../utils/transformers';
 import { deleteProductHandler } from './product';
-import { deleteProductByDestinationId } from 'src/database/postgres/handlers/product';
+import { deleteProductIdByDestinationId } from 'src/database/postgres/handlers/product';
 
 //  <-->  Create  <-->
 export const createBulkVariantsHandler = async (
@@ -31,7 +31,7 @@ export const createBulkVariantsHandler = async (
   } catch (err) {
     Logger.warn('product variant call failed', graphqlExceptionHandler(err));
     await deleteProductHandler(productId); // rollback <api>
-    await deleteProductByDestinationId(productId); // rollback <db>
+    await deleteProductIdByDestinationId(productId); // rollback <db>
     return;
   }
 };

@@ -62,6 +62,7 @@ export class ShopTransformerService {
     const emailTransformed = name.replace(/ /g, '_');
     return `${emailTransformed.toLowerCase()}@gmail.com`;
   }
+
   public shopUrlTransformer(@Param() url, name) {
     if (url.length) {
       return url;

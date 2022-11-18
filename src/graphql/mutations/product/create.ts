@@ -55,23 +55,3 @@ export const productChannelListingMutation = (productId) => {
     }
   `;
 };
-
-export const addOrangeShineIdMutation = (
-  destinationResponse,
-  productObject,
-) => {
-  const destinationId = destinationResponse.productCreate.product.id;
-  const orangeShineId = productObject.id;
-  return gql`
-    mutation {
-      updateMetadata(
-        id: "${destinationId}"
-        input: { key: "OS_ID", value: "${orangeShineId}" }
-      ) {
-        item {
-          __typename
-        }
-      }
-    }
-  `;
-};

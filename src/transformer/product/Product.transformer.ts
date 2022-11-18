@@ -98,7 +98,6 @@ export class ProductTransformerService {
       sourceMasterCategoryId,
     );
     if (destinationSubCategoryId) {
-      // console.log(destinationSubCategoryId, 'sub category passed');
       return destinationSubCategoryId;
     }
 

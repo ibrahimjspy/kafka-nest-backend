@@ -38,10 +38,10 @@ export class ProductVariantService {
     return await this.productVariantAssign(productVariantData, productId);
   }
 
-  public async productVariantUpdate(productId, sourceProductData) {
+  public async productVariantsUpdate(productId, sourceProductData) {
     const productDetails = await getProductDetailsHandler(productId);
     if (productDetails.variants.length === 0) {
-      await this.productClass.createProductVariants(
+      await this.productClass.productVariantsCreate(
         sourceProductData,
         productId,
       );

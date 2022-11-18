@@ -1,7 +1,7 @@
 import { Injectable, Param } from '@nestjs/common';
 import {
-  createCategoryMasterHandler,
-  createCategorySubHandler,
+  createMasterCategoryHandler,
+  createSubCategoryHandler,
   deleteMasterCategoryHandler,
   deleteSubCategoryHandler,
   updateMasterCategoryHandler,
@@ -105,7 +105,7 @@ export class CategoryService {
   ) {
     // creates new category and map its id in database
     const category: masterCategoryTransformed =
-      await createCategoryMasterHandler(categoryData);
+      await createMasterCategoryHandler(categoryData);
 
     if (category) {
       await insertMasterCategoryId(categoryData.id, category);
@@ -117,7 +117,7 @@ export class CategoryService {
   private async subCategoryCreate(
     @Param() categoryData: subCategoryTransformed,
   ) {
-    const subCategory = await createCategorySubHandler(
+    const subCategory = await createSubCategoryHandler(
       categoryData,
       categoryData.parentId,
     );

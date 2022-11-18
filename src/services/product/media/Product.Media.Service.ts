@@ -31,7 +31,7 @@ export class ProductMediaService {
   public async productMediaUpdate(productId, sourceProductData) {
     const productDetails = await getProductDetailsHandler(productId);
     if (productDetails.media.length === 0) {
-      await this.productClass.createProductMedia(
+      await this.productClass.productMediaCreate(
         productId,
         sourceProductData.media,
       );

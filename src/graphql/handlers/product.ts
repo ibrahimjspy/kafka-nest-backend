@@ -4,10 +4,7 @@ import {
   productCreate,
 } from 'src/graphql/types/product';
 import { productTransformed } from 'src/transformer/types/product';
-import {
-  graphqlCall,
-  graphqlExceptionHandler,
-} from 'src/graphql/utils/call';
+import { graphqlCall, graphqlExceptionHandler } from 'src/graphql/utils/call';
 import {
   createProductMutation,
   productChannelListingMutation,
@@ -26,7 +23,7 @@ export const createProductHandler = async (
       createProductMutation(productData),
     );
     const productId = createProduct?.productCreate?.product?.id;
-    await productChannelListing(productId);
+    await productChannelListingHandler(productId);
 
     Logger.verbose('Product created', createProduct);
     return productId;
@@ -36,7 +33,7 @@ export const createProductHandler = async (
   }
 };
 
-export const productChannelListing = async (productId) => {
+export const productChannelListingHandler = async (productId) => {
   try {
     return await graphqlCall(productChannelListingMutation(productId));
   } catch (err) {
