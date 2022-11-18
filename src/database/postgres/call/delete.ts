@@ -2,7 +2,7 @@ import { Logger } from '@nestjs/common';
 import client from '../../../../pg-config';
 
 /**
- * inserts source product and brand details against its product_id
+ * deletes source product and brand details against its product_id
  * @params postgres database query for inserting id
  * @warn currently only compatible with source and destination id
  */

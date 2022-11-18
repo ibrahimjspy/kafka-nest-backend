@@ -84,18 +84,15 @@ export class ProductService {
     productId: string,
     productData: productTransformed,
   ) {
-    const productDetails = await getProductDetailsHandler(productId);
-    if (productDetails.variants.length === 0) {
-      await this.createProductVariants(productData, productId);
-    }
-    if (productDetails.media.length === 0) {
-      await this.createProductMedia(productId, productData.media);
-      if (productData.media.length === 0) {
-        return await this.productDelete(productId);
-      }
-    }
+    await this.productMediaClass.productMediaUpdate(productId, productData);
+    await this.productVariantService.productVariantUpdate(
+      productId,
+      productData,
+    );
+
     return await updateProductHandler(productData, productId);
   }
+
   public async productDelete(destinationId: string) {
     if (destinationId) {
       const productDelete = await deleteProductHandler(destinationId);

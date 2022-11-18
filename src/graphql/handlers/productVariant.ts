@@ -5,8 +5,9 @@ import {
   addProductVariantToShopMutation,
   productVariantBulkCreateMutation,
 } from '../mutations/productVariant/create';
-import { productDeleteById } from 'src/services/product/Product.utils';
 import { productVariantQueryTransformer } from '../utils/transformers';
+import { deleteProductHandler } from './product';
+import { deleteProductByDestinationId } from 'src/database/postgres/handlers/product';
 
 //  <-->  Create  <-->
 export const createBulkVariantsHandler = async (
@@ -29,7 +30,8 @@ export const createBulkVariantsHandler = async (
     return variantIds;
   } catch (err) {
     Logger.warn('product variant call failed', graphqlExceptionHandler(err));
-    await productDeleteById(productId);
+    await deleteProductHandler(productId); // rollback <api>
+    await deleteProductByDestinationId(productId); // rollback <db>
     return;
   }
 };

@@ -1,5 +1,6 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { insertProductMediaById } from 'src/database/postgres/handlers/media';
+import { getProductDetailsHandler } from 'src/graphql/handlers/product';
 import { ProductService } from '../Product.Service';
 /**
  *  Injectable class handling media assign
@@ -27,15 +28,15 @@ export class ProductMediaService {
     return createMedia;
   }
 
-  public async productMediaUpdate(
-    destinationMedia,
-    sourceMedia,
-    destinationId,
-  ) {
-    if (destinationMedia === 0) {
-      await this.productClass.createProductMedia(destinationId, sourceMedia);
-      if (sourceMedia === 0) {
-        return await this.productClass.productDelete(destinationId);
+  public async productMediaUpdate(productId, sourceProductData) {
+    const productDetails = await getProductDetailsHandler(productId);
+    if (productDetails.media.length === 0) {
+      await this.productClass.createProductMedia(
+        productId,
+        sourceProductData.media,
+      );
+      if (sourceProductData.media.length === 0) {
+        return await this.productClass.productDelete(productId);
       }
     }
   }

@@ -11,6 +11,7 @@ import { getProductDetailsFromDb } from 'src/database/mssql/product-view/fetch';
 import { createBundleHandler } from 'src/graphql/handlers/bundle';
 import { chunkArray } from '../Product.utils';
 import { ProductService } from '../Product.Service';
+import { getProductDetailsHandler } from 'src/graphql/handlers/product';
 
 /**
  *  Injectable class handling productVariant and its relating tables CDC
@@ -35,6 +36,16 @@ export class ProductVariantService {
 
     // creating product variant against color
     return await this.productVariantAssign(productVariantData, productId);
+  }
+
+  public async productVariantUpdate(productId, sourceProductData) {
+    const productDetails = await getProductDetailsHandler(productId);
+    if (productDetails.variants.length === 0) {
+      await this.productClass.createProductVariants(
+        sourceProductData,
+        productId,
+      );
+    }
   }
 
   public async productVariantAssign(
