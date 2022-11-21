@@ -1,7 +1,9 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { insertProductMediaById } from 'src/database/postgres/handlers/media';
 import { getProductDetailsHandler } from 'src/graphql/handlers/product';
+import { productTransformed } from 'src/transformer/types/product';
 import { ProductService } from '../Product.Service';
+import { mediaUrlMapping } from '../Product.utils';
 /**
  *  Injectable class handling media assign
  *  @Injected transformation class for CDC payload validations and transformations
@@ -28,16 +30,24 @@ export class ProductMediaService {
     return createMedia;
   }
 
-  public async productMediaUpdate(productId, sourceProductData) {
+  public async productMediaUpdate(
+    productId: string,
+    sourceProductData: productTransformed,
+  ) {
     const productDetails = await getProductDetailsHandler(productId);
     if (productDetails.media.length === 0) {
-      await this.productClass.productMediaCreate(
+      return await this.productClass.productMediaCreate(
         productId,
         sourceProductData.media,
       );
-      if (sourceProductData.media.length === 0) {
-        return await this.productClass.productDelete(productId);
-      }
     }
+    const newMedia = mediaUrlMapping(
+      sourceProductData.media,
+      productDetails.media,
+    );
+    if (newMedia) {
+      return await this.productClass.productMediaCreate(productId, newMedia);
+    }
+    return;
   }
 }

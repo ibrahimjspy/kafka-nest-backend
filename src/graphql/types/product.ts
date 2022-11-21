@@ -29,6 +29,13 @@ export interface getProductDetailsInterface {
     updatedAt: string;
     variants: {
       id: string;
+      pricing?: {
+        price: {
+          gross: {
+            amount: number | string;
+          };
+        };
+      };
     }[];
   };
 }

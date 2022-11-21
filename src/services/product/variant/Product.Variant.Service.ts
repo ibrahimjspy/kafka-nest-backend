@@ -2,11 +2,15 @@ import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import {
   addProductVariantToShopHandler,
   createBulkVariantsHandler,
+  updateProductVariantPriceHandler,
 } from 'src/graphql/handlers/productVariant';
 import { fetchProductId } from 'src/database/postgres/handlers/product';
 import { TransformerService } from 'src/transformer/Transformer.service';
 import { productVariantInterface } from 'src/database/mssql/types/product';
-import { colorSelectDto } from 'src/transformer/types/product';
+import {
+  colorSelectDto,
+  productTransformed,
+} from 'src/transformer/types/product';
 import { getProductDetailsFromDb } from 'src/database/mssql/product-view/fetch';
 import { createBundleHandler } from 'src/graphql/handlers/bundle';
 import { chunkArray } from '../Product.utils';
@@ -38,14 +42,18 @@ export class ProductVariantService {
     return await this.productVariantAssign(productVariantData, productId);
   }
 
-  public async productVariantsUpdate(productId, sourceProductData) {
+  public async productVariantsUpdate(
+    productId,
+    sourceProductData: productTransformed,
+  ) {
     const productDetails = await getProductDetailsHandler(productId);
     if (productDetails.variants.length === 0) {
-      await this.productClass.productVariantsCreate(
+      return await this.productClass.productVariantsCreate(
         sourceProductData,
         productId,
       );
     }
+    return await this.updatePrice(sourceProductData.price, productDetails);
   }
 
   public async productVariantAssign(
@@ -97,5 +105,18 @@ export class ProductVariantService {
       }),
     );
     return createBundles;
+  }
+
+  private async updatePrice(sourcePrice, destinationProductData) {
+    if (
+      sourcePrice !==
+      destinationProductData.variants[0].pricing.price.gross.amount
+    ) {
+      await Promise.all(
+        destinationProductData.variants.map(async (id) => {
+          await updateProductVariantPriceHandler(id, sourcePrice);
+        }),
+      );
+    }
   }
 }

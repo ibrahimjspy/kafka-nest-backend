@@ -8,6 +8,7 @@ import {
 import { productVariantQueryTransformer } from '../utils/transformers';
 import { deleteProductHandler } from './product';
 import { deleteProductIdByDestinationId } from 'src/database/postgres/handlers/product';
+import { updateProductVariantPricingMutation } from '../mutations/productVariant/update';
 
 //  <-->  Create  <-->
 export const createBulkVariantsHandler = async (
@@ -49,6 +50,30 @@ export const addProductVariantToShopHandler = async (
   } catch (err) {
     Logger.error(
       'product variant add to shop call failed',
+      graphqlExceptionHandler(err),
+    );
+    return;
+  }
+};
+
+//  <-->  Update  <-->
+
+export const updateProductVariantPriceHandler = async (
+  productVariantId,
+  productVariantPrice,
+) => {
+  try {
+    if (productVariantId) {
+      await graphqlCall(
+        updateProductVariantPricingMutation(
+          productVariantId,
+          productVariantPrice,
+        ),
+      );
+    }
+  } catch (err) {
+    Logger.error(
+      'product variant pricing update call failed',
       graphqlExceptionHandler(err),
     );
     return;

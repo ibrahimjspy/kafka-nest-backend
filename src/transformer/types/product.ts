@@ -24,6 +24,7 @@ export interface productTransformed {
   media?: string[];
   categoryId?: string;
   shopId?: string;
+  price?: string;
 }
 
 export interface colorSelectDto {

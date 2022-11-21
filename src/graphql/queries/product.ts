@@ -12,6 +12,13 @@ export const getProductDetailsQuery = (productId: string): string => {
         description
         updatedAt
         variants {
+          pricing{
+            price{
+              gross{
+                amount
+              }
+            }
+          }
           id
         }
       }
