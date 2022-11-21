@@ -47,6 +47,7 @@ export class ProductVariantService {
     sourceProductData: productTransformed,
   ) {
     const productDetails = await getProductDetailsHandler(productId);
+
     if (productDetails.variants.length === 0) {
       return await this.productClass.productVariantsCreate(
         sourceProductData,
@@ -109,12 +110,15 @@ export class ProductVariantService {
 
   private async updatePrice(sourcePrice, destinationProductData) {
     if (
-      sourcePrice !==
-      destinationProductData.variants[0].pricing.price.gross.amount
+      parseFloat(sourcePrice) !==
+      parseFloat(destinationProductData.variants[0].pricing.price.gross.amount)
     ) {
       await Promise.all(
-        destinationProductData.variants.map(async (id) => {
-          await updateProductVariantPriceHandler(id, sourcePrice);
+        destinationProductData.variants.map(async (variant) => {
+          await updateProductVariantPriceHandler(
+            variant.id,
+            parseFloat(sourcePrice),
+          );
         }),
       );
     }

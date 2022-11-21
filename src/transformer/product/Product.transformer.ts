@@ -45,6 +45,7 @@ export class ProductTransformerService {
         );
 
     productObject['shopId'] = await this.shopIdTransformer(TBVendor_ID);
+    productObject['price'] = object.nPrice1;
 
     return productObject;
   }

@@ -3,7 +3,7 @@ import { gql } from 'graphql-request';
 export const getProductDetailsQuery = (productId: string): string => {
   return gql`
     query {
-      product(id: "${productId}") {
+      product(id: "${productId}" channel: "default-channel") {
         name
         media {
           url

@@ -15,7 +15,7 @@ export const mediaUrlMapping = (
   destinationMedia,
 ): string[] => {
   const transformedDestinationMedia = destinationMedia.map((media) => {
-    return media.url.split('media/')[0];
+    return media.url.split('ColorSwatch/')[1];
   });
   const transformedSourceMedia = sourceMedia.map((url) => {
     return url.split('Pictures/')[0];
