@@ -30,10 +30,9 @@ export class ProductTransformerService {
     } = object;
     productObject['id'] = TBItem_ID.toString();
     productObject['name'] = nStyleName.toString();
-    productObject['description'] = await this.descriptionTransformer(
-      nItemDescription,
-    );
-    productObject['media'] = await this.mediaTransformerMethod(object);
+    productObject['description'] =
+      this.descriptionTransformer(nItemDescription);
+    productObject['media'] = this.mediaTransformerMethod(object);
     productObject['categoryId'] = TBStyleNo_OS_Category_Sub_ID
       ? await this.categoryIdTransformer(
           TBStyleNo_OS_Category_Master_ID,
@@ -54,7 +53,7 @@ export class ProductTransformerService {
    * description transformed from string format to richText(destination format)
    * @params string to be transformed
    */
-  public async descriptionTransformer(@Param() description: string) {
+  public descriptionTransformer(@Param() description: string) {
     const validString = description.replace(/"/g, "'").replace(/[\r\n]+/g, ' ');
     if (validString) {
       return `{\"time\": 1662995227870, \"blocks\": [{\"id\": \"cqWmV3MIPH\", \"data\": {\"text\": \"${validString}\"}, \"type\": \"paragraph\"}], \"version\": \"2.24.3\"}`;
@@ -67,18 +66,15 @@ export class ProductTransformerService {
    * @params object to be transformed and mapped
    * @returns media composite array
    */
-  public async mediaTransformerMethod(@Param() productObject: productDto) {
-    return [
-      productObject.Picture1,
-      productObject.Picture2,
-      productObject.Picture3,
-      productObject.Picture4,
-      productObject.Picture5,
-      productObject.Picture6,
-      productObject.Picture7,
-      productObject.Picture8,
-      productObject.Picture9,
-    ];
+  public mediaTransformerMethod(@Param() productObject: object): string[] {
+    const urls = [];
+    for (let i = 1; i < 10; i++) {
+      urls.push(productObject[`Picture${i}`]);
+      urls.push(productObject[`PictureZ${i}`]);
+      urls.push(productObject[`PictureV${i}`]);
+      urls.push(productObject[`PictureS${i}`]);
+    }
+    return urls;
   }
 
   /**

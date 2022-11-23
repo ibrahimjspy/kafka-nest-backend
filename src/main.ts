@@ -21,7 +21,7 @@ async function bootstrap() {
       },
     },
   });
-  await app.startAllMicroservices();
+  app.startAllMicroservices();
   app
     .listen(process.env.SERVER_PORT || 6003)
     .then(() => {
