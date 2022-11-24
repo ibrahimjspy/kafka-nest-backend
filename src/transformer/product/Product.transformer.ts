@@ -67,14 +67,14 @@ export class ProductTransformerService {
    * @returns media composite array
    */
   public mediaTransformerMethod(@Param() productObject: object): string[] {
-    const urls = [];
+    let small, medium, large, tiny;
     for (let i = 1; i < 10; i++) {
-      urls.push(productObject[`Picture${i}`]);
-      urls.push(productObject[`PictureZ${i}`]);
-      urls.push(productObject[`PictureV${i}`]);
-      urls.push(productObject[`PictureS${i}`]);
+      medium.push(productObject[`Picture${i}`]);
+      large.push(productObject[`PictureZ${i}`]);
+      small.push(productObject[`PictureV${i}`]);
+      tiny.push(productObject[`PictureS${i}`]);
     }
-    return urls;
+    return [...medium, ...small, ...large, ...tiny];
   }
 
   /**
