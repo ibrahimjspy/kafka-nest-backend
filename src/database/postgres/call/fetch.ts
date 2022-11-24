@@ -25,7 +25,7 @@ export const postgresFetchIdCall = async (Query: string, retry = 0) => {
 };
 
 /**
- * fetches source product and brand details against its product_id
+ * fetches source product  media id
  * @params postgres database query for fetching id
  * @warn currently only compatible id
  * @returns uuid || serial 4 id

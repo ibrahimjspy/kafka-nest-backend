@@ -22,7 +22,7 @@ export interface productTransformed {
   id?: string;
   name?: string;
   description?: string;
-  media?: string[];
+  media?: mediaDto[];
   categoryId?: string;
   shopId?: string;
   price?: string;
@@ -35,4 +35,11 @@ export interface colorSelectDto {
   TBColor_ID: string;
   ImageLink: string;
   BrandActive: string;
+}
+
+export interface mediaDto {
+  tiny?: string;
+  small?: string;
+  medium?: string;
+  large?: string;
 }

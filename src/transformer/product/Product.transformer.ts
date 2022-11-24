@@ -1,5 +1,9 @@
 import { Injectable, Param } from '@nestjs/common';
-import { productDto, productTransformed } from 'src/transformer/types/product';
+import {
+  mediaDto,
+  productDto,
+  productTransformed,
+} from 'src/transformer/types/product';
 import {
   fetchMasterCategoryId,
   fetchSubCategoryId,
@@ -66,15 +70,17 @@ export class ProductTransformerService {
    * @params object to be transformed and mapped
    * @returns media composite array
    */
-  public mediaTransformerMethod(@Param() productObject: object): string[] {
-    let small, medium, large, tiny;
+  public mediaTransformerMethod(@Param() productObject: object): mediaDto[] {
+    let mediaArray: mediaDto[];
     for (let i = 1; i < 10; i++) {
-      medium.push(productObject[`Picture${i}`]);
-      large.push(productObject[`PictureZ${i}`]);
-      small.push(productObject[`PictureV${i}`]);
-      tiny.push(productObject[`PictureS${i}`]);
+      let image: mediaDto;
+      image.tiny = productObject[`Picture${i}`];
+      image.small = productObject[`PictureZ${i}`];
+      image.medium = productObject[`PictureV${i}`];
+      image.large = productObject[`PictureS${i}`];
+      mediaArray.push(image);
     }
-    return [...medium, ...small, ...large, ...tiny];
+    return mediaArray;
   }
 
   /**

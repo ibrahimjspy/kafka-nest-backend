@@ -12,7 +12,11 @@ import {
   insertProductId,
 } from 'src/database/postgres/handlers/product';
 import { deleteProductId } from 'src/database/postgres/handlers/product';
-import { productDto, productTransformed } from 'src/transformer/types/product';
+import {
+  mediaDto,
+  productDto,
+  productTransformed,
+} from 'src/transformer/types/product';
 import { getProductDetailsFromDb } from 'src/database/mssql/product-view/fetch';
 import { TransformerService } from '../../transformer/Transformer.service';
 import { ProductMediaService } from './media/Product.Media.Service';
@@ -126,7 +130,7 @@ export class ProductService {
     return productSerialId;
   }
 
-  public async productMediaCreate(productId: string, productMedia: string[]) {
+  public async productMediaCreate(productId: string, productMedia: mediaDto[]) {
     // fetches product serial id
     const productSerialId = await this.getProductSerialId(productId);
 

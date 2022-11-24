@@ -1,7 +1,12 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
-import { insertProductMediaById } from 'src/database/postgres/handlers/media';
+import { stringValidation } from 'src/app.utils';
+import {
+  fetchProductMediaId,
+  insertProductMediaById,
+  insertThumbnailMediaById,
+} from 'src/database/postgres/handlers/media';
 import { getProductDetailsHandler } from 'src/graphql/handlers/product';
-import { productTransformed } from 'src/transformer/types/product';
+import { mediaDto, productTransformed } from 'src/transformer/types/product';
 import { ProductService } from '../Product.Service';
 import { mediaUrlMapping } from '../Product.utils';
 /**
@@ -16,13 +21,22 @@ export class ProductMediaService {
     private readonly productClass: ProductService,
   ) {}
 
-  public async productMediaAssign(productMedia, productId) {
+  public async productMediaAssign(productMedia: mediaDto[], productId) {
     // Validating media url and inserting it to DB
     const createMedia = Promise.all(
-      productMedia.map(async (url) => {
-        if (url) {
-          if (url.length > 2) {
-            await insertProductMediaById(url, productId);
+      productMedia.map(async (image) => {
+        if (image.large) {
+          if (stringValidation(image.large)) {
+            // create standard media
+            await insertProductMediaById(image.large, productId);
+            const productMediaId = await fetchProductMediaId(
+              image.large,
+              productId,
+            );
+            // create thumbnails
+            if (image.medium && image.small && image.tiny) {
+              await this.productThumbnailsAssign(image, productMediaId);
+            }
           }
         }
       }),
@@ -49,5 +63,25 @@ export class ProductMediaService {
       return await this.productClass.productMediaCreate(productId, newMedia);
     }
     return;
+  }
+
+  public async productThumbnailsAssign(productMedia: mediaDto, productMediaId) {
+    // Validating media url and inserting it to DB
+    const createSmallImage = await insertThumbnailMediaById({
+      mediaUrl: productMedia.small,
+      size: '116',
+      productId: productMediaId,
+    });
+    const createMediumImage = await insertThumbnailMediaById({
+      mediaUrl: productMedia.medium,
+      size: '232',
+      productId: productMediaId,
+    });
+    const createTinyImage = await insertThumbnailMediaById({
+      mediaUrl: productMedia.tiny,
+      size: '56',
+      productId: productMediaId,
+    });
+    return { createSmallImage, createMediumImage, createTinyImage };
   }
 }
