@@ -71,9 +71,9 @@ export class ProductTransformerService {
    * @returns media composite array
    */
   public mediaTransformerMethod(@Param() productObject: object): mediaDto[] {
-    let mediaArray: mediaDto[];
+    const mediaArray: mediaDto[] = [];
     for (let i = 1; i < 10; i++) {
-      let image: mediaDto;
+      const image: mediaDto = {};
       image.tiny = productObject[`Picture${i}`];
       image.small = productObject[`PictureZ${i}`];
       image.medium = productObject[`PictureV${i}`];
