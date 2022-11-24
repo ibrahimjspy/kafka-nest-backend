@@ -40,7 +40,7 @@ export const deleteProductId = async (sourceId) => {
   return await postgresDeleteCall(deleteProductIdQuery(sourceId));
 };
 
-export const deleteProductByDestinationId = async (destinationId) => {
+export const deleteProductIdByDestinationId = async (destinationId) => {
   return await postgresDeleteCall(
     deleteProductIdByDestinationIdQuery(destinationId),
   );

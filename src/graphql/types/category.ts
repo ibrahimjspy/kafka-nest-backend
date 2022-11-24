@@ -1,1 +1,0 @@
-// category create types

@@ -1,9 +1,6 @@
 import { Logger } from '@nestjs/common';
 import { shopTransformed } from 'src/transformer/types/shop';
-import {
-  graphqlCall,
-  graphqlExceptionHandler,
-} from 'src/graphql/utils/call';
+import { graphqlCall, graphqlExceptionHandler } from 'src/graphql/utils/call';
 import {
   addUserToMarketplace,
   createShopMutation,

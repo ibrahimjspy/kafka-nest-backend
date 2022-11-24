@@ -3,10 +3,7 @@ import {
   masterCategoryTransformed,
   subCategoryTransformed,
 } from 'src/transformer/types/category';
-import {
-  graphqlCall,
-  graphqlExceptionHandler,
-} from 'src/graphql/utils/call';
+import { graphqlCall, graphqlExceptionHandler } from 'src/graphql/utils/call';
 import {
   createCategoryMasterMutation,
   createCategorySubMutation,
@@ -19,7 +16,7 @@ import {
 
 //  <-->  Create  <-->
 
-export const createCategoryMasterHandler = async (
+export const createMasterCategoryHandler = async (
   categoryData: masterCategoryTransformed,
 ): Promise<object> => {
   try {
@@ -33,7 +30,7 @@ export const createCategoryMasterHandler = async (
   }
 };
 
-export const createCategorySubHandler = async (
+export const createSubCategoryHandler = async (
   categoryData: subCategoryTransformed,
   masterId: string,
 ): Promise<object> => {

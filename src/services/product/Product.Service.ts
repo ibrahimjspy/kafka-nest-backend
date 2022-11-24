@@ -6,7 +6,7 @@ import {
   updateProductHandler,
 } from 'src/graphql/handlers/product';
 import {
-  deleteProductByDestinationId,
+  deleteProductIdByDestinationId,
   fetchProductId,
   fetchProductSerialIdBySlug,
   insertProductId,
@@ -42,7 +42,7 @@ export class ProductService {
     if (productExistsInDestination) {
       return await this.productUpdate(productExistsInDestination, productData);
     }
-    return await this.createProduct(productData);
+    return await this.productCreate(productData);
   }
 
   public async handleProductCDCDelete(
@@ -61,7 +61,7 @@ export class ProductService {
     return;
   }
 
-  private async createProduct(
+  private async productCreate(
     productData: productTransformed,
   ): Promise<object> {
     // creating new product and assigning it media
@@ -71,8 +71,8 @@ export class ProductService {
       // inserts product id into id mapping table
       await insertProductId(productData.id, productId);
       // creates product variants and its media
-      await this.createProductMedia(productId, productData.media);
-      await this.createProductVariants(productData, productId);
+      await this.productMediaCreate(productId, productData.media);
+      await this.productVariantsCreate(productData, productId);
       Logger.verbose(`product flow completed against ${productId}`);
     }
     return {
@@ -84,27 +84,26 @@ export class ProductService {
     productId: string,
     productData: productTransformed,
   ) {
-    const productDetails = await getProductDetailsHandler(productId);
-    if (productDetails.variants.length === 0) {
-      await this.createProductVariants(productData, productId);
-    }
-    if (productDetails.media.length === 0) {
-      await this.createProductMedia(productId, productData.media);
-      if (productData.media.length === 0) {
-        return await this.productDelete(productId);
-      }
-    }
+    await this.productMediaClass.productMediaUpdate(productId, productData);
+    await this.productVariantService.productVariantsUpdate(
+      productId,
+      productData,
+    );
+
     return await updateProductHandler(productData, productId);
   }
+
   public async productDelete(destinationId: string) {
     if (destinationId) {
       const productDelete = await deleteProductHandler(destinationId);
-      const productIdDelete = await deleteProductByDestinationId(destinationId);
+      const productIdDelete = await deleteProductIdByDestinationId(
+        destinationId,
+      );
       return { productDelete, productIdDelete };
     }
   }
 
-  public async createProductVariants(
+  public async productVariantsCreate(
     productData: productTransformed,
     productId: string,
   ) {
@@ -127,7 +126,7 @@ export class ProductService {
     return productSerialId;
   }
 
-  public async createProductMedia(productId: string, productMedia: string[]) {
+  public async productMediaCreate(productId: string, productMedia: string[]) {
     // fetches product serial id
     const productSerialId = await this.getProductSerialId(productId);
 
