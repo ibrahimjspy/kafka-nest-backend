@@ -10,7 +10,7 @@ export const insertMediaQuery = (
   INSERT INTO saleor.product_productmedia
    (sort_order,image,alt,"type",external_url,oembed_data,product_id,to_remove)
     VALUES
-  (NULL,'${mediaUrl}','alt','IMAGE',NULL,'{}',${productId},false);
+  (NULL,'ColorSwatch/${mediaUrl}','alt','IMAGE',NULL,'{}',${productId},false);
   `;
 };
 
@@ -22,7 +22,7 @@ export const insertThumbnailQuery: thumbnailQuery = ({
   return `
   INSERT INTO saleor.thumbnail_thumbnail
   (image, "size", product_media_id)
-  VALUES('${mediaUrl}', ${size}, '${productId}');
+  VALUES('ColorSwatch/${mediaUrl}', ${size}, '${productId}');
   `;
 };
 

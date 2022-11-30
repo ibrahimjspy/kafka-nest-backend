@@ -74,10 +74,10 @@ export class ProductTransformerService {
     const mediaArray: mediaDto[] = [];
     for (let i = 1; i < 10; i++) {
       const image: mediaDto = {};
-      image.tiny = productObject[`Picture${i}`];
-      image.small = productObject[`PictureZ${i}`];
-      image.medium = productObject[`PictureV${i}`];
-      image.large = productObject[`PictureS${i}`];
+      image.tiny = productObject[`PictureL${i}`];
+      image.small = productObject[`PictureV${i}`];
+      image.medium = productObject[`Picture${i}`];
+      image.large = productObject[`PictureZ${i}`];
       mediaArray.push(image);
     }
     return mediaArray;
