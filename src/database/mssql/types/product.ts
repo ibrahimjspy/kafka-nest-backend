@@ -6,6 +6,9 @@ export interface productVariantInterface {
   sizes?: string[];
   color_list?: any;
   pack_name?: string;
+  shoe_bundles?: any;
+  shoe_sizes?: any;
+  productGroup?: string;
 }
 
 export interface productDatabaseViewInterface {

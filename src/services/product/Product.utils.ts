@@ -1,3 +1,4 @@
+import { shoeSizeMapping } from 'src/transformer/product/Product.transformer.utils';
 import { mediaDto } from 'src/transformer/types/product';
 
 // convert array into smaller chunks  [ab, bc, cd] =>  [[ab,bc],[cd]]
@@ -27,4 +28,52 @@ export const mediaUrlMapping = (
     .map((url) => {
       return { large: url };
     });
+};
+
+/**
+ *  finds given shoe size variants then transforms it in a mappable array of bundles
+ */
+export const getShoeBundlesBySizes = (shoeVariants, bundleSizes, length) => {
+  const matchingVariants = [];
+  const bundles = [];
+  let i;
+  Object.keys(bundleSizes).forEach(function (key) {
+    matchingVariants.push(shoeVariants[`${key}`]);
+  });
+  for (i = 0; i < length; i++) {
+    bundles.push([]);
+  }
+  matchingVariants.map((bundle) => {
+    bundle.map((variant, key) => {
+      bundles[key].push(variant);
+    });
+  });
+  return bundles;
+};
+
+/**
+ * returns shoe sizes against table column names of shoe mapping
+ * @example s5 => 5.0 , s5h => 5.5
+ * @links shoe mapping object
+ */
+export const getShoeSizes = (shoe_sizes) => {
+  const sizes = [];
+  Object.keys(shoe_sizes).forEach(function (key) {
+    sizes.push(shoeSizeMapping[key]);
+  });
+  return sizes;
+};
+
+/**
+ * maps shoe variants according to colors
+ * @example {size : ['variantID1', 'variantID2']}
+ */
+export const getShoeVariantsMapping = (shoe_sizes, variantIds, color_list) => {
+  const shoeVariantIdMapping = {};
+  Object.keys(shoe_sizes).forEach(function (key, index) {
+    shoeVariantIdMapping[`${key}`] = chunkArray(variantIds, color_list.length)[
+      index
+    ];
+  });
+  return shoeVariantIdMapping;
 };

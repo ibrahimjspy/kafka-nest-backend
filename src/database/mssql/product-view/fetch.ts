@@ -7,6 +7,7 @@ import {
   productVariantInterface,
 } from 'src/database/mssql/types/product';
 import { TBStyleSearchUniqueQuery } from '../query';
+import { mockShoeBundles, mockShoeSizes } from 'mock/shoes/bundles';
 
 export const getProductDetailsFromDb = async (
   productId: string,
@@ -56,6 +57,9 @@ const productVariantObjectTransform = (recordset): productVariantInterface => {
       ? color_list.split(',')
       : ['ONE'];
     productVariantData['pack_name'] = viewResponse.pack_name;
+    productVariantData['shoe_bundles'] = mockShoeBundles;
+    productVariantData['shoe_sizes'] = mockShoeSizes;
+    productVariantData['productGroup'] = viewResponse.group_name;
   }
   return productVariantData;
 };

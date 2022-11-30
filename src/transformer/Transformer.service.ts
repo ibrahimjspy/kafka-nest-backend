@@ -79,6 +79,17 @@ export class TransformerService {
       price,
     );
   }
+  /**
+   * color and size transformer for shoe variant mapping
+   * @returns variants array ready to be mapped variant api with color and sizes against it
+   */
+  public shoeVariantTransformer(size, colors, price) {
+    return this.productTransformerService.shoeVariantTransformer(
+      size,
+      colors,
+      price,
+    );
+  }
   public pricingTransformer(pricingObject) {
     return pricingObject;
   }

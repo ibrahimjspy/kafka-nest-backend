@@ -152,4 +152,29 @@ export class ProductTransformerService {
 
     return array;
   }
+  /**
+   * This function returns variants based on color and its sizes
+   * @params size to be created as variant
+   * @params array of colors to be mapped with color
+   * @returns collection of variants to be created <Array>
+   */
+  public async shoeVariantTransformer(
+    size: string,
+    colors: string[],
+    price: string,
+  ) {
+    const array = [];
+    try {
+      colors.map((color) => {
+        const object: any = { size: size };
+        object.color = color;
+        object.price = price;
+        array.push(object);
+      });
+    } catch (error) {
+      console.warn(error);
+    }
+
+    return array;
+  }
 }

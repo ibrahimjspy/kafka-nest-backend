@@ -44,7 +44,8 @@ export class ProductService {
       kafkaMessage,
     );
     if (productExistsInDestination) {
-      return await this.productUpdate(productExistsInDestination, productData);
+      await this.productDelete(productExistsInDestination);
+      // return await this.productUpdate(productExistsInDestination, productData);
     }
     return await this.productCreate(productData);
   }
@@ -115,6 +116,13 @@ export class ProductService {
     const productVariantData: productVariantInterface =
       await getProductDetailsFromDb(productData.id);
     // creating product variant and its bundles against color and sizes , assigns product variant price
+    if (productVariantData.productGroup == 'SHOES') {
+      return await this.productVariantService.shoeVariantsAssign(
+        productVariantData,
+        productId,
+        productData.shopId,
+      );
+    }
     return await this.productVariantService.productVariantAssign(
       productVariantData,
       productId,
