@@ -61,4 +61,5 @@ export interface productDatabaseViewInterface {
   created_date?: number;
   updated_date?: number;
   color_list?: string;
+  ShoeDetails?: string;
 }

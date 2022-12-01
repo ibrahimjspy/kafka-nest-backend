@@ -179,7 +179,7 @@ export class ProductVariantService {
   }
 
   private async createShoeBundles(variantIds, bundle, shopId, colorList) {
-    const sizes = Object.values(bundle);
+    const quantities = Object.values(bundle);
     // GET BUNDLE VARIANT IDS SPLITTED AGAINST COLOR SIZES FROM MAPPED VARIANT IDS
     const bundleVariantIds = getShoeBundlesBySizes(
       variantIds,
@@ -187,8 +187,13 @@ export class ProductVariantService {
       colorList.length,
     );
     const createBundles = await Promise.all(
-      bundleVariantIds.map(async (variants) => {
-        await createBundleHandler(variants, sizes, shopId);
+      bundleVariantIds.map(async (variants, key) => {
+        await createBundleHandler(
+          variants,
+          quantities,
+          shopId,
+          `bundle ${key + 1}`,
+        );
       }),
     );
     return createBundles;

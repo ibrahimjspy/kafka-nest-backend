@@ -1,8 +1,13 @@
 import { shoeSizeMapping } from 'src/transformer/product/Product.transformer.utils';
 import { mediaDto } from 'src/transformer/types/product';
 
-// convert array into smaller chunks  [ab, bc, cd] =>  [[ab,bc],[cd]]
-export const chunkArray = (arr, size) =>
+/**
+ *  this utility function converts an array of n size in k quantity by making their sub arrays like this 
+ *    @example ['test', 'test1'],['test2', 'test3']]
+      @links bundle service 
+      @usecase splitting variants into quantities of colors , so we can create bundle against each color with equal amount
+ */
+export const chunkArray = (arr: string[], size: number) =>
   arr.length > size
     ? [arr.slice(0, size), ...chunkArray(arr.slice(size), size)]
     : [arr];
@@ -31,7 +36,13 @@ export const mediaUrlMapping = (
 };
 
 /**
- *  finds given shoe size variants then transforms it in a mappable array of bundles
+ *  @step This function first maps given bundle sizes against shoeVariants object{containing all variants of all sizes} and get variants against that particular size
+ *  @step secondly after getting variants of given sizes it create a state containing bundles
+ *  bundles simply is made by first creating sub array of color length as in our requirement each bundle is made against one color
+ *  after creating empty 2D array we start our main job : ==> ***
+ *  @step it maps our matching variants of that given bundle all ready in form of [{color1Variant, color2Variant, color3Variant}]
+ *  and uses its index to add in bundles 2d array made according to colors
+ *  @result [[color1Variant],[color2Variant],[color3Variant]]
  */
 export const getShoeBundlesBySizes = (shoeVariants, bundleSizes, length) => {
   const matchingVariants = [];
@@ -65,8 +76,11 @@ export const getShoeSizes = (shoe_sizes) => {
 };
 
 /**
- * maps shoe variants according to colors
- * @example {size : ['variantID1', 'variantID2']}
+ * right now when we create bulk variants we get a composite array containing variants like this
+ * @example [Small-Red-Variant,Small-Blue-Variant,Small-Green-Variant,Large-Red-Variant, .......]
+ * this utility simple just takes shoeSizes in a sorted manner , takes colors length and returns an object like this:
+ * @result @example {Small: [Small-Red-Variant,Small-Blue-Variant,Small-Green-Variant], Large: [....]}
+ * @work this function result can later be used to map our sizes against variantIds so we can easily create bundles
  */
 export const getShoeVariantsMapping = (shoe_sizes, variantIds, color_list) => {
   const shoeVariantIdMapping = {};

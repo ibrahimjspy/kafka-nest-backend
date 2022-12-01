@@ -7,7 +7,8 @@ import {
   productVariantInterface,
 } from 'src/database/mssql/types/product';
 import { TBStyleSearchUniqueQuery } from '../query';
-import { mockShoeBundles, mockShoeSizes } from 'mock/shoes/bundles';
+// import { mockShoeBundles, mockShoeSizes } from 'mock/shoes/bundles';
+import { getShoeBundles, getShoeSizes } from '../utils';
 
 export const getProductDetailsFromDb = async (
   productId: string,
@@ -43,10 +44,32 @@ export const getProductDetailsFromDb = async (
   return data;
 };
 
+/**
+ * @description this transformation function is built as an abstract layer to fetch database variant data
+ * @step it underneath is validating values , transforming db properties to meet CDC service requirements
+ * @records you can verify through inspecting productVariantInterface
+ * @returns :
+ * @property - price = regular price of product
+ * @property - sizes = sizes of a product
+ * @property - color_list = colors array of product by default ONE if there are not present
+ * @property - pack_name = bundle information
+ * @property - shoe_bundles = bundles array of shoes
+ * @property - shoe_sizes = unique sizes given shoe
+ * @property - productGroup = product related category
+ */
 const productVariantObjectTransform = (recordset): productVariantInterface => {
   const productVariantData = {};
   const viewResponse: productDatabaseViewInterface = recordset.recordset[0];
-  const { price, regular_price, item_sizes, color_list } = viewResponse;
+  const {
+    price,
+    regular_price,
+    item_sizes,
+    color_list,
+    pack_name,
+    ShoeDetails,
+    group_name,
+  } = viewResponse;
+
   if (price && item_sizes) {
     productVariantData['price'] = {
       price: price,
@@ -56,10 +79,14 @@ const productVariantObjectTransform = (recordset): productVariantInterface => {
     productVariantData['color_list'] = color_list
       ? color_list.split(',')
       : ['ONE'];
-    productVariantData['pack_name'] = viewResponse.pack_name;
-    productVariantData['shoe_bundles'] = mockShoeBundles;
-    productVariantData['shoe_sizes'] = mockShoeSizes;
-    productVariantData['productGroup'] = viewResponse.group_name;
+    productVariantData['pack_name'] = pack_name;
+    productVariantData['shoe_bundles'] = getShoeBundles(
+      JSON.parse(ShoeDetails),
+    );
+    productVariantData['shoe_sizes'] = getShoeSizes(
+      getShoeBundles(JSON.parse(ShoeDetails)),
+    );
+    productVariantData['productGroup'] = group_name;
   }
   return productVariantData;
 };

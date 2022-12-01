@@ -9,12 +9,14 @@ export const createBundleHandler = async (
   bundleVariants,
   bundleQuantities,
   shopId,
+  bundleName = 'product variant bundle',
 ) => {
   try {
     const bundles = await graphqlCall(
       createBundleMutation(
         bundleQueryTransformer(bundleVariants, bundleQuantities),
         shopId,
+        bundleName,
       ).replace(/'/g, '"'),
     );
     return bundles;
