@@ -23,7 +23,7 @@ export const mediaUrlMapping = (
   destinationMedia,
 ): mediaDto[] => {
   const transformedDestinationMedia = destinationMedia.map((media) => {
-    return media.url.split('media/')[1];
+    return media.url.split('media/ColorSwatch/')[1];
   });
   const transformedSourceMedia = sourceMedia.map((image) => {
     return image.large.split('Pictures/')[0];

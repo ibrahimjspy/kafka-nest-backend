@@ -80,12 +80,12 @@ const productVariantObjectTransform = (recordset): productVariantInterface => {
       ? color_list.split(',')
       : ['ONE'];
     productVariantData['pack_name'] = pack_name;
-    productVariantData['shoe_bundles'] = getShoeBundles(
-      JSON.parse(ShoeDetails),
-    );
-    productVariantData['shoe_sizes'] = getShoeSizes(
-      getShoeBundles(JSON.parse(ShoeDetails)),
-    );
+    productVariantData['shoe_bundles'] = ShoeDetails
+      ? getShoeBundles(JSON.parse(ShoeDetails))
+      : [];
+    productVariantData['shoe_sizes'] = ShoeDetails
+      ? getShoeSizes(getShoeBundles(JSON.parse(ShoeDetails)))
+      : [];
     productVariantData['productGroup'] = group_name;
   }
   return productVariantData;

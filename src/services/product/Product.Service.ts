@@ -44,8 +44,8 @@ export class ProductService {
       kafkaMessage,
     );
     if (productExistsInDestination) {
-      await this.productDelete(productExistsInDestination);
-      // return await this.productUpdate(productExistsInDestination, productData);
+      // await this.productDelete(productExistsInDestination);
+      return await this.productUpdate(productExistsInDestination, productData);
     }
     return await this.productCreate(productData);
   }
