@@ -22,7 +22,7 @@ export const insertThumbnailQuery: thumbnailQuery = ({
   return `
   INSERT INTO saleor.thumbnail_thumbnail
   (image, "size", product_media_id)
-  VALUES('ColorSwatch/${mediaUrl}', ${size}, '${productId}');
+  VALUES('${mediaUrl}', ${size}, '${productId}');
   `;
 };
 
@@ -35,6 +35,6 @@ export const fetchMediaIdQuery = (
   return `
   SELECT id 
   FROM saleor.product_productmedia pp  
-  WHERE product_id =${productId} AND Image='${mediaUrl}';
+  WHERE product_id =${productId} AND Image='ColorSwatch/${mediaUrl}';
   `;
 };

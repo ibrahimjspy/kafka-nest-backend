@@ -34,7 +34,7 @@ export class ProductMediaService {
               productId,
             );
             // create thumbnails
-            if (image.medium && image.small && image.tiny) {
+            if (productMediaId) {
               await this.productThumbnailsAssign(image, productMediaId);
             }
           }
@@ -67,21 +67,27 @@ export class ProductMediaService {
 
   public async productThumbnailsAssign(productMedia: mediaDto, productMediaId) {
     // Validating media url and inserting it to DB
-    const createSmallImage = await insertThumbnailMediaById({
-      mediaUrl: productMedia.small,
-      size: '116',
-      productId: productMediaId,
-    });
-    const createMediumImage = await insertThumbnailMediaById({
-      mediaUrl: productMedia.medium,
-      size: '232',
-      productId: productMediaId,
-    });
-    const createTinyImage = await insertThumbnailMediaById({
-      mediaUrl: productMedia.tiny,
-      size: '56',
-      productId: productMediaId,
-    });
-    return { createSmallImage, createMediumImage, createTinyImage };
+    if (productMedia.small) {
+      await insertThumbnailMediaById({
+        mediaUrl: productMedia.small,
+        size: '480',
+        productId: productMediaId,
+      });
+    }
+    if (productMedia.medium) {
+      await insertThumbnailMediaById({
+        mediaUrl: productMedia.medium,
+        size: '720',
+        productId: productMediaId,
+      });
+    }
+    if (productMedia.tiny) {
+      await insertThumbnailMediaById({
+        mediaUrl: productMedia.tiny,
+        size: '240',
+        productId: productMediaId,
+      });
+    }
+    return;
   }
 }

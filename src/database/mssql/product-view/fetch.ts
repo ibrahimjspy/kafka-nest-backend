@@ -8,7 +8,7 @@ import {
 } from 'src/database/mssql/types/product';
 import { TBStyleSearchUniqueQuery } from '../query';
 // import { mockShoeBundles, mockShoeSizes } from 'mock/shoes/bundles';
-import { getShoeBundles, getShoeSizes } from '../utils';
+import { getShoeBundlesFromDb, getShoeSizeColumns } from '../utils';
 
 export const getProductDetailsFromDb = async (
   productId: string,
@@ -81,10 +81,10 @@ const productVariantObjectTransform = (recordset): productVariantInterface => {
       : ['ONE'];
     productVariantData['pack_name'] = pack_name;
     productVariantData['shoe_bundles'] = ShoeDetails
-      ? getShoeBundles(JSON.parse(ShoeDetails))
+      ? getShoeBundlesFromDb(JSON.parse(ShoeDetails))
       : [];
     productVariantData['shoe_sizes'] = ShoeDetails
-      ? getShoeSizes(getShoeBundles(JSON.parse(ShoeDetails)))
+      ? getShoeSizeColumns(getShoeBundlesFromDb(JSON.parse(ShoeDetails)))
       : [];
     productVariantData['productGroup'] = group_name;
   }

@@ -31,6 +31,7 @@ export class ProductTransformerService {
       TBStyleNo_OS_Category_Master_ID,
       TBStyleNo_OS_Category_Sub_ID,
       TBVendor_ID,
+      nPrice1,
     } = object;
     productObject['id'] = TBItem_ID.toString();
     productObject['name'] = nStyleName.toString();
@@ -48,7 +49,7 @@ export class ProductTransformerService {
         );
 
     productObject['shopId'] = await this.shopIdTransformer(TBVendor_ID);
-    productObject['price'] = object.nPrice1;
+    productObject['price'] = nPrice1;
 
     return productObject;
   }
