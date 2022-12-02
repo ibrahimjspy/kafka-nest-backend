@@ -8,7 +8,11 @@ import {
 } from 'src/database/mssql/types/product';
 import { TBStyleSearchUniqueQuery } from '../query';
 // import { mockShoeBundles, mockShoeSizes } from 'mock/shoes/bundles';
-import { getShoeBundlesFromDb, getShoeSizeColumns } from '../utils';
+import {
+  getShoeBundleNames,
+  getShoeBundlesFromDb,
+  getShoeSizeColumns,
+} from '../utils';
 
 export const getProductDetailsFromDb = async (
   productId: string,
@@ -80,13 +84,20 @@ const productVariantObjectTransform = (recordset): productVariantInterface => {
       ? color_list.split(',')
       : ['ONE'];
     productVariantData['pack_name'] = pack_name;
-    productVariantData['shoe_bundles'] = ShoeDetails
-      ? getShoeBundlesFromDb(JSON.parse(ShoeDetails))
-      : [];
-    productVariantData['shoe_sizes'] = ShoeDetails
-      ? getShoeSizeColumns(getShoeBundlesFromDb(JSON.parse(ShoeDetails)))
-      : [];
     productVariantData['productGroup'] = group_name;
+    if (ShoeDetails) {
+      productVariantData['shoe_bundles'] = getShoeBundlesFromDb(
+        JSON.parse(ShoeDetails),
+      );
+
+      productVariantData['shoe_sizes'] = getShoeSizeColumns(
+        getShoeBundlesFromDb(JSON.parse(ShoeDetails)),
+      );
+
+      productVariantData['shoe_bundle_name'] = getShoeBundleNames(
+        JSON.parse(ShoeDetails),
+      );
+    }
   }
   return productVariantData;
 };

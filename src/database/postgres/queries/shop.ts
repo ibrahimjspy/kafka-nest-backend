@@ -12,7 +12,6 @@ export const shopIdQuery = (sourceId: string): string => {
 //                       <insert>
 
 export const insertShopIdQuery = (sourceId: string, destinationId): string => {
-  console.log(sourceId);
   return `
     INSERT INTO cdc.shop_id_mapping_table
     (source_id, destination_id)

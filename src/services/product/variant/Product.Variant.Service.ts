@@ -132,7 +132,8 @@ export class ProductVariantService {
     productId: string,
     shopId?: string,
   ) {
-    const { price, color_list, shoe_sizes, shoe_bundles } = shoeVariantData;
+    const { price, color_list, shoe_sizes, shoe_bundles, shoe_bundle_name } =
+      shoeVariantData;
     let sizes = [];
     let productVariants = [];
     let shoeVariantIdMapping = {}; // VARIANT ID MAPPED AGAINST SHOE SIZE
@@ -160,13 +161,14 @@ export class ProductVariantService {
         color_list,
       );
       // CREATE BUNDLES
-      shoe_bundles.map(async (bundle) => {
-        await this.createShoeBundles(
+      shoe_bundles.map(async (bundle, key) => {
+        await this.createShoeBundles({
           shoeVariantIdMapping,
           bundle,
           shopId,
           color_list,
-        );
+          bundleName: shoe_bundle_name[key],
+        });
       });
 
       // ADD PRODUCT VARIANTS TO SHOP
@@ -178,21 +180,27 @@ export class ProductVariantService {
     }
   }
 
-  private async createShoeBundles(variantIds, bundle, shopId, colorList) {
+  private async createShoeBundles({
+    shoeVariantIdMapping,
+    bundle,
+    shopId,
+    color_list,
+    bundleName,
+  }) {
     const quantities = Object.values(bundle);
     // GET BUNDLE VARIANT IDS SPLITTED AGAINST COLOR SIZES FROM MAPPED VARIANT IDS
     const bundleVariantIds = getShoeBundlesBySizes(
-      variantIds,
+      shoeVariantIdMapping,
       bundle,
-      colorList.length,
+      color_list.length,
     );
     const createBundles = await Promise.all(
-      bundleVariantIds.map(async (variants, key) => {
+      bundleVariantIds.map(async (variants) => {
         await createBundleHandler(
           variants,
           quantities,
           shopId,
-          `bundle ${key + 1}`,
+          bundleName['ShoeSizeName'],
         );
       }),
     );

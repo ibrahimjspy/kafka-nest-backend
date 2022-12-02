@@ -36,3 +36,18 @@ export const getShoeSizeColumns = (bundles) => {
   });
   return sizeUnion;
 };
+
+/**
+ * returns bundle names in sorted manner
+ */
+export const getShoeBundleNames = (bundles) => {
+  const bundlesNames = [];
+  bundles.TBVendorShoeSize_ID.map((bundle) => {
+    const bundleArray = Object.entries(bundle);
+    const filterArray = bundleArray.filter(([key]) =>
+      key.startsWith('ShoeSizeName'),
+    );
+    bundlesNames.push(Object.fromEntries(filterArray));
+  });
+  return bundlesNames;
+};
