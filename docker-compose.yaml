@@ -40,11 +40,11 @@ services:
       - kafka1
 
   connect:
-    image:  debezium/connect-jdbc-es:${DEBEZIUM_VERSION}
+    image:  debezium/connect-jdbc-es:1.9
     build:
       context: debezium-jdbc-es
       args:
-        DEBEZIUM_VERSION: ${DEBEZIUM_VERSION}
+        DEBEZIUM_VERSION: 1.9
     ports:
      - 8083:8083
      - 5005:5005
