@@ -29,5 +29,5 @@ jobs:
           ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
           cd /home/ubuntu/sharove_data_capture
           git pull origin development
-          sudo docker-compose up -d --build -e DEBEZIUM_VERSION=1.9
+          sudo docker-compose up -e DEBEZIUM_VERSION=1.9 -d --build
           '
