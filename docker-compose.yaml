@@ -35,7 +35,7 @@ services:
       KAFKA_BROKERCONNECT: "kafka1:29092"
       JVM_OPTS: "-Xms16M -Xmx512M -Xss180K -XX:-TieredCompilation -XX:+UseStringDeduplication -noverify"
     ports:
-      - 9000:9000
+      - 9001:9000
     depends_on:
       - kafka1
 
@@ -59,7 +59,7 @@ services:
      
   client:
     ports:
-      - 4001:5000
+      - 5000:5000
     build:
       context: .
       dockerfile: ./Dockerfile
