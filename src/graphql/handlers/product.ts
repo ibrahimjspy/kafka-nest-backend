@@ -51,8 +51,11 @@ export const getProductDetailsHandler = async (productId: string) => {
     const getProductDetails: getProductDetailsInterface = await graphqlCall(
       getProductDetailsQuery(productId),
     );
-    const { slug, variants, media } = getProductDetails.product;
-    return { slug, variants, media };
+    if (getProductDetails?.product?.slug) {
+      const { slug, variants, media } = getProductDetails.product;
+      return { slug, variants, media };
+    }
+    return await getProductDetailsHandler(productId);
   } catch (err) {
     Logger.warn('Product fetch call failed', graphqlExceptionHandler(err));
   }

@@ -15,12 +15,17 @@ export const graphqlCall: GraphqlCall = async (
   retries = 5,
 ): Promise<any> => {
   let data = {};
-  const graphQLClient = new GraphQLClient(FEDERATION_ENDPOINT);
+  const graphQLClient = new GraphQLClient(FEDERATION_ENDPOINT, {
+    headers: {
+      authorization: `Bearer ${process.env.AUTHORIZATION_HEADER}`,
+    },
+  });
   try {
     await graphQLClient.request(Query).then((res) => {
       data = res;
     });
   } catch (error) {
+    console.log(error);
     if (retries === 0) {
       Logger.error(`retries call finished`);
       throw error;

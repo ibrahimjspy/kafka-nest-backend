@@ -22,6 +22,7 @@ import { TransformerService } from '../../transformer/Transformer.service';
 import { ProductMediaService } from './media/Product.Media.Service';
 import { ProductVariantService } from './variant/Product.Variant.Service';
 import { productVariantInterface } from 'src/database/mssql/types/product';
+import { addProductMapping } from 'src/mapping/product';
 
 /**
  *  Injectable class handling product variant and its relating tables CDC
@@ -44,7 +45,7 @@ export class ProductService {
       kafkaMessage,
     );
     if (productExistsInDestination) {
-      // await this.productDelete(productExistsInDestination);
+      // return await this.productDelete(productExistsInDestination);
       return await this.productUpdate(productExistsInDestination, productData);
     }
     return await this.productCreate(productData);
@@ -75,6 +76,7 @@ export class ProductService {
     if (productId) {
       // inserts product id into id mapping table
       await insertProductId(productData.id, productId);
+      addProductMapping(productData.id, productId, productData.shopId);
       // creates product variants and its media
       await this.productMediaCreate(productId, productData.media);
       await this.productVariantsCreate(productData, productId);
