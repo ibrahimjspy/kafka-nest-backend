@@ -14,16 +14,17 @@ export const graphqlCall: GraphqlCall = async (
   Query: string,
   retries = 5,
 ): Promise<any> => {
-  let data = {};
-  const graphQLClient = new GraphQLClient(FEDERATION_ENDPOINT, {
-    headers: {
-      authorization: `Bearer ${process.env.AUTHORIZATION_HEADER}`,
-    },
-  });
   try {
+    let data = {};
+    const graphQLClient = new GraphQLClient(FEDERATION_ENDPOINT, {
+      headers: {
+        authorization: `Bearer ${process.env.AUTHORIZATION_HEADER}`,
+      },
+    });
     await graphQLClient.request(Query).then((res) => {
       data = res;
     });
+    return data;
   } catch (error) {
     console.log(error);
     if (retries === 0) {
@@ -31,9 +32,8 @@ export const graphqlCall: GraphqlCall = async (
       throw error;
     }
     Logger.warn('retrying', Query.split('(')[0]);
-    await graphqlCall(Query, retries - 1);
+    return await graphqlCall(Query, retries - 1);
   }
-  return data;
 };
 
 /**
