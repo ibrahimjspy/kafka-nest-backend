@@ -21,6 +21,10 @@ import {
 } from 'src/database/postgres/handlers/user';
 import { TransformerService } from 'src/transformer/Transformer.service';
 import { shopDto, shopTransformed } from 'src/transformer/types/shop';
+import { fetchVendorShipping } from 'src/database/mssql/bulk-import/methods';
+import { fetchShippingMethodId } from 'src/database/postgres/handlers/shippingMethods';
+import { addShippingMethodHandler } from 'src/graphql/handlers/shippingMethod';
+import { shippingMethodValidation } from './Shop.utils';
 
 /**
  *  Injectable class handling brand and its relating tables CDC
@@ -91,5 +95,33 @@ export class ShopService {
     const updateUser = await updateUserHandler(shopData, userId);
     const updateShop = await updateShopHandler(shopData, shopId);
     return { updateUser, updateShop };
+  }
+
+  private async addShippingMethodToShop(
+    sourceId: string,
+    destinationId,
+  ): Promise<any> {
+    const shippingMethodIds = [];
+    const DEFAULT_SHIPPING_METHOD = 'U2hpcHBpbmdNZXRob2RUeXBlOjE=';
+    const sourceShippingDetails: any = await fetchVendorShipping(sourceId);
+
+    if (sourceShippingDetails) {
+      await Promise.all(
+        sourceShippingDetails?.map(async (shippingMethod) => {
+          const id = await fetchShippingMethodId(
+            shippingMethod.TBShipMethod_ID,
+          );
+          if (id) {
+            shippingMethodIds.push(id);
+          }
+        }),
+      );
+    }
+
+    const data = await addShippingMethodHandler(
+      destinationId,
+      shippingMethodValidation(shippingMethodIds, DEFAULT_SHIPPING_METHOD),
+    );
+    return data;
   }
 }

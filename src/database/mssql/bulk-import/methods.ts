@@ -5,6 +5,7 @@ import {
   tbShipMethodQuery,
   tbStyleNoNewQuery,
   tbVendorQuery,
+  tbVendorShippingDetailsQuery,
 } from '../query';
 
 export const fetchBulkSubCategoriesData = async () => {
@@ -25,4 +26,8 @@ export const fetchBulkVendors = async () => {
 
 export const fetchBulkShippingMethods = async () => {
   return await mssqlCall(tbShipMethodQuery());
+};
+
+export const fetchVendorShipping = async (vendorId: string) => {
+  return await mssqlCall(tbVendorShippingDetailsQuery(vendorId));
 };

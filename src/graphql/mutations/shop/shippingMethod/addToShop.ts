@@ -2,13 +2,13 @@ import { gql } from 'graphql-request';
 
 export const addShippingMethodToShopMutation = (
   shopId: string,
-  shippingMethodId: string,
+  shippingMethodId: string[],
 ) => {
   return gql`
     mutation {
       addMarketplaceShippingMethods(
         shopId: "${shopId}"
-        shippingMethodTypeIds: ["${shippingMethodId}"]
+        shippingMethodTypeIds: ${JSON.stringify(shippingMethodId)}
       ) {
         __typename
         ... on MarketplaceShop {

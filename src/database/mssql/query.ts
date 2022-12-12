@@ -39,3 +39,10 @@ export const tbShipMethodQuery = (): string => {
   FROM testDB.dbo.TBShipMethod;
   `;
 };
+
+export const tbVendorShippingDetailsQuery = (vendorId): string => {
+  return `SELECT TBVendor_ID, ShippedFrom, TBShipMethod_ID, SMShipMethodName, SMDescription
+  FROM testDB.dbo.TBVendorShippingDetails
+  where TBVendor_ID = '${vendorId}'
+  `;
+};

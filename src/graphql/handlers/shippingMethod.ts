@@ -39,12 +39,13 @@ export const shippingMethodChannelListing = async (
 
 export const addShippingMethodHandler = async (
   shopId: string,
-  shippingMethodId: string,
-): Promise<object> => {
+  shippingMethodId: string[],
+): Promise<any> => {
   try {
     const addShippingMethods = await graphqlCall(
       addShippingMethodToShopMutation(shopId, shippingMethodId),
     );
+    Logger.verbose('shipping method added', addShippingMethods);
     return addShippingMethods;
   } catch (err) {
     return graphqlExceptionHandler(err);
