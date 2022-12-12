@@ -10,6 +10,7 @@ import { ProductVariantService } from './services/product/variant/Product.Varian
 import { ShopService } from './services/shop/Shop.Service';
 import { TransformerModule } from './transformer/Transformer.module';
 import { TransformerService } from './transformer/Transformer.service';
+import { ShippingService } from './services/shop/shipping/Shipping.Service';
 
 @Module({
   imports: [ConfigModule.forRoot(), TransformerModule],
@@ -22,6 +23,7 @@ import { TransformerService } from './transformer/Transformer.service';
     ShopService,
     ProductMediaService,
     ProductVariantService,
+    ShippingService,
   ],
 })
 export class AppModule {}

@@ -27,3 +27,9 @@ export interface shopTransformed {
   madeIn?: string;
   returnPolicy?: string;
 }
+
+export interface shippingMethodDto {
+  TBShipMethod_ID?: string;
+  SMShipMethodName?: string;
+  SMDescription?: string;
+}

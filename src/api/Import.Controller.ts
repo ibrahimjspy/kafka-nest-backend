@@ -2,6 +2,7 @@ import { Controller, Get } from '@nestjs/common';
 import { AppService } from 'src/app.service';
 import {
   fetchBulkProductsData,
+  fetchBulkShippingMethods,
   fetchBulkVendors,
 } from 'src/database/mssql/bulk-import/methods';
 
@@ -24,7 +25,14 @@ export class BulkImportController {
   @Get('shops')
   async createShops() {
     const data: any = await fetchBulkVendors();
-    await this.appService.ShopBulkCreate(data.slice(180, 186));
+    await this.appService.shopBulkCreate(data.slice(180, 186));
+    return `${data.length} shops created`;
+  }
+
+  @Get('shipping')
+  async createShipping() {
+    const data: any = await fetchBulkShippingMethods();
+    this.appService.shippingMethodBulkCreate(data);
     return `${data.length} shops created`;
   }
 }

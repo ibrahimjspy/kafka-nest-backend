@@ -32,13 +32,14 @@ export const createProductMutation = (productData: productTransformed) => {
 };
 
 export const productChannelListingMutation = (productId) => {
+  const DEFAULT_CHANNEL = 'Q2hhbm5lbDox';
   return gql`
     mutation {
       productChannelListingUpdate(
         id: "${productId}"
         input: {
           updateChannels: {
-            channelId: "Q2hhbm5lbDox"
+            channelId: "${DEFAULT_CHANNEL}"
             visibleInListings: true
             isAvailableForPurchase: true
             isPublished: true

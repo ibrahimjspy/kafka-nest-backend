@@ -5,6 +5,7 @@ import { ProductService } from './services/product/Product.Service';
 import { ProductVariantService } from './services/product/variant/Product.Variant.Service';
 import { ShopService } from './services/shop/Shop.Service';
 import { PromisePool } from '@supercharge/promise-pool';
+import { ShippingService } from './services/shop/shipping/Shipping.Service';
 @Injectable()
 export class AppService {
   constructor(
@@ -12,6 +13,7 @@ export class AppService {
     private readonly categoryService: CategoryService,
     private readonly shopService: ShopService,
     private readonly productVariantService: ProductVariantService,
+    private readonly shippingMethodService: ShippingService,
   ) {}
 
   // ChangeDataCapture methods
@@ -96,7 +98,7 @@ export class AppService {
     }
   }
 
-  async ShopBulkCreate(bulkArray, batchSize = 5) {
+  async shopBulkCreate(bulkArray, batchSize = 5) {
     try {
       const { results } = await PromisePool.for(bulkArray)
         .withConcurrency(batchSize)
@@ -106,6 +108,23 @@ export class AppService {
           return shopCreate;
         });
       Logger.verbose(`${bulkArray.length} shops created`);
+      return results;
+    } catch (error) {
+      Logger.warn(error);
+    }
+  }
+
+  async shippingMethodBulkCreate(bulkArray, batchSize = 5) {
+    try {
+      const { results } = await PromisePool.for(bulkArray)
+        .withConcurrency(batchSize)
+        .process(async (data: any) => {
+          const shippingMethodCreate =
+            await this.shippingMethodService.createShippingMethods(data);
+
+          return shippingMethodCreate;
+        });
+      Logger.verbose(`${bulkArray.length} shippingMethods created`);
       return results;
     } catch (error) {
       Logger.warn(error);
