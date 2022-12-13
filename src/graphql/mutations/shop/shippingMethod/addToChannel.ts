@@ -3,7 +3,7 @@ import { gql } from 'graphql-request';
 export const shippingMethodChannelListingMutation = (
   shippingMethodId: string,
 ) => {
-  const DEFAULT_CHANNEL = 'Q2hhbm5lbDox';
+  const DEFAULT_CHANNEL = process.env.DEFAULT_CHANNEL || 'Q2hhbm5lbDox';
   return gql`
     mutation {
       shippingMethodChannelListingUpdate(

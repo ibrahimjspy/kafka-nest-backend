@@ -5,7 +5,8 @@ export const createShippingMethodMutation = (
   shippingMethodData: shippingMethodDto,
 ) => {
   const { SMShipMethodName } = shippingMethodData;
-  const SHIPPING_ZONE_ID = 'U2hpcHBpbmdab25lOjE=';
+  const SHIPPING_ZONE_ID =
+    process.env.SHIPPING_ZONE_ID || 'U2hpcHBpbmdab25lOjE=';
   return gql`
         mutation {
         shippingPriceCreate(

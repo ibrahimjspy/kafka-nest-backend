@@ -97,12 +97,10 @@ export class ShopService {
     return { updateUser, updateShop };
   }
 
-  private async addShippingMethodToShop(
-    sourceId: string,
-    destinationId,
-  ): Promise<any> {
+  private async addShippingMethodToShop(sourceId: string, destinationId) {
     const shippingMethodIds = [];
-    const DEFAULT_SHIPPING_METHOD = 'U2hpcHBpbmdNZXRob2RUeXBlOjE=';
+    const DEFAULT_SHIPPING_METHOD =
+      process.env.DEFAULT_SHIPPING_METHOD || 'U2hpcHBpbmdNZXRob2RUeXBlOjE=';
     const sourceShippingDetails: any = await fetchVendorShipping(sourceId);
 
     if (sourceShippingDetails) {
