@@ -11,6 +11,7 @@ import { ShopService } from './services/shop/Shop.Service';
 import { TransformerModule } from './transformer/Transformer.module';
 import { TransformerService } from './transformer/Transformer.service';
 import { ShippingService } from './services/shop/shipping/Shipping.Service';
+import { UserService } from './services/shop/user/User.Service';
 
 @Module({
   imports: [ConfigModule.forRoot(), TransformerModule],
@@ -24,6 +25,7 @@ import { ShippingService } from './services/shop/shipping/Shipping.Service';
     ProductMediaService,
     ProductVariantService,
     ShippingService,
+    UserService,
   ],
 })
 export class AppModule {}

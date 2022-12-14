@@ -12,6 +12,7 @@ export interface shopDto {
   VDMadeIn: string;
   VDReturnPolicy: string;
   VDVendorEmail?: string;
+  VDPhone?: string;
 }
 
 export interface shopTransformed {
@@ -26,6 +27,7 @@ export interface shopTransformed {
   storePolicy?: string;
   madeIn?: string;
   returnPolicy?: string;
+  phoneNumber?: string;
 }
 
 export interface shippingMethodDto {

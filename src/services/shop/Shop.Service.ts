@@ -25,6 +25,7 @@ import { fetchVendorShipping } from 'src/database/mssql/bulk-import/methods';
 import { fetchShippingMethodId } from 'src/database/postgres/handlers/shippingMethods';
 import { addShippingMethodHandler } from 'src/graphql/handlers/shippingMethod';
 import { shippingMethodValidation } from './Shop.utils';
+import { UserService } from './user/User.Service';
 
 /**
  *  Injectable class handling brand and its relating tables CDC
@@ -33,7 +34,10 @@ import { shippingMethodValidation } from './Shop.utils';
  */
 @Injectable()
 export class ShopService {
-  constructor(private readonly transformerService: TransformerService) {}
+  constructor(
+    private readonly transformerService: TransformerService,
+    private readonly userService: UserService,
+  ) {}
 
   public async handleShopCDC(@Param() kafkaMessage: shopDto): Promise<object> {
     const shopExistsInDestination: string = await fetchShopId(

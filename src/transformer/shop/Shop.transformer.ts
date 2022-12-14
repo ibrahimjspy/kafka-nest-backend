@@ -22,7 +22,10 @@ export class ShopTransformerService {
    * @params object,  Composite object containing cdc changeData, categoryMaster data
    * @returns transformed object
    */
-  public async shopTransformerMethod(@Param() object: shopDto) {
+  public async shopTransformerMethod(
+    @Param() object: shopDto,
+  ): Promise<shopTransformed> {
+    // console.dir(object, { depth: null });
     const shopObject: shopTransformed = {};
     const {
       TBVendor_ID,
@@ -35,10 +38,12 @@ export class ShopTransformerService {
       SEODescription,
       VDName,
       VDMadeIn,
+      VDPhone,
       VDReturnPolicy,
     } = object;
     shopObject['id'] = TBVendor_ID?.toString();
     shopObject['name'] = `${VDName?.toString()}`;
+    shopObject['phoneNumber'] = this.shopPhoneNumberTransformer(VDPhone);
     shopObject['description'] = VDFrontDescription?.toString();
     shopObject['seo_description'] = SEODescription?.toString();
     shopObject['seo_title'] = SEOTitle?.toString();
@@ -68,5 +73,16 @@ export class ShopTransformerService {
       return url;
     }
     return `${name.toLowerCase()}.com`;
+  }
+
+  public shopPhoneNumberTransformer(@Param() phoneNumber) {
+    const phone = phoneNumber.split(',')[0];
+    phone.split('/')[0];
+    phone.split('TEXT ONLY')[1];
+    const isEmail = /\.COM/;
+    if (isEmail.test(phoneNumber)) {
+      return '1234';
+    }
+    return `+1${phone.replace(/-/g, '')}`;
   }
 }
