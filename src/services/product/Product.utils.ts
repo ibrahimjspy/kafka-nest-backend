@@ -91,3 +91,10 @@ export const getShoeVariantsMapping = (shoe_sizes, variantIds, color_list) => {
   });
   return shoeVariantIdMapping;
 };
+
+/**
+ * @example 'UHJvZHVjdFZhcmlhbnQ6ODc1MDI=' => '87502'
+ */
+export const idBase64Decode = (productId: string): string => {
+  return atob(productId).split(':')[1];
+};

@@ -10,6 +10,7 @@ export interface productVariantInterface {
   shoe_sizes?: any;
   productGroup?: string;
   shoe_bundle_name?: any[];
+  variant_media?: any;
 }
 
 export interface productDatabaseViewInterface {

@@ -97,6 +97,9 @@ const productVariantObjectTransform = (recordset): productVariantInterface => {
       productVariantData['shoe_bundle_name'] = getShoeBundleNames(
         JSON.parse(ShoeDetails),
       );
+      productVariantData['variant_media'] = JSON.parse(
+        viewResponse['ColorMedia'],
+      );
     }
   }
   return productVariantData;

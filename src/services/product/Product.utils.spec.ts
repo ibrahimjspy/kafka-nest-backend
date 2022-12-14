@@ -1,3 +1,4 @@
+import { mockColorList, mockVariantData } from '../../../mock/product/variant';
 import { addProductMapping, getProductMapping } from 'src/mapping/product';
 import {
   expectedShoeVariantsMappedAgainstShoeColumns,
@@ -9,12 +10,14 @@ import {
   mockShoeVariantMapping,
   mockSourceUrls,
 } from '../../../mock/product/utils.spec.mock';
+import { getVariantIdsByColor } from './media/Product.Media.utils';
 import {
   chunkArray,
   getShoeBundlesBySizes,
   getShoeSizes,
   getShoeVariantsMapping,
   mediaUrlMapping,
+  idBase64Decode,
 } from './Product.utils';
 describe('Product utility tests', () => {
   describe('findAll', () => {
@@ -75,5 +78,18 @@ describe('Product utility tests', () => {
     const getTable = await getProductMapping('123');
     console.log(getTable);
     expect(getTable).toBeDefined();
+  });
+
+  it('testing base 64 conversion', async () => {
+    const encoded = 'UHJvZHVjdFZhcmlhbnQ6ODc1MDI=';
+    const data = idBase64Decode(encoded);
+    console.log(data);
+    expect(data).toBeDefined();
+  });
+
+  it('variant ids are coming fine', async () => {
+    const data = getVariantIdsByColor(mockVariantData, mockColorList);
+    console.log(data);
+    expect(data).toBeDefined();
   });
 });

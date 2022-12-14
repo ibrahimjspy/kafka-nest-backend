@@ -26,6 +26,14 @@ export const insertThumbnailQuery: thumbnailQuery = ({
   `;
 };
 
+export const insertVariantMediaQuery = (mediaId, variantId): string => {
+  return `
+  INSERT INTO saleor.product_variantmedia
+  (media_id, variant_id)
+  VALUES(${mediaId}, ${variantId});
+  `;
+};
+
 //                       <fetch>
 
 export const fetchMediaIdQuery = (

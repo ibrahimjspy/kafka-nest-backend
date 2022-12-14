@@ -4,6 +4,7 @@ import {
   fetchMediaIdQuery,
   insertMediaQuery,
   insertThumbnailQuery,
+  insertVariantMediaQuery,
 } from '../queries/media';
 import { thumbnailDto } from '../types/thumbnail';
 
@@ -17,6 +18,12 @@ export const insertThumbnailMediaById = async (
   thumbnailMedia: thumbnailDto,
 ) => {
   return await postgresInsertCall(insertThumbnailQuery(thumbnailMedia));
+};
+
+export const insertVariantMedia = async (mediaId: string, productVariantId) => {
+  return await postgresInsertCall(
+    insertVariantMediaQuery(mediaId, productVariantId),
+  );
 };
 
 //                       <fetch>
