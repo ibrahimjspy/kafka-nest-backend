@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Logger, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -18,6 +18,7 @@ import { UserService } from './services/shop/user/User.Service';
   controllers: [AppController, BulkImportController],
   providers: [
     AppService,
+    Logger,
     ProductService,
     CategoryService,
     TransformerService,
