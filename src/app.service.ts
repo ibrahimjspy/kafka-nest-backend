@@ -6,6 +6,7 @@ import { ProductVariantService } from './services/product/variant/Product.Varian
 import { ShopService } from './services/shop/Shop.Service';
 import { PromisePool } from '@supercharge/promise-pool';
 import { ShippingService } from './services/shop/shipping/Shipping.Service';
+import { RetailerService } from './services/shop/retailer/Retailer.Service';
 @Injectable()
 export class AppService {
   constructor(
@@ -14,6 +15,7 @@ export class AppService {
     private readonly shopService: ShopService,
     private readonly productVariantService: ProductVariantService,
     private readonly shippingMethodService: ShippingService,
+    private readonly retailerService: RetailerService,
   ) {}
 
   // ChangeDataCapture methods
@@ -50,6 +52,15 @@ export class AppService {
       Logger.log('category deleted');
     }
   }
+
+  handleCustomerCDC(kafkaMessage) {
+    try {
+      return this.retailerService.retailerCreate(kafkaMessage);
+    } catch (error) {
+      Logger.log('customer deleted');
+    }
+  }
+
   public addProductCatalog(kafkaMessage) {
     return createProductHandler(kafkaMessage);
   }

@@ -4,6 +4,7 @@ import {
   AdminDeleteUserCommand,
 } from '@aws-sdk/client-cognito-identity-provider';
 import { Injectable, Logger, Param } from '@nestjs/common';
+import { retailerTransformed } from 'src/transformer/types/retailer';
 import { shopTransformed } from 'src/transformer/types/shop';
 import { awsClient } from './proxies/client';
 import { userGroupsRetailer, userGroupsVendor } from './proxies/groups';
@@ -11,7 +12,7 @@ import { userGroupsRetailer, userGroupsVendor } from './proxies/groups';
 @Injectable()
 export class UserService {
   constructor(private readonly logger: Logger) {}
-  public async create(@Param() user: shopTransformed) {
+  public async create(@Param() user: shopTransformed | retailerTransformed) {
     try {
       const { AWS_USER_POOL_ID } = process.env;
       const { name, email, phoneNumber } = user;
@@ -35,7 +36,7 @@ export class UserService {
     }
   }
 
-  public async delete(@Param() user: shopTransformed) {
+  public async delete(@Param() user: shopTransformed | retailerTransformed) {
     try {
       const { AWS_USER_POOL_ID } = process.env;
       const command = new AdminDeleteUserCommand({
@@ -49,7 +50,9 @@ export class UserService {
     }
   }
 
-  public async addVendorToGroups(@Param() user: shopTransformed) {
+  public async addVendorToGroups(
+    @Param() user: shopTransformed | retailerTransformed,
+  ) {
     try {
       const { email } = user;
       const { AWS_USER_POOL_ID } = process.env;
@@ -66,7 +69,9 @@ export class UserService {
       console.log(error);
     }
   }
-  public async addRetailerToGroups(@Param() user: shopTransformed) {
+  public async addRetailerToGroups(
+    @Param() user: shopTransformed | retailerTransformed,
+  ) {
     try {
       const { email } = user;
       const { AWS_USER_POOL_ID } = process.env;

@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { CategoryTransformerService } from './category/Category.transformer';
 import { ProductTransformerService } from './product/Product.transformer';
+import { RetailerTransformerService } from './shop/Retailer.transformer';
 import { ShopTransformerService } from './shop/Shop.transformer';
 import { TransformerService } from './Transformer.service';
 
@@ -10,6 +11,7 @@ import { TransformerService } from './Transformer.service';
     ProductTransformerService,
     CategoryTransformerService,
     ShopTransformerService,
+    RetailerTransformerService,
   ],
   exports: [
     TransformerService,

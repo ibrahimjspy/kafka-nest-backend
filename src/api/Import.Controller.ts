@@ -4,6 +4,7 @@ import {
   fetchBulkProductsData,
   fetchBulkShippingMethods,
   fetchBulkVendors,
+  fetchCustomer,
 } from 'src/database/mssql/bulk-import/methods';
 
 // endpoints to trigger data bulk imports
@@ -34,5 +35,13 @@ export class BulkImportController {
     const data: any = await fetchBulkShippingMethods();
     this.appService.shippingMethodBulkCreate(data);
     return `${data.length} shops created`;
+  }
+
+  @Get('customer')
+  async createCustomers() {
+    const data: any = await fetchCustomer();
+    // console.log(data[0]);
+    this.appService.handleCustomerCDC(data[0]);
+    return `${data.length} customers created`;
   }
 }

@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { CategoryTransformerService } from './category/Category.transformer';
 import { ProductTransformerService } from './product/Product.transformer';
+import { RetailerTransformerService } from './shop/Retailer.transformer';
 import { ShopTransformerService } from './shop/Shop.transformer';
 
 /**
@@ -14,6 +15,7 @@ export class TransformerService {
     private readonly productTransformerService: ProductTransformerService,
     private readonly categoryTransformerService: CategoryTransformerService,
     private readonly shopTransformerService: ShopTransformerService,
+    private readonly retailerTransformerService: RetailerTransformerService,
   ) {}
   /**
    * complete product object transform
@@ -89,6 +91,12 @@ export class TransformerService {
       colors,
       price,
     );
+  }
+  /**
+   * transforms source customer object according to destination retailer requirements
+   */
+  public retailerTransformer(object) {
+    return this.retailerTransformerService.retailerTransformerMethod(object);
   }
   public pricingTransformer(pricingObject) {
     return pricingObject;

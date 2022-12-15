@@ -2,6 +2,7 @@ import { mssqlCall } from 'src/database/mssql/bulk-import/fetch';
 import {
   masterCategoryQuery,
   subCategoryQuery,
+  tbCustomerQuery,
   tbShipMethodQuery,
   tbStyleNoNewQuery,
   tbVendorQuery,
@@ -30,4 +31,8 @@ export const fetchBulkShippingMethods = async () => {
 
 export const fetchVendorShipping = async (vendorId: string) => {
   return await mssqlCall(tbVendorShippingDetailsQuery(vendorId));
+};
+
+export const fetchCustomer = async () => {
+  return await mssqlCall(tbCustomerQuery());
 };
