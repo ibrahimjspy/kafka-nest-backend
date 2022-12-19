@@ -19,6 +19,7 @@ export class UserService {
       const command = new AdminCreateUserCommand({
         UserPoolId: AWS_USER_POOL_ID,
         Username: `${email}`,
+        TemporaryPassword: '',
         UserAttributes: [
           { Name: 'email', Value: `${email}` },
           { Name: 'family_name', Value: `${name}` },

@@ -54,12 +54,14 @@ export const getShoeBundlesBySizes = (shoeVariants, bundleSizes, length) => {
   for (i = 0; i < length; i++) {
     bundles.push([]);
   }
-  matchingVariants.map((bundle) => {
-    bundle.map((variant, key) => {
-      bundles[key].push(variant);
+  if (matchingVariants.length) {
+    matchingVariants.map((bundle) => {
+      bundle.map((variant, key) => {
+        bundles[key].push(variant);
+      });
     });
-  });
-  return bundles;
+    return bundles;
+  }
 };
 
 /**

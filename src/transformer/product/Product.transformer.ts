@@ -32,8 +32,10 @@ export class ProductTransformerService {
       TBStyleNo_OS_Category_Sub_ID,
       TBVendor_ID,
       nPrice1,
+      nVendorStyleNo,
     } = object;
     productObject['id'] = TBItem_ID.toString();
+    productObject['styleNumber'] = nVendorStyleNo.toString();
     productObject['name'] = nStyleName.toString();
     productObject['description'] =
       this.descriptionTransformer(nItemDescription);
