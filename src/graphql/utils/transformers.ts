@@ -15,7 +15,7 @@ export const bundleQueryTransformer = (
  *   transforms product variants and their attributes array into a string which can be used in graphql query
  *   @returns string e.g: ["id1","id2", 'id3]
  */
-export const productVariantQueryTransformer = (variantIds) => {
+export const productVariantQueryTransformer = (variants) => {
   // variant configurations
   const DEFAULT_WAREHOUSE_ID =
     process.env.DEFAULT_WAREHOUSE_ID ||
@@ -28,7 +28,7 @@ export const productVariantQueryTransformer = (variantIds) => {
     process.env.DEFAULT_COMMISSION_ATTRIBUTE_ID || 'QXR0cmlidXRlOjQ=';
   const DEFAULT_CHANNEL_ID = process.env.DEFAULT_CHANNEL_ID || 'Q2hhbm5lbDox';
 
-  return variantIds.map((variant) => {
+  return variants.map((variant) => {
     return `
     {
       attributes: [
@@ -36,8 +36,15 @@ export const productVariantQueryTransformer = (variantIds) => {
       { id: "${SIZE_ATTRIBUTE_ID}", values:["${variant.size}"] }
       { id: "${COMMISSION_ATTRIBUTE_ID}", values:["10"] }
     ]
-      channelListings: { channelId: "${DEFAULT_CHANNEL_ID}", price: ${variant.price} }
-      stocks: { warehouse:"${DEFAULT_WAREHOUSE_ID}"  quantity: 1000 }
+      channelListings: { channelId: "${DEFAULT_CHANNEL_ID}", price: ${
+      variant.price.purchasePrice
+    } }
+      ${variant.preOrder == 'Y' ? ` preorder: { globalThreshold: 1000 }` : ' '}
+      ${
+        variant.preOrder == 'N'
+          ? ` stocks: { warehouse:"${DEFAULT_WAREHOUSE_ID}"  quantity: 1000 }`
+          : ' '
+      }
     }
   `;
   });

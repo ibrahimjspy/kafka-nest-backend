@@ -17,7 +17,6 @@ export const createBulkVariantsHandler = async (
 ) => {
   try {
     const variantIds = [];
-
     const createProductVariants: bulkVariantCreate = await graphqlCall(
       productVariantBulkCreateMutation(
         productVariantQueryTransformer(productVariantData),

@@ -1,6 +1,7 @@
 import { Injectable, Param } from '@nestjs/common';
 import {
   mediaDto,
+  priceInterface,
   productDto,
   productTransformed,
 } from 'src/transformer/types/product';
@@ -31,9 +32,12 @@ export class ProductTransformerService {
       TBStyleNo_OS_Category_Master_ID,
       TBStyleNo_OS_Category_Sub_ID,
       TBVendor_ID,
-      nPrice1,
       nVendorStyleNo,
+      nSalePrice,
+      nOnSale,
+      nPurchasePrice,
     } = object;
+    // console.log(object);
     productObject['id'] = TBItem_ID.toString();
     productObject['styleNumber'] = nVendorStyleNo.toString();
     productObject['name'] = nStyleName.toString();
@@ -49,9 +53,12 @@ export class ProductTransformerService {
           TBStyleNo_OS_Category_Master_ID,
           100000,
         );
-
     productObject['shopId'] = await this.shopIdTransformer(TBVendor_ID);
-    productObject['price'] = nPrice1;
+    productObject['price'] = this.priceTransformer(
+      nPurchasePrice,
+      nSalePrice,
+      nOnSale,
+    );
 
     return productObject;
   }
@@ -134,18 +141,22 @@ export class ProductTransformerService {
    * This function returns variants based on color and its sizes
    * @params color to be created as variant
    * @params array of sizes to be mapped with color
+   * @params preOrder information
+   * @params pricing information
    * @returns collection of variants to be created <Array>
    */
   public async productVariantTransformer(
     color: string,
     sizes: string[],
-    price: string,
+    preOrder: string,
+    price: priceInterface,
   ) {
     const array = [];
     try {
       sizes.map((s) => {
         const object: any = { color: color };
         object.size = s;
+        object.preOrder = preOrder;
         object.price = price;
         array.push(object);
       });
@@ -159,12 +170,15 @@ export class ProductTransformerService {
    * This function returns variants based on color and its sizes
    * @params size to be created as variant
    * @params array of colors to be mapped with color
+   * @params preOrder information
+   * @params pricing information
    * @returns collection of variants to be created <Array>
    */
   public async shoeVariantTransformer(
     size: string,
     colors: string[],
-    price: string,
+    preOrder: string,
+    price: priceInterface,
   ) {
     const array = [];
     try {
@@ -172,6 +186,7 @@ export class ProductTransformerService {
         const object: any = { size: size };
         object.color = color;
         object.price = price;
+        object.preOrder = preOrder;
         array.push(object);
       });
     } catch (error) {
@@ -179,5 +194,16 @@ export class ProductTransformerService {
     }
 
     return array;
+  }
+
+  /**
+   * This function returns pricing information
+   */
+  public priceTransformer(purchasePrice, salePrice, onSale): priceInterface {
+    return {
+      purchasePrice: purchasePrice,
+      salePrice: salePrice,
+      onSale: onSale,
+    };
   }
 }

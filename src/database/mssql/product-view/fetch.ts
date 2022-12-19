@@ -62,9 +62,10 @@ export const getProductDetailsFromDb = async (
  * @property - productGroup = product related category
  */
 const productVariantObjectTransform = (recordset): productVariantInterface => {
-  const productVariantData = {};
+  const productVariantData: productVariantInterface = {};
   const viewResponse: productDatabaseViewInterface = recordset.recordset[0];
   const {
+    style_name,
     price,
     regular_price,
     item_sizes,
@@ -72,14 +73,20 @@ const productVariantObjectTransform = (recordset): productVariantInterface => {
     pack_name,
     ShoeDetails,
     group_name,
+    sale_price,
+    is_sale,
+    is_preorder,
   } = viewResponse;
 
   if (price && item_sizes) {
     productVariantData['price'] = {
-      price: price,
-      regular_price: regular_price,
+      purchasePrice: regular_price,
+      salePrice: sale_price,
+      onSale: is_sale,
     };
+    productVariantData['style_name'] = style_name;
     productVariantData['sizes'] = item_sizes?.split('-');
+    productVariantData['isPreOrder'] = is_preorder;
     productVariantData['color_list'] = color_list
       ? color_list.split(',')
       : ['ONE'];

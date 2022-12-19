@@ -71,24 +71,34 @@ export class TransformerService {
     return this.productTransformerService.mediaTransformerMethod(mediaObject);
   }
   /**
-   * color and size transformer for variant mapping
-   * @returns variants array ready to be mapped variant api with color and sizes against it
+   * This function returns variants based on color and its sizes
+   * @params color to be created as variant
+   * @params array of sizes to be mapped with color
+   * @params preOrder information
+   * @params pricing information
+   * @returns collection of variants to be created <Array>
    */
-  public productVariantTransformer(color, sizes, price) {
+  public productVariantTransformer(color, sizes, preOrder, price) {
     return this.productTransformerService.productVariantTransformer(
       color,
       sizes,
+      preOrder,
       price,
     );
   }
   /**
-   * color and size transformer for shoe variant mapping
-   * @returns variants array ready to be mapped variant api with color and sizes against it
+   * This function returns variants based on color and its sizes
+   * @params size to be created as variant
+   * @params array of colors to be mapped with color
+   * @params preOrder information
+   * @params pricing information
+   * @returns collection of variants to be created <Array>
    */
-  public shoeVariantTransformer(size, colors, price) {
+  public shoeVariantTransformer(size, colors, preOrder, price) {
     return this.productTransformerService.shoeVariantTransformer(
       size,
       colors,
+      preOrder,
       price,
     );
   }

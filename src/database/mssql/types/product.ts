@@ -1,8 +1,7 @@
+import { priceInterface } from 'src/transformer/types/product';
+
 export interface productVariantInterface {
-  price?: {
-    price: number;
-    regular_price: number;
-  };
+  price?: priceInterface;
   sizes?: string[];
   color_list?: any;
   pack_name?: string;
@@ -11,6 +10,8 @@ export interface productVariantInterface {
   productGroup?: string;
   shoe_bundle_name?: any[];
   variant_media?: any;
+  isPreOrder?: string;
+  style_name?: string;
 }
 
 export interface productDatabaseViewInterface {

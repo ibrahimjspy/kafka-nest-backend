@@ -21,6 +21,7 @@ import {
 } from '../Product.utils';
 import { ProductService } from '../Product.Service';
 import { getProductDetailsHandler } from 'src/graphql/handlers/product';
+import { createSalesHandler } from 'src/graphql/handlers/sale';
 
 /**
  *  Injectable class handling productVariant and its relating tables CDC
@@ -66,7 +67,8 @@ export class ProductVariantService {
     productId: string,
     shopId?: string,
   ) {
-    const { sizes, price, color_list, pack_name } = productVariantData;
+    const { sizes, price, color_list, pack_name, isPreOrder, style_name } =
+      productVariantData;
     let productVariants = [];
 
     if (color_list) {
@@ -75,7 +77,8 @@ export class ProductVariantService {
         const variants = await this.transformerClass.productVariantTransformer(
           color,
           sizes,
-          price.regular_price,
+          isPreOrder,
+          price,
         );
         productVariants = [...productVariants, ...variants];
       });
@@ -85,7 +88,14 @@ export class ProductVariantService {
           productVariants,
           productId,
         );
-
+        // CREATE SALES IF PRODUCT IS ON SALE
+        if (price.onSale == 'Y') {
+          createSalesHandler(
+            style_name,
+            Number(price.purchasePrice) - Number(price.salePrice),
+            variantIds,
+          );
+        }
         // CREATE BUNDLES
         await this.createBundles(variantIds, pack_name.split('-'), shopId);
 
@@ -132,8 +142,15 @@ export class ProductVariantService {
     productId: string,
     shopId?: string,
   ) {
-    const { price, color_list, shoe_sizes, shoe_bundles, shoe_bundle_name } =
-      shoeVariantData;
+    const {
+      price,
+      color_list,
+      shoe_sizes,
+      shoe_bundles,
+      shoe_bundle_name,
+      isPreOrder,
+      style_name,
+    } = shoeVariantData;
     let sizes = [];
     let productVariants = [];
     let shoeVariantIdMapping = {}; // VARIANT ID MAPPED AGAINST SHOE SIZE
@@ -144,7 +161,8 @@ export class ProductVariantService {
       const variants = await this.transformerClass.shoeVariantTransformer(
         size,
         color_list,
-        price.regular_price,
+        isPreOrder,
+        price,
       );
       productVariants = [...productVariants, ...variants];
     });
@@ -154,6 +172,14 @@ export class ProductVariantService {
         productVariants,
         productId,
       );
+      // CREATE SALES IF PRODUCT IS ON SALE
+      if (price.onSale == 'Y') {
+        createSalesHandler(
+          style_name,
+          Number(price.purchasePrice) - Number(price.salePrice),
+          variantIds,
+        );
+      }
       // MAP VARIANT IDS ACCORDING TO SIZES
       shoeVariantIdMapping = getShoeVariantsMapping(
         shoe_sizes,

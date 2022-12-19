@@ -17,6 +17,9 @@ export interface productDto {
   TBVendor_ID?: string;
   nPrice1?: string;
   nVendorStyleNo?: string;
+  nSalePrice?: string;
+  nPurchasePrice?: string;
+  nOnSale?: string;
 }
 
 export interface productTransformed {
@@ -26,10 +29,14 @@ export interface productTransformed {
   media?: mediaDto[];
   categoryId?: string;
   shopId?: string;
-  price?: string;
+  price?: priceInterface;
   styleNumber?: string;
 }
-
+export interface priceInterface {
+  purchasePrice?: string | number;
+  salePrice?: string | number;
+  onSale?: string | number;
+}
 export interface colorSelectDto {
   id: number;
   TBColorSelect_ID: string;
