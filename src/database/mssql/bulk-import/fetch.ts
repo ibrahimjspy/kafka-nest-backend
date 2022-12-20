@@ -12,7 +12,7 @@ export const mssqlCall = async (query: string, wait = 100000) => {
       Logger.warn(err);
       sqlTransaction.clear(); // aborting sql transaction
     }
-    // console.log(query);
+
     // requesting db with StyleSearchUnique query
     const request = new Request();
     return await request.query(query, function (err, recordset) {

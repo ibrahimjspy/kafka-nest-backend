@@ -26,7 +26,7 @@ export const createProductMutation = (productData: productTransformed) => {
         product {
           name
           id
-          description
+          slug
         }
         errors {
           field

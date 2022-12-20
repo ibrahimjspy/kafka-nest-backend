@@ -14,6 +14,12 @@ import {
   getShoeSizeColumns,
 } from '../utils';
 
+/**
+ * returns product variants information of a given product, giving information such as colors , shoe sizes , bundles, media and discount e.t.c
+ * @links productVariantObjectTransform < validation object builder > parses database response according to our requirements
+ * @param productID
+ * @param wait - optional -- high level parameter setting a transaction threshold of how long this transaction can go on before throwing error
+ */
 export const getProductDetailsFromDb = async (
   productId: string,
   wait?: number,
@@ -62,7 +68,7 @@ export const getProductDetailsFromDb = async (
  * @property - productGroup = product related category
  */
 const productVariantObjectTransform = (recordset): productVariantInterface => {
-  const productVariantData: productVariantInterface = {};
+  let productVariantData: productVariantInterface = {};
   const viewResponse: productDatabaseViewInterface = recordset.recordset[0];
   const {
     style_name,
@@ -92,22 +98,34 @@ const productVariantObjectTransform = (recordset): productVariantInterface => {
       : ['ONE'];
     productVariantData['pack_name'] = pack_name;
     productVariantData['productGroup'] = group_name;
+    productVariantData['variant_media'] = JSON.parse(
+      viewResponse['ColorMedia'],
+    );
+    // shoe information with bundles
     if (ShoeDetails) {
-      productVariantData['shoe_bundles'] = getShoeBundlesFromDb(
-        JSON.parse(ShoeDetails),
-      );
-
-      productVariantData['shoe_sizes'] = getShoeSizeColumns(
-        getShoeBundlesFromDb(JSON.parse(ShoeDetails)),
-      );
-
-      productVariantData['shoe_bundle_name'] = getShoeBundleNames(
-        JSON.parse(ShoeDetails),
-      );
-      productVariantData['variant_media'] = JSON.parse(
-        viewResponse['ColorMedia'],
-      );
+      productVariantData = shoeTransformer(ShoeDetails, productVariantData);
     }
   }
   return productVariantData;
+};
+
+/**
+ * adds hoe information such as shoe bundles and sizes to variant object
+ */
+export const shoeTransformer = (
+  shoeDetails,
+  productVariantObject: productVariantInterface,
+) => {
+  productVariantObject['shoe_bundles'] = getShoeBundlesFromDb(
+    JSON.parse(shoeDetails),
+  );
+
+  productVariantObject['shoe_sizes'] = getShoeSizeColumns(
+    getShoeBundlesFromDb(JSON.parse(shoeDetails)),
+  );
+
+  productVariantObject['shoe_bundle_name'] = getShoeBundleNames(
+    JSON.parse(shoeDetails),
+  );
+  return productVariantObject;
 };

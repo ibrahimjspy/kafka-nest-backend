@@ -29,10 +29,10 @@ export const fetchBulkShippingMethods = async () => {
   return await mssqlCall(tbShipMethodQuery());
 };
 
-export const fetchVendorShipping = async (vendorId: string) => {
+export const fetchBulkVendorShipping = async (vendorId: string) => {
   return await mssqlCall(tbVendorShippingDetailsQuery(vendorId));
 };
 
-export const fetchCustomer = async () => {
+export const fetchBulkCustomers = async () => {
   return await mssqlCall(tbCustomerQuery());
 };

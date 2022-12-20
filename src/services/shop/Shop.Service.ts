@@ -21,7 +21,7 @@ import {
 } from 'src/database/postgres/handlers/user';
 import { TransformerService } from 'src/transformer/Transformer.service';
 import { shopDto, shopTransformed } from 'src/transformer/types/shop';
-import { fetchVendorShipping } from 'src/database/mssql/bulk-import/methods';
+import { fetchBulkVendorShipping } from 'src/database/mssql/bulk-import/methods';
 import { fetchShippingMethodId } from 'src/database/postgres/handlers/shippingMethods';
 import { addShippingMethodHandler } from 'src/graphql/handlers/shippingMethod';
 import { shippingMethodValidation } from './Shop.utils';
@@ -105,7 +105,7 @@ export class ShopService {
     const shippingMethodIds = [];
     const DEFAULT_SHIPPING_METHOD =
       process.env.DEFAULT_SHIPPING_METHOD || 'U2hpcHBpbmdNZXRob2RUeXBlOjE=';
-    const sourceShippingDetails: any = await fetchVendorShipping(sourceId);
+    const sourceShippingDetails: any = await fetchBulkVendorShipping(sourceId);
 
     if (sourceShippingDetails) {
       await Promise.all(
