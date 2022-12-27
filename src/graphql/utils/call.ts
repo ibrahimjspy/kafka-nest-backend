@@ -1,5 +1,5 @@
 import { Logger } from '@nestjs/common';
-import { FEDERATION_ENDPOINT, SALEOR_ENDPOINT } from 'common.env';
+import { FEDERATION_ENDPOINT, SALEOR_ENDPOINT } from '../../../common.env';
 import { GraphQLClient } from 'graphql-request';
 type GraphqlCall = (Query: string, retries?: number) => Promise<object>;
 /**

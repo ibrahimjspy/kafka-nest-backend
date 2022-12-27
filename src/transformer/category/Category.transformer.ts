@@ -1,5 +1,5 @@
 import { Injectable, Param } from '@nestjs/common';
-import { groupIds } from 'mock/category/groupIds';
+import { groupIds } from '../../../mock/category/groupIds';
 import { fetchMasterCategoryId } from 'src/database/postgres/handlers/category';
 import {
   masterCategoryDto,

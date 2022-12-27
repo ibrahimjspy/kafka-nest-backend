@@ -13,6 +13,7 @@ export const shopCdcMock: shopDto = {
   VDStorePolicy: 'vendor store policy',
   VDMadeIn: 'China',
   VDReturnPolicy: 'none',
+  VDPhone: '200-134-41',
 };
 
 export const shopTransformedMock: shopTransformed = {

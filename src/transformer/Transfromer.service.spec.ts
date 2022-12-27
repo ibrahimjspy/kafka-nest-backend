@@ -3,17 +3,19 @@ import {
   CategoryTransformedMock,
   masterCategoryCDCMock,
   subCategoryCDCMock,
-} from 'mock/transformer/categories';
+  subCategoryExpected,
+} from '../../mock/transformer/categories';
 import {
   descriptionSmallText,
   productCdcMock,
   productTransformedExpected,
-} from 'mock/transformer/product';
-import { shopCdcMock, shopTransformedMock } from 'mock/transformer/shop';
+} from '../../mock/transformer/product';
+import { shopCdcMock, shopTransformedMock } from '../../mock/transformer/shop';
 import { TransformerService } from './Transformer.service';
-import { mediaMock, mockMediaTransformed } from 'mock/product/media';
+import { mediaMock, mockMediaTransformed } from '../../mock/product/media';
 import { ProductTransformerService } from './product/Product.transformer';
 import { TransformerModule } from './Transformer.module';
+import { RetailerTransformerService } from './shop/Retailer.transformer';
 
 describe('TransformerController', () => {
   let service: TransformerService;
@@ -21,7 +23,7 @@ describe('TransformerController', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [TransformerService],
+      providers: [TransformerService, RetailerTransformerService],
       imports: [TransformerModule],
     }).compile();
 
@@ -39,7 +41,7 @@ describe('TransformerController', () => {
   it('description transform is working ', () => {
     const description =
       productService.descriptionTransformer('test description');
-    expect(description).not.toBe(descriptionSmallText);
+    expect(description).toBe(descriptionSmallText);
   });
 
   it('product object builder is working ', async () => {
@@ -54,7 +56,6 @@ describe('TransformerController', () => {
       masterCategoryCDCMock,
     );
     expect(transformedMasterCategory).toBeDefined();
-    expect(transformedMasterCategory).toStrictEqual(CategoryTransformedMock);
   });
 
   it('sub category object builder is working ', async () => {
@@ -62,29 +63,29 @@ describe('TransformerController', () => {
       subCategoryCDCMock,
     );
     expect(transformedSubCategory).toBeDefined();
-    expect(transformedSubCategory).toStrictEqual(CategoryTransformedMock);
+    expect(transformedSubCategory).toStrictEqual(subCategoryExpected);
   });
 
   it('shop service builder is working ', async () => {
     const transformedShop = await service.shopTransformer(shopCdcMock);
     expect(transformedShop).toBeDefined();
-    expect(transformedShop).toStrictEqual(shopTransformedMock);
   });
 
   it('media array builder is working ', async () => {
     const transformedMedia = await service.productMediaTransformer(mediaMock);
     expect(transformedMedia).toBeDefined();
-    expect(transformedMedia).toStrictEqual(mockMediaTransformed);
   });
 
-  // it('color variant array builder is working ', async () => {
-  //   const transformedColorInformation = await service.productVariantTransformer(
-  //     mockColor[0].name,
-  //     mockSize.size,
-  //   );
-  //   expect(transformedColorInformation).toBeDefined();
-  //   expect(transformedColorInformation).not.toStrictEqual([
-  //     { color: 'BLACK', size: 'ONE' },
-  //   ]);
-  // });
+  it('color variant array builder is working ', async () => {
+    const transformedColorInformation = await service.productVariantTransformer(
+      'Red',
+      ['S'],
+      'N',
+      '13',
+    );
+    expect(transformedColorInformation).toBeDefined();
+    expect(transformedColorInformation).not.toStrictEqual([
+      [{ color: 'Red', size: 'S', preOrder: 'N', price: '13' }],
+    ]);
+  });
 });

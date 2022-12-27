@@ -24,6 +24,7 @@ export class ProductTransformerService {
    * @params object,  Composite object containing cdc changeData, productView data
    */
   public async productGeneralTransformerMethod(@Param() object: productDto) {
+    // console.dir(object, { depth: null });
     const productObject: productTransformed = {};
     const {
       TBItem_ID,
@@ -68,7 +69,9 @@ export class ProductTransformerService {
    * @params string to be transformed
    */
   public descriptionTransformer(@Param() description: string) {
-    const validString = description.replace(/"/g, "'").replace(/[\r\n]+/g, ' ');
+    const validString = description
+      ?.replace(/"/g, "'")
+      .replace(/[\r\n]+/g, ' ');
     if (validString) {
       return `{\"time\": 1662995227870, \"blocks\": [{\"id\": \"cqWmV3MIPH\", \"data\": {\"text\": \"${validString}\"}, \"type\": \"paragraph\"}], \"version\": \"2.24.3\"}`;
     }

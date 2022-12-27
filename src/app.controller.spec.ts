@@ -8,6 +8,12 @@ import { ProductService } from './services/product/Product.Service';
 import { ProductVariantService } from './services/product/variant/Product.Variant.Service';
 import { ShopService } from './services/shop/Shop.Service';
 import { TransformerService } from './transformer/Transformer.service';
+import { RetailerService } from './services/shop/retailer/Retailer.Service';
+import { ShippingService } from './services/shop/shipping/Shipping.Service';
+import { UserService } from './services/shop/user/User.Service';
+import { RetailerTransformerService } from './transformer/shop/Retailer.transformer';
+import { Logger } from '@nestjs/common';
+import { TransformerModule } from './transformer/Transformer.module';
 // import { graphqlCall } from './utils/graphql/handler';
 // import { productGeneralTransformer } from './transformers/product/general';
 
@@ -16,15 +22,21 @@ describe('AppController', () => {
   // const testObjectEmpty = {};
   beforeEach(async () => {
     const app: TestingModule = await Test.createTestingModule({
+      imports: [TransformerModule],
       controllers: [AppController],
       providers: [
         AppService,
+        Logger,
         ProductService,
-        TransformerService,
         CategoryService,
+        TransformerService,
         ShopService,
-        ProductVariantService,
         ProductMediaService,
+        ProductVariantService,
+        ShippingService,
+        UserService,
+        RetailerService,
+        RetailerTransformerService,
       ],
     }).compile();
     appController = app.get<AppController>(AppController);
