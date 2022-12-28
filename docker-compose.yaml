@@ -58,6 +58,7 @@ services:
   client:
     ports:
       - 5000:5000
+      - 6003:6003
     build:
       context: .
       dockerfile: ./Dockerfile
