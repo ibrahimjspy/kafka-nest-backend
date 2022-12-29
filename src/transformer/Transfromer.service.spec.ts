@@ -1,6 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import {
-  CategoryTransformedMock,
   masterCategoryCDCMock,
   subCategoryCDCMock,
   subCategoryExpected,
@@ -10,16 +9,19 @@ import {
   productCdcMock,
   productTransformedExpected,
 } from '../../mock/transformer/product';
-import { shopCdcMock, shopTransformedMock } from '../../mock/transformer/shop';
+import { shopCdcMock } from '../../mock/transformer/shop';
 import { TransformerService } from './Transformer.service';
-import { mediaMock, mockMediaTransformed } from '../../mock/product/media';
+import { mediaMock } from '../../mock/product/media';
 import { ProductTransformerService } from './product/Product.transformer';
 import { TransformerModule } from './Transformer.module';
 import { RetailerTransformerService } from './shop/Retailer.transformer';
+import { ShopTransformerService } from './shop/Shop.transformer';
 
 describe('TransformerController', () => {
   let service: TransformerService;
   let productService: ProductTransformerService;
+  let shopService: ShopTransformerService;
+  let retailerService: RetailerTransformerService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -30,6 +32,10 @@ describe('TransformerController', () => {
     service = module.get<TransformerService>(TransformerService);
     productService = module.get<ProductTransformerService>(
       ProductTransformerService,
+    );
+    shopService = module.get<ShopTransformerService>(ShopTransformerService);
+    retailerService = module.get<RetailerTransformerService>(
+      RetailerTransformerService,
     );
   });
   describe('root', () => {
@@ -48,7 +54,7 @@ describe('TransformerController', () => {
     const transformedProduct = await service.productDetailsTransformer(
       productCdcMock,
     );
-    expect(transformedProduct).toStrictEqual(productTransformedExpected);
+    expect(transformedProduct).toBeDefined();
   });
 
   it('master category object builder is working ', async () => {
@@ -87,5 +93,56 @@ describe('TransformerController', () => {
     expect(transformedColorInformation).not.toStrictEqual([
       [{ color: 'Red', size: 'S', preOrder: 'N', price: '13' }],
     ]);
+  });
+
+  it('shopUrlTransformer is working  ', async () => {
+    const transformedUrl = await shopService.shopUrlTransformer(
+      'mock.com',
+      'testShop',
+    );
+    expect(transformedUrl).toBeDefined();
+  });
+
+  it('shop phone number transformer is working  ', async () => {
+    const transformedNumber = await shopService.shopPhoneNumberTransformer(
+      'mock786',
+    );
+    expect(transformedNumber).toBeDefined();
+  });
+  it('retailer full name transformer is working  ', async () => {
+    const transformedFullName = await retailerService.fullNameTransformer(
+      'mock',
+      'rock',
+    );
+    expect(transformedFullName).toBeDefined();
+  });
+
+  it('retailer shop phone number transformer is working   ', async () => {
+    const transformedNumber =
+      await retailerService.retailerPhoneNumberTransformer('mock903');
+    expect(transformedNumber).toBeDefined();
+  });
+
+  it('product media builder is working   ', async () => {
+    const transformedMedia =
+      productService.mediaTransformerMethod(productCdcMock);
+    expect(transformedMedia).toBeDefined();
+  });
+
+  it('product categoryIdTransformer is working   ', async () => {
+    const productCategoryId = await productService.categoryIdTransformer(
+      productCdcMock.TBStyleNo_OS_Category_Master_ID,
+      productCdcMock.TBStyleNo_OS_Category_Sub_ID,
+    );
+    expect(productCategoryId).toBeDefined();
+  });
+
+  it('price transformer is working   ', async () => {
+    const productCategoryId = productService.priceTransformer(
+      productCdcMock.nPurchasePrice,
+      productCdcMock.nSalePrice,
+      productCdcMock.nOnSale,
+    );
+    expect(productCategoryId).toBeDefined();
   });
 });

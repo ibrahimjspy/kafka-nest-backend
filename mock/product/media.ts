@@ -72,3 +72,26 @@ export const mediaMockSmall = {
     'https://dc964uidi8qge.cloudfront.net/OSFile/OS/Pictures/202109/E/51ed1d47-1280-11ec-9786-002590aaee66_E.jpg',
   ],
 };
+
+export const mockVariantMappedByMedia = [
+  { variantId: '87425', colorImage: ['123'] },
+  { variantId: '87429', colorImage: ['123'] },
+  { variantId: '87435', colorImage: ['123'] },
+  { variantId: '87441', colorImage: ['123'] },
+  { variantId: '87447', colorImage: ['123'] },
+  { variantId: '87453', colorImage: ['123'] },
+  { variantId: '87459', colorImage: ['123'] },
+  { variantId: '87465', colorImage: ['123'] },
+  { variantId: '87471', colorImage: ['123'] },
+  { variantId: '87477', colorImage: ['123'] },
+  { variantId: '87427', colorImage: ['123'] },
+  { variantId: '87432', colorImage: ['123'] },
+  { variantId: '87438', colorImage: ['123'] },
+  { variantId: '87444', colorImage: ['123'] },
+  { variantId: '87450', colorImage: ['123'] },
+  { variantId: '87456', colorImage: ['123'] },
+  { variantId: '87462', colorImage: ['123'] },
+  { variantId: '87468', colorImage: ['123'] },
+  { variantId: '87474', colorImage: ['123'] },
+  { variantId: '87480', colorImage: ['123'] },
+];

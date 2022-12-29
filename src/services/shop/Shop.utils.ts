@@ -12,4 +12,4 @@ export const shippingMethodValidation = (
     return arr;
   }
   return [`${shippingMethodId}`];
-};
+}; //test

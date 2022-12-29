@@ -3,7 +3,7 @@ import { productDto, productTransformed } from 'src/transformer/types/product';
 export const descriptionSmallText =
   '{"time": 1662995227870, "blocks": [{"id": "cqWmV3MIPH", "data": {"text": "test description"}, "type": "paragraph"}], "version": "2.24.3"}';
 
-export const productCdcMock: any = {
+export const productCdcMock: productDto | any = {
   TBItem_ID: '93535945',
   TBVendorOwnCategory_ID: '8199',
   TBStyleNoCategory1_ID: '1',
@@ -22,14 +22,14 @@ export const productCdcMock: any = {
   nActive: 'Y',
   nVendorActive: 'Y',
   nPrepare: 'N',
-  nPurchasePrice: 14.5,
+  nPurchasePrice: '14.5',
   nPurchaseDiscountPrice: 0,
   nMSRP: 0,
-  nPrice1: 14.5,
+  nPrice1: '14.5',
   nPrice2: 14.5,
   nPrice3: 14.5,
   nOnSale: 'N',
-  nSalePrice: 0,
+  nSalePrice: '0',
   nSalePrice1: 0,
   nSalePrice2: 0,
   nSalePrice3: 0,

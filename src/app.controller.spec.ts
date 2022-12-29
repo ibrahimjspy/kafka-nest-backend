@@ -14,6 +14,8 @@ import { UserService } from './services/shop/user/User.Service';
 import { RetailerTransformerService } from './transformer/shop/Retailer.transformer';
 import { Logger } from '@nestjs/common';
 import { TransformerModule } from './transformer/Transformer.module';
+import { stringValidation } from './app.utils';
+import { shippingMethodValidation } from './services/shop/Shop.utils';
 // import { graphqlCall } from './utils/graphql/handler';
 // import { productGeneralTransformer } from './transformers/product/general';
 
@@ -46,5 +48,15 @@ describe('AppController', () => {
     it('should return "Hello World!"', () => {
       expect(appController.healthCheck());
     });
+  });
+
+  it('string validation test', () => {
+    expect(stringValidation('testString')).toBeDefined();
+  });
+
+  it('shipping method util validation', () => {
+    const data = shippingMethodValidation([], 'default');
+    expect(data).toBeDefined();
+    expect(data).toStrictEqual(['default']);
   });
 });

@@ -318,3 +318,53 @@ export const mockVariantData = [
 ];
 
 export const mockColorList = ['WHITE', 'YELLOW'];
+
+export const mockVariantsByColor = {
+  WHITE: [
+    'UHJvZHVjdFZhcmlhbnQ6ODc0MjU=',
+    'UHJvZHVjdFZhcmlhbnQ6ODc0Mjk=',
+    'UHJvZHVjdFZhcmlhbnQ6ODc0MzU=',
+    'UHJvZHVjdFZhcmlhbnQ6ODc0NDE=',
+    'UHJvZHVjdFZhcmlhbnQ6ODc0NDc=',
+    'UHJvZHVjdFZhcmlhbnQ6ODc0NTM=',
+    'UHJvZHVjdFZhcmlhbnQ6ODc0NTk=',
+    'UHJvZHVjdFZhcmlhbnQ6ODc0NjU=',
+    'UHJvZHVjdFZhcmlhbnQ6ODc0NzE=',
+    'UHJvZHVjdFZhcmlhbnQ6ODc0Nzc=',
+  ],
+  YELLOW: [
+    'UHJvZHVjdFZhcmlhbnQ6ODc0Mjc=',
+    'UHJvZHVjdFZhcmlhbnQ6ODc0MzI=',
+    'UHJvZHVjdFZhcmlhbnQ6ODc0Mzg=',
+    'UHJvZHVjdFZhcmlhbnQ6ODc0NDQ=',
+    'UHJvZHVjdFZhcmlhbnQ6ODc0NTA=',
+    'UHJvZHVjdFZhcmlhbnQ6ODc0NTY=',
+    'UHJvZHVjdFZhcmlhbnQ6ODc0NjI=',
+    'UHJvZHVjdFZhcmlhbnQ6ODc0Njg=',
+    'UHJvZHVjdFZhcmlhbnQ6ODc0NzQ=',
+    'UHJvZHVjdFZhcmlhbnQ6ODc0ODA=',
+  ],
+};
+
+export const mockVariantMappedByMedia = [
+  { variantId: '87425', colorImage: ['123'] },
+  { variantId: '87429', colorImage: ['123'] },
+  { variantId: '87435', colorImage: ['123'] },
+  { variantId: '87441', colorImage: ['123'] },
+  { variantId: '87447', colorImage: ['123'] },
+  { variantId: '87453', colorImage: ['123'] },
+  { variantId: '87459', colorImage: ['123'] },
+  { variantId: '87465', colorImage: ['123'] },
+  { variantId: '87471', colorImage: ['123'] },
+  { variantId: '87477', colorImage: ['123'] },
+  { variantId: '87427', colorImage: ['123'] },
+  { variantId: '87432', colorImage: ['123'] },
+  { variantId: '87438', colorImage: ['123'] },
+  { variantId: '87444', colorImage: ['123'] },
+  { variantId: '87450', colorImage: ['123'] },
+  { variantId: '87456', colorImage: ['123'] },
+  { variantId: '87462', colorImage: ['123'] },
+  { variantId: '87468', colorImage: ['123'] },
+  { variantId: '87474', colorImage: ['123'] },
+  { variantId: '87480', colorImage: ['123'] },
+];

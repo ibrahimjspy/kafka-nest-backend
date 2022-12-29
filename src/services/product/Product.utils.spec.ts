@@ -1,4 +1,8 @@
-import { mockColorList, mockVariantData } from '../../../mock/product/variant';
+import {
+  mockColorList,
+  mockVariantData,
+  mockVariantsByColor,
+} from '../../../mock/product/variant';
 import { addProductMapping, getProductMapping } from 'src/mapping/product';
 import {
   expectedShoeVariantsMappedAgainstShoeColumns,
@@ -10,7 +14,10 @@ import {
   mockShoeVariantMapping,
   mockSourceUrls,
 } from '../../../mock/product/utils.spec.mock';
-import { getVariantIdsByColor } from './media/Product.Media.utils';
+import {
+  getVariantIdsByColor,
+  getVariantMediaById,
+} from './media/Product.Media.utils';
 import {
   chunkArray,
   getShoeBundlesBySizes,
@@ -19,6 +26,7 @@ import {
   mediaUrlMapping,
   idBase64Decode,
 } from './Product.utils';
+import { mockVariantMappedByMedia } from '../../../mock/product/media';
 describe('Product utility tests', () => {
   describe('findAll', () => {
     it('chunkArray unit test to check if it is splitting array', async () => {
@@ -89,5 +97,15 @@ describe('Product utility tests', () => {
     const data = getVariantIdsByColor(mockVariantData, mockColorList);
     console.log(data);
     expect(data).toBeDefined();
+    expect(data).toStrictEqual(mockVariantsByColor);
+  });
+
+  it('variant media is mapping with variant fine', async () => {
+    const data = getVariantMediaById(mockVariantsByColor, {
+      WHITE: ['123'],
+      YELLOW: ['123'],
+    });
+    expect(data).toBeDefined();
+    expect(data).toStrictEqual(mockVariantMappedByMedia);
   });
 });
