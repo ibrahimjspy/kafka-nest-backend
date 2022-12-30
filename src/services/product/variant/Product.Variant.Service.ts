@@ -100,7 +100,7 @@ export class ProductVariantService {
         await this.createBundles(variantIds, pack_name.split('-'), shopId);
 
         // ADD PRODUCT VARIANTS TO SHOP
-        await Promise.all(
+        Promise.all(
           variantIds.map(async (id) => {
             addProductVariantToShopHandler(id, shopId);
           }),
@@ -198,7 +198,7 @@ export class ProductVariantService {
       });
 
       // ADD PRODUCT VARIANTS TO SHOP
-      await Promise.all(
+      Promise.all(
         variantIds.map(async (id) => {
           addProductVariantToShopHandler(id, shopId);
         }),
@@ -221,8 +221,8 @@ export class ProductVariantService {
       color_list.length,
     );
     const createBundles = await Promise.all(
-      bundleVariantIds.map(async (variants) => {
-        await createBundleHandler(
+      bundleVariantIds.map((variants) => {
+        createBundleHandler(
           variants,
           quantities,
           shopId,

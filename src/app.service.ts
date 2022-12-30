@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { createProductHandler } from './graphql/handlers/product';
 import { CategoryService } from './services/category/Category.Service';
 import { ProductService } from './services/product/Product.Service';
@@ -7,6 +7,9 @@ import { ShopService } from './services/shop/Shop.Service';
 import { PromisePool } from '@supercharge/promise-pool';
 import { ShippingService } from './services/shop/shipping/Shipping.Service';
 import { RetailerService } from './services/shop/retailer/Retailer.Service';
+import { fetchStyleDetailsById } from './database/mssql/api_methods/getProductById';
+import { prepareFailedResponse } from './app.utils';
+
 @Injectable()
 export class AppService {
   constructor(
@@ -139,6 +142,24 @@ export class AppService {
       return results;
     } catch (error) {
       Logger.warn(error);
+    }
+  }
+
+  // ChangeDataCapture methods
+  async createProductById(sourceProductId) {
+    try {
+      const sourceStyleDetails: any = fetchStyleDetailsById(sourceProductId);
+      const createProduct = await this.productService.handleProductCDC(
+        sourceStyleDetails,
+      );
+      return createProduct;
+    } catch (error) {
+      Logger.log('product creation failed');
+      prepareFailedResponse(
+        'product creation failed',
+        HttpStatus.BAD_REQUEST,
+        error,
+      );
     }
   }
 }

@@ -80,7 +80,7 @@ export class ShopService {
     @Param() shopData: shopTransformed,
   ): Promise<object> {
     // creating new user and map its id in database
-    const user = await createUserHandler(shopData);
+    const user = await this.userService.create(shopData);
     const userIdMapping = await insertUserId(shopData.id, user);
 
     // creates new shop and map its id in database
