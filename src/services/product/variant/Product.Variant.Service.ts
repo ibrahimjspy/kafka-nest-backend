@@ -22,6 +22,8 @@ import {
 import { ProductService } from '../Product.Service';
 import { getProductDetailsHandler } from 'src/graphql/handlers/product';
 import { createSalesHandler } from 'src/graphql/handlers/sale';
+import { addSkuToProductVariants } from './Product.Variant.utils';
+import { createSkuHandler } from 'src/graphql/handlers/sku';
 
 /**
  *  Injectable class handling productVariant and its relating tables CDC
@@ -83,6 +85,11 @@ export class ProductVariantService {
         productVariants = [...productVariants, ...variants];
       });
       if (productVariants.length > 0) {
+        // ADD SKU FOR PRODUCT VARIANTS
+        addSkuToProductVariants(
+          await createSkuHandler(productVariants, style_name),
+          productVariants,
+        );
         // CREATE VARIANTS
         const variantIds = await createBulkVariantsHandler(
           productVariants,
@@ -100,11 +107,7 @@ export class ProductVariantService {
         await this.createBundles(variantIds, pack_name.split('-'), shopId);
 
         // ADD PRODUCT VARIANTS TO SHOP
-        Promise.all(
-          variantIds.map(async (id) => {
-            addProductVariantToShopHandler(id, shopId);
-          }),
-        );
+        addProductVariantToShopHandler(variantIds, shopId);
       }
     }
     return;
@@ -167,6 +170,11 @@ export class ProductVariantService {
       productVariants = [...productVariants, ...variants];
     });
     if (productVariants.length > 0) {
+      // ADD SKU FOR PRODUCT VARIANTS
+      addSkuToProductVariants(
+        await createSkuHandler(productVariants, style_name),
+        productVariants,
+      );
       // CREATE VARIANTS
       const variantIds = await createBulkVariantsHandler(
         productVariants,
@@ -198,11 +206,7 @@ export class ProductVariantService {
       });
 
       // ADD PRODUCT VARIANTS TO SHOP
-      Promise.all(
-        variantIds.map(async (id) => {
-          addProductVariantToShopHandler(id, shopId);
-        }),
-      );
+      addProductVariantToShopHandler(variantIds, shopId);
     }
   }
 

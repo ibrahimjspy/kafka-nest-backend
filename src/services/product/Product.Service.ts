@@ -40,9 +40,11 @@ export class ProductService {
     const productExistsInDestination: string = await fetchProductId(
       kafkaMessage.TBItem_ID,
     );
+    // console.log(productExistsInDestination);
     const productData = await this.transformerClass.productDetailsTransformer(
       kafkaMessage,
     );
+    // console.log(productData);
     if (productExistsInDestination) {
       await this.productDelete(productExistsInDestination);
       // return await this.productUpdate(productExistsInDestination, productData);

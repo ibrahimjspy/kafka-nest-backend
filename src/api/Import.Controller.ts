@@ -3,9 +3,9 @@ import { AppService } from 'src/app.service';
 import { prepareFailedResponse } from 'src/app.utils';
 import {
   fetchBulkProductsData,
-  fetchBulkShippingMethods,
   fetchBulkVendors,
   fetchBulkCustomers,
+  fetchBulkSubCategoriesData,
 } from 'src/database/mssql/bulk-import/methods';
 import { connect } from 'mssql';
 import { config } from 'mssql-config';
@@ -34,7 +34,8 @@ export class BulkImportController {
   @Get('api/v1/bulk/products')
   async createProducts() {
     const data: any = await fetchBulkProductsData();
-    await this.appService.productBulkCreate(data.slice(200, 201));
+    // console.log(data);
+    await this.appService.productBulkCreate(data.slice(40, 41));
     return `${data.length} products created`;
   }
 
@@ -49,13 +50,13 @@ export class BulkImportController {
   @Get('api/v1/bulk/shops')
   async createShops() {
     const data: any = await fetchBulkVendors();
-    await this.appService.shopBulkCreate(data.slice(180, 181));
+    await this.appService.shopBulkCreate(data.slice(0, 1));
     return `${data.length} shops created`;
   }
 
   @Get('api/v1/bulk/shipping')
   async createShipping() {
-    const data: any = await fetchBulkShippingMethods();
+    const data: any = await fetchBulkSubCategoriesData();
     this.appService.shippingMethodBulkCreate(data);
     return `${data.length} shops created`;
   }

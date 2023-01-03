@@ -2,7 +2,7 @@ import { Logger } from '@nestjs/common';
 import { bulkVariantCreate } from 'src/graphql/types/product';
 import { graphqlCall, graphqlExceptionHandler } from 'src/graphql/utils/call';
 import {
-  addProductVariantToShopMutation,
+  addProductVariantsToShopMutation,
   productVariantBulkCreateMutation,
 } from '../mutations/productVariant/create';
 import { productVariantQueryTransformer } from '../utils/transformers';
@@ -37,13 +37,13 @@ export const createBulkVariantsHandler = async (
 };
 
 export const addProductVariantToShopHandler = async (
-  productVariantId,
+  productVariantIds,
   shopId,
 ) => {
   try {
-    if (productVariantId) {
+    if (productVariantIds) {
       await graphqlCall(
-        addProductVariantToShopMutation(productVariantId, shopId),
+        addProductVariantsToShopMutation(productVariantIds, shopId),
       );
     }
   } catch (err) {

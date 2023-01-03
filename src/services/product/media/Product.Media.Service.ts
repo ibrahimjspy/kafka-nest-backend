@@ -142,18 +142,18 @@ export class ProductMediaService {
       productVariantMedia.map(async (media) => {
         const url: string = media['color_image'];
         // checks if media all ready exists in product scope
-        if (url.includes('Pictures')) {
+        if (!url || url.includes('Pictures')) {
           mediaIds[`${media.color_name}`] = defaultMediaId;
           return;
         }
         // creates media against that color
         if (url.includes('ColorSwatch')) {
           await insertProductMediaById(
-            url.split('ColorSwatch/')[1],
+            `ColorSwatch/${url.split('ColorSwatch/')[1]}`,
             idBase64Decode(productId),
           );
           const productMediaId = await fetchProductMediaId(
-            url.split('ColorSwatch/')[1],
+            `ColorSwatch/${url.split('ColorSwatch/')[1]}`,
             idBase64Decode(productId),
           );
           mediaIds[`${media.color_name}`] = productMediaId;

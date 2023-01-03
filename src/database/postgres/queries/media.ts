@@ -10,7 +10,7 @@ export const insertMediaQuery = (
   INSERT INTO saleor.product_productmedia
    (sort_order,image,alt,"type",external_url,oembed_data,product_id,to_remove)
     VALUES
-  (NULL,'ColorSwatch/${mediaUrl}','alt','IMAGE',NULL,'{}',${productId},false);
+  (NULL,'${mediaUrl}','alt','IMAGE',NULL,'{}',${productId},false);
   `;
 };
 
@@ -43,6 +43,6 @@ export const fetchMediaIdQuery = (
   return `
   SELECT id 
   FROM saleor.product_productmedia pp  
-  WHERE product_id =${productId} AND Image='ColorSwatch/${mediaUrl}';
+  WHERE product_id =${productId} AND Image='${mediaUrl}';
   `;
 };

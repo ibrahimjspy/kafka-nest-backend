@@ -4,21 +4,13 @@ import {
   deleteShopHandler,
   updateShopHandler,
 } from 'src/graphql/handlers/shop';
-import {
-  createUserHandler,
-  deleteUserHandler,
-  updateUserHandler,
-} from 'src/graphql/handlers/user';
+import { deleteUserHandler } from 'src/graphql/handlers/user';
 import {
   deleteShopId,
   fetchShopId,
   insertShopId,
 } from 'src/database/postgres/handlers/shop';
-import {
-  deleteUserId,
-  fetchUserId,
-  insertUserId,
-} from 'src/database/postgres/handlers/user';
+import { deleteUserId, fetchUserId } from 'src/database/postgres/handlers/user';
 import { TransformerService } from 'src/transformer/Transformer.service';
 import { shopDto, shopTransformed } from 'src/transformer/types/shop';
 import { fetchBulkVendorShipping } from 'src/database/mssql/bulk-import/methods';
@@ -79,15 +71,11 @@ export class ShopService {
   private async createShop(
     @Param() shopData: shopTransformed,
   ): Promise<object> {
-    // creating new user and map its id in database
-    const user = await this.userService.create(shopData);
-    const userIdMapping = await insertUserId(shopData.id, user);
-
     // creates new shop and map its id in database
-    const shop = await createShopHandler(shopData, user);
+    const shop = await createShopHandler(shopData);
     const shopIdMapping = await insertShopId(shopData.id, shop);
 
-    return { user, shop, userIdMapping, shopIdMapping };
+    return { shop, shopIdMapping };
   }
 
   private async updateShop(
@@ -95,10 +83,8 @@ export class ShopService {
     shopId: string,
   ): Promise<object> {
     // updates user and shop
-    const userId = await fetchUserId(shopData.id);
-    const updateUser = await updateUserHandler(shopData, userId);
     const updateShop = await updateShopHandler(shopData, shopId);
-    return { updateUser, updateShop };
+    return { updateShop };
   }
 
   private async addShippingMethodToShop(sourceId: string, destinationId) {

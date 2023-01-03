@@ -27,6 +27,10 @@ import {
   idBase64Decode,
 } from './Product.utils';
 import { mockVariantMappedByMedia } from '../../../mock/product/media';
+import {
+  addSkuToProductVariants,
+  getProductVariantsForSku,
+} from './variant/Product.Variant.utils';
 describe('Product utility tests', () => {
   describe('findAll', () => {
     it('chunkArray unit test to check if it is splitting array', async () => {
@@ -107,5 +111,18 @@ describe('Product utility tests', () => {
     });
     expect(data).toBeDefined();
     expect(data).toStrictEqual(mockVariantMappedByMedia);
+  });
+
+  it('product variants are transformed accurately for sku', async () => {
+    const data = getProductVariantsForSku(mockVariantData, mockColorList);
+    console.log(data);
+    expect(data).toBeDefined();
+  });
+
+  it('sku is added fine to product variants array', async () => {
+    const variantsMock = [{ color: 'red' }];
+    addSkuToProductVariants([{ sku: 'test' }], variantsMock);
+    expect(variantsMock).toBeDefined();
+    expect(variantsMock).toStrictEqual([{ color: 'red', sku: 'test' }]);
   });
 });

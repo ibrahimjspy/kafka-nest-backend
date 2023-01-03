@@ -31,17 +31,14 @@ export const productVariantBulkCreateMutation = (
   `;
 };
 
-export const addProductVariantToShopMutation = (variantId, shopId) => {
+export const addProductVariantsToShopMutation = (variantsIds, shopId) => {
   return gql`
     mutation {
-      addProductVariantToShop(
-        input: {
-          productVariantId: "${variantId}"
-          shopId: "${shopId}"
-        }
-      ) {
-         name
-       }
+      addProductVariantsToShop(input: { productVariantIds: ${JSON.stringify(
+        variantsIds,
+      )}, shopId: "${shopId}" }) {
+        id
+      }
     }
   `;
 };

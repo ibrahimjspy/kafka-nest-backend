@@ -368,3 +368,127 @@ export const mockVariantMappedByMedia = [
   { variantId: '87474', colorImage: ['123'] },
   { variantId: '87480', colorImage: ['123'] },
 ];
+
+export const mockVariantsTransformed = [
+  {
+    size: '6',
+    color: 'SLVFAB',
+    price: { purchasePrice: 16.55, salePrice: 0, onSale: 'N' },
+    preOrder: 'N',
+  },
+  {
+    size: '6',
+    color: 'GLDFAB',
+    price: { purchasePrice: 16.55, salePrice: 0, onSale: 'N' },
+    preOrder: 'N',
+  },
+  {
+    size: '6.5',
+    color: 'SLVFAB',
+    price: { purchasePrice: 16.55, salePrice: 0, onSale: 'N' },
+    preOrder: 'N',
+  },
+  {
+    size: '6.5',
+    color: 'GLDFAB',
+    price: { purchasePrice: 16.55, salePrice: 0, onSale: 'N' },
+    preOrder: 'N',
+  },
+  {
+    size: '7',
+    color: 'SLVFAB',
+    price: { purchasePrice: 16.55, salePrice: 0, onSale: 'N' },
+    preOrder: 'N',
+  },
+  {
+    size: '7',
+    color: 'GLDFAB',
+    price: { purchasePrice: 16.55, salePrice: 0, onSale: 'N' },
+    preOrder: 'N',
+  },
+  {
+    size: '7.5',
+    color: 'SLVFAB',
+    price: { purchasePrice: 16.55, salePrice: 0, onSale: 'N' },
+    preOrder: 'N',
+  },
+  {
+    size: '7.5',
+    color: 'GLDFAB',
+    price: { purchasePrice: 16.55, salePrice: 0, onSale: 'N' },
+    preOrder: 'N',
+  },
+  {
+    size: '8',
+    color: 'SLVFAB',
+    price: { purchasePrice: 16.55, salePrice: 0, onSale: 'N' },
+    preOrder: 'N',
+  },
+  {
+    size: '8',
+    color: 'GLDFAB',
+    price: { purchasePrice: 16.55, salePrice: 0, onSale: 'N' },
+    preOrder: 'N',
+  },
+  {
+    size: '8.5',
+    color: 'SLVFAB',
+    price: { purchasePrice: 16.55, salePrice: 0, onSale: 'N' },
+    preOrder: 'N',
+  },
+  {
+    size: '8.5',
+    color: 'GLDFAB',
+    price: { purchasePrice: 16.55, salePrice: 0, onSale: 'N' },
+    preOrder: 'N',
+  },
+  {
+    size: '9',
+    color: 'SLVFAB',
+    price: { purchasePrice: 16.55, salePrice: 0, onSale: 'N' },
+    preOrder: 'N',
+  },
+  {
+    size: '9',
+    color: 'GLDFAB',
+    price: { purchasePrice: 16.55, salePrice: 0, onSale: 'N' },
+    preOrder: 'N',
+  },
+  {
+    size: '10',
+    color: 'SLVFAB',
+    price: { purchasePrice: 16.55, salePrice: 0, onSale: 'N' },
+    preOrder: 'N',
+  },
+  {
+    size: '10',
+    color: 'GLDFAB',
+    price: { purchasePrice: 16.55, salePrice: 0, onSale: 'N' },
+    preOrder: 'N',
+  },
+  {
+    size: '5.5',
+    color: 'SLVFAB',
+    price: { purchasePrice: 16.55, salePrice: 0, onSale: 'N' },
+    preOrder: 'N',
+  },
+  {
+    size: '5.5',
+    color: 'GLDFAB',
+    price: { purchasePrice: 16.55, salePrice: 0, onSale: 'N' },
+    preOrder: 'N',
+  },
+  {
+    size: '11',
+    color: 'SLVFAB',
+    price: { purchasePrice: 16.55, salePrice: 0, onSale: 'N' },
+    preOrder: 'N',
+  },
+  {
+    size: '11',
+    color: 'GLDFAB',
+    price: { purchasePrice: 16.55, salePrice: 0, onSale: 'N' },
+    preOrder: 'N',
+  },
+];
+export const mockStyleName = 'Bamboo  Chunky heel Bow Tie Sandals';

@@ -36,6 +36,7 @@ export const productVariantQueryTransformer = (variants) => {
       { id: "${SIZE_ATTRIBUTE_ID}", values:["${variant.size}"] }
       { id: "${COMMISSION_ATTRIBUTE_ID}", values:["10"] }
     ]
+      sku: "${variant.sku}"
       channelListings: { channelId: "${DEFAULT_CHANNEL_ID}", price: ${
       variant.price.purchasePrice
     } }
