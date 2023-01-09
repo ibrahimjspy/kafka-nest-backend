@@ -11,7 +11,6 @@ import {
   colorSelectDto,
   productTransformed,
 } from 'src/transformer/types/product';
-import { getProductDetailsFromDb } from 'src/database/mssql/product-view/fetch';
 import { createBundleHandler } from 'src/graphql/handlers/bundle';
 import {
   chunkArray,
@@ -24,6 +23,8 @@ import { getProductDetailsHandler } from 'src/graphql/handlers/product';
 import { createSalesHandler } from 'src/graphql/handlers/sale';
 import { addSkuToProductVariants } from './Product.Variant.utils';
 import { createSkuHandler } from 'src/graphql/handlers/sku';
+import { getProductDetailsFromDb } from 'src/database/mssql/product-view/getProductViewById';
+import { bundlesCreateInterface } from './Product.Variant.types';
 
 /**
  *  Injectable class handling productVariant and its relating tables CDC
@@ -61,7 +62,10 @@ export class ProductVariantService {
         productId,
       );
     }
-    return await this.updatePrice(sourceProductData.price, productDetails);
+    return await this.updatePrice(
+      sourceProductData.price.purchasePrice,
+      productDetails,
+    );
   }
 
   public async productVariantAssign(
@@ -104,7 +108,12 @@ export class ProductVariantService {
           );
         }
         // CREATE BUNDLES
-        await this.createBundles(variantIds, pack_name.split('-'), shopId);
+        await this.createBundles({
+          variantIds,
+          bundle: pack_name.split('-'),
+          shopId,
+          productId,
+        });
 
         // ADD PRODUCT VARIANTS TO SHOP
         addProductVariantToShopHandler(variantIds, shopId);
@@ -113,12 +122,17 @@ export class ProductVariantService {
     return;
   }
 
-  private async createBundles(variantIds, bundle, shopId) {
+  private async createBundles({
+    variantIds,
+    bundle,
+    shopId,
+    productId,
+  }: bundlesCreateInterface) {
     // Filters variantIds array according to bundles
     const bundleVariantIds = chunkArray(variantIds, bundle.length);
     const createBundles = await Promise.all(
       bundleVariantIds.map(async (variants) => {
-        await createBundleHandler(variants, bundle, shopId);
+        await createBundleHandler(variants, bundle, shopId, productId);
       }),
     );
     return createBundles;
@@ -157,7 +171,6 @@ export class ProductVariantService {
     let sizes = [];
     let productVariants = [];
     let shoeVariantIdMapping = {}; // VARIANT ID MAPPED AGAINST SHOE SIZE
-
     sizes = getShoeSizes(shoe_sizes);
     // TRANSFORM SIZES AND COLORS
     await sizes.map(async (size) => {
@@ -202,6 +215,7 @@ export class ProductVariantService {
           shopId,
           color_list,
           bundleName: shoe_bundle_name[key],
+          productId,
         });
       });
 
@@ -216,8 +230,9 @@ export class ProductVariantService {
     shopId,
     color_list,
     bundleName,
+    productId,
   }) {
-    const quantities = Object.values(bundle);
+    const quantities: string[] = Object.values(bundle);
     // GET BUNDLE VARIANT IDS SPLITTED AGAINST COLOR SIZES FROM MAPPED VARIANT IDS
     const bundleVariantIds = getShoeBundlesBySizes(
       shoeVariantIdMapping,
@@ -225,11 +240,12 @@ export class ProductVariantService {
       color_list.length,
     );
     const createBundles = await Promise.all(
-      bundleVariantIds.map((variants) => {
-        createBundleHandler(
+      bundleVariantIds.map(async (variants) => {
+        await createBundleHandler(
           variants,
           quantities,
           shopId,
+          productId,
           bundleName['ShoeSizeName'],
         );
       }),

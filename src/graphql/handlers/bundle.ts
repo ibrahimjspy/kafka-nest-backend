@@ -6,9 +6,10 @@ import { bundleQueryTransformer } from '../utils/transformers';
 //  <-->  Create  <-->
 
 export const createBundleHandler = async (
-  bundleVariants,
-  bundleQuantities,
-  shopId,
+  bundleVariants: string[],
+  bundleQuantities: string[],
+  shopId: string,
+  productId: string,
   bundleName = 'product variant bundle',
 ) => {
   try {
@@ -17,6 +18,7 @@ export const createBundleHandler = async (
         bundleQueryTransformer(bundleVariants, bundleQuantities),
         shopId,
         bundleName,
+        productId,
       ).replace(/'/g, '"'),
     );
     return bundles;

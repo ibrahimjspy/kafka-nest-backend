@@ -4,6 +4,7 @@ import { ProductTransformerService } from './product/Product.transformer';
 import { RetailerTransformerService } from './shop/Retailer.transformer';
 import { ShopTransformerService } from './shop/Shop.transformer';
 import { TransformerService } from './Transformer.service';
+import { ProductVariantTransformerService } from './product/Product.variant/Product.variant.transformer';
 
 @Module({
   providers: [
@@ -12,12 +13,14 @@ import { TransformerService } from './Transformer.service';
     CategoryTransformerService,
     ShopTransformerService,
     RetailerTransformerService,
+    ProductVariantTransformerService,
   ],
   exports: [
     TransformerService,
     ProductTransformerService,
     CategoryTransformerService,
     ShopTransformerService,
+    ProductVariantTransformerService,
   ],
 })
 export class TransformerModule {}

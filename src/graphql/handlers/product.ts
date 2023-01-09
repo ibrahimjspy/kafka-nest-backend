@@ -53,7 +53,7 @@ export const getProductDetailsHandler = async (productId: string) => {
     );
     if (getProductDetails?.product?.slug) {
       const { slug, variants, media } = getProductDetails.product;
-      return { slug, variants, media };
+      return { slug, variants, media, productId };
     }
     return await getProductDetailsHandler(productId);
   } catch (err) {

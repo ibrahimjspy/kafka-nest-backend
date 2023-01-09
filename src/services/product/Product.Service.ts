@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import {
   createProductHandler,
   deleteProductHandler,
@@ -15,13 +15,14 @@ import {
   productDto,
   productTransformed,
 } from 'src/transformer/types/product';
-import { getProductDetailsFromDb } from 'src/database/mssql/product-view/fetch';
 import { TransformerService } from '../../transformer/Transformer.service';
 import { ProductMediaService } from './media/Product.Media.Service';
 import { ProductVariantService } from './variant/Product.Variant.Service';
 import { productVariantInterface } from 'src/database/mssql/types/product';
 import { addProductMapping } from 'src/mapping/product';
 import { idBase64Decode } from './Product.utils';
+import { ApplicationLogger } from 'src/logger/Logger.service';
+import { getProductDetailsFromDb } from 'src/database/mssql/product-view/getProductViewById';
 
 /**
  *  Injectable class handling product variant and its relating tables CDC
@@ -34,20 +35,18 @@ export class ProductService {
     private readonly transformerClass: TransformerService,
     private readonly productMediaClass: ProductMediaService,
     private readonly productVariantService: ProductVariantService,
+    public logger: ApplicationLogger,
   ) {}
 
   public async handleProductCDC(kafkaMessage: productDto) {
-    const productExistsInDestination: string = await fetchProductId(
+    const productExistsInDestination: any = await fetchProductId(
       kafkaMessage.TBItem_ID,
     );
-    // console.log(productExistsInDestination);
     const productData = await this.transformerClass.productDetailsTransformer(
       kafkaMessage,
     );
-    // console.log(productData);
     if (productExistsInDestination) {
-      await this.productDelete(productExistsInDestination);
-      // return await this.productUpdate(productExistsInDestination, productData);
+      return await this.productUpdate(productExistsInDestination, productData);
     }
     return await this.productCreate(productData);
   }
@@ -72,16 +71,17 @@ export class ProductService {
     productData: productTransformed,
   ): Promise<object> {
     // creating new product and assigning it media
-
     const productId = await createProductHandler(productData);
     if (productId) {
       // inserts product id into id mapping table
       await insertProductId(productData.id, productId);
       addProductMapping(productData.id, productId, productData.shopId);
       // creates product variants and its media
-      await this.productMediaCreate(productId, productData.media);
-      await this.productVariantsCreate(productData, productId);
-      Logger.verbose(`product flow completed against ${productId}`);
+      await Promise.all([
+        this.productMediaCreate(productId, productData.media),
+        this.productVariantsCreate(productData, productId),
+      ]);
+      this.logger.verbose(`product flow completed against ${productId}`);
     }
     return {
       productId,
@@ -117,7 +117,9 @@ export class ProductService {
   ) {
     // fetches product variant information
     const productVariantData: productVariantInterface =
-      await getProductDetailsFromDb(productData.id);
+      await this.transformerClass.productViewTransformer(
+        await getProductDetailsFromDb(productData.id),
+      );
     // creating product variant and its bundles against color and sizes , assigns product variant price
     if (productVariantData.productGroup == 'SHOES') {
       await this.productVariantService.shoeVariantsAssign(
@@ -125,17 +127,14 @@ export class ProductService {
         productId,
         productData.shopId,
       );
-      return await this.productVariantMediaCreate(
-        productId,
-        productVariantData,
-      );
+      return;
     }
     await this.productVariantService.productVariantAssign(
       productVariantData,
       productId,
       productData.shopId,
     );
-    return await this.productVariantMediaCreate(productId, productVariantData);
+    return;
   }
 
   public async productMediaCreate(productId: string, productMedia: mediaDto[]) {

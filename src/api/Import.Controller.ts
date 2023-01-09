@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Body, Controller, Get, Post, Res } from '@nestjs/common';
 import { AppService } from 'src/app.service';
 import { prepareFailedResponse } from 'src/app.utils';
@@ -34,8 +35,7 @@ export class BulkImportController {
   @Get('api/v1/bulk/products')
   async createProducts() {
     const data: any = await fetchBulkProductsData();
-    // console.log(data);
-    await this.appService.productBulkCreate(data.slice(40, 41));
+    await this.appService.productBulkCreate(data.slice(3000, 3001));
     return `${data.length} products created`;
   }
 
@@ -50,22 +50,21 @@ export class BulkImportController {
   @Get('api/v1/bulk/shops')
   async createShops() {
     const data: any = await fetchBulkVendors();
-    await this.appService.shopBulkCreate(data.slice(0, 1));
+    await this.appService.shopBulkCreate(data.slice(1, 40));
     return `${data.length} shops created`;
   }
 
   @Get('api/v1/bulk/shipping')
   async createShipping() {
     const data: any = await fetchBulkSubCategoriesData();
-    this.appService.shippingMethodBulkCreate(data);
+    await this.appService.shippingMethodBulkCreate(data);
     return `${data.length} shops created`;
   }
 
   @Get('api/v1/bulk/customers')
   async createCustomers() {
     const data: any = await fetchBulkCustomers();
-    // console.log(data[0]);
-    this.appService.handleCustomerCDC(data[0]);
+    await this.appService.handleCustomerCDC(data[0]);
     return `${data.length} customers created`;
   }
 }

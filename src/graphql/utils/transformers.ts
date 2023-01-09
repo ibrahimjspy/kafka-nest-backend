@@ -7,7 +7,7 @@ export const bundleQueryTransformer = (
   bundleQuantities,
 ): string => {
   return bundleVariants.map((variantId, key): string => {
-    return `{ variantId:"${variantId}", quantity: ${bundleQuantities[key]} }`;
+    return `{ productVariantId:"${variantId}", quantity: ${bundleQuantities[key]} }`;
   });
 };
 

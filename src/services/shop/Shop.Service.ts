@@ -42,7 +42,6 @@ export class ShopService {
       // updates shop and user information
       return this.updateShop(shopData, shopExistsInDestination);
     }
-
     // creates new users and shop
     return this.createShop(shopData);
   }

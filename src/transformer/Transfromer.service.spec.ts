@@ -7,7 +7,6 @@ import {
 import {
   descriptionSmallText,
   productCdcMock,
-  productTransformedExpected,
 } from '../../mock/transformer/product';
 import { shopCdcMock } from '../../mock/transformer/shop';
 import { TransformerService } from './Transformer.service';
@@ -16,6 +15,16 @@ import { ProductTransformerService } from './product/Product.transformer';
 import { TransformerModule } from './Transformer.module';
 import { RetailerTransformerService } from './shop/Retailer.transformer';
 import { ShopTransformerService } from './shop/Shop.transformer';
+import {
+  getShoeBundleNames,
+  getShoeBundlesFromDb,
+  getShoeSizeColumns,
+} from './product/Product.variant/Product.variant.transformer.utils';
+import {
+  expectedShoeSizes,
+  mockDbShoesDetails,
+  mockShoeBundles,
+} from '../../mock/shoes/bundles';
 
 describe('TransformerController', () => {
   let service: TransformerService;
@@ -144,5 +153,33 @@ describe('TransformerController', () => {
       productCdcMock.nOnSale,
     );
     expect(productCategoryId).toBeDefined();
+  });
+
+  it('shop media urls are transforming fine', async () => {
+    const testMedia = 'profile_2UNIC.jpg';
+    const data = shopService.shopImageTransformer(testMedia);
+    console.log(data);
+    expect(data).toBeDefined();
+  });
+
+  it('shop banners are transforming fine', async () => {
+    const data = shopService.shopBannerTransformer(shopCdcMock);
+    console.log(data);
+    expect(data).toBeDefined();
+  });
+
+  // Product variant transformer utils unit tests
+  it('checking whether getShoeBundles is working', async () => {
+    const data = getShoeBundlesFromDb(mockDbShoesDetails);
+    expect(data).toBeDefined();
+  });
+  it('checking whether we qet union sizes of get sizes util', async () => {
+    const data = getShoeSizeColumns(mockShoeBundles);
+    expect(data).toBeDefined();
+    expect(data).toStrictEqual(expectedShoeSizes);
+  });
+  it('checking whether we are fetching bundle names accurately', async () => {
+    const bundleNames = getShoeBundleNames(mockDbShoesDetails);
+    expect(bundleNames).toBeDefined();
   });
 });

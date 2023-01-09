@@ -41,7 +41,7 @@ export class ProductMediaService {
             );
             // create thumbnails
             if (productMediaId) {
-              await this.productThumbnailsAssign(image, productMediaId);
+              this.productThumbnailsAssign(image, productMediaId);
             }
           }
         }
@@ -102,7 +102,10 @@ export class ProductMediaService {
     productVariantData: productVariantInterface,
   ) {
     const productDetails = await getProductDetailsHandler(productId);
-    if (!productDetails.variants[0]?.media[0]?.url) {
+    if (
+      !productDetails.variants[0]?.media[0]?.url &&
+      productVariantData.variant_media
+    ) {
       // getting media ids of each product color
       const mediaIds = await this.createVariantMedia(
         productVariantData.variant_media['ColorMedia'],
@@ -121,14 +124,16 @@ export class ProductMediaService {
 
       // inserting media ids  against variant ids using mapping array
       await Promise.all(
-        variantMedia.map(async (media) => {
+        variantMedia?.map(async (media) => {
           return await insertVariantMedia(
             media['colorImage'],
             media['variantId'],
           );
         }),
       );
-      Logger.verbose('variant media created');
+      Logger.verbose(
+        `variant media created against product id === ${productDetails.productId}`,
+      );
     }
   }
 
@@ -139,13 +144,8 @@ export class ProductMediaService {
   ) {
     const mediaIds = {};
     await Promise.all(
-      productVariantMedia.map(async (media) => {
+      productVariantMedia?.map(async (media) => {
         const url: string = media['color_image'];
-        // checks if media all ready exists in product scope
-        if (!url || url.includes('Pictures')) {
-          mediaIds[`${media.color_name}`] = defaultMediaId;
-          return;
-        }
         // creates media against that color
         if (url.includes('ColorSwatch')) {
           await insertProductMediaById(
@@ -159,6 +159,9 @@ export class ProductMediaService {
           mediaIds[`${media.color_name}`] = productMediaId;
           return mediaIds;
         }
+        // checks if media all ready exists in product scope
+        mediaIds[`${media.color_name}`] = defaultMediaId;
+        return;
       }),
     );
     return mediaIds;

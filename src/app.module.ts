@@ -14,9 +14,10 @@ import { ShippingService } from './services/shop/shipping/Shipping.Service';
 import { UserService } from './services/shop/user/User.Service';
 import { RetailerService } from './services/shop/retailer/Retailer.Service';
 import { RetailerTransformerService } from './transformer/shop/Retailer.transformer';
+import { LoggerModule } from './logger/Logger.module';
 
 @Module({
-  imports: [ConfigModule.forRoot(), TransformerModule],
+  imports: [ConfigModule.forRoot(), TransformerModule, LoggerModule],
   controllers: [AppController, BulkImportController],
   providers: [
     AppService,
