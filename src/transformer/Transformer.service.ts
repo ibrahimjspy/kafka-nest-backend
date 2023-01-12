@@ -1,7 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { CategoryTransformerService } from './category/Category.transformer';
 import { ProductTransformerService } from './product/Product.transformer';
+import { RetailerTransformerService } from './shop/Retailer.transformer';
 import { ShopTransformerService } from './shop/Shop.transformer';
+import { ProductVariantTransformerService } from './product/Product.variant/Product.variant.transformer';
 
 /**
  * Transformation class with utility methods performing specific
@@ -14,6 +16,8 @@ export class TransformerService {
     private readonly productTransformerService: ProductTransformerService,
     private readonly categoryTransformerService: CategoryTransformerService,
     private readonly shopTransformerService: ShopTransformerService,
+    private readonly retailerTransformerService: RetailerTransformerService,
+    private readonly productVariantTransformerService: ProductVariantTransformerService,
   ) {}
   /**
    * complete product object transform
@@ -69,19 +73,57 @@ export class TransformerService {
     return this.productTransformerService.mediaTransformerMethod(mediaObject);
   }
   /**
-   * color and size transformer for variant mapping
-   * @returns variants array ready to be mapped variant api with color and sizes against it
+   * This function returns variants based on color and its sizes
+   * @params color to be created as variant
+   * @params array of sizes to be mapped with color
+   * @params preOrder information
+   * @params pricing information
+   * @returns collection of variants to be created <Array>
    */
-  public productVariantTransformer(color, sizes, price) {
+  public productVariantTransformer(color, sizes, preOrder, price) {
     return this.productTransformerService.productVariantTransformer(
       color,
       sizes,
+      preOrder,
       price,
     );
+  }
+  /**
+   * This function returns variants based on color and its sizes
+   * @params size to be created as variant
+   * @params array of colors to be mapped with color
+   * @params preOrder information
+   * @params pricing information
+   * @returns collection of variants to be created <Array>
+   */
+  public shoeVariantTransformer(size, colors, preOrder, price) {
+    return this.productTransformerService.shoeVariantTransformer(
+      size,
+      colors,
+      preOrder,
+      price,
+    );
+  }
+  /**
+   * transforms source customer object according to destination retailer requirements
+   */
+  public retailerTransformer(object) {
+    return this.retailerTransformerService.retailerTransformerMethod(object);
   }
   public pricingTransformer(pricingObject) {
     return pricingObject;
   }
+
+  /**
+   * transforms database view for product variant
+   * @returns transformed product variant object
+   */
+  public productViewTransformer(viewObject) {
+    return this.productVariantTransformerService.productViewTransformer(
+      viewObject,
+    );
+  }
+
   public healthCheck(): string {
     return 'Service running';
   }

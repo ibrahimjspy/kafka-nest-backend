@@ -5,13 +5,20 @@ export const createProductMutation = (productData: productTransformed) => {
   // parsing product data;
   const DEFAULT_PRODUCT_TYPE =
     process.env.DEFAULT_PRODUCT_TYPE || 'UHJvZHVjdFR5cGU6Mg==';
-  const { name, categoryId } = productData;
+  const STYLE_ATTRIBUTE_ID =
+    process.env.STYLE_ATTRIBUTE_ID || 'QXR0cmlidXRlOjU=';
+  const { name, categoryId, description, styleNumber } = productData;
   return gql`
     mutation {
       productCreate(
         input: {
           productType: "${DEFAULT_PRODUCT_TYPE}"
+          description:${JSON.stringify(description)}
           name: "${name}"
+          attributes:[{
+            id:"${STYLE_ATTRIBUTE_ID}",
+            values:["${styleNumber}"]
+          }]
           category:"${categoryId}"
           rating: 4
         }
@@ -19,7 +26,7 @@ export const createProductMutation = (productData: productTransformed) => {
         product {
           name
           id
-          description
+          slug
         }
         errors {
           field
@@ -31,13 +38,14 @@ export const createProductMutation = (productData: productTransformed) => {
 };
 
 export const productChannelListingMutation = (productId) => {
+  const DEFAULT_CHANNEL = 'Q2hhbm5lbDox';
   return gql`
     mutation {
       productChannelListingUpdate(
         id: "${productId}"
         input: {
           updateChannels: {
-            channelId: "Q2hhbm5lbDox"
+            channelId: "${DEFAULT_CHANNEL}"
             visibleInListings: true
             isAvailableForPurchase: true
             isPublished: true

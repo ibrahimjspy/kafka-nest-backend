@@ -1,5 +1,10 @@
 import { Injectable, Param } from '@nestjs/common';
-import { productDto, productTransformed } from 'src/transformer/types/product';
+import {
+  mediaDto,
+  priceInterface,
+  productDto,
+  productTransformed,
+} from 'src/transformer/types/product';
 import {
   fetchMasterCategoryId,
   fetchSubCategoryId,
@@ -19,6 +24,7 @@ export class ProductTransformerService {
    * @params object,  Composite object containing cdc changeData, productView data
    */
   public async productGeneralTransformerMethod(@Param() object: productDto) {
+    // console.dir(object, { depth: null });
     const productObject: productTransformed = {};
     const {
       TBItem_ID,
@@ -27,8 +33,14 @@ export class ProductTransformerService {
       TBStyleNo_OS_Category_Master_ID,
       TBStyleNo_OS_Category_Sub_ID,
       TBVendor_ID,
+      nVendorStyleNo,
+      nSalePrice,
+      nOnSale,
+      nPurchasePrice,
     } = object;
+    // console.log(object);
     productObject['id'] = TBItem_ID.toString();
+    productObject['styleNumber'] = nVendorStyleNo.toString();
     productObject['name'] = nStyleName.toString();
     productObject['description'] =
       this.descriptionTransformer(nItemDescription);
@@ -42,9 +54,12 @@ export class ProductTransformerService {
           TBStyleNo_OS_Category_Master_ID,
           100000,
         );
-
     productObject['shopId'] = await this.shopIdTransformer(TBVendor_ID);
-    productObject['price'] = object.nPrice1;
+    productObject['price'] = this.priceTransformer(
+      nPurchasePrice,
+      nSalePrice,
+      nOnSale,
+    );
 
     return productObject;
   }
@@ -54,11 +69,13 @@ export class ProductTransformerService {
    * @params string to be transformed
    */
   public descriptionTransformer(@Param() description: string) {
-    const validString = description.replace(/"/g, "'").replace(/[\r\n]+/g, ' ');
+    const validString = description
+      ?.replace(/"/g, "'")
+      .replace(/[\r\n]+/g, ' ');
     if (validString) {
       return `{\"time\": 1662995227870, \"blocks\": [{\"id\": \"cqWmV3MIPH\", \"data\": {\"text\": \"${validString}\"}, \"type\": \"paragraph\"}], \"version\": \"2.24.3\"}`;
     }
-    return `{\"time\": 1662995227870, \"blocks\": [{\"id\": \"cqWmV3MIPH\", \"data\": {\"text\": \"test product\"}, \"type\": \"paragraph\"}], \"version\": \"2.24.3\"}`;
+    return `{\"time\": 1662995227870, \"blocks\": [{\"id\": \"cqWmV3MIPH\", \"data\": {\"text\": \" \"}, \"type\": \"paragraph\"}], \"version\": \"2.24.3\"}`;
   }
 
   /**
@@ -66,15 +83,17 @@ export class ProductTransformerService {
    * @params object to be transformed and mapped
    * @returns media composite array
    */
-  public mediaTransformerMethod(@Param() productObject: object): string[] {
-    let small, medium, large, tiny;
+  public mediaTransformerMethod(@Param() productObject: object): mediaDto[] {
+    const mediaArray: mediaDto[] = [];
     for (let i = 1; i < 10; i++) {
-      medium.push(productObject[`Picture${i}`]);
-      large.push(productObject[`PictureZ${i}`]);
-      small.push(productObject[`PictureV${i}`]);
-      tiny.push(productObject[`PictureS${i}`]);
+      const image: mediaDto = {};
+      image.tiny = productObject[`PictureL${i}`];
+      image.small = productObject[`PictureV${i}`];
+      image.medium = productObject[`Picture${i}`];
+      image.large = productObject[`PictureZ${i}`];
+      mediaArray.push(image);
     }
-    return [...medium, ...small, ...large, ...tiny];
+    return mediaArray;
   }
 
   /**
@@ -125,18 +144,22 @@ export class ProductTransformerService {
    * This function returns variants based on color and its sizes
    * @params color to be created as variant
    * @params array of sizes to be mapped with color
+   * @params preOrder information
+   * @params pricing information
    * @returns collection of variants to be created <Array>
    */
   public async productVariantTransformer(
     color: string,
     sizes: string[],
-    price: string,
+    preOrder: string,
+    price: priceInterface,
   ) {
     const array = [];
     try {
       sizes.map((s) => {
         const object: any = { color: color };
         object.size = s;
+        object.preOrder = preOrder;
         object.price = price;
         array.push(object);
       });
@@ -145,5 +168,45 @@ export class ProductTransformerService {
     }
 
     return array;
+  }
+  /**
+   * This function returns variants based on color and its sizes
+   * @params size to be created as variant
+   * @params array of colors to be mapped with color
+   * @params preOrder information
+   * @params pricing information
+   * @returns collection of variants to be created <Array>
+   */
+  public async shoeVariantTransformer(
+    size: string,
+    colors: string[],
+    preOrder: string,
+    price: priceInterface,
+  ) {
+    const array = [];
+    try {
+      colors.map((color) => {
+        const object: any = { size: size };
+        object.color = color;
+        object.price = price;
+        object.preOrder = preOrder;
+        array.push(object);
+      });
+    } catch (error) {
+      console.warn(error);
+    }
+
+    return array;
+  }
+
+  /**
+   * This function returns pricing information
+   */
+  public priceTransformer(purchasePrice, salePrice, onSale): priceInterface {
+    return {
+      purchasePrice: purchasePrice,
+      salePrice: salePrice,
+      onSale: onSale,
+    };
   }
 }

@@ -4,23 +4,20 @@ import {
   deleteShopHandler,
   updateShopHandler,
 } from 'src/graphql/handlers/shop';
-import {
-  createUserHandler,
-  deleteUserHandler,
-  updateUserHandler,
-} from 'src/graphql/handlers/user';
+import { deleteUserHandler } from 'src/graphql/handlers/user';
 import {
   deleteShopId,
   fetchShopId,
   insertShopId,
 } from 'src/database/postgres/handlers/shop';
-import {
-  deleteUserId,
-  fetchUserId,
-  insertUserId,
-} from 'src/database/postgres/handlers/user';
+import { deleteUserId, fetchUserId } from 'src/database/postgres/handlers/user';
 import { TransformerService } from 'src/transformer/Transformer.service';
 import { shopDto, shopTransformed } from 'src/transformer/types/shop';
+import { fetchBulkVendorShipping } from 'src/database/mssql/bulk-import/methods';
+import { fetchShippingMethodId } from 'src/database/postgres/handlers/shippingMethods';
+import { addShippingMethodHandler } from 'src/graphql/handlers/shippingMethod';
+import { shippingMethodValidation } from './Shop.utils';
+import { UserService } from './user/User.Service';
 
 /**
  *  Injectable class handling brand and its relating tables CDC
@@ -29,7 +26,10 @@ import { shopDto, shopTransformed } from 'src/transformer/types/shop';
  */
 @Injectable()
 export class ShopService {
-  constructor(private readonly transformerService: TransformerService) {}
+  constructor(
+    private readonly transformerService: TransformerService,
+    private readonly userService: UserService,
+  ) {}
 
   public async handleShopCDC(@Param() kafkaMessage: shopDto): Promise<object> {
     const shopExistsInDestination: string = await fetchShopId(
@@ -42,7 +42,6 @@ export class ShopService {
       // updates shop and user information
       return this.updateShop(shopData, shopExistsInDestination);
     }
-
     // creates new users and shop
     return this.createShop(shopData);
   }
@@ -71,15 +70,11 @@ export class ShopService {
   private async createShop(
     @Param() shopData: shopTransformed,
   ): Promise<object> {
-    // creating new user and map its id in database
-    const user = await createUserHandler(shopData);
-    const userIdMapping = await insertUserId(shopData.id, user);
-
     // creates new shop and map its id in database
-    const shop = await createShopHandler(shopData, user);
+    const shop = await createShopHandler(shopData);
     const shopIdMapping = await insertShopId(shopData.id, shop);
 
-    return { user, shop, userIdMapping, shopIdMapping };
+    return { shop, shopIdMapping };
   }
 
   private async updateShop(
@@ -87,9 +82,33 @@ export class ShopService {
     shopId: string,
   ): Promise<object> {
     // updates user and shop
-    const userId = await fetchUserId(shopData.id);
-    const updateUser = await updateUserHandler(shopData, userId);
     const updateShop = await updateShopHandler(shopData, shopId);
-    return { updateUser, updateShop };
+    return { updateShop };
+  }
+
+  private async addShippingMethodToShop(sourceId: string, destinationId) {
+    const shippingMethodIds = [];
+    const DEFAULT_SHIPPING_METHOD =
+      process.env.DEFAULT_SHIPPING_METHOD || 'U2hpcHBpbmdNZXRob2RUeXBlOjE=';
+    const sourceShippingDetails: any = await fetchBulkVendorShipping(sourceId);
+
+    if (sourceShippingDetails) {
+      await Promise.all(
+        sourceShippingDetails?.map(async (shippingMethod) => {
+          const id = await fetchShippingMethodId(
+            shippingMethod.TBShipMethod_ID,
+          );
+          if (id) {
+            shippingMethodIds.push(id);
+          }
+        }),
+      );
+    }
+
+    const data = await addShippingMethodHandler(
+      destinationId,
+      shippingMethodValidation(shippingMethodIds, DEFAULT_SHIPPING_METHOD),
+    );
+    return data;
   }
 }

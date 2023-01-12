@@ -1,10 +1,7 @@
 import { Logger } from '@nestjs/common';
 import { shopTransformed } from 'src/transformer/types/shop';
 import { graphqlCall, graphqlExceptionHandler } from 'src/graphql/utils/call';
-import {
-  addUserToMarketplace,
-  createShopMutation,
-} from '../mutations/shop/create';
+import { createShopMutation } from '../mutations/shop/create';
 import { deleteShopMutation } from '../mutations/shop/delete';
 import { updateShopMutation } from '../mutations/shop/update';
 
@@ -12,19 +9,14 @@ import { updateShopMutation } from '../mutations/shop/update';
 
 export const createShopHandler = async (
   shopData: shopTransformed,
-  userId,
 ): Promise<object> => {
   try {
-    // registers user id in shop service
-    const addShop = await graphqlCall(
-      addUserToMarketplace(userId.createUser.staffCreate.user.id),
-    );
     // creates shop against that user
     const createShop: object = await graphqlCall(
-      createShopMutation(shopData, userId.createUser.staffCreate.user.id),
+      createShopMutation(shopData, 'test'),
     );
     Logger.verbose('Marketplace shop created', createShop);
-    return { ...addShop, createShop };
+    return { createShop };
   } catch (err) {
     return graphqlExceptionHandler(err);
   }

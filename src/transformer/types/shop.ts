@@ -12,6 +12,20 @@ export interface shopDto {
   VDMadeIn: string;
   VDReturnPolicy: string;
   VDVendorEmail?: string;
+  VDPhone?: string;
+  OSDescription?: string;
+  VDMinimumOrderAmount?: string;
+  VDAddress?: string;
+  VDCity?: string;
+  Brand_Rep_Image?: string;
+  BannerImg1?: string;
+  BannerImg2?: string;
+  BannerImg3?: string;
+  BannerImg4?: string;
+  BannerImg5?: string;
+  BannerImg6?: string;
+  BannerImg7?: string;
+  ShippedFrom?: string;
 }
 
 export interface shopTransformed {
@@ -26,4 +40,11 @@ export interface shopTransformed {
   storePolicy?: string;
   madeIn?: string;
   returnPolicy?: string;
+  phoneNumber?: string;
+}
+
+export interface shippingMethodDto {
+  TBShipMethod_ID?: string;
+  SMShipMethodName?: string;
+  SMDescription?: string;
 }

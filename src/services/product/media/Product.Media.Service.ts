@@ -1,9 +1,20 @@
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
-import { insertProductMediaById } from 'src/database/postgres/handlers/media';
+import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
+import { stringValidation } from 'src/app.utils';
+import { productVariantInterface } from 'src/database/mssql/types/product';
+import {
+  fetchProductMediaId,
+  insertProductMediaById,
+  insertThumbnailMediaById,
+  insertVariantMedia,
+} from 'src/database/postgres/handlers/media';
 import { getProductDetailsHandler } from 'src/graphql/handlers/product';
-import { productTransformed } from 'src/transformer/types/product';
+import { mediaDto, productTransformed } from 'src/transformer/types/product';
 import { ProductService } from '../Product.Service';
-import { mediaUrlMapping } from '../Product.utils';
+import { idBase64Decode, mediaUrlMapping } from '../Product.utils';
+import {
+  getVariantIdsByColor,
+  getVariantMediaById,
+} from './Product.Media.utils';
 /**
  *  Injectable class handling media assign
  *  @Injected transformation class for CDC payload validations and transformations
@@ -16,13 +27,22 @@ export class ProductMediaService {
     private readonly productClass: ProductService,
   ) {}
 
-  public async productMediaAssign(productMedia, productId) {
+  public async productMediaAssign(productMedia: mediaDto[], productId) {
     // Validating media url and inserting it to DB
     const createMedia = Promise.all(
-      productMedia.map(async (url) => {
-        if (url) {
-          if (url.length > 2) {
-            await insertProductMediaById(url, productId);
+      productMedia.map(async (image) => {
+        if (image.large) {
+          if (stringValidation(image.large)) {
+            // create standard media
+            await insertProductMediaById(image.large, productId);
+            const productMediaId = await fetchProductMediaId(
+              image.large,
+              productId,
+            );
+            // create thumbnails
+            if (productMediaId) {
+              this.productThumbnailsAssign(image, productMediaId);
+            }
           }
         }
       }),
@@ -49,5 +69,101 @@ export class ProductMediaService {
       return await this.productClass.productMediaCreate(productId, newMedia);
     }
     return;
+  }
+
+  public async productThumbnailsAssign(productMedia: mediaDto, productMediaId) {
+    // Validating media url and inserting it to DB
+    if (productMedia.small) {
+      await insertThumbnailMediaById({
+        mediaUrl: productMedia.small,
+        size: '480',
+        productId: productMediaId,
+      });
+    }
+    if (productMedia.medium) {
+      await insertThumbnailMediaById({
+        mediaUrl: productMedia.medium,
+        size: '720',
+        productId: productMediaId,
+      });
+    }
+    if (productMedia.tiny) {
+      await insertThumbnailMediaById({
+        mediaUrl: productMedia.tiny,
+        size: '240',
+        productId: productMediaId,
+      });
+    }
+    return;
+  }
+
+  public async productVariantMediaAssign(
+    productId: string,
+    productVariantData: productVariantInterface,
+  ) {
+    const productDetails = await getProductDetailsHandler(productId);
+    if (
+      !productDetails.variants[0]?.media[0]?.url &&
+      productVariantData.variant_media
+    ) {
+      // getting media ids of each product color
+      const mediaIds = await this.createVariantMedia(
+        productVariantData.variant_media['ColorMedia'],
+        productId,
+        idBase64Decode(productDetails['media'][0]?.id),
+      );
+
+      // getting variantIds of all product colors
+      const variantIds = getVariantIdsByColor(
+        productDetails['variants'],
+        productVariantData.color_list,
+      );
+
+      // mapping variant ids with media ids
+      const variantMedia = getVariantMediaById(variantIds, mediaIds);
+
+      // inserting media ids  against variant ids using mapping array
+      await Promise.all(
+        variantMedia?.map(async (media) => {
+          return await insertVariantMedia(
+            media['colorImage'],
+            media['variantId'],
+          );
+        }),
+      );
+      Logger.verbose(
+        `variant media created against product id === ${productDetails.productId}`,
+      );
+    }
+  }
+
+  public async createVariantMedia(
+    productVariantMedia,
+    productId,
+    defaultMediaId,
+  ) {
+    const mediaIds = {};
+    await Promise.all(
+      productVariantMedia?.map(async (media) => {
+        const url: string = media['color_image'];
+        // creates media against that color
+        if (url.includes('ColorSwatch')) {
+          await insertProductMediaById(
+            `ColorSwatch/${url.split('ColorSwatch/')[1]}`,
+            idBase64Decode(productId),
+          );
+          const productMediaId = await fetchProductMediaId(
+            `ColorSwatch/${url.split('ColorSwatch/')[1]}`,
+            idBase64Decode(productId),
+          );
+          mediaIds[`${media.color_name}`] = productMediaId;
+          return mediaIds;
+        }
+        // checks if media all ready exists in product scope
+        mediaIds[`${media.color_name}`] = defaultMediaId;
+        return;
+      }),
+    );
+    return mediaIds;
   }
 }

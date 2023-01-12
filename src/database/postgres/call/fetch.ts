@@ -12,20 +12,18 @@ export const postgresFetchIdCall = async (Query: string, retry = 0) => {
   await client
     .query(Query, [])
     .then((res) => {
-      // Logger.log('Successfully fetched from postgres database', res);
       data = res.rows[0]?.destination_id ? res.rows[0]?.destination_id : null;
     })
     .catch(async (err) => {
-      if (retry > 4) {
+      if ((retry = 1)) {
         Logger.warn('postgres error', err);
       }
-      return await postgresFetchIdCall(Query, retry + 1);
     });
   return data;
 };
 
 /**
- * fetches source product and brand details against its product_id
+ * fetches source product  media id
  * @params postgres database query for fetching id
  * @warn currently only compatible id
  * @returns uuid || serial 4 id

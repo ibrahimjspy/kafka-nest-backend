@@ -22,36 +22,51 @@ export class ShopTransformerService {
    * @params object,  Composite object containing cdc changeData, categoryMaster data
    * @returns transformed object
    */
-  public async shopTransformerMethod(@Param() object: shopDto) {
+  public async shopTransformerMethod(
+    @Param() object: shopDto,
+  ): Promise<shopTransformed> {
+    // console.dir(object, { depth: null });
     const shopObject: shopTransformed = {};
     const {
       TBVendor_ID,
       VDVendorEmail,
-      VDFrontDescription,
+      OSDescription,
       VDVendorURL,
-      OSminOrderAMT,
+      VDMinimumOrderAmount,
       VDStorePolicy,
       SEOTitle,
       SEODescription,
       VDName,
       VDMadeIn,
+      VDPhone,
       VDReturnPolicy,
+      Brand_Rep_Image,
     } = object;
     shopObject['id'] = TBVendor_ID?.toString();
     shopObject['name'] = `${VDName?.toString()}`;
-    shopObject['description'] = VDFrontDescription?.toString();
-    shopObject['seo_description'] = SEODescription?.toString();
-    shopObject['seo_title'] = SEOTitle?.toString();
+    shopObject['phoneNumber'] = this.shopPhoneNumberTransformer(VDPhone);
+    shopObject['description'] = OSDescription
+      ? OSDescription.replace(/(\r\n|\n|\r)/gm, '')
+      : '';
+    shopObject['seo_description'] = SEODescription || '';
+    shopObject['seo_title'] = SEOTitle || '';
     shopObject['email'] = `${VDVendorEmail}`;
     shopObject['url'] = `${this.shopUrlTransformer(VDVendorURL, VDName)}`;
-    shopObject['minOrder'] = OSminOrderAMT?.toString();
-    shopObject['storePolicy'] = VDStorePolicy?.toString()
-      .replace(/[\r\n]/gm, '')
-      .replace(/"/g, "'");
-    shopObject['madeIn'] = VDMadeIn?.toString();
-    shopObject['returnPolicy'] = VDReturnPolicy?.toString()
-      .replace(/[\r\n]/gm, '')
-      .replace(/"/g, "'");
+    shopObject['minOrder'] = VDMinimumOrderAmount || '0';
+    shopObject['banners'] = this.shopBannerTransformer(object);
+    shopObject['vendorMainImage'] =
+      this.shopImageTransformer(Brand_Rep_Image) || '';
+    shopObject['storePolicy'] = VDStorePolicy
+      ? VDStorePolicy?.toString()
+          .replace(/[\r\n]/gm, '')
+          .replace(/"/g, "'")
+      : '';
+    shopObject['madeIn'] = VDMadeIn || '';
+    shopObject['returnPolicy'] = VDReturnPolicy
+      ? VDReturnPolicy.toString()
+          .replace(/[\r\n]/gm, '')
+          .replace(/"/g, "'")
+      : '';
     return shopObject;
   }
 
@@ -68,5 +83,39 @@ export class ShopTransformerService {
       return url;
     }
     return `${name.toLowerCase()}.com`;
+  }
+
+  public shopPhoneNumberTransformer(@Param() phoneNumber) {
+    const phone = phoneNumber.split(',')[0];
+    phone.split('/')[0];
+    phone.split('TEXT ONLY')[1];
+    const isEmail = /\.COM/;
+    if (isEmail.test(phoneNumber)) {
+      return '1234';
+    }
+    return `+1${phone.replace(/-/g, '')}`;
+  }
+
+  public shopBannerTransformer(@Param() shopObject: shopDto): string[] {
+    const bannersArray = [];
+    for (let i = 1; i < 8; i++) {
+      shopObject[`BannerImg${i}`]
+        ? bannersArray.push(
+            this.shopImageTransformer(shopObject[`BannerImg${i}`]),
+          )
+        : '';
+    }
+    return bannersArray;
+  }
+
+  /**
+   * this takes url and returns a url which is s3 image url of source, this helps us in frontend integration with shop service, especially in case of media mapping
+   * @param url -> valid image url
+   * @returns image url which could be integrated
+   */
+  public shopImageTransformer(@Param() url) {
+    if (url.length) {
+      return `${process.env.S3_VENDOR_URL}${url}`;
+    }
   }
 }

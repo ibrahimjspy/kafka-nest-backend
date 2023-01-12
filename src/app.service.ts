@@ -1,10 +1,15 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { createProductHandler } from './graphql/handlers/product';
 import { CategoryService } from './services/category/Category.Service';
 import { ProductService } from './services/product/Product.Service';
 import { ProductVariantService } from './services/product/variant/Product.Variant.Service';
 import { ShopService } from './services/shop/Shop.Service';
 import { PromisePool } from '@supercharge/promise-pool';
+import { ShippingService } from './services/shop/shipping/Shipping.Service';
+import { RetailerService } from './services/shop/retailer/Retailer.Service';
+import { fetchStyleDetailsById } from './database/mssql/api_methods/getProductById';
+import { prepareFailedResponse } from './app.utils';
+
 @Injectable()
 export class AppService {
   constructor(
@@ -12,6 +17,8 @@ export class AppService {
     private readonly categoryService: CategoryService,
     private readonly shopService: ShopService,
     private readonly productVariantService: ProductVariantService,
+    private readonly shippingMethodService: ShippingService,
+    private readonly retailerService: RetailerService,
   ) {}
 
   // ChangeDataCapture methods
@@ -48,6 +55,15 @@ export class AppService {
       Logger.log('category deleted');
     }
   }
+
+  handleCustomerCDC(kafkaMessage) {
+    try {
+      return this.retailerService.retailerCreate(kafkaMessage);
+    } catch (error) {
+      Logger.log('customer deleted');
+    }
+  }
+
   public addProductCatalog(kafkaMessage) {
     return createProductHandler(kafkaMessage);
   }
@@ -83,6 +99,9 @@ export class AppService {
           Logger.log(`Finished tasks: ${pool.processedItems().length}`);
           Logger.log(`Finished tasks: ${pool.processedCount()}`);
         })
+        .handleError((error) => {
+          Logger.error(error, 'ProductBulkCreate');
+        })
         .process(async (data: any) => {
           const productCreate = await this.productService.handleProductCDC(
             data,
@@ -96,7 +115,7 @@ export class AppService {
     }
   }
 
-  async ShopBulkCreate(bulkArray, batchSize = 5) {
+  async shopBulkCreate(bulkArray, batchSize = 5) {
     try {
       const { results } = await PromisePool.for(bulkArray)
         .withConcurrency(batchSize)
@@ -109,6 +128,41 @@ export class AppService {
       return results;
     } catch (error) {
       Logger.warn(error);
+    }
+  }
+
+  async shippingMethodBulkCreate(bulkArray, batchSize = 5) {
+    try {
+      const { results } = await PromisePool.for(bulkArray)
+        .withConcurrency(batchSize)
+        .process(async (data: any) => {
+          const shippingMethodCreate =
+            await this.shippingMethodService.createShippingMethods(data);
+
+          return shippingMethodCreate;
+        });
+      Logger.verbose(`${bulkArray.length} shippingMethods created`);
+      return results;
+    } catch (error) {
+      Logger.warn(error);
+    }
+  }
+
+  // ChangeDataCapture methods
+  async createProductById(sourceProductId) {
+    try {
+      const sourceStyleDetails: any = fetchStyleDetailsById(sourceProductId);
+      const createProduct = await this.productService.handleProductCDC(
+        sourceStyleDetails,
+      );
+      return createProduct;
+    } catch (error) {
+      Logger.log('product creation failed');
+      prepareFailedResponse(
+        'product creation failed',
+        HttpStatus.BAD_REQUEST,
+        error,
+      );
     }
   }
 }

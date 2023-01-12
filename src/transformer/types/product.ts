@@ -16,18 +16,27 @@ export interface productDto {
   TBStyleNo_OS_Category_Sub_ID?: string;
   TBVendor_ID?: string;
   nPrice1?: string;
+  nVendorStyleNo?: string;
+  nSalePrice?: string;
+  nPurchasePrice?: string;
+  nOnSale?: string;
 }
 
 export interface productTransformed {
   id?: string;
   name?: string;
   description?: string;
-  media?: string[];
+  media?: mediaDto[];
   categoryId?: string;
   shopId?: string;
-  price?: string;
+  price?: priceInterface;
+  styleNumber?: string;
 }
-
+export interface priceInterface {
+  purchasePrice?: string | number;
+  salePrice?: string | number;
+  onSale?: string | number;
+}
 export interface colorSelectDto {
   id: number;
   TBColorSelect_ID: string;
@@ -35,4 +44,11 @@ export interface colorSelectDto {
   TBColor_ID: string;
   ImageLink: string;
   BrandActive: string;
+}
+
+export interface mediaDto {
+  tiny?: string;
+  small?: string;
+  medium?: string;
+  large?: string;
 }

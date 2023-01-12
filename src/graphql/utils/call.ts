@@ -1,5 +1,5 @@
 import { Logger } from '@nestjs/common';
-import { FEDERATION_ENDPOINT, SALEOR_ENDPOINT } from 'common.env';
+import { FEDERATION_ENDPOINT, SALEOR_ENDPOINT } from '../../../common.env';
 import { GraphQLClient } from 'graphql-request';
 type GraphqlCall = (Query: string, retries?: number) => Promise<object>;
 /**
@@ -14,21 +14,26 @@ export const graphqlCall: GraphqlCall = async (
   Query: string,
   retries = 5,
 ): Promise<any> => {
-  let data = {};
-  const graphQLClient = new GraphQLClient(FEDERATION_ENDPOINT);
   try {
+    let data = {};
+    const graphQLClient = new GraphQLClient(FEDERATION_ENDPOINT, {
+      headers: {
+        authorization: `Bearer ${process.env.AUTHORIZATION_HEADER}`,
+      },
+    });
     await graphQLClient.request(Query).then((res) => {
       data = res;
     });
+    return data;
   } catch (error) {
+    console.log(error);
     if (retries === 0) {
       Logger.error(`retries call finished`);
       throw error;
     }
     Logger.warn('retrying', Query.split('(')[0]);
-    await graphqlCall(Query, retries - 1);
+    return await graphqlCall(Query, retries - 1);
   }
-  return data;
 };
 
 /**
