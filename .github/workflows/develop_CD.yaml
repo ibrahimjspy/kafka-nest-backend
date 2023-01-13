@@ -27,9 +27,8 @@ jobs:
         run: |
           echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
           ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
-          sudo su -
           cd /home/ec2-user/sharove_data_capture
           git pull origin development
-          sudo docker-compose build
-          sudo docker-compose up -d
+          docker-compose build
+          docker-compose up -d
           '
