@@ -5,19 +5,34 @@ export const updateShopMutation = (
   shopData: shopTransformed,
   shopId: string,
 ) => {
-  const { description, storePolicy, madeIn, returnPolicy } = shopData;
+  const {
+    description,
+    storePolicy,
+    madeIn,
+    returnPolicy,
+    minOrder,
+    name,
+    phoneNumber,
+    vendorMainImage,
+    banners,
+  } = shopData;
   return gql`
     mutation {
       updateMarketplaceShop(
         id: "${shopId}"
         input: {
-          # managerType: "2"
+          name:"${name}"
           madeIn: "${madeIn}"
-          minOrder: 200
-          about: "shop about"
+          minOrder: ${minOrder}
+          about: "${description}"
           returnPolicy: "${returnPolicy}"
           storePolicy: "${storePolicy}"
           description: "${description}"
+          fields: [
+            { name: "banner", newValues: ${JSON.stringify(banners)} }
+            { name: "vendorMainImage", newValues: ["${vendorMainImage}"] }
+            { name: "phoneNumber", newValues: ["${phoneNumber}"] }
+            ]
         }
       ) {
         id

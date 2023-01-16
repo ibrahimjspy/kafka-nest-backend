@@ -31,16 +31,18 @@ export interface shopDto {
 export interface shopTransformed {
   id?: string;
   name?: string;
+  phoneNumber?: string;
   description?: string;
   seo_description?: string;
   seo_title?: string;
   email?: string;
   url?: string;
   minOrder?: string;
+  banners?: string[];
+  vendorMainImage?: string;
   storePolicy?: string;
   madeIn?: string;
   returnPolicy?: string;
-  phoneNumber?: string;
 }
 
 export interface shippingMethodDto {
