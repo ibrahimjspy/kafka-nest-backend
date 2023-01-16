@@ -46,7 +46,7 @@ export class ShopTransformerService {
     shopObject['name'] = `${VDName?.toString()}`;
     shopObject['phoneNumber'] = this.shopPhoneNumberTransformer(VDPhone);
     shopObject['description'] = OSDescription
-      ? OSDescription.replace(/(\r\n|\n|\r)/gm, '')
+      ? this.textTransformer(OSDescription)
       : '';
     shopObject['seo_description'] = SEODescription || '';
     shopObject['seo_title'] = SEOTitle || '';
@@ -57,15 +57,11 @@ export class ShopTransformerService {
     shopObject['vendorMainImage'] =
       this.shopImageTransformer(Brand_Rep_Image) || '';
     shopObject['storePolicy'] = VDStorePolicy
-      ? VDStorePolicy?.toString()
-          .replace(/[\r\n]/gm, '')
-          .replace(/"/g, "'")
+      ? this.textTransformer(VDStorePolicy)
       : '';
     shopObject['madeIn'] = VDMadeIn || '';
     shopObject['returnPolicy'] = VDReturnPolicy
-      ? VDReturnPolicy.toString()
-          .replace(/[\r\n]/gm, '')
-          .replace(/"/g, "'")
+      ? this.textTransformer(VDReturnPolicy)
       : '';
     return shopObject;
   }
@@ -83,6 +79,10 @@ export class ShopTransformerService {
       return url;
     }
     return `${name.toLowerCase()}.com`;
+  }
+
+  public textTransformer(@Param() description: string) {
+    return description.replace(/(\r\n|\n|\r)/gm, '').replace(/"/g, "'");
   }
 
   public shopPhoneNumberTransformer(@Param() phoneNumber) {
