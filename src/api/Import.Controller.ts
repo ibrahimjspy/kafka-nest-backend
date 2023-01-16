@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Body, Controller, Get, Post, Res } from '@nestjs/common';
+import { Body, Controller, Get, Logger, Post, Res } from '@nestjs/common';
 import { AppService } from 'src/app.service';
 import { prepareFailedResponse } from 'src/app.utils';
 import {
@@ -7,14 +7,18 @@ import {
   fetchBulkVendors,
   fetchBulkCustomers,
   fetchBulkSubCategoriesData,
+  fetchBulkShippingMethods,
+  fetchBulkMasterCategoriesData,
 } from 'src/database/mssql/bulk-import/methods';
 import { connect } from 'mssql';
 import { config } from 'mssql-config';
 import client from 'pg-config';
 import { createProductDTO } from './import.dtos';
+import { ApiTags } from '@nestjs/swagger';
 
 // endpoints to trigger data bulk imports
 @Controller()
+@ApiTags('bulk-import')
 export class BulkImportController {
   constructor(private readonly appService: AppService) {}
   @Get()
@@ -35,7 +39,7 @@ export class BulkImportController {
   @Get('api/v1/bulk/products')
   async createProducts() {
     const data: any = await fetchBulkProductsData();
-    await this.appService.productBulkCreate(data.slice(3000, 3001));
+    await this.appService.productBulkCreate(data.slice(400, 401));
     return `${data.length} products created`;
   }
 
@@ -50,13 +54,13 @@ export class BulkImportController {
   @Get('api/v1/bulk/shops')
   async createShops() {
     const data: any = await fetchBulkVendors();
-    await this.appService.shopBulkCreate(data.slice(1, 40));
+    await this.appService.shopBulkCreate(data);
     return `${data.length} shops created`;
   }
 
   @Get('api/v1/bulk/shipping')
   async createShipping() {
-    const data: any = await fetchBulkSubCategoriesData();
+    const data: any = await fetchBulkShippingMethods();
     await this.appService.shippingMethodBulkCreate(data);
     return `${data.length} shops created`;
   }
@@ -64,7 +68,7 @@ export class BulkImportController {
   @Get('api/v1/bulk/customers')
   async createCustomers() {
     const data: any = await fetchBulkCustomers();
-    await this.appService.handleCustomerCDC(data[0]);
+    // await this.appService.handleCustomerCDC(data[0]);
     return `${data.length} customers created`;
   }
 }

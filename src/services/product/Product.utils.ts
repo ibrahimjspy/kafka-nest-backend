@@ -45,22 +45,26 @@ export const mediaUrlMapping = (
  *  @result [[color1Variant],[color2Variant],[color3Variant]]
  */
 export const getShoeBundlesBySizes = (shoeVariants, bundleSizes, length) => {
-  const matchingVariants = [];
-  const bundles = [];
-  let i;
-  Object.keys(bundleSizes).forEach(function (key) {
-    matchingVariants.push(shoeVariants[`${key}`]);
-  });
-  for (i = 0; i < length; i++) {
-    bundles.push([]);
-  }
-  if (matchingVariants.length) {
-    matchingVariants.map((bundle) => {
-      bundle.map((variant, key) => {
-        bundles[key].push(variant);
-      });
+  try {
+    const matchingVariants = [];
+    const bundles = [];
+    let i;
+    Object.keys(bundleSizes).forEach(function (key) {
+      matchingVariants.push(shoeVariants[`${key}`]);
     });
+    for (i = 0; i < length; i++) {
+      bundles.push([]);
+    }
+    matchingVariants &&
+      matchingVariants.map((bundle) => {
+        bundle.map((variant, key) => {
+          bundles[key].push(variant);
+        });
+      });
     return bundles;
+  } catch (error) {
+    console.log(error);
+    console.log({ shoeVariants, bundleSizes, length }, '---error---');
   }
 };
 

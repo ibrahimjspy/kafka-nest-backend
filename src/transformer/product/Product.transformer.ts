@@ -6,10 +6,10 @@ import {
   productTransformed,
 } from 'src/transformer/types/product';
 import {
-  fetchMasterCategoryId,
-  fetchSubCategoryId,
-} from 'src/database/postgres/handlers/category';
-import { fetchShopId } from 'src/database/postgres/handlers/shop';
+  getMasterCategoryMapping,
+  getSubCategoryMapping,
+} from 'src/mapping/methods/category';
+import { getShopMapping } from 'src/mapping/methods/shop';
 /**
  *  Injectable class handling product transformation
  *  @Injectable in app scope or in kafka connection to reach kafka messages
@@ -24,7 +24,6 @@ export class ProductTransformerService {
    * @params object,  Composite object containing cdc changeData, productView data
    */
   public async productGeneralTransformerMethod(@Param() object: productDto) {
-    // console.dir(object, { depth: null });
     const productObject: productTransformed = {};
     const {
       TBItem_ID,
@@ -38,7 +37,6 @@ export class ProductTransformerService {
       nOnSale,
       nPurchasePrice,
     } = object;
-    // console.log(object);
     productObject['id'] = TBItem_ID.toString();
     productObject['styleNumber'] = nVendorStyleNo.toString();
     productObject['name'] = nStyleName.toString();
@@ -109,7 +107,7 @@ export class ProductTransformerService {
     const DEFAULT_CATEGORY_ID =
       process.env.DEFAULT_CATEGORY_ID || 'Q2F0ZWdvcnk6MQ==';
 
-    const destinationSubCategoryId: string = await fetchSubCategoryId(
+    const destinationSubCategoryId: string = await getSubCategoryMapping(
       sourceSubCategoryId,
       sourceMasterCategoryId,
     );
@@ -117,7 +115,7 @@ export class ProductTransformerService {
       return destinationSubCategoryId;
     }
 
-    const destinationMasterCategoryId: string = await fetchMasterCategoryId(
+    const destinationMasterCategoryId: string = await getMasterCategoryMapping(
       sourceMasterCategoryId,
     );
     if (destinationMasterCategoryId) {
@@ -133,7 +131,7 @@ export class ProductTransformerService {
   public async shopIdTransformer(vendorId: string) {
     const DEFAULT_SHOP_ID = process.env.DEFAULT_SHOP_ID || '16';
 
-    const destinationShopId = await fetchShopId(vendorId);
+    const destinationShopId = await getShopMapping(vendorId);
     if (destinationShopId) {
       return destinationShopId;
     }

@@ -4,7 +4,6 @@ import {
   createBulkVariantsHandler,
   updateProductVariantPriceHandler,
 } from 'src/graphql/handlers/productVariant';
-import { fetchProductId } from 'src/database/postgres/handlers/product';
 import { TransformerService } from 'src/transformer/Transformer.service';
 import { productVariantInterface } from 'src/database/mssql/types/product';
 import {
@@ -25,6 +24,7 @@ import { addSkuToProductVariants } from './Product.Variant.utils';
 import { createSkuHandler } from 'src/graphql/handlers/sku';
 import { getProductDetailsFromDb } from 'src/database/mssql/product-view/getProductViewById';
 import { bundlesCreateInterface } from './Product.Variant.types';
+import { getProductMapping } from 'src/mapping/methods/product';
 
 /**
  *  Injectable class handling productVariant and its relating tables CDC
@@ -44,7 +44,7 @@ export class ProductVariantService {
     // fetching product variant additional information
     const productVariantData: productVariantInterface =
       await getProductDetailsFromDb(sourceId);
-    const productId = await fetchProductId(sourceId);
+    const productId = await getProductMapping(sourceId);
 
     // creating product variant against color
     return await this.productVariantAssign(productVariantData, productId);
@@ -88,12 +88,12 @@ export class ProductVariantService {
         );
         productVariants = [...productVariants, ...variants];
       });
-      if (productVariants.length > 0) {
-        // ADD SKU FOR PRODUCT VARIANTS
-        addSkuToProductVariants(
-          await createSkuHandler(productVariants, style_name),
-          productVariants,
-        );
+      // ADD SKU FOR PRODUCT VARIANTS
+      addSkuToProductVariants(
+        await createSkuHandler(productVariants, style_name),
+        productVariants,
+      );
+      if (productVariants.length) {
         // CREATE VARIANTS
         const variantIds = await createBulkVariantsHandler(
           productVariants,
@@ -182,45 +182,47 @@ export class ProductVariantService {
       );
       productVariants = [...productVariants, ...variants];
     });
-    if (productVariants.length > 0) {
-      // ADD SKU FOR PRODUCT VARIANTS
-      addSkuToProductVariants(
-        await createSkuHandler(productVariants, style_name),
-        productVariants,
-      );
+    // ADD SKU FOR PRODUCT VARIANTS
+    addSkuToProductVariants(
+      await createSkuHandler(productVariants, style_name),
+      productVariants,
+    );
+    if (productVariants.length) {
       // CREATE VARIANTS
       const variantIds = await createBulkVariantsHandler(
         productVariants,
         productId,
       );
-      // CREATE SALES IF PRODUCT IS ON SALE
-      if (price.onSale == 'Y') {
-        createSalesHandler(
-          style_name,
-          Number(price.purchasePrice) - Number(price.salePrice),
+      if (variantIds) {
+        // CREATE SALES IF PRODUCT IS ON SALE
+        if (price.onSale == 'Y') {
+          createSalesHandler(
+            style_name,
+            Number(price.purchasePrice) - Number(price.salePrice),
+            variantIds,
+          );
+        }
+        // MAP VARIANT IDS ACCORDING TO SIZES
+        shoeVariantIdMapping = getShoeVariantsMapping(
+          shoe_sizes,
           variantIds,
-        );
-      }
-      // MAP VARIANT IDS ACCORDING TO SIZES
-      shoeVariantIdMapping = getShoeVariantsMapping(
-        shoe_sizes,
-        variantIds,
-        color_list,
-      );
-      // CREATE BUNDLES
-      shoe_bundles.map(async (bundle, key) => {
-        await this.createShoeBundles({
-          shoeVariantIdMapping,
-          bundle,
-          shopId,
           color_list,
-          bundleName: shoe_bundle_name[key],
-          productId,
+        );
+        // CREATE BUNDLES
+        shoe_bundles.map(async (bundle, key) => {
+          await this.createShoeBundles({
+            shoeVariantIdMapping,
+            bundle,
+            shopId,
+            color_list,
+            bundleName: shoe_bundle_name[key],
+            productId,
+          });
         });
-      });
 
-      // ADD PRODUCT VARIANTS TO SHOP
-      addProductVariantToShopHandler(variantIds, shopId);
+        // ADD PRODUCT VARIANTS TO SHOP
+        addProductVariantToShopHandler(variantIds, shopId);
+      }
     }
   }
 
@@ -239,17 +241,19 @@ export class ProductVariantService {
       bundle,
       color_list.length,
     );
-    const createBundles = await Promise.all(
-      bundleVariantIds.map(async (variants) => {
-        await createBundleHandler(
-          variants,
-          quantities,
-          shopId,
-          productId,
-          bundleName['ShoeSizeName'],
-        );
-      }),
-    );
+    const createBundles =
+      bundleVariantIds &&
+      (await Promise.all(
+        bundleVariantIds?.map(async (variants) => {
+          await createBundleHandler(
+            variants,
+            quantities,
+            shopId,
+            productId,
+            bundleName['ShoeSizeName'],
+          );
+        }),
+      ));
     return createBundles;
   }
 }

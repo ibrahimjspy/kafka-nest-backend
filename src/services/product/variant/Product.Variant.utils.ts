@@ -1,3 +1,7 @@
+import { Logger } from '@nestjs/common';
+import { deleteProductHandler } from 'src/graphql/handlers/product';
+import { removeProductMapping } from 'src/mapping/methods/product';
+
 /**
  * this function returns a string that could be added to graphql mutation which fetches sku's for product variants
  * @param product variants transformed using product transformer space
@@ -29,4 +33,26 @@ export const addSkuToProductVariants = (skuArray, productVariantData) => {
   productVariantData.map((variant, key) => {
     variant['sku'] = skuArray[key]['sku'];
   });
+};
+
+/**
+ *  @description this validator takes product variants array and product id as input , and checks whether product variant array is valid
+ *  and can be used for bundles creation or adding product variants to shop
+ *  @param productVariants array ---- []string
+ *  @param productId in base64 form ----- string
+ *  @returns productVariants if they are valid or falsy promise which reject upcoming promises
+ */
+export const validateProductVariants = async (
+  productVariants: string[],
+  productId: string,
+) => {
+  if (productVariants && productVariants.length) {
+    return productVariants;
+  }
+  Logger.warn(`Rolling back product flow for productId = '${productId}'`);
+  await Promise.all([
+    deleteProductHandler(productId),
+    removeProductMapping(productId),
+  ]);
+  return null;
 };

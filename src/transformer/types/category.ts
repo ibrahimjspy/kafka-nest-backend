@@ -17,6 +17,7 @@ export interface masterCategoryTransformed {
   url?: string;
   seo_description?: string;
   seo_title?: string;
+  groupId?: string;
 }
 
 export interface subCategoryDto {

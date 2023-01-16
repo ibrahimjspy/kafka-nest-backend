@@ -6,3 +6,6 @@ export const FEDERATION_ENDPOINT = process.env.DESTINATION_FEDERATION_ENDPOINT;
 export const KAFKA_BROKER_ENDPOINT = process.env.KAFKA_BROKER;
 export const ID_MAPPING_URL = process.env.MAPPING_URL;
 export const ID_MAPPING_TOKEN = process.env.MAPPING_TOKEN;
+export const CATEGORY_ENGINE = process.env.CATEGORY_ENGINE;
+export const PRODUCT_ENGINE = process.env.PRODUCT_ENGINE;
+export const SHOP_ENGINE = process.env.SHOP_ENGINE;
