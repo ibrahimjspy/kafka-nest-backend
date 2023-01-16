@@ -1,6 +1,5 @@
 import { Injectable, Param } from '@nestjs/common';
 import { groupIds } from '../../../mock/category/groupIds';
-import { fetchMasterCategoryId } from 'src/database/postgres/handlers/category';
 import {
   masterCategoryDto,
   masterCategoryTransformed,
@@ -8,6 +7,7 @@ import {
   subCategoryTransformed,
 } from 'src/transformer/types/category';
 import { ProductTransformerService } from '../product/Product.transformer';
+import { getMasterCategoryMapping } from 'src/mapping/methods/category';
 
 /**
  *  Injectable class handling category transform ( sub and master)
@@ -90,7 +90,7 @@ export class CategoryTransformerService {
     const DEFAULT_MASTER_CATEGORY_ID =
       process.env.DEFAULT_CATEGORY_ID || 'Q2F0ZWdvcnk6MTM=';
 
-    const destinationCategoryId = await fetchMasterCategoryId(category_id);
+    const destinationCategoryId = await getMasterCategoryMapping(category_id);
     if (destinationCategoryId) {
       return destinationCategoryId;
     }

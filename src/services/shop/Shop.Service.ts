@@ -4,13 +4,6 @@ import {
   deleteShopHandler,
   updateShopHandler,
 } from 'src/graphql/handlers/shop';
-import { deleteUserHandler } from 'src/graphql/handlers/user';
-import {
-  deleteShopId,
-  fetchShopId,
-  insertShopId,
-} from 'src/database/postgres/handlers/shop';
-import { deleteUserId, fetchUserId } from 'src/database/postgres/handlers/user';
 import { TransformerService } from 'src/transformer/Transformer.service';
 import { shopDto, shopTransformed } from 'src/transformer/types/shop';
 import { fetchBulkVendorShipping } from 'src/database/mssql/bulk-import/methods';
@@ -18,6 +11,11 @@ import { fetchShippingMethodId } from 'src/database/postgres/handlers/shippingMe
 import { addShippingMethodHandler } from 'src/graphql/handlers/shippingMethod';
 import { shippingMethodValidation } from './Shop.utils';
 import { UserService } from './user/User.Service';
+import {
+  addShopMapping,
+  getShopMapping,
+  removeShopMapping,
+} from 'src/mapping/methods/shop';
 
 /**
  *  Injectable class handling brand and its relating tables CDC
@@ -31,50 +29,43 @@ export class ShopService {
     private readonly userService: UserService,
   ) {}
 
-  public async handleShopCDC(@Param() kafkaMessage: shopDto): Promise<object> {
-    const shopExistsInDestination: string = await fetchShopId(
-      kafkaMessage.TBVendor_ID,
-    );
+  public async handleShopCDC(@Param() kafkaMessage: shopDto): Promise<any> {
     const shopData: shopTransformed =
       await this.transformerService.shopTransformer(kafkaMessage);
 
-    if (shopExistsInDestination) {
+    const mappingExists: string = await getShopMapping(
+      kafkaMessage.TBVendor_ID,
+    );
+    if (mappingExists) {
       // updates shop and user information
-      return this.updateShop(shopData, shopExistsInDestination);
+      return await this.updateShop(shopData, mappingExists);
     }
     // creates new users and shop
-    return this.createShop(shopData);
+    return await this.createShop(shopData);
   }
 
   public async handleShopCDCDelete(
     @Param() kafkaMessage: shopDto,
   ): Promise<object> {
-    const shopExistsInDestination: string = await fetchShopId(
+    const shopExistsInDestination: string = await getShopMapping(
       kafkaMessage.TBVendor_ID,
     );
     // deactivates shop if it exists
     if (shopExistsInDestination) {
       await deleteShopHandler(shopExistsInDestination);
-      await deleteShopId(kafkaMessage.TBVendor_ID);
+      await removeShopMapping(shopExistsInDestination);
     }
-    // deletes user if it exists
-    const userExistsInDestination = await fetchUserId(kafkaMessage.TBVendor_ID);
-    if (userExistsInDestination) {
-      await deleteUserHandler(userExistsInDestination);
-      await deleteUserId(kafkaMessage.TBVendor_ID);
-    }
-
     return;
   }
 
   private async createShop(
     @Param() shopData: shopTransformed,
   ): Promise<object> {
-    // creates new shop and map its id in database
+    // creates new shop and map its id in mapping service
     const shop = await createShopHandler(shopData);
-    const shopIdMapping = await insertShopId(shopData.id, shop);
+    shop && (await addShopMapping(shopData.id, shop));
 
-    return { shop, shopIdMapping };
+    return { shop };
   }
 
   private async updateShop(

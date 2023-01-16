@@ -30,7 +30,6 @@ export class ProductVariantTransformerService {
   public async productViewTransformer(
     @Param() object: productDatabaseViewInterface,
   ) {
-    console.log(object);
     let productVariantData: productVariantInterface = {};
     const {
       style_name,

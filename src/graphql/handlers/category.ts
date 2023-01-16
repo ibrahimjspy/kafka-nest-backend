@@ -18,30 +18,35 @@ import {
 
 export const createMasterCategoryHandler = async (
   categoryData: masterCategoryTransformed,
-): Promise<object> => {
+): Promise<string> => {
   try {
     const createCategoryMaster = await graphqlCall(
       createCategoryMasterMutation(categoryData),
     );
     Logger.verbose('Category created', createCategoryMaster);
-    return { ...createCategoryMaster };
+    const categoryId = createCategoryMaster['categoryCreate']?.category?.id;
+    return categoryId;
   } catch (err) {
-    return graphqlExceptionHandler(err);
+    graphqlExceptionHandler(err);
+    return;
   }
 };
 
 export const createSubCategoryHandler = async (
   categoryData: subCategoryTransformed,
   masterId: string,
-): Promise<object> => {
+): Promise<string> => {
   try {
     const createCategorySub: object = await graphqlCall(
       createCategorySubMutation(categoryData, masterId),
     );
     Logger.verbose('Category created', createCategorySub);
-    return { ...createCategorySub };
+    const categoryId = createCategorySub['categoryCreate']?.category?.id;
+
+    return categoryId;
   } catch (err) {
-    return graphqlExceptionHandler(err);
+    graphqlExceptionHandler(err);
+    return;
   }
 };
 

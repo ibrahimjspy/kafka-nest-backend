@@ -7,8 +7,9 @@ import {
 } from '../mutations/productVariant/create';
 import { productVariantQueryTransformer } from '../utils/transformers';
 import { deleteProductHandler } from './product';
-import { deleteProductIdByDestinationId } from 'src/database/postgres/handlers/product';
 import { updateProductVariantPricingMutation } from '../mutations/productVariant/update';
+import { validateProductVariants } from 'src/services/product/variant/Product.Variant.utils';
+import { removeProductMapping } from 'src/mapping/methods/product';
 
 //  <-->  Create  <-->
 export const createBulkVariantsHandler = async (
@@ -26,12 +27,11 @@ export const createBulkVariantsHandler = async (
     createProductVariants.productVariantBulkCreate.productVariants.map(
       (variant) => [variantIds.push(variant.id)],
     );
-
-    return variantIds;
+    return await validateProductVariants(variantIds, productId);
   } catch (err) {
     Logger.warn('product variant call failed', graphqlExceptionHandler(err));
     await deleteProductHandler(productId); // rollback <api>
-    await deleteProductIdByDestinationId(productId); // rollback <db>
+    await removeProductMapping(productId); // rollback <mapping>
     return;
   }
 };
