@@ -22,10 +22,10 @@ export const mediaUrlMapping = (
   sourceMedia: mediaDto[],
   destinationMedia,
 ): mediaDto[] => {
-  const transformedDestinationMedia = destinationMedia.map((media) => {
+  const transformedDestinationMedia = (destinationMedia || []).map((media) => {
     return media.url.split('media/')[1];
   });
-  const transformedSourceMedia = sourceMedia.map((image) => {
+  const transformedSourceMedia = (sourceMedia || []).map((image) => {
     return image.large.split('Pictures/')[0];
   });
   return transformedSourceMedia
@@ -56,8 +56,8 @@ export const getShoeBundlesBySizes = (shoeVariants, bundleSizes, length) => {
       bundles.push([]);
     }
     matchingVariants &&
-      matchingVariants.map((bundle) => {
-        bundle.map((variant, key) => {
+      (matchingVariants || []).map((bundle) => {
+        (bundle || []).map((variant, key) => {
           bundles[key].push(variant);
         });
       });

@@ -14,7 +14,7 @@ export const createShopHandler = async (shopData: shopTransformed) => {
       createShopMutation(shopData, 'test'),
     );
     Logger.verbose('Marketplace shop created', createShop);
-    const shopId: string = createShop['createShop'].createMarketplaceShop.id;
+    const shopId: string = createShop['createShop']?.createMarketplaceShop?.id;
     return shopId;
   } catch (err) {
     graphqlExceptionHandler(err);

@@ -173,7 +173,7 @@ export class ProductVariantService {
     let shoeVariantIdMapping = {}; // VARIANT ID MAPPED AGAINST SHOE SIZE
     sizes = getShoeSizes(shoe_sizes);
     // TRANSFORM SIZES AND COLORS
-    await sizes.map(async (size) => {
+    await (sizes || []).map(async (size) => {
       const variants = await this.transformerClass.shoeVariantTransformer(
         size,
         color_list,
@@ -209,7 +209,7 @@ export class ProductVariantService {
           color_list,
         );
         // CREATE BUNDLES
-        shoe_bundles.map(async (bundle, key) => {
+        (shoe_bundles || []).map(async (bundle, key) => {
           await this.createShoeBundles({
             shoeVariantIdMapping,
             bundle,

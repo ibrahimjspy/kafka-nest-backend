@@ -3,9 +3,9 @@
  */
 export const getVariantIdsByColor = (variantInformation, colorList) => {
   const variantData = {};
-  colorList.map((color) => {
+  (colorList || []).map((color) => {
     variantData[color] = [];
-    variantInformation.map((variant) => {
+    (variantInformation || []).map((variant) => {
       if (variant.attributes[0].values[0].name == color)
         variantData[color].push(variant.id);
     });
@@ -19,7 +19,7 @@ export const getVariantIdsByColor = (variantInformation, colorList) => {
 export const getVariantMediaById = (variantIds, mediaIds) => {
   const variantMedia = [];
   const variantColors = Object.keys(variantIds);
-  variantColors?.map((color) => {
+  (variantColors || []).map((color) => {
     variantIds[`${color}`].map((id) => {
       variantMedia.push({
         variantId: atob(id).split('ProductVariant:')[1],
