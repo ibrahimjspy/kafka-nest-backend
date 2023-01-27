@@ -9,3 +9,5 @@ export const ID_MAPPING_TOKEN = process.env.MAPPING_TOKEN;
 export const CATEGORY_ENGINE = process.env.CATEGORY_ENGINE;
 export const PRODUCT_ENGINE = process.env.PRODUCT_ENGINE;
 export const SHOP_ENGINE = process.env.SHOP_ENGINE;
+export const COST_ATTRIBUTE_ID =
+  process.env.COST_ATTRIBUTE_ID || 'QXR0cmlidXRlOjU=';

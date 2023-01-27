@@ -63,3 +63,18 @@ export const productChannelListingMutation = (productId) => {
     }
   `;
 };
+
+export const addProductToShopMutation = (
+  productIds: string[],
+  shopId: string,
+) => {
+  return gql`
+    mutation {
+      addProductToShop(Input: { productIds: ${JSON.stringify(
+        productIds,
+      )}, shopId: "${shopId}" }) {
+        id
+      }
+    }
+  `;
+};

@@ -4,9 +4,13 @@
  * @params -- element you want value for -- type - string
  * @params -- elastic search response array you want that element value from
  */
-export const getIdByElement = (element: string, response: object[]) => {
-  if (response.length) {
-    return response[0][element]['raw'] || null;
+export const getIdByElement = (element: string, response) => {
+  try {
+    if (response.length) {
+      return response[0][`${element}`]?.raw || null;
+    }
+    return null;
+  } catch (error) {
+    return null;
   }
-  return null;
 };

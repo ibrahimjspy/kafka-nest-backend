@@ -7,7 +7,10 @@ import {
 } from '../mutations/productVariant/create';
 import { productVariantQueryTransformer } from '../utils/transformers';
 import { deleteProductHandler } from './product';
-import { updateProductVariantPricingMutation } from '../mutations/productVariant/update';
+import {
+  updateProductVariantCostAttributeMutation,
+  updateProductVariantPricingMutation,
+} from '../mutations/productVariant/update';
 import { validateProductVariants } from 'src/services/product/variant/Product.Variant.utils';
 import { removeProductMapping } from 'src/mapping/methods/product';
 
@@ -59,20 +62,42 @@ export const addProductVariantToShopHandler = async (
 
 export const updateProductVariantPriceHandler = async (
   productVariantId,
-  productVariantPrice,
+  productVariantResalePrice,
 ) => {
   try {
     if (productVariantId) {
       await graphqlCall(
         updateProductVariantPricingMutation(
           productVariantId,
-          productVariantPrice,
+          productVariantResalePrice,
         ),
       );
     }
   } catch (err) {
     Logger.error(
       'product variant pricing update call failed',
+      graphqlExceptionHandler(err),
+    );
+    return;
+  }
+};
+
+export const updateProductVariantAttributeCostHandler = async (
+  productVariantId,
+  productVariantCostPrice,
+) => {
+  try {
+    if (productVariantId) {
+      await graphqlCall(
+        updateProductVariantCostAttributeMutation(
+          productVariantId,
+          productVariantCostPrice,
+        ),
+      );
+    }
+  } catch (err) {
+    Logger.error(
+      'product variant pricing attribute update call failed',
       graphqlExceptionHandler(err),
     );
     return;

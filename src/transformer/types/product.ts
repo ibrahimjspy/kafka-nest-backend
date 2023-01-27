@@ -36,6 +36,7 @@ export interface priceInterface {
   purchasePrice?: string | number;
   salePrice?: string | number;
   onSale?: string | number;
+  retailPrice?: string | number;
 }
 export interface colorSelectDto {
   id: number;
