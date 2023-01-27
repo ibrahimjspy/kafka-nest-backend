@@ -10,6 +10,7 @@ import {
   getSubCategoryMapping,
 } from 'src/mapping/methods/category';
 import { getShopMapping } from 'src/mapping/methods/shop';
+import { DEFAULT_CATEGORY_ID, DEFAULT_SHOP_ID } from 'common.env';
 /**
  *  Injectable class handling product transformation
  *  @Injectable in app scope or in kafka connection to reach kafka messages
@@ -50,9 +51,11 @@ export class ProductTransformerService {
         )
       : await this.categoryIdTransformer(
           TBStyleNo_OS_Category_Master_ID,
-          100000,
+          '100000',
         );
-    productObject['shopId'] = await this.shopIdTransformer(TBVendor_ID);
+    productObject['shopId'] = await this.shopIdTransformer(
+      TBVendor_ID ? TBVendor_ID : TBVendor_ID[0],
+    );
     productObject['price'] = this.priceTransformer(
       nPurchasePrice,
       nSalePrice,
@@ -104,9 +107,6 @@ export class ProductTransformerService {
     sourceMasterCategoryId: string,
     sourceSubCategoryId,
   ) {
-    const DEFAULT_CATEGORY_ID =
-      process.env.DEFAULT_CATEGORY_ID || 'Q2F0ZWdvcnk6MQ==';
-
     const destinationSubCategoryId: string = await getSubCategoryMapping(
       sourceSubCategoryId,
       sourceMasterCategoryId,
@@ -114,7 +114,6 @@ export class ProductTransformerService {
     if (destinationSubCategoryId) {
       return destinationSubCategoryId;
     }
-
     const destinationMasterCategoryId: string = await getMasterCategoryMapping(
       sourceMasterCategoryId,
     );
@@ -129,8 +128,6 @@ export class ProductTransformerService {
    * @params TBVendor_ID as input
    */
   public async shopIdTransformer(vendorId: string) {
-    const DEFAULT_SHOP_ID = process.env.DEFAULT_SHOP_ID || '16';
-
     const destinationShopId = await getShopMapping(vendorId);
     if (destinationShopId) {
       return destinationShopId;
@@ -205,6 +202,15 @@ export class ProductTransformerService {
       purchasePrice: purchasePrice,
       salePrice: salePrice,
       onSale: onSale,
+      retailPrice: this.retailPriceTransformer(purchasePrice),
     };
+  }
+
+  /**
+   * This function returns retail price based on  a constant rule
+   */
+  public retailPriceTransformer(purchasePrice): string {
+    const RULE_ENGINE = 1.6;
+    return `${Number(purchasePrice) * RULE_ENGINE}`;
   }
 }

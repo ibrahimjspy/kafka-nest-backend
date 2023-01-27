@@ -16,6 +16,7 @@ import {
   getShopMapping,
   removeShopMapping,
 } from 'src/mapping/methods/shop';
+import { DEFAULT_SHIPPING_METHOD } from 'common.env';
 
 /**
  *  Injectable class handling brand and its relating tables CDC
@@ -79,8 +80,6 @@ export class ShopService {
 
   private async addShippingMethodToShop(sourceId: string, destinationId) {
     const shippingMethodIds = [];
-    const DEFAULT_SHIPPING_METHOD =
-      process.env.DEFAULT_SHIPPING_METHOD || 'U2hpcHBpbmdNZXRob2RUeXBlOjE=';
     const sourceShippingDetails: any = await fetchBulkVendorShipping(sourceId);
 
     if (sourceShippingDetails) {

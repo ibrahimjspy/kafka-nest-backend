@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import {
+  addProductToShopHandler,
   createProductHandler,
   deleteProductHandler,
   updateProductHandler,
@@ -77,6 +78,7 @@ export class ProductService {
       await addProductMapping(productData.id, productId, productData.shopId);
       // creates product variants and its media
       await Promise.all([
+        await addProductToShopHandler(productId, productData.shopId),
         await this.productMediaCreate(productId, productData.media),
         this.productVariantsCreate(productData, productId),
       ]);

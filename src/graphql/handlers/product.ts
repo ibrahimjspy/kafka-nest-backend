@@ -6,6 +6,7 @@ import {
 import { productTransformed } from 'src/transformer/types/product';
 import { graphqlCall, graphqlExceptionHandler } from 'src/graphql/utils/call';
 import {
+  addProductToShopMutation,
   createProductMutation,
   productChannelListingMutation,
 } from '../mutations/product/create';
@@ -44,6 +45,22 @@ export const productChannelListingHandler = async (productId) => {
     return;
   }
 };
+
+export const addProductToShopHandler = async (
+  productId: string,
+  shopId: string,
+) => {
+  try {
+    return await graphqlCall(addProductToShopMutation([productId], shopId));
+  } catch (err) {
+    Logger.error(
+      'product add to shop call failed',
+      graphqlExceptionHandler(err),
+    );
+    return;
+  }
+};
+
 //  <-->  Read  <-->
 
 export const getProductDetailsHandler = async (productId: string) => {

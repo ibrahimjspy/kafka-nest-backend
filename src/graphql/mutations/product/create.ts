@@ -1,12 +1,13 @@
+import {
+  DEFAULT_CHANNEL_ID,
+  DEFAULT_PRODUCT_TYPE,
+  STYLE_ATTRIBUTE_ID,
+} from 'common.env';
 import { gql } from 'graphql-request';
 import { productTransformed } from 'src/transformer/types/product';
 
 export const createProductMutation = (productData: productTransformed) => {
   // parsing product data;
-  const DEFAULT_PRODUCT_TYPE =
-    process.env.DEFAULT_PRODUCT_TYPE || 'UHJvZHVjdFR5cGU6Mg==';
-  const STYLE_ATTRIBUTE_ID =
-    process.env.STYLE_ATTRIBUTE_ID || 'QXR0cmlidXRlOjU=';
   const { name, categoryId, description, styleNumber } = productData;
   return gql`
     mutation {
@@ -38,14 +39,13 @@ export const createProductMutation = (productData: productTransformed) => {
 };
 
 export const productChannelListingMutation = (productId) => {
-  const DEFAULT_CHANNEL = 'Q2hhbm5lbDox';
   return gql`
     mutation {
       productChannelListingUpdate(
         id: "${productId}"
         input: {
           updateChannels: {
-            channelId: "${DEFAULT_CHANNEL}"
+            channelId: "${DEFAULT_CHANNEL_ID}"
             visibleInListings: true
             isAvailableForPurchase: true
             isPublished: true
@@ -59,6 +59,21 @@ export const productChannelListingMutation = (productId) => {
         errors {
           message
         }
+      }
+    }
+  `;
+};
+
+export const addProductToShopMutation = (
+  productIds: string[],
+  shopId: string,
+) => {
+  return gql`
+    mutation {
+      addProductToShop(input: { productIds: ${JSON.stringify(
+        productIds,
+      )}, shopId: "${shopId}" }) {
+        id
       }
     }
   `;
