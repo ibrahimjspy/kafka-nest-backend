@@ -1,7 +1,11 @@
 import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { Transport, MicroserviceOptions } from '@nestjs/microservices';
-import { KAFKA_BROKER_ENDPOINT } from 'common.env';
+import {
+  KAFKA_BROKER_ENDPOINT,
+  KAFKA_CONSUMER_GROUP,
+  SERVER_PORT,
+} from 'common.env';
 import packageInfo from '../package.json';
 import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
@@ -24,7 +28,7 @@ async function bootstrap() {
       consumer: {
         // sessionTimeout: 200007,
 
-        groupId: process.env.KAFKA_CONSUMER_GROUP || 'my-kafka-consumer3',
+        groupId: KAFKA_CONSUMER_GROUP || 'my-kafka-consumer3',
       },
     },
   });
@@ -44,7 +48,7 @@ async function bootstrap() {
   // enable auto validation
   app.useGlobalPipes(new ValidationPipe());
   app
-    .listen(process.env.SERVER_PORT || 6003)
+    .listen(SERVER_PORT || 6003)
     .then(() => {
       Logger.verbose('kafka client connected');
     })

@@ -1,5 +1,9 @@
 import { Logger } from '@nestjs/common';
-import { FEDERATION_ENDPOINT, SALEOR_ENDPOINT } from '../../../common.env';
+import {
+  AUTHORIZATION_HEADER_APP,
+  FEDERATION_ENDPOINT,
+  SALEOR_ENDPOINT,
+} from '../../../common.env';
 import { GraphQLClient } from 'graphql-request';
 type GraphqlCall = (Query: string, retries?: number) => Promise<object>;
 /**
@@ -18,7 +22,7 @@ export const graphqlCall: GraphqlCall = async (
     let data = {};
     const graphQLClient = new GraphQLClient(FEDERATION_ENDPOINT, {
       headers: {
-        authorization: `Bearer ${process.env.AUTHORIZATION_HEADER}`,
+        authorization: `Bearer ${AUTHORIZATION_HEADER_APP}`,
       },
     });
     await graphQLClient.request(Query).then((res) => {
@@ -51,7 +55,7 @@ export const graphqlCallSaleor: GraphqlCall = async (
   let data = {};
   const graphQLClient = new GraphQLClient(SALEOR_ENDPOINT, {
     headers: {
-      authorization: `Bearer ${process.env.AUTHORIZATION_HEADER_APP}`,
+      authorization: `Bearer ${AUTHORIZATION_HEADER_APP}`,
     },
   });
   try {

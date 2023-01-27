@@ -8,6 +8,7 @@ import {
 } from 'src/transformer/types/category';
 import { ProductTransformerService } from '../product/Product.transformer';
 import { getMasterCategoryMapping } from 'src/mapping/methods/category';
+import { DEFAULT_MASTER_CATEGORY_ID } from 'common.env';
 
 /**
  *  Injectable class handling category transform ( sub and master)
@@ -87,14 +88,10 @@ export class CategoryTransformerService {
   }
 
   public async masterCategoryIdTransformer(category_id: string) {
-    const DEFAULT_MASTER_CATEGORY_ID =
-      process.env.DEFAULT_CATEGORY_ID || 'Q2F0ZWdvcnk6MTM=';
-
     const destinationCategoryId = await getMasterCategoryMapping(category_id);
     if (destinationCategoryId) {
       return destinationCategoryId;
     }
-
     return DEFAULT_MASTER_CATEGORY_ID;
   }
 

@@ -44,7 +44,6 @@ export class ProductService {
     const productData = await this.transformerClass.productDetailsTransformer(
       kafkaMessage,
     );
-    // console.log(productData);
     if (productExistsInDestination) {
       return await this.productUpdate(productExistsInDestination, productData);
     }

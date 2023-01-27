@@ -8,12 +8,16 @@ import {
   getShoeBundlesFromDb,
   getShoeSizeColumns,
 } from './Product.variant.transformer.utils';
+import { ProductTransformerService } from '../Product.transformer';
 /**
  *  Injectable class handling product transformation
  *  @Injectable in app scope or in kafka connection to reach kafka messages
  */
 @Injectable()
 export class ProductVariantTransformerService {
+  constructor(
+    private readonly productTransformerService: ProductTransformerService,
+  ) {}
   /**
    * @description this transformation function is built as an abstract layer to fetch database variant data
    * @step it underneath is validating values , transforming db properties to meet CDC service requirements
@@ -50,6 +54,8 @@ export class ProductVariantTransformerService {
         purchasePrice: regular_price,
         salePrice: sale_price,
         onSale: is_sale,
+        retailPrice:
+          this.productTransformerService.retailPriceTransformer(regular_price),
       };
       productVariantData['style_name'] = style_name;
       productVariantData['sizes'] = item_sizes?.split('-');

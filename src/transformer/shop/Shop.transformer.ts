@@ -1,4 +1,5 @@
 import { Injectable, Param } from '@nestjs/common';
+import { S3_VENDOR_URL } from 'common.env';
 import { shopDto, shopTransformed } from 'src/transformer/types/shop';
 /**
  *  Injectable class handling shop transformation\
@@ -115,7 +116,7 @@ export class ShopTransformerService {
    */
   public shopImageTransformer(@Param() url) {
     if (url.length) {
-      return `${process.env.S3_VENDOR_URL}${url}`;
+      return `${S3_VENDOR_URL}${url}`;
     }
   }
 }

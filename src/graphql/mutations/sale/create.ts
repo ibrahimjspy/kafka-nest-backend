@@ -1,3 +1,4 @@
+import { DEFAULT_CHANNEL_ID } from 'common.env';
 import { gql } from 'graphql-request';
 
 export const createSalesMutation = (productName, saleAmount, variantIds) => {
@@ -25,13 +26,12 @@ export const createSalesMutation = (productName, saleAmount, variantIds) => {
 };
 
 export const addSaleToChannelMutation = (saleId, saleAmount) => {
-  const DEFAULT_CHANNEL = 'Q2hhbm5lbDox';
   return gql`
     mutation {
       saleChannelListingUpdate(
         id: "${saleId}"
         input: {
-          addChannels: [{ channelId: "${DEFAULT_CHANNEL}", discountValue: ${saleAmount} }]
+          addChannels: [{ channelId: "${DEFAULT_CHANNEL_ID}", discountValue: ${saleAmount} }]
         }
       ) {
         sale {
