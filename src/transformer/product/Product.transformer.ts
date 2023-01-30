@@ -211,6 +211,9 @@ export class ProductTransformerService {
    */
   public retailPriceTransformer(purchasePrice): string {
     const RULE_ENGINE = 1.6;
-    return `${Number(purchasePrice) * RULE_ENGINE}`;
+    return `${
+      Math.round((Number(purchasePrice) * RULE_ENGINE + Number.EPSILON) * 100) /
+      100
+    }`;
   }
 }
