@@ -40,7 +40,7 @@ export const productVariantQueryTransformer = (variants) => {
       sku: "${variant.sku}"
       channelListings: { channelId: "${DEFAULT_CHANNEL_ID}", price: ${
       variant.price.retailPrice
-    } }
+    } costPrice: ${variant.price.purchasePrice} }
       ${variant.preOrder == 'Y' ? ` preorder: { globalThreshold: 1000 }` : ' '}
       ${
         variant.preOrder == 'N'
