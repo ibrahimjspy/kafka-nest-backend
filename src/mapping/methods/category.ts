@@ -50,6 +50,7 @@ export const addMasterCategoryMapping = async (
 export const addSubCategoryMapping = async (
   sourceId: string,
   destinationId: string,
+  destinationParentId: string,
   sourceMasterId: string,
 ) => {
   try {
@@ -57,6 +58,7 @@ export const addSubCategoryMapping = async (
       os_category_master_id: sourceMasterId,
       os_category_sub_id: sourceId,
       shr_category_sub_id: destinationId,
+      shr_category_parent_id: destinationParentId,
     });
   } catch (error) {}
 };

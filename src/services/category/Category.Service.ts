@@ -113,6 +113,7 @@ export class CategoryService {
     const categoryIdMapping = await addSubCategoryMapping(
       categoryData.id,
       subCategory['id'],
+      categoryData.parentId,
       categoryData.sourceParentId,
     );
     return { subCategory, categoryIdMapping };
