@@ -124,6 +124,15 @@ export class TransformerService {
     );
   }
 
+  /**
+   * transforms database vendor pickup zone data to shipping zone
+   * this also fetches destination zone id against given pickup zone id
+   * @returns transformed shipping zone object
+   */
+  public shopShippingZoneTransformer(shopObject) {
+    return this.shopTransformerService.shopShippingZoneTransformer(shopObject);
+  }
+
   public healthCheck(): string {
     return 'Service running';
   }
