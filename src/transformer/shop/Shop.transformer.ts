@@ -1,6 +1,12 @@
 import { Injectable, Param } from '@nestjs/common';
 import { S3_VENDOR_URL } from 'common.env';
-import { shopDto, shopTransformed } from 'src/transformer/types/shop';
+import {
+  shippingZoneTransformedDto,
+  shippingZoneDto,
+  shopDto,
+  shopTransformed,
+} from 'src/transformer/types/shop';
+import { brandPickupZoneMapping } from './Shop.transformer.utils';
 /**
  *  Injectable class handling shop transformation\
  *  @requires Injectable in app scope or in kafka connection to reach kafka messages
@@ -118,5 +124,15 @@ export class ShopTransformerService {
     if (url.length) {
       return `${S3_VENDOR_URL}${url}`;
     }
+  }
+
+  public shopShippingZoneTransformer(
+    @Param() shopObject: shippingZoneDto,
+  ): shippingZoneTransformedDto {
+    const shippingZoneData = {};
+    shippingZoneData['shopId'] = shopObject.TBVendor_ID;
+    shippingZoneData['zoneId'] =
+      brandPickupZoneMapping[shopObject.Content] || '8';
+    return shippingZoneData;
   }
 }

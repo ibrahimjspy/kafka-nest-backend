@@ -49,7 +49,7 @@ export class CategoryService {
 
   public async handleSubCategoryCDC(
     @Param() kafkaMessage: subCategoryDto,
-  ): Promise<object> {
+  ): Promise<any> {
     const categoryData = await this.transformerService.subCategoryTransformer(
       kafkaMessage,
     );
@@ -112,7 +112,7 @@ export class CategoryService {
     );
     const categoryIdMapping = await addSubCategoryMapping(
       categoryData.id,
-      subCategory['id'],
+      subCategory,
       categoryData.parentId,
       categoryData.sourceParentId,
     );

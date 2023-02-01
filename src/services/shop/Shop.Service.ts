@@ -17,6 +17,8 @@ import {
   removeShopMapping,
 } from 'src/mapping/methods/shop';
 import { DEFAULT_SHIPPING_METHOD } from 'common.env';
+import { fetchVendorPickupById } from 'src/database/mssql/api_methods/getVendorPickup';
+import { addShippingZoneHandler } from 'src/graphql/handlers/shippingZone';
 
 /**
  *  Injectable class handling brand and its relating tables CDC
@@ -100,5 +102,26 @@ export class ShopService {
       shippingMethodValidation(shippingMethodIds, DEFAULT_SHIPPING_METHOD),
     );
     return data;
+  }
+
+  private async addShippingZoneToShop(
+    shopData: shopTransformed,
+    destinationId: string,
+  ) {
+    const sourceShippingZoneDetails: any = await fetchVendorPickupById(
+      shopData.id,
+    );
+    if (sourceShippingZoneDetails) {
+      const shippingZoneTransformed =
+        this.transformerService.shopShippingZoneTransformer(
+          sourceShippingZoneDetails,
+        );
+      await addShippingZoneHandler(
+        destinationId,
+        shippingZoneTransformed.zoneId,
+      );
+      return shippingZoneTransformed;
+    }
+    return;
   }
 }

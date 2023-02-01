@@ -50,3 +50,15 @@ export interface shippingMethodDto {
   SMShipMethodName?: string;
   SMDescription?: string;
 }
+
+export interface shippingZoneDto {
+  id?: number;
+  TBVendor_ID?: string;
+  Type?: string;
+  Content?: string;
+}
+
+export interface shippingZoneTransformedDto {
+  shopId?: string;
+  zoneId?: string;
+}
