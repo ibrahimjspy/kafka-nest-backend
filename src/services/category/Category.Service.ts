@@ -49,7 +49,7 @@ export class CategoryService {
 
   public async handleSubCategoryCDC(
     @Param() kafkaMessage: subCategoryDto,
-  ): Promise<object> {
+  ): Promise<any> {
     const categoryData = await this.transformerService.subCategoryTransformer(
       kafkaMessage,
     );
@@ -57,7 +57,9 @@ export class CategoryService {
       kafkaMessage.TBStyleNo_OS_Category_Sub_ID,
       kafkaMessage.TBStyleNo_OS_Category_Master_ID,
     );
+    console.log(mappingExists);
     if (mappingExists) {
+      return;
       return await updateSubCategoryHandler(categoryData, mappingExists);
     }
     return await this.subCategoryCreate(categoryData);
@@ -112,7 +114,7 @@ export class CategoryService {
     );
     const categoryIdMapping = await addSubCategoryMapping(
       categoryData.id,
-      subCategory['id'],
+      subCategory,
       categoryData.parentId,
       categoryData.sourceParentId,
     );
