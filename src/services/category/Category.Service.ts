@@ -57,9 +57,7 @@ export class CategoryService {
       kafkaMessage.TBStyleNo_OS_Category_Sub_ID,
       kafkaMessage.TBStyleNo_OS_Category_Master_ID,
     );
-    console.log(mappingExists);
     if (mappingExists) {
-      return;
       return await updateSubCategoryHandler(categoryData, mappingExists);
     }
     return await this.subCategoryCreate(categoryData);
