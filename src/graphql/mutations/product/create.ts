@@ -70,7 +70,7 @@ export const addProductToShopMutation = (
 ) => {
   return gql`
     mutation {
-      addProductToShop(input: { productIds: ${JSON.stringify(
+      addProductsToShop(Input: { productIds: ${JSON.stringify(
         productIds,
       )}, shopId: "${shopId}" }) {
         id
