@@ -26,8 +26,8 @@ export class BulkImportController {
   async app() {
     try {
       const sourceConnection = await connect(config);
-      const destinationConnect = await client;
-      if (sourceConnection && destinationConnect) {
+      const destinationConnection = await client;
+      if (sourceConnection && destinationConnection) {
         return 'kafka client service running';
       }
     } catch (error) {
@@ -40,7 +40,6 @@ export class BulkImportController {
   @Get('api/v1/bulk/products')
   async createProducts() {
     const data: any = await fetchBulkProductsData();
-    console.log(data);
     await this.appService.productBulkCreate(data.slice(6000, 6010));
     return `${data.length} products created`;
   }
@@ -70,7 +69,7 @@ export class BulkImportController {
   @Get('api/v1/bulk/customers')
   async createCustomers() {
     const data: any = await fetchBulkCustomers();
-    // await this.appService.handleCustomerCDC(data[0]);
+    await this.appService.handleCustomerCDC(data[0]);
     return `${data.length} customers created`;
   }
 
