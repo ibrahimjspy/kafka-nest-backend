@@ -4,6 +4,7 @@ import {
   subCategoryQuery,
   tbCustomerQuery,
   tbShipMethodQuery,
+  tbStyleFirstTenQuery,
   tbStyleNoNewQuery,
   tbVendorQuery,
   tbVendorShippingDetailsQuery,
@@ -35,4 +36,8 @@ export const fetchBulkVendorShipping = async (vendorId: string) => {
 
 export const fetchBulkCustomers = async () => {
   return await mssqlCall(tbCustomerQuery());
+};
+
+export const fetchFirstTenProducts = async () => {
+  return await mssqlCall(tbStyleFirstTenQuery());
 };

@@ -9,6 +9,7 @@ import {
   fetchBulkSubCategoriesData,
   fetchBulkShippingMethods,
   fetchBulkMasterCategoriesData,
+  fetchFirstTenProducts,
 } from 'src/database/mssql/bulk-import/methods';
 import { connect } from 'mssql';
 import { config } from 'mssql-config';
@@ -25,7 +26,7 @@ export class BulkImportController {
   async app() {
     try {
       const sourceConnection = await connect(config);
-      const destinationConnection = await client();
+      const destinationConnection = await client;
       if (sourceConnection && destinationConnection) {
         return 'kafka client service running';
       }
@@ -39,7 +40,7 @@ export class BulkImportController {
   @Get('api/v1/bulk/products')
   async createProducts() {
     const data: any = await fetchBulkProductsData();
-    await this.appService.productBulkCreate(data.slice(400, 401));
+    await this.appService.productBulkCreate(data.slice(6000, 6010));
     return `${data.length} products created`;
   }
 
@@ -68,7 +69,13 @@ export class BulkImportController {
   @Get('api/v1/bulk/customers')
   async createCustomers() {
     const data: any = await fetchBulkCustomers();
-    // await this.appService.handleCustomerCDC(data[0]);
+    await this.appService.handleCustomerCDC(data[0]);
     return `${data.length} customers created`;
+  }
+
+  @Get('api/v1/source/products')
+  async getSourceProducts() {
+    const data: any = await fetchFirstTenProducts();
+    return data;
   }
 }
