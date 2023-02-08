@@ -1,5 +1,5 @@
 import { Injectable, Param } from '@nestjs/common';
-import { S3_VENDOR_URL } from 'common.env';
+import { S3_VENDOR_URL } from '../../../common.env';
 import {
   shippingZoneTransformedDto,
   shippingZoneDto,

@@ -21,6 +21,7 @@ export const shopCdcMock: shopDto = {
   BannerImg5: 'testurl5',
   BannerImg6: 'testurl6',
   BannerImg7: 'testurl7',
+  Brand_Rep_Image: 'testImage',
 };
 
 export const shopTransformedMock: shopTransformed = {

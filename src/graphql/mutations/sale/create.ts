@@ -1,4 +1,4 @@
-import { DEFAULT_CHANNEL_ID } from 'common.env';
+import { DEFAULT_CHANNEL_ID } from '../../../../common.env';
 import { gql } from 'graphql-request';
 
 export const createSalesMutation = (productName, saleAmount, variantIds) => {

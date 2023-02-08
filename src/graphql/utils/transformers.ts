@@ -5,7 +5,7 @@ import {
   DEFAULT_CHANNEL_ID,
   DEFAULT_WAREHOUSE_ID,
   SIZE_ATTRIBUTE_ID,
-} from 'common.env';
+} from '../../../common.env';
 
 /**
  *   transforms bundle variants and their quantity array into a string which can be used in graphql query

@@ -5,7 +5,7 @@ import {
   KAFKA_BROKER_ENDPOINT,
   KAFKA_CONSUMER_GROUP,
   SERVER_PORT,
-} from 'common.env';
+} from '../common.env';
 import packageInfo from '../package.json';
 import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';

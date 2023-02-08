@@ -8,7 +8,7 @@ import {
 } from 'src/transformer/types/category';
 import { ProductTransformerService } from '../product/Product.transformer';
 import { getMasterCategoryMapping } from 'src/mapping/methods/category';
-import { DEFAULT_MASTER_CATEGORY_ID } from 'common.env';
+import { DEFAULT_MASTER_CATEGORY_ID } from '../../../common.env';
 
 /**
  *  Injectable class handling category transform ( sub and master)

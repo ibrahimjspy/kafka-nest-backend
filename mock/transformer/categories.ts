@@ -40,7 +40,7 @@ export const subCategoryCDCMock: subCategoryDto = {
 export const subCategoryExpected: subCategoryTransformed = {
   id: '5',
   sourceParentId: '3',
-  parentId: 'Q2F0ZWdvcnk6MTM=',
+  parentId: 'Q2F0ZWdvcnk6MTY=',
   name: 'name',
   description:
     '{"time": 1662995227870, "blocks": [{"id": "cqWmV3MIPH", "data": {"text": "test description"}, "type": "paragraph"}], "version": "2.24.3"}',

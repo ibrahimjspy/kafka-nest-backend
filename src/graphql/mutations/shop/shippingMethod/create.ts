@@ -1,4 +1,4 @@
-import { SHIPPING_ZONE_ID } from 'common.env';
+import { SHIPPING_ZONE_ID } from '../../../../../common.env';
 import { gql } from 'graphql-request';
 import { shippingMethodDto } from 'src/transformer/types/shop';
 
