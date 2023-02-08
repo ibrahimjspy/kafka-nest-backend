@@ -16,7 +16,7 @@ import {
   getShopMapping,
   removeShopMapping,
 } from 'src/mapping/methods/shop';
-import { DEFAULT_SHIPPING_METHOD } from 'common.env';
+import { DEFAULT_SHIPPING_METHOD } from '../../../common.env';
 import { fetchVendorPickupById } from 'src/database/mssql/api_methods/getVendorPickup';
 import { addShippingZoneHandler } from 'src/graphql/handlers/shippingZone';
 

@@ -2,7 +2,7 @@ import {
   DEFAULT_CHANNEL_ID,
   DEFAULT_PRODUCT_TYPE,
   STYLE_ATTRIBUTE_ID,
-} from 'common.env';
+} from '../../../../common.env';
 import { gql } from 'graphql-request';
 import { productTransformed } from 'src/transformer/types/product';
 

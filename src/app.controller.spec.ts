@@ -16,6 +16,7 @@ import { Logger } from '@nestjs/common';
 import { TransformerModule } from './transformer/Transformer.module';
 import { stringValidation } from './app.utils';
 import { shippingMethodValidation } from './services/shop/Shop.utils';
+import { ApplicationLogger } from './logger/Logger.service';
 // import { graphqlCall } from './utils/graphql/handler';
 // import { productGeneralTransformer } from './transformers/product/general';
 
@@ -39,6 +40,7 @@ describe('AppController', () => {
         UserService,
         RetailerService,
         RetailerTransformerService,
+        ApplicationLogger,
       ],
     }).compile();
     appController = app.get<AppController>(AppController);

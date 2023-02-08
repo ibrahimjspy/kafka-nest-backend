@@ -1,4 +1,4 @@
-import { COST_ATTRIBUTE_ID, DEFAULT_CHANNEL_ID } from 'common.env';
+import { COST_ATTRIBUTE_ID, DEFAULT_CHANNEL_ID } from '../../../../common.env';
 import { gql } from 'graphql-request';
 
 export const updateProductVariantPricingMutation = (

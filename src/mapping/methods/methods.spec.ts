@@ -38,16 +38,15 @@ describe('MappingService', () => {
         'sourceSubTestAlpha',
         'sourceSubTestDestination',
         'sourceMasterTestZalpha',
+        'sourceSubTestDestination',
       );
       expect(data).toBeDefined();
-
       const destinationId = await getSubCategoryMapping(
         'sourceSubTestAlpha',
-        'sourceMasterTestZalpha',
+        'sourceSubTestDestination',
       );
       expect(destinationId).toBeDefined();
       expect(destinationId).toStrictEqual('sourceSubTestDestination');
-
       const deleteMapping = await removeSubCategoryMapping(
         'sourceSubTestDestination',
       );

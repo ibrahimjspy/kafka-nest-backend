@@ -1,4 +1,4 @@
-import { MANAGER_TYPE } from 'common.env';
+import { MANAGER_TYPE } from '../../../../common.env';
 import { gql } from 'graphql-request';
 import { shopTransformed } from 'src/transformer/types/shop';
 

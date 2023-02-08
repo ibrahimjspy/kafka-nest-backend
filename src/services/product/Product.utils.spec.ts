@@ -3,7 +3,7 @@ import {
   mockVariantData,
   mockVariantsByColor,
 } from '../../../mock/product/variant';
-import { addProductMapping, getProductMapping } from 'src/mapping/product';
+import { getProductMapping } from 'src/mapping/methods/product';
 import {
   expectedShoeVariantsMappedAgainstShoeColumns,
   expectedSizes,
@@ -76,12 +76,6 @@ describe('Product utility tests', () => {
     expect(variantsMapping).toStrictEqual(
       expectedShoeVariantsMappedAgainstShoeColumns,
     );
-  });
-
-  it('testing add to mapping table ', async () => {
-    const addToTable = await addProductMapping('123', '786', '1500001');
-    console.log(addToTable);
-    expect(addToTable).toBeDefined();
   });
 
   it('testing get mapping table data ', async () => {

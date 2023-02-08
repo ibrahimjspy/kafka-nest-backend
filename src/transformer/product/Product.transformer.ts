@@ -10,7 +10,7 @@ import {
   getSubCategoryMapping,
 } from 'src/mapping/methods/category';
 import { getShopMapping } from 'src/mapping/methods/shop';
-import { DEFAULT_CATEGORY_ID, DEFAULT_SHOP_ID } from 'common.env';
+import { DEFAULT_CATEGORY_ID, DEFAULT_SHOP_ID } from '../../../common.env';
 /**
  *  Injectable class handling product transformation
  *  @Injectable in app scope or in kafka connection to reach kafka messages
