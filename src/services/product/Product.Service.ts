@@ -3,6 +3,7 @@ import {
   addProductToShopHandler,
   createProductHandler,
   deleteProductHandler,
+  storeProductStatusHandler,
   updateProductHandler,
 } from 'src/graphql/handlers/product';
 import {
@@ -82,6 +83,7 @@ export class ProductService {
         await this.productMediaCreate(productId, productData.media),
         this.productVariantsCreate(productData, productId),
       ]);
+      await storeProductStatusHandler(productId);
       this.logger.verbose(`product flow completed against ${productId}`);
     }
     return {

@@ -78,3 +78,21 @@ export const addProductToShopMutation = (
     }
   `;
 };
+
+export const storeProductStatusMutation = (productId: string) => {
+  return gql`
+    mutation {
+      updatePrivateMetadata(
+        id: "${productId}"
+        input: { key: "status", value: "product_created" }
+      ) {
+        item {
+          privateMetadata {
+            key
+            value
+          }
+        }
+      }
+    }
+  `;
+};
