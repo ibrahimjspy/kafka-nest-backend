@@ -67,7 +67,19 @@ services:
       - "host.docker.internal:host-gateway"
     depends_on:
       - kafka1
-
+  
+  autosync:
+    ports:
+      - 4001:5000
+      - 3000:3000
+    build:
+      context: ../auto-sync
+      dockerfile: ./Dockerfile
+    restart: unless-stopped
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      - kafka1
 
 
 
