@@ -32,7 +32,7 @@ async function bootstrap() {
       },
     },
   });
-  // app.startAllMicroservices();
+  app.startAllMicroservices();
   // swagger configuration
   const config = new DocumentBuilder()
     .setTitle(packageInfo.name)
