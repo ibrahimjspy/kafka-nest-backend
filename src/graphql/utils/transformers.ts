@@ -4,6 +4,7 @@ import {
   COST_ATTRIBUTE_ID,
   DEFAULT_CHANNEL_ID,
   DEFAULT_WAREHOUSE_ID,
+  RESALE_PRICE_ATTRIBUTE,
   SIZE_ATTRIBUTE_ID,
 } from '../../../common.env';
 
@@ -32,6 +33,9 @@ export const productVariantQueryTransformer = (variants) => {
       { id: "${COLOR_ATTRIBUTE_ID}", values:["${variant.color}"] }
       { id: "${SIZE_ATTRIBUTE_ID}", values:["${variant.size}"] }
       { id: "${COMMISSION_ATTRIBUTE_ID}", values:["10"] }
+      { id: "${RESALE_PRICE_ATTRIBUTE}", values:["${
+      variant?.price?.retailPrice
+    }"] }
       { id: "${COST_ATTRIBUTE_ID}", values:["${
       variant?.price?.purchasePrice
     }"] }
@@ -39,7 +43,7 @@ export const productVariantQueryTransformer = (variants) => {
     ]
       sku: "${variant.sku}"
       channelListings: { channelId: "${DEFAULT_CHANNEL_ID}", price: ${
-      variant.price.retailPrice
+      variant.price.purchasePrice
     } costPrice: ${variant.price.purchasePrice} }
       ${variant.preOrder == 'Y' ? ` preorder: { globalThreshold: 1000 }` : ' '}
       ${

@@ -40,3 +40,5 @@ export const DEFAULT_SHOP_ID = process.env.DEFAULT_SHOP_ID || '16';
 export const S3_VENDOR_URL = process.env.S3_VENDOR_URL;
 export const KAFKA_CONSUMER_GROUP = process.env.KAFKA_CONSUMER_GROUP;
 export const SERVER_PORT = process.env.SERVER_PORT;
+export const RESALE_PRICE_ATTRIBUTE =
+  process.env.RESALE_PRICE_ATTRIBUTE || 'QXR0cmlidXRlOjg=';

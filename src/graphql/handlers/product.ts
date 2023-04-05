@@ -9,6 +9,7 @@ import {
   addProductToShopMutation,
   createProductMutation,
   productChannelListingMutation,
+  addShopInMetadataMutation,
   storeProductStatusMutation,
 } from '../mutations/product/create';
 import { deleteProductMutation } from '../mutations/product/delete';
@@ -52,7 +53,9 @@ export const addProductToShopHandler = async (
   shopId: string,
 ) => {
   try {
-    return await graphqlCall(addProductToShopMutation([productId], shopId));
+    const response = graphqlCall(addProductToShopMutation([productId], shopId));
+    const { name, id } = response['addProductToShop'];
+    return await addShopInProductMetadataHandler(productId, id, name);
   } catch (err) {
     Logger.error(
       'product add to shop call failed',
@@ -65,6 +68,24 @@ export const addProductToShopHandler = async (
 export const storeProductStatusHandler = async (productId: string) => {
   try {
     return await graphqlCall(storeProductStatusMutation(productId));
+  } catch (err) {
+    Logger.error(
+      'product status storage call failed',
+      graphqlExceptionHandler(err),
+    );
+    return;
+  }
+};
+
+export const addShopInProductMetadataHandler = async (
+  productId: string,
+  shopId: string,
+  shopName: string,
+) => {
+  try {
+    return await graphqlCall(
+      addShopInMetadataMutation(productId, shopId, shopName),
+    );
   } catch (err) {
     Logger.error(
       'product status storage call failed',

@@ -2,7 +2,7 @@ import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import {
   addProductVariantToShopHandler,
   createBulkVariantsHandler,
-  updateProductVariantAttributeCostHandler,
+  updateProductVariantPriceHandler,
 } from 'src/graphql/handlers/productVariant';
 import { TransformerService } from 'src/transformer/Transformer.service';
 import { productVariantInterface } from 'src/database/mssql/types/product';
@@ -141,14 +141,13 @@ export class ProductVariantService {
   private async updatePrice(sourcePrice, destinationProductData) {
     if (
       parseFloat(sourcePrice) !==
-      parseFloat(destinationProductData.variants[0].pricing.price.gross.amount)
+      parseFloat(
+        destinationProductData.variants[0].pricing?.price?.gross?.amount,
+      )
     ) {
       await Promise.all(
         destinationProductData.variants.map(async (variant) => {
-          await updateProductVariantAttributeCostHandler(
-            variant.id,
-            sourcePrice,
-          );
+          await updateProductVariantPriceHandler(variant.id, sourcePrice);
         }),
       );
     }

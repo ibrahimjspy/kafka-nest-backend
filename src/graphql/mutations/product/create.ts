@@ -46,9 +46,9 @@ export const productChannelListingMutation = (productId) => {
         input: {
           updateChannels: {
             channelId: "${DEFAULT_CHANNEL_ID}"
-            visibleInListings: true
-            isAvailableForPurchase: true
-            isPublished: true
+            visibleInListings: false
+            isAvailableForPurchase: false
+            isPublished: false
           }
         }
       ) {
@@ -74,6 +74,7 @@ export const addProductToShopMutation = (
         productIds,
       )}, shopId: "${shopId}" }) {
         id
+        name
       }
     }
   `;
@@ -87,7 +88,30 @@ export const storeProductStatusMutation = (productId: string) => {
         input: { key: "status", value: "product_created" }
       ) {
         item {
-          privateMetadata {
+          id
+          metadata {
+            key
+            value
+          }
+        }
+      }
+    }
+  `;
+};
+
+export const addShopInMetadataMutation = (
+  productId: string,
+  vendorId: string,
+  vendorName: string,
+) => {
+  return gql`
+    mutation {
+      updateMetadata(
+        id: "${productId}"
+        input: [{ key: "vendorId", value: "${vendorId}" }, { key: "vendorName", value: "${vendorName}" }]
+      ) {
+        item {
+          metadata {
             key
             value
           }

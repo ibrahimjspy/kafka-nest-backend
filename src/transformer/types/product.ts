@@ -20,6 +20,8 @@ export interface productDto {
   nSalePrice?: string;
   nPurchasePrice?: string;
   nOnSale?: string;
+  nVendorActive?: string;
+  nActive?: string;
 }
 
 export interface productTransformed {
