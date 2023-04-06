@@ -17,6 +17,7 @@ import {
 import {
   getVariantIdsByColor,
   getVariantMediaById,
+  validateMediaArray,
 } from './media/Product.Media.utils';
 import {
   chunkArray,
@@ -118,5 +119,20 @@ describe('Product utility tests', () => {
     addSkuToProductVariants([{ sku: 'test' }], variantsMock);
     expect(variantsMock).toBeDefined();
     expect(variantsMock).toStrictEqual([{ color: 'red', sku: 'test' }]);
+  });
+
+  it('media array is correctly getting validated', async () => {
+    const mediaArrayMock = [
+      {
+        tiny: undefined,
+        small: '',
+        medium: '201710/E/3a5710eb-be53-11e7-9fb1-002590aaee66_E.jpg',
+        large: '201710/Z/3a5710eb-be53-11e7-9fb1-002590aaee66_Z.jpg',
+      },
+      { tiny: undefined, small: '', medium: '', large: '' },
+    ];
+    const mediaArray = validateMediaArray(mediaArrayMock);
+    console.log(mediaArray);
+    expect(mediaArray).toBeDefined();
   });
 });
