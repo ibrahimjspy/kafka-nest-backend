@@ -31,18 +31,16 @@ export class ProductMediaService {
     // Validating media url and inserting it to DB
     const createMedia = Promise.all(
       productMedia.map(async (image) => {
-        if (image.large) {
-          if (stringValidation(image.large)) {
-            // create standard media
-            await insertProductMediaById(image.large, productId);
-            const productMediaId = await fetchProductMediaId(
-              image.large,
-              productId,
-            );
-            // create thumbnails
-            if (productMediaId) {
-              this.productThumbnailsAssign(image, productMediaId);
-            }
+        if (image.medium && stringValidation(image.medium)) {
+          // create standard media
+          await insertProductMediaById(image.medium, productId);
+          const productMediaId = await fetchProductMediaId(
+            image.medium,
+            productId,
+          );
+          // create thumbnails
+          if (productMediaId) {
+            this.productThumbnailsAssign(image, productMediaId);
           }
         }
       }),
@@ -76,21 +74,21 @@ export class ProductMediaService {
     if (productMedia.small) {
       await insertThumbnailMediaById({
         mediaUrl: productMedia.small,
-        size: '480',
+        size: '256',
         productId: productMediaId,
       });
     }
-    if (productMedia.medium) {
+    if (productMedia.large) {
       await insertThumbnailMediaById({
-        mediaUrl: productMedia.medium,
-        size: '720',
+        mediaUrl: productMedia.large,
+        size: '1024',
         productId: productMediaId,
       });
     }
     if (productMedia.tiny) {
       await insertThumbnailMediaById({
         mediaUrl: productMedia.tiny,
-        size: '240',
+        size: '128',
         productId: productMediaId,
       });
     }

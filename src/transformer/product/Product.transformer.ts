@@ -11,6 +11,7 @@ import {
 } from 'src/mapping/methods/category';
 import { getShopMapping } from 'src/mapping/methods/shop';
 import { DEFAULT_CATEGORY_ID, DEFAULT_SHOP_ID } from '../../../common.env';
+import { validateMediaArray } from 'src/services/product/media/Product.Media.utils';
 /**
  *  Injectable class handling product transformation
  *  @Injectable in app scope or in kafka connection to reach kafka messages
@@ -94,7 +95,7 @@ export class ProductTransformerService {
       image.large = productObject[`PictureZ${i}`];
       mediaArray.push(image);
     }
-    return mediaArray;
+    return validateMediaArray(mediaArray);
   }
 
   /**

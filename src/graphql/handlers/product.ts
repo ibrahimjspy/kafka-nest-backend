@@ -53,8 +53,10 @@ export const addProductToShopHandler = async (
   shopId: string,
 ) => {
   try {
-    const response = graphqlCall(addProductToShopMutation([productId], shopId));
-    const { name, id } = response['addProductToShop'];
+    const response = await graphqlCall(
+      addProductToShopMutation([productId], shopId),
+    );
+    const { name, id } = response['addProductsToShop'];
     return await addShopInProductMetadataHandler(productId, id, name);
   } catch (err) {
     Logger.error(
