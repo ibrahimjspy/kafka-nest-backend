@@ -43,7 +43,7 @@ export const validateMediaArray = (mediaArray: mediaDto[]) => {
     mediaSizes.map((size, key) => {
       if (!media[`${size}`] || !stringValidation(media[`${size}`])) {
         if (key == mediaSizes.length + 1) {
-          media[`${size}`] = media[`${mediaSizes[0]}`];
+          media[`${size}`] = media[`${mediaSizes[key - 1]}`];
         }
         media[`${size}`] = media[`${mediaSizes[key + 1]}`];
       }
