@@ -46,9 +46,9 @@ export const productChannelListingMutation = (productId) => {
         input: {
           updateChannels: {
             channelId: "${DEFAULT_CHANNEL_ID}"
-            visibleInListings: false
-            isAvailableForPurchase: false
-            isPublished: false
+            visibleInListings: true
+            isAvailableForPurchase: true
+            isPublished: true
           }
         }
       ) {
