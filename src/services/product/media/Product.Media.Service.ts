@@ -74,7 +74,7 @@ export class ProductMediaService {
     if (productMedia.small) {
       await insertThumbnailMediaById({
         mediaUrl: productMedia.small,
-        size: '256',
+        size: '512',
         productId: productMediaId,
       });
     }
@@ -88,7 +88,7 @@ export class ProductMediaService {
     if (productMedia.tiny) {
       await insertThumbnailMediaById({
         mediaUrl: productMedia.tiny,
-        size: '128',
+        size: '256',
         productId: productMediaId,
       });
     }
