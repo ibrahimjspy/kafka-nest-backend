@@ -18,8 +18,8 @@ export const fetchBulkMasterCategoriesData = async () => {
   return await mssqlCall(masterCategoryQuery());
 };
 
-export const fetchBulkProductsData = async () => {
-  return await mssqlCall(tbStyleNoNewQuery());
+export const fetchBulkProductsData = async (vendorId: string) => {
+  return await mssqlCall(tbStyleNoNewQuery(vendorId));
 };
 
 export const fetchBulkVendors = async () => {

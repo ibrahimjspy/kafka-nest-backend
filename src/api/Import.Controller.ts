@@ -14,8 +14,8 @@ import {
 import { connect } from 'mssql';
 import { config } from 'mssql-config';
 import client from 'pg-config';
-import { createProductDTO } from './import.dtos';
-import { ApiTags } from '@nestjs/swagger';
+import { BulkProductImportDto, createProductDTO } from './import.dtos';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
 // endpoints to trigger data bulk imports
 @Controller()
@@ -37,11 +37,30 @@ export class BulkImportController {
     }
   }
 
-  @Get('api/v1/bulk/products')
-  async createProducts() {
-    const data: any = await fetchBulkProductsData();
-    await this.appService.productBulkCreate(data.slice(6000, 6010));
-    return `${data.length} products created`;
+  @Post('api/v1/bulk/products')
+  @ApiOperation({
+    summary: 'imports bulk products against a vendor',
+  })
+  async createProducts(@Body() bulkProductsImportDto: BulkProductImportDto) {
+    const vendorProducts: any = await fetchBulkProductsData(
+      bulkProductsImportDto.vendorId,
+    );
+    await this.appService.productBulkCreate(vendorProducts);
+    return `${vendorProducts.length} products created`;
+  }
+
+  @Post('api/v1/bulk/products/variant/media')
+  @ApiOperation({
+    summary: 'imports product variant media against all products of vendor',
+  })
+  async importVariantMedia(
+    @Body() bulkProductsImportDto: BulkProductImportDto,
+  ) {
+    const vendorProducts: any = await fetchBulkProductsData(
+      bulkProductsImportDto.vendorId,
+    );
+    await this.appService.productVariantMediaImport(vendorProducts);
+    return `${vendorProducts.length} products variant media created`;
   }
 
   @Post('api/v1/product')
@@ -52,21 +71,21 @@ export class BulkImportController {
     return await this.appService.createProductById(createProductDTO.productId);
   }
 
-  @Get('api/v1/bulk/shops')
+  @Post('api/v1/bulk/shops')
   async createShops() {
     const data: any = await fetchBulkVendors();
     await this.appService.shopBulkCreate(data);
     return `${data.length} shops created`;
   }
 
-  @Get('api/v1/bulk/shipping')
+  @Post('api/v1/bulk/shipping')
   async createShipping() {
     const data: any = await fetchBulkShippingMethods();
     await this.appService.shippingMethodBulkCreate(data);
     return `${data.length} shops created`;
   }
 
-  @Get('api/v1/bulk/customers')
+  @Post('api/v1/bulk/customers')
   async createCustomers() {
     const data: any = await fetchBulkCustomers();
     await this.appService.handleCustomerCDC(data[0]);
