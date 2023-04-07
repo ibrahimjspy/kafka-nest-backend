@@ -39,7 +39,7 @@ export class AppController {
 
   @MessagePattern('product_bulk_create') // topic name
   async productBulkCreate(@Payload() message) {
-    const data: any = await fetchBulkProductsData();
+    const data: any = await fetchBulkProductsData(message);
     await this.appService.productBulkCreate(data.slice(850, 855));
     return `${data.length} products created`;
   }

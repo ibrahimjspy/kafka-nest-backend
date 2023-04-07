@@ -6,3 +6,9 @@ export class createProductDTO {
   @IsNotEmpty()
   productId: string;
 }
+
+export class BulkProductImportDto {
+  @ApiProperty()
+  @IsNotEmpty()
+  vendorId: string;
+}

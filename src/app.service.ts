@@ -9,6 +9,10 @@ import { ShippingService } from './services/shop/shipping/Shipping.Service';
 import { RetailerService } from './services/shop/retailer/Retailer.Service';
 import { fetchStyleDetailsById } from './database/mssql/api_methods/getProductById';
 import { prepareFailedResponse } from './app.utils';
+import { getProductDetailsFromDb } from './database/mssql/product-view/getProductViewById';
+import { productVariantInterface } from './database/mssql/types/product';
+import { TransformerService } from './transformer/Transformer.service';
+import { getProductMapping } from './mapping/methods/product';
 
 @Injectable()
 export class AppService {
@@ -19,6 +23,7 @@ export class AppService {
     private readonly productVariantService: ProductVariantService,
     private readonly shippingMethodService: ShippingService,
     private readonly retailerService: RetailerService,
+    private readonly transformerService: TransformerService,
   ) {}
 
   // ChangeDataCapture methods
@@ -163,6 +168,39 @@ export class AppService {
         HttpStatus.BAD_REQUEST,
         error,
       );
+    }
+  }
+
+  // big data import methods dividing data in batches and running them in pools
+  async productVariantMediaImport(bulkArray) {
+    try {
+      const { results } = await PromisePool.withConcurrency(100)
+        .for(bulkArray)
+        .onTaskStarted((product, pool) => {
+          Logger.log(`Progress: ${pool.processedPercentage()}%`);
+        })
+        .handleError((error) => {
+          Logger.error(error, 'ProductVariantMediaCreate');
+        })
+        .process(async (data: any) => {
+          const productExistsInDestination: any = await getProductMapping(
+            data.TBItem_ID,
+          );
+          if (productExistsInDestination) {
+            const productVariantData: productVariantInterface =
+              await this.transformerService.productViewTransformer(
+                await getProductDetailsFromDb(data.TBItem_ID),
+              );
+            return await this.productService.productVariantMediaCreate(
+              productExistsInDestination,
+              productVariantData,
+            );
+          }
+        });
+      Logger.verbose(`${bulkArray.length} products variant media created`);
+      return results;
+    } catch (error) {
+      Logger.warn(error);
     }
   }
 }
