@@ -37,7 +37,7 @@ export class ProductTransformerService {
       nVendorStyleNo,
       nSalePrice,
       nOnSale,
-      nPurchasePrice,
+      nPrice2,
     } = object;
     productObject['id'] = TBItem_ID.toString();
     productObject['styleNumber'] = nVendorStyleNo.toString();
@@ -58,7 +58,7 @@ export class ProductTransformerService {
       TBVendor_ID ? TBVendor_ID : TBVendor_ID[0],
     );
     productObject['price'] = this.priceTransformer(
-      nPurchasePrice,
+      nPrice2,
       nSalePrice,
       nOnSale,
     );

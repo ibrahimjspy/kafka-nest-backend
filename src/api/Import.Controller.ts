@@ -21,6 +21,7 @@ import { ApiOperation, ApiTags } from '@nestjs/swagger';
 @Controller()
 @ApiTags('bulk-import')
 export class BulkImportController {
+  private readonly logger: Logger;
   constructor(private readonly appService: AppService) {}
   @Get()
   async app() {
@@ -42,11 +43,19 @@ export class BulkImportController {
     summary: 'imports bulk products against a vendor',
   })
   async createProducts(@Body() bulkProductsImportDto: BulkProductImportDto) {
-    const vendorProducts: any = await fetchBulkProductsData(
-      bulkProductsImportDto.vendorId,
-    );
-    await this.appService.productBulkCreate(vendorProducts);
-    return `${vendorProducts.length} products created`;
+    try {
+      const vendorProducts: any = await fetchBulkProductsData(
+        bulkProductsImportDto.vendorId,
+      );
+      const { startCurser, endCurser } = bulkProductsImportDto;
+      await this.appService.productBulkCreate(
+        vendorProducts.slice(startCurser, endCurser),
+      );
+      return `${vendorProducts.length} products created`;
+    } catch (error) {
+      this.logger.error(error);
+      return error.message;
+    }
   }
 
   @Post('api/v1/bulk/products/variant/media')

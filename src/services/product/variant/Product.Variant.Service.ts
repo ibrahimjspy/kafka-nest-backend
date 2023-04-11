@@ -10,7 +10,11 @@ import {
   colorSelectDto,
   productTransformed,
 } from 'src/transformer/types/product';
-import { createBundleHandler } from 'src/graphql/handlers/bundle';
+import {
+  createBundleHandler,
+  getBundleIdsHandler,
+  updateBundlePriceHandler,
+} from 'src/graphql/handlers/bundle';
 import {
   chunkArray,
   getShoeBundlesBySizes,
@@ -150,6 +154,10 @@ export class ProductVariantService {
           await updateProductVariantPriceHandler(variant.id, sourcePrice);
         }),
       );
+      const bundleIds: any = await getBundleIdsHandler(
+        destinationProductData.productId,
+      );
+      await updateBundlePriceHandler(bundleIds);
     }
   }
 
