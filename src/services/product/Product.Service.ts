@@ -95,7 +95,6 @@ export class ProductService {
     productId: string,
     productData: productTransformed,
   ) {
-    await this.productMediaClass.productMediaUpdate(productId, productData);
     await this.productVariantService.productVariantsUpdate(
       productId,
       productData,
