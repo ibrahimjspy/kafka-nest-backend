@@ -1,5 +1,13 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Body, Controller, Get, Logger, Post, Res } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Logger,
+  Param,
+  Post,
+  Res,
+} from '@nestjs/common';
 import { AppService } from 'src/app.service';
 import { prepareFailedResponse } from 'src/app.utils';
 import {
@@ -16,6 +24,7 @@ import { config } from 'mssql-config';
 import client from 'pg-config';
 import { BulkProductImportDto, createProductDTO } from './import.dtos';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { getProductDetailsFromDb } from 'src/database/mssql/product-view/getProductViewById';
 
 // endpoints to trigger data bulk imports
 @Controller()
@@ -105,5 +114,14 @@ export class BulkImportController {
   async getSourceProducts() {
     const data: any = await fetchFirstTenProducts();
     return data;
+  }
+
+  @Get('api/v1/source/product/:productId')
+  async getSourceProductDetails(@Param() param: createProductDTO) {
+    try {
+      return await getProductDetailsFromDb(param.productId);
+    } catch (error) {
+      this.logger.error(error);
+    }
   }
 }
