@@ -13,6 +13,7 @@ import { getProductDetailsFromDb } from './database/mssql/product-view/getProduc
 import { productVariantInterface } from './database/mssql/types/product';
 import { TransformerService } from './transformer/Transformer.service';
 import { getProductMapping } from './mapping/methods/product';
+import { BATCH_SIZE } from 'common.env';
 
 @Injectable()
 export class AppService {
@@ -96,7 +97,7 @@ export class AppService {
   // big data import methods dividing data in batches and running them in pools
   async productBulkCreate(bulkArray) {
     try {
-      const { results } = await PromisePool.withConcurrency(100)
+      const { results } = await PromisePool.withConcurrency(BATCH_SIZE)
         .for(bulkArray)
         .onTaskStarted((product, pool) => {
           Logger.log(`Progress: ${pool.processedPercentage()}%`);
