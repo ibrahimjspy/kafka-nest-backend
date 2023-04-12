@@ -1,5 +1,13 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Body, Controller, Get, Logger, Post, Res } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Logger,
+  Param,
+  Post,
+  Res,
+} from '@nestjs/common';
 import { AppService } from 'src/app.service';
 import { prepareFailedResponse } from 'src/app.utils';
 import {
@@ -16,11 +24,13 @@ import { config } from 'mssql-config';
 import client from 'pg-config';
 import { BulkProductImportDto, createProductDTO } from './import.dtos';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { getProductDetailsFromDb } from 'src/database/mssql/product-view/getProductViewById';
 
 // endpoints to trigger data bulk imports
 @Controller()
 @ApiTags('bulk-import')
 export class BulkImportController {
+  private readonly logger: Logger;
   constructor(private readonly appService: AppService) {}
   @Get()
   async app() {
@@ -42,11 +52,19 @@ export class BulkImportController {
     summary: 'imports bulk products against a vendor',
   })
   async createProducts(@Body() bulkProductsImportDto: BulkProductImportDto) {
-    const vendorProducts: any = await fetchBulkProductsData(
-      bulkProductsImportDto.vendorId,
-    );
-    await this.appService.productBulkCreate(vendorProducts);
-    return `${vendorProducts.length} products created`;
+    try {
+      const vendorProducts: any = await fetchBulkProductsData(
+        bulkProductsImportDto.vendorId,
+      );
+      const { startCurser, endCurser } = bulkProductsImportDto;
+      await this.appService.productBulkCreate(
+        vendorProducts.slice(startCurser, endCurser),
+      );
+      return `${vendorProducts.length} products created`;
+    } catch (error) {
+      this.logger.error(error);
+      return error.message;
+    }
   }
 
   @Post('api/v1/bulk/products/variant/media')
@@ -96,5 +114,14 @@ export class BulkImportController {
   async getSourceProducts() {
     const data: any = await fetchFirstTenProducts();
     return data;
+  }
+
+  @Get('api/v1/source/product/:productId')
+  async getSourceProductDetails(@Param() param: createProductDTO) {
+    try {
+      return await getProductDetailsFromDb(param.productId);
+    } catch (error) {
+      this.logger.error(error);
+    }
   }
 }

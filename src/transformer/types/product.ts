@@ -16,6 +16,7 @@ export interface productDto {
   TBStyleNo_OS_Category_Sub_ID?: string;
   TBVendor_ID?: string;
   nPrice1?: string;
+  nPrice2?: string;
   nVendorStyleNo?: string;
   nSalePrice?: string;
   nPurchasePrice?: string;

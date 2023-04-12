@@ -11,4 +11,12 @@ export class BulkProductImportDto {
   @ApiProperty()
   @IsNotEmpty()
   vendorId: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  startCurser: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  endCurser: string;
 }
