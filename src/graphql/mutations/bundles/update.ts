@@ -1,7 +1,7 @@
 import { gql } from 'graphql-request';
 
 export const updateBundlePricingMutation = (bundleIds: string[]) => {
-  const data = gql`
+  return gql`
     mutation {
       updateBundlesPricing(bundles: [${bundleIds.map((id) => {
         return `{bundleId: "${id}"}`;
@@ -15,6 +15,4 @@ export const updateBundlePricingMutation = (bundleIds: string[]) => {
       }
     }
   `;
-  console.log(data);
-  return data;
 };
