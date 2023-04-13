@@ -45,6 +45,7 @@ export class ProductTransformerService {
     productObject['description'] =
       this.descriptionTransformer(nItemDescription);
     productObject['media'] = this.mediaTransformerMethod(object);
+    productObject['listing'] = this.channelListingTransformer(object);
     productObject['categoryId'] = TBStyleNo_OS_Category_Sub_ID
       ? await this.categoryIdTransformer(
           TBStyleNo_OS_Category_Master_ID,
@@ -216,5 +217,15 @@ export class ProductTransformerService {
       Math.round((Number(purchasePrice) * RULE_ENGINE + Number.EPSILON) * 100) /
       100
     }`;
+  }
+
+  /**
+   * this method adds channel listing to transformed data
+   */
+  public channelListingTransformer(productData: productDto): boolean {
+    if (productData.nActive == 'Y' && productData.nVendorActive == 'Y') {
+      return true;
+    }
+    return false;
   }
 }

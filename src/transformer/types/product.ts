@@ -34,6 +34,7 @@ export interface productTransformed {
   shopId?: string;
   price?: priceInterface;
   styleNumber?: string;
+  listing?: boolean;
 }
 export interface priceInterface {
   purchasePrice?: string | number;
