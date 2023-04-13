@@ -3,6 +3,8 @@ import {
   addProductToShopHandler,
   createProductHandler,
   deleteProductHandler,
+  productChannelListingHandler,
+  removeChannelListingHandler,
   storeProductStatusHandler,
   updateProductHandler,
 } from 'src/graphql/handlers/product';
@@ -79,11 +81,11 @@ export class ProductService {
       await addProductMapping(productData.id, productId, productData.shopId);
       // creates product variants and its media
       await Promise.all([
-        await addProductToShopHandler(productId, productData.shopId),
-        await this.productMediaCreate(productId, productData.media),
+        addProductToShopHandler(productId, productData.shopId),
+        this.productMediaCreate(productId, productData.media),
         this.productVariantsCreate(productData, productId),
       ]);
-      await storeProductStatusHandler(productId);
+      storeProductStatusHandler(productId);
       this.logger.verbose(`product flow completed against ${productId}`);
     }
     return {
@@ -95,12 +97,11 @@ export class ProductService {
     productId: string,
     productData: productTransformed,
   ) {
-    await this.productVariantService.productVariantsUpdate(
-      productId,
-      productData,
-    );
-
-    return await updateProductHandler(productData, productId);
+    return await Promise.all([
+      this.productListingUpdate(productId, productData),
+      this.productVariantService.productVariantsUpdate(productId, productData),
+      updateProductHandler(productData, productId),
+    ]);
   }
 
   public async productDelete(destinationId: string) {
@@ -157,5 +158,15 @@ export class ProductService {
       productId,
       productVariantData,
     );
+  }
+
+  public async productListingUpdate(
+    productId: string,
+    productData: productTransformed,
+  ) {
+    if (productData.listing) {
+      return await productChannelListingHandler(productId);
+    }
+    return await removeChannelListingHandler(productId);
   }
 }

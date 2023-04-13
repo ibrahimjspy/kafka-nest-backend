@@ -12,7 +12,10 @@ import {
   addShopInMetadataMutation,
   storeProductStatusMutation,
 } from '../mutations/product/create';
-import { deleteProductMutation } from '../mutations/product/delete';
+import {
+  deleteProductMutation,
+  removeChannelListingMutation,
+} from '../mutations/product/delete';
 import { updateProductMutation } from '../mutations/product/update';
 import { getProductDetailsQuery } from '../queries/product';
 
@@ -142,5 +145,17 @@ export const deleteProductHandler = async (
     Logger.warn('Product deleted', data);
   } catch (err) {
     return graphqlExceptionHandler(err);
+  }
+};
+
+export const removeChannelListingHandler = async (productId) => {
+  try {
+    return await graphqlCall(removeChannelListingMutation(productId));
+  } catch (err) {
+    Logger.warn(
+      'product channel update call failed',
+      graphqlExceptionHandler(err),
+    );
+    return;
   }
 };
