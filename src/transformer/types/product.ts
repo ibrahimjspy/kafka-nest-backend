@@ -23,6 +23,8 @@ export interface productDto {
   nOnSale?: string;
   nVendorActive?: string;
   nActive?: string;
+  is_broken_pack?: number;
+  min_broken_pack_order_qty?: number;
 }
 
 export interface productTransformed {
@@ -35,6 +37,8 @@ export interface productTransformed {
   price?: priceInterface;
   styleNumber?: string;
   listing?: boolean;
+  openPack?: boolean;
+  openPackMinimumQuantity?: number;
 }
 export interface priceInterface {
   purchasePrice?: string | number;

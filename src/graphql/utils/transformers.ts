@@ -55,3 +55,19 @@ export const productVariantQueryTransformer = (variants) => {
   `;
   });
 };
+
+/**
+ *   transforms product metadata by checking if values are valid and not falsy
+ *   @returns string
+ */
+export const productMetadataTransformer = (
+  shopId,
+  openPack,
+  openPackMinimumQuantity,
+  shopName,
+): string => {
+  return `[{ key: "vendorId", value: "${shopId}" }, ${
+    shopName ? { key: 'vendorName', value: '${shopName}' } : ''
+  },
+  { key: "isOpenPack", value: "${openPack}" },  { key: "openPackMinimumQuantity", value: "${openPackMinimumQuantity}" } ]`;
+};

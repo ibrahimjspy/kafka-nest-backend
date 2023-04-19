@@ -1,5 +1,8 @@
 import { HttpStatus, Injectable, Logger } from '@nestjs/common';
-import { createProductHandler } from './graphql/handlers/product';
+import {
+  createProductHandler,
+  updateProductMetadataHandler,
+} from './graphql/handlers/product';
 import { CategoryService } from './services/category/Category.Service';
 import { ProductService } from './services/product/Product.Service';
 import { ProductVariantService } from './services/product/variant/Product.Variant.Service';
@@ -12,7 +15,7 @@ import { prepareFailedResponse } from './app.utils';
 import { getProductDetailsFromDb } from './database/mssql/product-view/getProductViewById';
 import { productVariantInterface } from './database/mssql/types/product';
 import { TransformerService } from './transformer/Transformer.service';
-import { getProductMapping } from './mapping/methods/product';
+import { getAllMappings, getProductMapping } from './mapping/methods/product';
 import { BATCH_SIZE } from 'common.env';
 
 @Injectable()
@@ -202,6 +205,32 @@ export class AppService {
       return results;
     } catch (error) {
       Logger.warn(error);
+    }
+  }
+
+  async saveOpenPack(curserPage) {
+    try {
+      const mappings = await getAllMappings(curserPage);
+      return await PromisePool.withConcurrency(30)
+        .for(mappings)
+        .onTaskStarted((product, pool) => {
+          Logger.log(`Progress: ${pool.processedPercentage()}%`);
+        })
+        .handleError((error) => {
+          Logger.error(error, 'Save open packs');
+        })
+        .process(async (data) => {
+          const sourceData = await fetchStyleDetailsById(data.sourceId);
+          if (!sourceData) return;
+          const productData =
+            await this.transformerService.productDetailsTransformer(sourceData);
+          return await updateProductMetadataHandler(
+            data.destinationId,
+            productData,
+          );
+        });
+    } catch (error) {
+      Logger.log(error);
     }
   }
 }

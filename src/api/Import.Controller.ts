@@ -22,7 +22,11 @@ import {
 import { connect } from 'mssql';
 import { config } from 'mssql-config';
 import client from 'pg-config';
-import { BulkProductImportDto, createProductDTO } from './import.dtos';
+import {
+  BulkProductImportDto,
+  UpdateOpenPackDto,
+  createProductDTO,
+} from './import.dtos';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { getProductDetailsFromDb } from 'src/database/mssql/product-view/getProductViewById';
 
@@ -120,6 +124,15 @@ export class BulkImportController {
   async getSourceProductDetails(@Param() param: createProductDTO) {
     try {
       return await getProductDetailsFromDb(param.productId);
+    } catch (error) {
+      this.logger.error(error);
+    }
+  }
+
+  @Post('api/v1/product/open/pack')
+  async updateOpenPack(@Body() updateOpenPackInput: UpdateOpenPackDto) {
+    try {
+      return await this.appService.saveOpenPack(updateOpenPackInput.curserPage);
     } catch (error) {
       this.logger.error(error);
     }
