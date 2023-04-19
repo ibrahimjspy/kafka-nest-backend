@@ -81,7 +81,7 @@ export class ProductService {
       await addProductMapping(productData.id, productId, productData.shopId);
       // creates product variants and its media
       await Promise.all([
-        addProductToShopHandler(productId, productData.shopId),
+        addProductToShopHandler(productId, productData),
         this.productMediaCreate(productId, productData.media),
         this.productVariantsCreate(productData, productId),
       ]);

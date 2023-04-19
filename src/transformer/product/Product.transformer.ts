@@ -38,6 +38,8 @@ export class ProductTransformerService {
       nSalePrice,
       nOnSale,
       nPrice2,
+      min_broken_pack_order_qty,
+      is_broken_pack,
     } = object;
     productObject['id'] = TBItem_ID.toString();
     productObject['styleNumber'] = nVendorStyleNo.toString();
@@ -63,6 +65,8 @@ export class ProductTransformerService {
       nSalePrice,
       nOnSale,
     );
+    productObject['openPack'] = is_broken_pack ? true : false;
+    productObject['openPackMinimumQuantity'] = min_broken_pack_order_qty;
 
     return productObject;
   }

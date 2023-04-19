@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { deleteMapping, getMapping, insertMapping } from '../fetch';
-import { getIdByElement } from '../utils';
+import { getIdByElement, transformMappingsArray } from '../utils';
 import { PRODUCT_ENGINE } from '../../../common.env';
 
 /**
@@ -15,6 +15,14 @@ export const getProductMapping = async (sourceId: string) => {
       },
     ]),
   );
+};
+
+/**
+ * @returns all products mapping in bulk
+ */
+export const getAllMappings = async (pageNumber: number) => {
+  const data = await getMapping(PRODUCT_ENGINE, [], pageNumber);
+  return transformMappingsArray(data);
 };
 
 /**

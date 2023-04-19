@@ -4,6 +4,7 @@ import {
   STYLE_ATTRIBUTE_ID,
 } from '../../../../common.env';
 import { gql } from 'graphql-request';
+import { productMetadataTransformer } from 'src/graphql/utils/transformers';
 import { productTransformed } from 'src/transformer/types/product';
 
 export const createProductMutation = (productData: productTransformed) => {
@@ -98,16 +99,22 @@ export const storeProductStatusMutation = (productId: string) => {
   `;
 };
 
-export const addShopInMetadataMutation = (
+export const updateProductMetadata = (
   productId: string,
-  vendorId: string,
-  vendorName: string,
+  productData: productTransformed,
+  shopName: string,
 ) => {
+  const { shopId, openPack, openPackMinimumQuantity } = productData;
   return gql`
     mutation {
       updateMetadata(
         id: "${productId}"
-        input: [{ key: "vendorId", value: "${vendorId}" }, { key: "vendorName", value: "${vendorName}" }]
+        input: ${productMetadataTransformer(
+          shopId,
+          openPack,
+          openPackMinimumQuantity,
+          shopName,
+        )}
       ) {
         item {
           metadata {

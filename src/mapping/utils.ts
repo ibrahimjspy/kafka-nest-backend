@@ -14,3 +14,23 @@ export const getIdByElement = (element: string, response) => {
     return null;
   }
 };
+
+/**
+ * @description this utility is for mapping service response parsing.
+ * it takes the response as defined by elastic search protocol and returns array of mappings
+ */
+export const transformMappingsArray = (
+  mappingsArray,
+): Array<{
+  sourceId: string;
+  destinationId: string;
+}> => {
+  const mappings = [];
+  mappingsArray.map((mapping) => {
+    mappings.push({
+      sourceId: mapping.os_product_id.raw,
+      destinationId: mapping.shr_b2b_product_id.raw,
+    });
+  });
+  return mappings;
+};

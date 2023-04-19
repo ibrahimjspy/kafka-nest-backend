@@ -20,3 +20,9 @@ export class BulkProductImportDto {
   @IsNotEmpty()
   endCurser: string;
 }
+
+export class UpdateOpenPackDto {
+  @ApiProperty()
+  @IsNotEmpty()
+  curserPage: number;
+}

@@ -4,9 +4,10 @@ import { ID_MAPPING_TOKEN, ID_MAPPING_URL } from '../../common.env';
 /**
  * @returns mappings stored against an engine
  */
-export const getMapping = async (engine, filter) => {
+export const getMapping = async (engine, filter, currentPage = 1) => {
   const data = JSON.stringify({
     query: '',
+    page: { size: 1000, current: currentPage },
     filters: {
       all: filter,
     },
