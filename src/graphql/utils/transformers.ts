@@ -67,7 +67,7 @@ export const productMetadataTransformer = (
   shopName,
 ): string => {
   return `[{ key: "vendorId", value: "${shopId}" }, ${
-    shopName ? { key: 'vendorName', value: '${shopName}' } : ''
+    shopName ? `{ key: 'vendorName', value: '${shopName}' },` : ''
   },
   { key: "isOpenPack", value: "${openPack}" },  { key: "openPackMinimumQuantity", value: "${openPackMinimumQuantity}" } ]`;
 };
