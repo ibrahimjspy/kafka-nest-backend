@@ -233,4 +233,25 @@ export class AppService {
       Logger.log(error);
     }
   }
+
+  async updateProducts(curserPage) {
+    try {
+      const mappings = await getAllMappings(curserPage);
+      return await PromisePool.withConcurrency(BATCH_SIZE)
+        .for(mappings)
+        .onTaskStarted((product, pool) => {
+          Logger.log(`Progress: ${pool.processedPercentage()}%`);
+        })
+        .handleError((error) => {
+          Logger.error(error, 'updating products');
+        })
+        .process(async (data) => {
+          const sourceData = await fetchStyleDetailsById(data.sourceId);
+          if (!sourceData) return;
+          return await this.productService.handleProductCDC(sourceData);
+        });
+    } catch (error) {
+      Logger.log(error);
+    }
+  }
 }

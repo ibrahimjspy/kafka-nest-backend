@@ -137,4 +137,13 @@ export class BulkImportController {
       this.logger.error(error);
     }
   }
+
+  @Post('api/v1/products/update')
+  async updateProducts(@Body() updateProducts: UpdateOpenPackDto) {
+    try {
+      return await this.appService.updateProducts(updateProducts.curserPage);
+    } catch (error) {
+      this.logger.error(error);
+    }
+  }
 }
