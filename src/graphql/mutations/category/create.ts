@@ -1,18 +1,23 @@
 import { gql } from 'graphql-request';
 
 export const createCategoryMasterMutation = (categoryData) => {
-  const categoryName = categoryData.CategoryMasterName;
-  // const categoryDescription = categoryData.Description;
+  const { name, seo_title, seo_description, description, groupId } =
+    categoryData;
   return gql`
     mutation {
       categoryCreate(
+        parent:"${groupId}"
         input: {
-          name: "${categoryName}"
-          seo: { title: "${categoryData.seo_title}", description: "${categoryData.seo_description}" }
+          name: "${name}"
+          description:${JSON.stringify(description)}
+          seo: { title: "${seo_title}", description: "${seo_description}" }
         }
       ) {
         category {
           id
+        }
+        errors{
+          message
         }
       }
     }
@@ -20,15 +25,15 @@ export const createCategoryMasterMutation = (categoryData) => {
 };
 
 export const createCategorySubMutation = (categoryData, MasterId) => {
-  const categoryName = categoryData.CategorySubName;
-  // const categoryDescription = categoryData.Description;
+  const { name, seo_title, seo_description, description } = categoryData;
   return gql`
     mutation {
       categoryCreate(
         parent:"${MasterId}"
         input: {
-          name: "${categoryName}"
-          seo: { title: "${categoryData.seo_title}", description: "${categoryData.seo_description}" }
+          name: "${name}"
+          description:${JSON.stringify(description)}
+          seo: { title: "${seo_title}", description: "${seo_description}" }
         }
       ) {
         category {

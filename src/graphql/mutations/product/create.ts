@@ -1,24 +1,34 @@
+import {
+  DEFAULT_CHANNEL_ID,
+  DEFAULT_PRODUCT_TYPE,
+  STYLE_ATTRIBUTE_ID,
+} from '../../../../common.env';
 import { gql } from 'graphql-request';
+import { productMetadataTransformer } from 'src/graphql/utils/transformers';
+import { productTransformed } from 'src/transformer/types/product';
 
-export const createProductMutation = (productData) => {
+export const createProductMutation = (productData: productTransformed) => {
   // parsing product data;
-  const seoTitle = productData.brand.information.seo_title;
-  const seoDescription = productData.brand.seo_title;
-  const productName = productData.style_name;
+  const { name, categoryId, description, styleNumber } = productData;
   return gql`
     mutation {
       productCreate(
         input: {
-          productType: "UHJvZHVjdFR5cGU6MQ=="
-          name: "${productName}"
-          seo: { title: "${seoTitle}", description: "${seoDescription}" }
+          productType: "${DEFAULT_PRODUCT_TYPE}"
+          description:${JSON.stringify(description)}
+          name: "${name}"
+          attributes:[{
+            id:"${STYLE_ATTRIBUTE_ID}",
+            values:["${styleNumber}"]
+          }]
+          category:"${categoryId}"
           rating: 4
         }
       ) {
         product {
           name
           id
-          seoTitle
+          slug
         }
         errors {
           field
@@ -28,21 +38,89 @@ export const createProductMutation = (productData) => {
     }
   `;
 };
-export const addOrangeShineIdMutation = (
-  destinationResponse,
-  productObject,
+
+export const productChannelListingMutation = (productId) => {
+  return gql`
+    mutation {
+      productChannelListingUpdate(
+        id: "${productId}"
+        input: {
+          updateChannels: {
+            channelId: "${DEFAULT_CHANNEL_ID}"
+            visibleInListings: true
+            isAvailableForPurchase: true
+            isPublished: true
+          }
+        }
+      ) {
+        product {
+          id
+          name
+        }
+        errors {
+          message
+        }
+      }
+    }
+  `;
+};
+
+export const addProductToShopMutation = (
+  productIds: string[],
+  shopId: string,
 ) => {
-  const destinationId = destinationResponse.productCreate.product.id;
-  const orangeShineId = productObject.id;
-  console.log({ destinationId, orangeShineId });
+  return gql`
+    mutation {
+      addProductsToShop(Input: { productIds: ${JSON.stringify(
+        productIds,
+      )}, shopId: "${shopId}" }) {
+        id
+        name
+      }
+    }
+  `;
+};
+
+export const storeProductStatusMutation = (productId: string) => {
+  return gql`
+    mutation {
+      updatePrivateMetadata(
+        id: "${productId}"
+        input: { key: "status", value: "product_created" }
+      ) {
+        item {
+          metadata {
+            key
+            value
+          }
+        }
+      }
+    }
+  `;
+};
+
+export const updateProductMetadata = (
+  productId: string,
+  productData: productTransformed,
+  shopName: string,
+) => {
+  const { shopId, openPack, openPackMinimumQuantity } = productData;
   return gql`
     mutation {
       updateMetadata(
-        id: "${destinationId}"
-        input: { key: "OS_ID", value: "${orangeShineId}" }
+        id: "${productId}"
+        input: ${productMetadataTransformer(
+          shopId,
+          openPack,
+          openPackMinimumQuantity,
+          shopName,
+        )}
       ) {
         item {
-          __typename
+          metadata {
+            key
+            value
+          }
         }
       }
     }

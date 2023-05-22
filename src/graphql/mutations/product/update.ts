@@ -1,21 +1,29 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable prettier/prettier */
-import {gql} from 'graphql-request';
+import { gql } from 'graphql-request';
+import { productTransformed } from 'src/transformer/types/product';
 
-export const updateProductQuery = (productData) => {
+export const updateProductMutation = (
+  productData: productTransformed,
+  destinationId,
+) => {
+  const { id, name, description, categoryId } = productData;
   return gql`
     mutation{
       productUpdate(
-        id:${productData.product_id}
-        input: {
-          name: "${productData.name}"
-          description:"${productData.descriptiopn}"
-          seo: {
-            title: "${productData.brand.seo_title || ''}"
-            description: "${productData.brand.seo_description || ''}"
-          }
-          rating: "${productData.rating || 2}"
-        }
-      )
+        id:"${destinationId}" 
+        input:{
+        category:"${categoryId}"
+        name:"${name}"
+        description:${JSON.stringify(description)}
+        rating:4
+      }){
+    product{
+      name
+      id
+      rating
+    }
+   }
     }
 `;
 };

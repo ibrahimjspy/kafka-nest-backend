@@ -1,16 +1,38 @@
 import { gql } from 'graphql-request';
 
-export const updateCategoryMutation = (categoryData, categoryId: string) => {
-  const categoryName = categoryData.CategoryMasterName;
-  const categoryDescription = categoryData.description;
+export const updateMasterCategoryMutation = (
+  categoryData,
+  categoryId: string,
+) => {
+  const { name, seo_title, seo_description, description } = categoryData;
   return gql`
     mutation {
       categoryUpdate(
         id:"${categoryId}"
-        description:"${categoryDescription}"
         input: {
-          name: "${categoryName}"
-          seo: { title: "${categoryData.seo_title}", description: "${categoryData.seo_description}" }
+          name: "${name}"
+          description:${JSON.stringify(description)}
+          seo: { title: "${seo_title}", description: "${seo_description}" }
+        }
+      ) {
+        category {
+          id
+        }
+      }
+    }
+  `;
+};
+
+export const updateSubCategoryMutation = (categoryData, categoryId: string) => {
+  const { name, seo_title, seo_description, description } = categoryData;
+  return gql`
+    mutation {
+      categoryUpdate(
+        id:"${categoryId}"
+        input: {
+          name: "${name}"
+          description:${JSON.stringify(description)}
+          seo: { title: "${seo_title}", description: "${seo_description}" }
         }
       ) {
         category {
