@@ -1,6 +1,7 @@
 import { Logger } from '@nestjs/common';
 import { deleteProductHandler } from 'src/graphql/handlers/product';
 import { removeProductMapping } from 'src/mapping/methods/product';
+import { idBase64Decode } from '../Product.utils';
 
 /**
  * this function returns a string that could be added to graphql mutation which fetches sku's for product variants
@@ -17,7 +18,7 @@ export const getProductVariantsForSku = (
     const skuProductVariant = {};
     skuProductVariant['color'] = variant.color;
     skuProductVariant['size'] = variant.size;
-    skuProductVariant['id'] = productId;
+    skuProductVariant['id'] = Number(idBase64Decode(productId));
     skuProductVariants.push(skuProductVariant);
   });
   return JSON.stringify(skuProductVariants)
