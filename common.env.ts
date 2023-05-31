@@ -4,7 +4,7 @@ dotenv.config();
 dotenv.config();
 
 export const BATCH_SIZE = Number(process.env.BATCH_SIZE) || 10;
-export const SALEOR_ENDPOINT = process.env.DESTINATION_SALEOR_ENDPOINT;
+export const SALEOR_ENDPOINT = process.env.FEDERATION_ENDPOINT;
 export const FEDERATION_ENDPOINT = process.env.DESTINATION_FEDERATION_ENDPOINT;
 export const KAFKA_BROKER_ENDPOINT = process.env.KAFKA_BROKER;
 export const ID_MAPPING_URL = process.env.MAPPING_URL;
@@ -45,3 +45,4 @@ export const KAFKA_CONSUMER_GROUP = process.env.KAFKA_CONSUMER_GROUP;
 export const SERVER_PORT = process.env.SERVER_PORT;
 export const RESALE_PRICE_ATTRIBUTE =
   process.env.RESALE_PRICE_ATTRIBUTE || 'QXR0cmlidXRlOjg=';
+export const AUTO_SYNC_URL = process.env.AUTO_SYNC_URL;

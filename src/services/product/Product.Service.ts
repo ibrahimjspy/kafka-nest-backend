@@ -25,6 +25,7 @@ import {
   getProductMapping,
   removeProductMapping,
 } from 'src/mapping/methods/product';
+import { autoSyncWebhookHandler } from 'src/external/endpoints/autoSync';
 
 /**
  *  Injectable class handling product variant and its relating tables CDC
@@ -91,9 +92,8 @@ export class ProductService {
           this.productMediaCreate(productId, productData.media),
           this.productVariantsCreate(productData, productId),
         ]);
-
         storeProductStatusHandler(productId);
-
+        autoSyncWebhookHandler(productId);
         this.logger.verbose(
           `Product flow completed for productId: ${productId}`,
         );
