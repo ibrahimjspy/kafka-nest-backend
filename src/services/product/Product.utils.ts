@@ -36,31 +36,25 @@ export const mediaUrlMapping = (
 };
 
 /**
- *  @step This function first maps given bundle sizes against shoeVariants object{containing all variants of all sizes} and get variants against that particular size
- *  @step secondly after getting variants of given sizes it create a state containing bundles
- *  bundles simply is made by first creating sub array of color length as in our requirement each bundle is made against one color
- *  after creating empty 2D array we start our main job : ==> ***
- *  @step it maps our matching variants of that given bundle all ready in form of [{color1Variant, color2Variant, color3Variant}]
- *  and uses its index to add in bundles 2d array made according to colors
- *  @result [[color1Variant],[color2Variant],[color3Variant]]
+ * Generates bundles of shoe variants based on bundle sizes and shoe variants.
+ * @param shoeVariants - The shoe variants object.
+ * @param bundleSizes - The bundle sizes object.
+ * @param length - The length of the bundles.
+ * @returns A 2D array containing the shoe variants grouped into bundles.
  */
 export const getShoeBundlesBySizes = (shoeVariants, bundleSizes, length) => {
   try {
-    const matchingVariants = [];
-    const bundles = [];
-    let i;
-    Object.keys(bundleSizes).forEach(function (key) {
-      matchingVariants.push(shoeVariants[`${key}`]);
-    });
-    for (i = 0; i < length; i++) {
-      bundles.push([]);
-    }
-    matchingVariants &&
-      (matchingVariants || []).map((bundle) => {
-        (bundle || []).map((variant, key) => {
-          bundles[key].push(variant);
-        });
+    const matchingVariants = Object.keys(bundleSizes).map(
+      (key) => shoeVariants[key],
+    );
+    const bundles = Array.from({ length }, () => []);
+
+    matchingVariants.forEach((bundle) => {
+      bundle.forEach((variant, key) => {
+        bundles[key].push(variant);
       });
+    });
+
     return bundles;
   } catch (error) {
     console.log(error);
@@ -69,33 +63,28 @@ export const getShoeBundlesBySizes = (shoeVariants, bundleSizes, length) => {
 };
 
 /**
- * returns shoe sizes against table column names of shoe mapping
- * @example s5 => 5.0 , s5h => 5.5
- * @links shoe mapping object
+ * Returns shoe sizes based on the provided shoe sizes mapping.
+ * @param shoeSizes - The shoe sizes mapping object.
+ * @returns An array of shoe sizes.
  */
-export const getShoeSizes = (shoe_sizes) => {
-  const sizes = [];
-  Object.keys(shoe_sizes).forEach(function (key) {
-    sizes.push(shoeSizeMapping[key]);
-  });
-  return sizes;
+export const getShoeSizes = (shoeSizes: Record<string, string>): string[] => {
+  return Object.keys(shoeSizes).map((key) => shoeSizeMapping[key]);
 };
 
 /**
- * right now when we create bulk variants we get a composite array containing variants like this
- * @example [Small-Red-Variant,Small-Blue-Variant,Small-Green-Variant,Large-Red-Variant, .......]
- * this utility simple just takes shoeSizes in a sorted manner , takes colors length and returns an object like this:
- * @result @example {Small: [Small-Red-Variant,Small-Blue-Variant,Small-Green-Variant], Large: [....]}
- * @work this function result can later be used to map our sizes against variantIds so we can easily create bundles
+ * Generates a mapping of shoe variants based on shoe sizes, variant IDs, and color list.
+ * @param shoe_sizes - The shoe sizes object.
+ * @param variantIds - The array of variant IDs.
+ * @param color_list - The array of colors.
+ * @returns An object mapping shoe sizes to variant IDs.
  */
 export const getShoeVariantsMapping = (shoe_sizes, variantIds, color_list) => {
-  const shoeVariantIdMapping = {};
-  Object.keys(shoe_sizes).forEach(function (key, index) {
-    shoeVariantIdMapping[`${key}`] = chunkArray(variantIds, color_list.length)[
-      index
-    ];
-  });
-  return shoeVariantIdMapping;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  return Object.entries(shoe_sizes).reduce((mapping, [key, _], index) => {
+    const variants = chunkArray(variantIds, color_list.length)[index];
+    mapping[key] = variants;
+    return mapping;
+  }, {});
 };
 
 /**
