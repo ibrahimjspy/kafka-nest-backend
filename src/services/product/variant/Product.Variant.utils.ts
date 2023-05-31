@@ -10,18 +10,18 @@ import { removeProductMapping } from 'src/mapping/methods/product';
  */
 export const getProductVariantsForSku = (
   productVariantData,
-  productName,
+  productId,
 ): string => {
   const skuProductVariants = [];
   (productVariantData || []).map((variant) => {
     const skuProductVariant = {};
     skuProductVariant['color'] = variant.color;
     skuProductVariant['size'] = variant.size;
-    skuProductVariant['name'] = productName;
+    skuProductVariant['id'] = productId;
     skuProductVariants.push(skuProductVariant);
   });
   return JSON.stringify(skuProductVariants)
-    .replace(/"name"/g, 'name')
+    .replace(/"id"/g, 'id')
     .replace(/"color"/g, 'color')
     .replace(/"size"/g, 'size');
 };

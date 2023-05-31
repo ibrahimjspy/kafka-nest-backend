@@ -6,11 +6,11 @@ import { getProductVariantsForSku } from 'src/services/product/variant/Product.V
 
 export const createSkuHandler = async (
   productVariants,
-  productName,
+  productId,
 ): Promise<object> => {
   try {
     const skuData = await graphqlCall(
-      createSkuMutation(getProductVariantsForSku(productVariants, productName)),
+      createSkuMutation(getProductVariantsForSku(productVariants, productId)),
     );
     return skuData['skuForProductVariants']['productVariants'];
   } catch (err) {

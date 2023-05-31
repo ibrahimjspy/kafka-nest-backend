@@ -102,7 +102,7 @@ export class ProductVariantService {
         productVariants.push(...variants);
       }
 
-      const skuMap = await createSkuHandler(productVariants, style_name);
+      const skuMap = await createSkuHandler(productVariants, productId);
       addSkuToProductVariants(skuMap, productVariants);
 
       if (productVariants.length > 0) {
@@ -220,7 +220,7 @@ export class ProductVariantService {
 
     // Add SKU for product variants
     await addSkuToProductVariants(
-      await createSkuHandler(productVariants, style_name),
+      await createSkuHandler(productVariants, productId),
       productVariants,
     );
 
