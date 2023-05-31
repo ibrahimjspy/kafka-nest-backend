@@ -27,25 +27,37 @@ export class ProductMediaService {
     private readonly productClass: ProductService,
   ) {}
 
-  public async productMediaAssign(productMedia: mediaDto[], productId) {
-    // Validating media url and inserting it to DB
-    const createMedia = Promise.all(
-      productMedia.map(async (image) => {
-        if (image.medium && stringValidation(image.medium)) {
-          // create standard media
-          await insertProductMediaById(image.medium, productId);
-          const productMediaId = await fetchProductMediaId(
-            image.medium,
-            productId,
-          );
-          // create thumbnails
-          if (productMediaId) {
-            this.productThumbnailsAssign(image, productMediaId);
-          }
-        }
-      }),
+  /**
+   * Assigns product media to a given product ID.
+   * Validates the media URLs and inserts them into the database.
+   * Creates thumbnails for the inserted media.
+   * @param productMedia - The array of media objects.
+   * @param productId - The ID of the product to assign the media.
+   * @returns A promise that resolves when all media has been assigned.
+   */
+  public async productMediaAssign(
+    productMedia: mediaDto[],
+    productId: string,
+  ): Promise<void> {
+    const validMediaUrls = productMedia.filter(
+      (image) => image.medium && stringValidation(image.medium),
     );
-    return createMedia;
+
+    const createMediaPromises = validMediaUrls.map(async (image) => {
+      if (image.medium && stringValidation(image.medium)) {
+        await insertProductMediaById(image.medium, productId);
+        const productMediaId = await fetchProductMediaId(
+          image.medium,
+          productId,
+        );
+        if (productMediaId) {
+          this.productThumbnailsAssign(image, productMediaId);
+        }
+      }
+    });
+
+    await Promise.all(createMediaPromises);
+    Logger.verbose(`Media added against product id: ${productId}`);
   }
 
   public async productMediaUpdate(
@@ -69,30 +81,36 @@ export class ProductMediaService {
     return;
   }
 
-  public async productThumbnailsAssign(productMedia: mediaDto, productMediaId) {
-    // Validating media url and inserting it to DB
-    if (productMedia.small) {
-      await insertThumbnailMediaById({
-        mediaUrl: productMedia.small,
-        size: '512',
-        productId: productMediaId,
+  /**
+   * Assigns thumbnails to a given product media ID.
+   * Validates the thumbnail URLs and inserts them into the database.
+   * @param productMedia - The media object containing thumbnail URLs.
+   * @param productMediaId - The ID of the product media to assign the thumbnails.
+   */
+  public async productThumbnailsAssign(
+    productMedia: mediaDto,
+    productMediaId: string,
+  ): Promise<void> {
+    const thumbnailSizes = [
+      { size: '512', url: productMedia?.small },
+      { size: '1024', url: productMedia?.large },
+      { size: '256', url: productMedia?.tiny },
+    ];
+
+    const thumbnailPromises = thumbnailSizes
+      .filter((thumbnail) => thumbnail.url && stringValidation(thumbnail.url))
+      .map(async (thumbnail) => {
+        if (thumbnail.url) {
+          await insertThumbnailMediaById({
+            mediaUrl: thumbnail.url,
+            size: thumbnail.size,
+            productId: productMediaId,
+          });
+        }
       });
-    }
-    if (productMedia.large) {
-      await insertThumbnailMediaById({
-        mediaUrl: productMedia.large,
-        size: '1024',
-        productId: productMediaId,
-      });
-    }
-    if (productMedia.tiny) {
-      await insertThumbnailMediaById({
-        mediaUrl: productMedia.tiny,
-        size: '256',
-        productId: productMediaId,
-      });
-    }
-    return;
+
+    await Promise.all(thumbnailPromises);
+    Logger.verbose(`Thumbnail added against: ${productMediaId}`);
   }
 
   public async productVariantMediaAssign(

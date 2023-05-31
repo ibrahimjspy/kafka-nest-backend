@@ -25,6 +25,7 @@ import {
   getProductMapping,
   removeProductMapping,
 } from 'src/mapping/methods/product';
+import { autoSyncWebhookHandler } from 'src/external/endpoints/autoSync';
 
 /**
  *  Injectable class handling product variant and its relating tables CDC
@@ -71,26 +72,43 @@ export class ProductService {
     return;
   }
 
-  private async productCreate(
-    productData: productTransformed,
-  ): Promise<object> {
-    // creating new product and assigning it media
-    const productId = await createProductHandler(productData);
-    if (productId) {
-      // inserts product id into id mapping table
-      await addProductMapping(productData.id, productId, productData.shopId);
-      // creates product variants and its media
-      await Promise.all([
-        addProductToShopHandler(productId, productData),
-        this.productMediaCreate(productId, productData.media),
-        this.productVariantsCreate(productData, productId),
-      ]);
-      storeProductStatusHandler(productId);
-      this.logger.verbose(`product flow completed against ${productId}`);
+  /**
+   * Creates a new product, assigns media, creates variants, and updates the product status.
+   * @param {productTransformed} productData - The transformed product data.
+   * @returns {Promise<object>} An object containing the productId.
+   */
+  private async productCreate(productData) {
+    try {
+      // Creating a new product and assigning it media
+      const productId = await createProductHandler(productData);
+
+      if (productId) {
+        // Inserts product id into elastic search mapping
+        await addProductMapping(productData.id, productId, productData.shopId);
+
+        // Creates product variants and their media
+        await Promise.all([
+          addProductToShopHandler(productId, productData),
+          this.productMediaCreate(productId, productData.media),
+          this.productVariantsCreate(productData, productId),
+        ]);
+        storeProductStatusHandler(productId);
+        autoSyncWebhookHandler(productId);
+        this.logger.verbose(
+          `Product flow completed for productId: ${productId}`,
+        );
+      }
+
+      return {
+        productId,
+      };
+    } catch (error) {
+      this.logger.error(
+        `An error occurred while creating product: ${error.message}`,
+        error,
+      );
+      throw error;
     }
-    return {
-      productId,
-    };
   }
 
   public async productUpdate(
@@ -112,17 +130,25 @@ export class ProductService {
     }
   }
 
+  /**
+   * Creates product variants and assigns them to a product.
+   * Fetches product variant information from the database.
+   * If the product group is 'SHOES', assigns shoe variants.
+   * Otherwise, assigns regular product variants.
+   * @param productData - The transformed product data.
+   * @param productId - The ID of the product to assign the variants.
+   * @returns A promise that resolves when the variants have been assigned.
+   */
   public async productVariantsCreate(
     productData: productTransformed,
     productId: string,
-  ) {
-    // fetches product variant information
+  ): Promise<void> {
     const productVariantData: productVariantInterface =
       await this.transformerClass.productViewTransformer(
         await getProductDetailsFromDb(productData.id),
       );
-    // creating product variant and its bundles against color and sizes , assigns product variant price
-    if (productVariantData.productGroup == 'SHOES') {
+
+    if (productVariantData.productGroup === 'SHOES') {
       await this.productVariantService.shoeVariantsAssign(
         productVariantData,
         productId,
@@ -130,20 +156,29 @@ export class ProductService {
       );
       return;
     }
+
     await this.productVariantService.productVariantAssign(
       productVariantData,
       productId,
       productData.shopId,
     );
-    return;
   }
 
-  public async productMediaCreate(productId: string, productMedia: mediaDto[]) {
-    // fetches product serial id
+  /**
+   * Creates product media for the specified product.
+   * @param {string} productId - The ID of the product.
+   * @param {mediaDto[]} productMedia - The media data to be assigned to the product.
+   * @returns {Promise<void>} A promise that resolves when the product media is created.
+   */
+  public async productMediaCreate(
+    productId: string,
+    productMedia: mediaDto[],
+  ): Promise<void> {
+    // Fetch the product serial ID
     const productSerialId = idBase64Decode(productId);
 
     if (productSerialId) {
-      // creates product media directly in database
+      // Create product media directly in the database
       await this.productMediaClass.productMediaAssign(
         productMedia,
         productSerialId,
