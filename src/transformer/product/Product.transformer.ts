@@ -190,7 +190,7 @@ export class ProductTransformerService {
    * @param {string} purchasePrice - The purchase price to be transformed.
    * @returns {string} The transformed retail price.
    */
-  public retailPriceTransformer(purchasePrice: string): string {
+  public retailPriceTransformer(purchasePrice): string {
     const RULE_ENGINE = 1.6;
     const retailPrice = (Number(purchasePrice) * RULE_ENGINE).toFixed(2);
     return retailPrice;
