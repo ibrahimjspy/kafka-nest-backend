@@ -38,7 +38,7 @@ export class ProductTransformerService {
         productData.TBStyleNo_OS_Category_Sub_ID || '100000',
       ),
       shopId: await this.shopIdTransformer(
-        productData.TBVendor_ID?.[0] || productData.TBVendor_ID,
+        productData.TBVendor_ID || productData.TBVendor_ID?.[0],
       ),
       price: this.priceTransformer(
         productData.nPrice2,

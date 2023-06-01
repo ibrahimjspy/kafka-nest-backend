@@ -10,11 +10,9 @@ import { updateShopMutation } from '../mutations/shop/update';
 export const createShopHandler = async (shopData: shopTransformed) => {
   try {
     // creates shop against that user
-    const createShop: object = await graphqlCall(
-      createShopMutation(shopData, 'test'),
-    );
+    const createShop: object = await graphqlCall(createShopMutation(shopData));
     Logger.verbose('Marketplace shop created', createShop);
-    const shopId: string = createShop['createShop']?.createMarketplaceShop?.id;
+    const shopId: string = createShop['createMarketplaceShop']?.id;
     return shopId;
   } catch (err) {
     graphqlExceptionHandler(err);

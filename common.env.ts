@@ -46,3 +46,4 @@ export const SERVER_PORT = process.env.SERVER_PORT;
 export const RESALE_PRICE_ATTRIBUTE =
   process.env.RESALE_PRICE_ATTRIBUTE || 'QXR0cmlidXRlOjg=';
 export const AUTO_SYNC_URL = process.env.AUTO_SYNC_URL;
+export const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'dev@orangeshine.com';

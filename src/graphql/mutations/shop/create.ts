@@ -1,11 +1,7 @@
-import { MANAGER_TYPE } from '../../../../common.env';
 import { gql } from 'graphql-request';
 import { shopTransformed } from 'src/transformer/types/shop';
 
-export const createShopMutation = (
-  shopData: shopTransformed,
-  userId: string,
-) => {
+export const createShopMutation = (shopData: shopTransformed) => {
   const {
     name,
     description,
@@ -22,9 +18,8 @@ export const createShopMutation = (
       createMarketplaceShop(
         input: {
           name: "${name}"
-          user: "${userId}"
-          managerType: "${MANAGER_TYPE}"
           madeIn: "${madeIn}"
+          user: ""
           minOrder: ${minOrder}
           about: "${description}"
           returnPolicy: "${returnPolicy}"
@@ -32,7 +27,7 @@ export const createShopMutation = (
           email: "${email}"
           url: "${url}"
           description: "${description}"
-          shippedFrom: "${shippedFrom}"
+          shipsFrom: "${shippedFrom}"
         }
       ) {
         id
