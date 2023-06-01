@@ -43,6 +43,7 @@ export interface shopTransformed {
   storePolicy?: string;
   madeIn?: string;
   returnPolicy?: string;
+  shippedFrom?: string;
 }
 
 export interface shippingMethodDto {

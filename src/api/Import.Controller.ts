@@ -26,16 +26,22 @@ import {
   BulkProductImportDto,
   UpdateOpenPackDto,
   createProductDTO,
+  vendorDto,
 } from './import.dtos';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { getProductDetailsFromDb } from 'src/database/mssql/product-view/getProductViewById';
+import { ProducerService } from 'src/kafka/Kafka.producer.service';
+import { KAFKA_CREATE_PRODUCTS_TOPIC } from 'src/kafka/Kafka.constants';
 
 // endpoints to trigger data bulk imports
 @Controller()
 @ApiTags('bulk-import')
 export class BulkImportController {
   private readonly logger: Logger;
-  constructor(private readonly appService: AppService) {}
+  constructor(
+    private readonly appService: AppService,
+    private readonly kafkaService: ProducerService,
+  ) {}
   @Get()
   async app() {
     try {
@@ -55,16 +61,17 @@ export class BulkImportController {
   @ApiOperation({
     summary: 'imports bulk products against a vendor',
   })
-  async createProducts(@Body() bulkProductsImportDto: BulkProductImportDto) {
+  async createProducts(@Body() bulkProductsImportInput: BulkProductImportDto) {
     try {
-      const vendorProducts: any = await fetchBulkProductsData(
-        bulkProductsImportDto.vendorId,
-      );
-      const { startCurser, endCurser } = bulkProductsImportDto;
-      await this.appService.productBulkCreate(
-        vendorProducts.slice(startCurser, endCurser),
-      );
-      return `${vendorProducts.length} products created`;
+      this.kafkaService.produce({
+        topic: KAFKA_CREATE_PRODUCTS_TOPIC,
+        messages: [
+          {
+            value: JSON.stringify(bulkProductsImportInput),
+          },
+        ],
+      });
+      return 'Added bulk products to kafka topic';
     } catch (error) {
       this.logger.error(error);
       return error.message;
@@ -94,8 +101,9 @@ export class BulkImportController {
   }
 
   @Post('api/v1/bulk/shops')
-  async createShops() {
-    const data: any = await fetchBulkVendors();
+  async createShops(@Body() importVendorsInput: vendorDto) {
+    const vendorId = importVendorsInput.vendorId;
+    const data: any = await fetchBulkVendors(vendorId);
     await this.appService.shopBulkCreate(data);
     return `${data.length} shops created`;
   }

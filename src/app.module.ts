@@ -15,10 +15,12 @@ import { UserService } from './services/shop/user/User.Service';
 import { RetailerService } from './services/shop/retailer/Retailer.Service';
 import { RetailerTransformerService } from './transformer/shop/Retailer.transformer';
 import { LoggerModule } from './logger/Logger.module';
+import { ProducerService } from './kafka/Kafka.producer.service';
+import { KafkaController } from './kafka/Kafka.controller';
 
 @Module({
   imports: [ConfigModule.forRoot(), TransformerModule, LoggerModule],
-  controllers: [AppController, BulkImportController],
+  controllers: [AppController, BulkImportController, KafkaController],
   providers: [
     AppService,
     Logger,
@@ -32,6 +34,7 @@ import { LoggerModule } from './logger/Logger.module';
     UserService,
     RetailerService,
     RetailerTransformerService,
+    ProducerService,
   ],
 })
 export class AppModule {}
