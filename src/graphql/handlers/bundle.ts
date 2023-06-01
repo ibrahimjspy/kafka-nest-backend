@@ -4,6 +4,8 @@ import { createBundleMutation } from '../mutations/bundles/create';
 import { bundleQueryTransformer } from '../utils/transformers';
 import { getBundleIdsQuery } from '../queries/bundles';
 import { updateBundlePricingMutation } from '../mutations/bundles/update';
+import { removeProductMapping } from 'src/mapping/methods/product';
+import { deleteProductHandler } from './product';
 
 //  <-->  Create  <-->
 
@@ -26,6 +28,8 @@ export const createBundleHandler = async (
     return bundles;
   } catch (err) {
     Logger.error('add to bundle call failed');
+    await deleteProductHandler(productId); // rollback <api>
+    await removeProductMapping(productId); // rollback <mapping>
     return graphqlExceptionHandler(err);
   }
 };

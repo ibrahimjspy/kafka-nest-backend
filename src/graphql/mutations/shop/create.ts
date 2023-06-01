@@ -6,8 +6,17 @@ export const createShopMutation = (
   shopData: shopTransformed,
   userId: string,
 ) => {
-  const { name, description, storePolicy, email, madeIn, returnPolicy, url } =
-    shopData;
+  const {
+    name,
+    description,
+    storePolicy,
+    email,
+    madeIn,
+    returnPolicy,
+    url,
+    minOrder,
+    shippedFrom,
+  } = shopData;
   return gql`
     mutation {
       createMarketplaceShop(
@@ -16,13 +25,14 @@ export const createShopMutation = (
           user: "${userId}"
           managerType: "${MANAGER_TYPE}"
           madeIn: "${madeIn}"
-          minOrder: 200
-          about: "shop about"
+          minOrder: ${minOrder}
+          about: "${description}"
           returnPolicy: "${returnPolicy}"
           storePolicy: "${storePolicy}"
           email: "${email}"
           url: "${url}"
           description: "${description}"
+          shippedFrom: "${shippedFrom}"
         }
       ) {
         id

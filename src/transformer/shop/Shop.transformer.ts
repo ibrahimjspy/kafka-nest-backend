@@ -14,26 +14,14 @@ import { brandPickupZoneMapping } from './Shop.transformer.utils';
 @Injectable()
 export class ShopTransformerService {
   /**
-   * transforms and validates shop responses and existence
-   * @value id
-   * @value description
-   * @value name
-   * @value seo_description
-   * @value seo_title
-   * @value url
-   * @value minOrder
-   * @value storePolicy
-   * @value madeIn
-   * @value returnPolicy
-   * @value email
-   * @params object,  Composite object containing cdc changeData, categoryMaster data
-   * @returns transformed object
+   * Transforms and validates shop responses and existence.
+   *
+   * @param {shopDto} object - Composite object containing cdc changeData, categoryMaster data.
+   * @returns {Promise<shopTransformed>} - Transformed object.
    */
   public async shopTransformerMethod(
-    @Param() object: shopDto,
+    object: shopDto,
   ): Promise<shopTransformed> {
-    // console.dir(object, { depth: null });
-    const shopObject: shopTransformed = {};
     const {
       TBVendor_ID,
       VDVendorEmail,
@@ -48,28 +36,32 @@ export class ShopTransformerService {
       VDPhone,
       VDReturnPolicy,
       Brand_Rep_Image,
+      ShippedFrom,
     } = object;
-    shopObject['id'] = TBVendor_ID?.toString();
-    shopObject['name'] = `${VDName?.toString()}`;
-    shopObject['phoneNumber'] = this.shopPhoneNumberTransformer(VDPhone);
-    shopObject['description'] = OSDescription
-      ? this.textTransformer(OSDescription)
-      : '';
-    shopObject['seo_description'] = SEODescription || '';
-    shopObject['seo_title'] = SEOTitle || '';
-    shopObject['email'] = `${VDVendorEmail}`;
-    shopObject['url'] = `${this.shopUrlTransformer(VDVendorURL, VDName)}`;
-    shopObject['minOrder'] = VDMinimumOrderAmount || '0';
-    shopObject['banners'] = this.shopBannerTransformer(object);
-    shopObject['vendorMainImage'] =
-      this.shopImageTransformer(Brand_Rep_Image) || '';
-    shopObject['storePolicy'] = VDStorePolicy
-      ? this.textTransformer(VDStorePolicy)
-      : '';
-    shopObject['madeIn'] = VDMadeIn || '';
-    shopObject['returnPolicy'] = VDReturnPolicy
-      ? this.textTransformer(VDReturnPolicy)
-      : '';
+
+    /**
+     * Transformed shop object.
+     *
+     * @type {shopTransformed}
+     */
+    const shopObject: shopTransformed = {
+      id: TBVendor_ID?.toString(),
+      name: VDName?.toString(),
+      phoneNumber: this.shopPhoneNumberTransformer(VDPhone),
+      description: OSDescription ? this.textTransformer(OSDescription) : '',
+      seo_description: SEODescription || '',
+      seo_title: SEOTitle || '',
+      email: `${VDVendorEmail}`,
+      url: `${this.shopUrlTransformer(VDVendorURL, VDName)}`,
+      minOrder: VDMinimumOrderAmount || '0',
+      banners: this.shopBannerTransformer(object),
+      vendorMainImage: this.shopImageTransformer(Brand_Rep_Image) || '',
+      storePolicy: VDStorePolicy ? this.textTransformer(VDStorePolicy) : '',
+      madeIn: VDMadeIn || '',
+      returnPolicy: VDReturnPolicy ? this.textTransformer(VDReturnPolicy) : '',
+      shippedFrom: ShippedFrom,
+    };
+
     return shopObject;
   }
 
@@ -92,14 +84,20 @@ export class ShopTransformerService {
     return description.replace(/(\r\n|\n|\r)/gm, '').replace(/"/g, "'");
   }
 
-  public shopPhoneNumberTransformer(@Param() phoneNumber) {
+  /**
+   * Transforms the shop phone number.
+   *
+   * @param {string} phoneNumber - The phone number to transform.
+   * @returns {string} - The transformed phone number.
+   */
+  public shopPhoneNumberTransformer(phoneNumber: string): string {
     const phone = phoneNumber.split(',')[0];
-    phone.split('/')[0];
-    phone.split('TEXT ONLY')[1];
     const isEmail = /\.COM/;
+
     if (isEmail.test(phoneNumber)) {
       return '1234';
     }
+
     return `+1${phone.replace(/-/g, '')}`;
   }
 

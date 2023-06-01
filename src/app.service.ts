@@ -17,9 +17,12 @@ import { productVariantInterface } from './database/mssql/types/product';
 import { TransformerService } from './transformer/Transformer.service';
 import { getAllMappings, getProductMapping } from './mapping/methods/product';
 import { BATCH_SIZE } from 'common.env';
+import { fetchBulkProductsData } from './database/mssql/bulk-import/methods';
+import { productDto } from './transformer/types/product';
 
 @Injectable()
 export class AppService {
+  private readonly logger = new Logger(AppService.name);
   constructor(
     private readonly productService: ProductService,
     private readonly categoryService: CategoryService,
@@ -75,6 +78,35 @@ export class AppService {
 
   public addProductCatalog(kafkaMessage) {
     return createProductHandler(kafkaMessage);
+  }
+
+  /**
+   * Handles the bulk creation of products based on the provided bulk import input.
+   * @param {Object} bulkImportInput - The input for the bulk import operation.
+   * @param {string} bulkImportInput.vendorId - The ID of the vendor.
+   * @param {number} bulkImportInput.startCurser - The starting cursor for selecting products from the vendor's data.
+   * @param {number} bulkImportInput.endCurser - The ending cursor for selecting products from the vendor's data.
+   * @returns {Promise<string>} A promise that resolves to a string indicating the number of products created.
+   */
+  async handleProductBulkCreateCDC(bulkImportInput) {
+    try {
+      this.logger.log('Fetching bulk products data...');
+      const vendorProducts = (await fetchBulkProductsData(
+        bulkImportInput.vendorId,
+      )) as productDto[];
+      this.logger.log('Bulk products data fetched successfully.');
+
+      const { startCurser, endCurser } = bulkImportInput;
+      const productBatch = vendorProducts.slice(startCurser, endCurser);
+
+      this.logger.log(`Creating ${productBatch.length} products...`);
+      await this.productBulkCreate(productBatch);
+      this.logger.log(`${productBatch.length} products created.`);
+
+      return `${productBatch.length} products created`;
+    } catch (error) {
+      this.logger.error(error);
+    }
   }
 
   handleShopCDC(kafkaMessage) {
