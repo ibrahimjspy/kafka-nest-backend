@@ -29,7 +29,7 @@ export const updateShopMutation = (
           returnPolicy: "${returnPolicy}"
           storePolicy: "${storePolicy}"
           description: "${description}"
-          shippedFrom: "${shippedFrom}"
+          shipsFrom: "${shippedFrom}"
           fields: [
             { name: "banner", newValues: ${JSON.stringify(banners)} }
             { name: "vendorMainImage", newValues: ["${vendorMainImage}"] }

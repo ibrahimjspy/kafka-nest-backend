@@ -1,5 +1,5 @@
 import { Injectable, Param } from '@nestjs/common';
-import { S3_VENDOR_URL } from '../../../common.env';
+import { ADMIN_EMAIL, S3_VENDOR_URL } from '../../../common.env';
 import {
   shippingZoneTransformedDto,
   shippingZoneDto,
@@ -51,7 +51,7 @@ export class ShopTransformerService {
       description: OSDescription ? this.textTransformer(OSDescription) : '',
       seo_description: SEODescription || '',
       seo_title: SEOTitle || '',
-      email: `${VDVendorEmail}`,
+      email: `${this.shopEmailTransformer(VDVendorEmail, VDName)}`,
       url: `${this.shopUrlTransformer(VDVendorURL, VDName)}`,
       minOrder: VDMinimumOrderAmount || '0',
       banners: this.shopBannerTransformer(object),
@@ -66,8 +66,9 @@ export class ShopTransformerService {
   }
 
   public shopEmailTransformer(@Param() email, name) {
-    if (email.length) {
-      return email;
+    if (email == ADMIN_EMAIL) {
+      const emailTransformed = name.replace(/ /g, '_');
+      return `${emailTransformed.toLowerCase()}@gmail.com`;
     }
     const emailTransformed = name.replace(/ /g, '_');
     return `${emailTransformed.toLowerCase()}@gmail.com`;
