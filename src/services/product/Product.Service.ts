@@ -26,6 +26,7 @@ import {
   removeProductMapping,
 } from 'src/mapping/methods/product';
 import { autoSyncWebhookHandler } from 'src/external/endpoints/autoSync';
+import { SHOES_GROUP_NAME } from 'common.env';
 
 /**
  *  Injectable class handling product variant and its relating tables CDC
@@ -149,7 +150,7 @@ export class ProductService {
           await getProductDetailsFromDb(productData.id),
         );
 
-      if (productVariantData.productGroup === 'SHOES') {
+      if (productVariantData.productGroup === SHOES_GROUP_NAME) {
         await this.productVariantService.shoeVariantsAssign(
           productVariantData,
           productId,
