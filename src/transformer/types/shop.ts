@@ -26,6 +26,7 @@ export interface shopDto {
   BannerImg6?: string;
   BannerImg7?: string;
   ShippedFrom?: string;
+  VDState?: string;
 }
 
 export interface shopTransformed {
