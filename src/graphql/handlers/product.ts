@@ -51,22 +51,32 @@ export const productChannelListingHandler = async (productId) => {
   }
 };
 
+/**
+ * Adds the product to the shop.
+ * @param {string} productId - The ID of the product.
+ * @param {productTransformed} productData - The transformed product data.
+ * @returns {Promise<void>} A promise that resolves when the product is added to the shop.
+ */
 export const addProductToShopHandler = async (
   productId: string,
   productData: productTransformed,
-) => {
+): Promise<void> => {
   try {
     const response = await graphqlCall(
       addProductToShopMutation([productId], productData.shopId),
     );
+
+    if (!response || !response['addProductsToShop']) {
+      throw new Error('Invalid response from addProductsToShop mutation');
+    }
+
     const { name } = response['addProductsToShop'];
-    return await updateProductMetadataHandler(productId, productData, name);
-  } catch (err) {
-    Logger.error(
-      'product add to shop call failed',
-      graphqlExceptionHandler(err),
-    );
-    return;
+    await updateProductMetadataHandler(productId, productData, name);
+    Logger.verbose(`Product with ID ${productId} added to shop: ${name}`);
+  } catch (error) {
+    const errorMessage = 'Product add to shop call failed';
+    Logger.error(errorMessage, error);
+    throw new Error(errorMessage);
   }
 };
 

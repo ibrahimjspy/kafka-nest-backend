@@ -66,7 +66,9 @@ export class ShopService {
   ): Promise<object> {
     // creates new shop and map its id in mapping service
     const shop = await createShopHandler(shopData);
-    shop && (await addShopMapping(shopData.id, shop));
+    if (shop) {
+      await addShopMapping(shopData.id, shop);
+    }
 
     return { shop };
   }

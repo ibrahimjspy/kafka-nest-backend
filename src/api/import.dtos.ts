@@ -26,3 +26,9 @@ export class UpdateOpenPackDto {
   @IsNotEmpty()
   curserPage: number;
 }
+
+export class vendorDto {
+  @ApiProperty()
+  @IsNotEmpty()
+  vendorId: string;
+}

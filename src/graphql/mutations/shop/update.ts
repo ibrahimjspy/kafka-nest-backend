@@ -15,6 +15,7 @@ export const updateShopMutation = (
     phoneNumber,
     vendorMainImage,
     banners,
+    shippedFrom,
   } = shopData;
   return gql`
     mutation {
@@ -28,6 +29,7 @@ export const updateShopMutation = (
           returnPolicy: "${returnPolicy}"
           storePolicy: "${storePolicy}"
           description: "${description}"
+          shipsFrom: "${shippedFrom}"
           fields: [
             { name: "banner", newValues: ${JSON.stringify(banners)} }
             { name: "vendorMainImage", newValues: ["${vendorMainImage}"] }

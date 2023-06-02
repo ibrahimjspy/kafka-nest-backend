@@ -1,6 +1,5 @@
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
 import {
-  addProductVariantToShopHandler,
   createBulkVariantsHandler,
   updateProductVariantPriceHandler,
 } from 'src/graphql/handlers/productVariant';
@@ -37,6 +36,8 @@ import { getProductMapping } from 'src/mapping/methods/product';
  */
 @Injectable()
 export class ProductVariantService {
+  private readonly logger = new Logger(ProductVariantService.name);
+
   constructor(
     private readonly transformerClass: TransformerService,
     @Inject(forwardRef(() => ProductService))
@@ -72,46 +73,60 @@ export class ProductVariantService {
     );
   }
 
+  /**
+   * Assigns product variants to a given product ID.
+   * Creates variants based on color and sizes, assigns prices and SKUs,
+   * creates sales if the product is on sale, and creates bundles.
+   * @param productVariantData - The product variant data.
+   * @param productId - The ID of the product to assign the variants.
+   * @param shopId - The ID of the shop associated with the product.
+   * @returns A promise that resolves when the variants have been assigned.
+   */
   public async productVariantAssign(
     productVariantData: productVariantInterface,
     productId: string,
     shopId?: string,
-  ) {
+  ): Promise<void> {
     const { sizes, price, color_list, pack_name, isPreOrder, style_name } =
       productVariantData;
-    let productVariants = [];
+    const productVariants = [];
 
     if (color_list) {
-      // TRANSFORM PRODUCT VARIANTS
-      await color_list.map(async (color) => {
+      for (const color of color_list) {
         const variants = await this.transformerClass.productVariantTransformer(
           color,
           sizes,
           isPreOrder,
           price,
         );
-        productVariants = [...productVariants, ...variants];
-      });
-      // ADD SKU FOR PRODUCT VARIANTS
-      addSkuToProductVariants(
-        await createSkuHandler(productVariants, style_name),
-        productVariants,
-      );
-      if (productVariants.length) {
-        // CREATE VARIANTS
+        productVariants.push(...variants);
+      }
+
+      const skuMap = await createSkuHandler(productVariants, productId);
+      addSkuToProductVariants(skuMap, productVariants);
+
+      if (productVariants.length > 0) {
+        // Logging the creation of product variants
+        this.logger.verbose(
+          `Creating ${productVariants.length} variants for product ${productId}`,
+        );
+
         const variantIds = await createBulkVariantsHandler(
           productVariants,
           productId,
         );
-        // CREATE SALES IF PRODUCT IS ON SALE
-        if (price.onSale == 'Y') {
+
+        if (price.onSale === 'Y') {
+          // Logging the creation of sales for on-sale products
+          this.logger.verbose(`Creating sales for product ${productId}`);
+
           createSalesHandler(
             style_name,
             Number(price.purchasePrice) - Number(price.salePrice),
             variantIds,
           );
         }
-        // CREATE BUNDLES
+
         await this.createBundles({
           variantIds,
           bundle: pack_name.split('-'),
@@ -119,27 +134,33 @@ export class ProductVariantService {
           productId,
         });
 
-        // ADD PRODUCT VARIANTS TO SHOP
-        addProductVariantToShopHandler(variantIds, shopId);
+        // Logging the completion of variant assignment
+        this.logger.verbose(
+          `Variant assignment completed for product ${productId}`,
+        );
       }
     }
-    return;
   }
 
+  /**
+   * Creates bundles for the given variant IDs based on the bundle array.
+   * @param variantIds - The array of variant IDs to be grouped into bundles.
+   * @param bundle - The bundle array specifying the grouping of variants.
+   * @param shopId - The ID of the shop associated with the bundles.
+   * @param productId - The ID of the product associated with the bundles.
+   * @returns A promise that resolves when all bundles have been created.
+   */
   private async createBundles({
     variantIds,
     bundle,
     shopId,
     productId,
-  }: bundlesCreateInterface) {
-    // Filters variantIds array according to bundles
+  }: bundlesCreateInterface): Promise<void[]> {
     const bundleVariantIds = chunkArray(variantIds, bundle.length);
-    const createBundles = await Promise.all(
-      bundleVariantIds.map(async (variants) => {
-        await createBundleHandler(variants, bundle, shopId, productId);
-      }),
-    );
-    return createBundles;
+    const createBundlesPromises = bundleVariantIds.map(async (variants) => {
+      return createBundleHandler(variants, bundle, shopId, productId);
+    });
+    return Promise.all(createBundlesPromises);
   }
 
   private async updatePrice(sourcePrice, destinationProductData) {
@@ -161,6 +182,12 @@ export class ProductVariantService {
     }
   }
 
+  /**
+   * Assigns shoe variants to a product.
+   * @param shoeVariantData - The shoe variant data.
+   * @param productId - The ID of the product.
+   * @param shopId - The ID of the shop (optional).
+   */
   public async shoeVariantsAssign(
     shoeVariantData: productVariantInterface,
     productId: string,
@@ -175,64 +202,80 @@ export class ProductVariantService {
       isPreOrder,
       style_name,
     } = shoeVariantData;
-    let sizes = [];
-    let productVariants = [];
-    let shoeVariantIdMapping = {}; // VARIANT ID MAPPED AGAINST SHOE SIZE
-    sizes = getShoeSizes(shoe_sizes);
-    // TRANSFORM SIZES AND COLORS
-    await (sizes || []).map(async (size) => {
+
+    const sizes = getShoeSizes(shoe_sizes);
+    const productVariants = [];
+    let shoeVariantIdMapping: Record<string, string[]> = {};
+
+    // Transform sizes and colors into shoe variants
+    for (const size of sizes) {
       const variants = await this.transformerClass.shoeVariantTransformer(
         size,
         color_list,
         isPreOrder,
         price,
       );
-      productVariants = [...productVariants, ...variants];
-    });
-    // ADD SKU FOR PRODUCT VARIANTS
-    addSkuToProductVariants(
-      await createSkuHandler(productVariants, style_name),
+      productVariants.push(...variants);
+    }
+
+    // Add SKU for product variants
+    await addSkuToProductVariants(
+      await createSkuHandler(productVariants, productId),
       productVariants,
     );
+
     if (productVariants.length) {
-      // CREATE VARIANTS
+      // Create variants
       const variantIds = await createBulkVariantsHandler(
         productVariants,
         productId,
       );
+
       if (variantIds) {
-        // CREATE SALES IF PRODUCT IS ON SALE
-        if (price.onSale == 'Y') {
+        // Create sales if product is on sale
+        if (price.onSale === 'Y') {
           createSalesHandler(
             style_name,
             Number(price.purchasePrice) - Number(price.salePrice),
             variantIds,
           );
         }
-        // MAP VARIANT IDS ACCORDING TO SIZES
+
+        // Map variant IDs according to sizes
         shoeVariantIdMapping = getShoeVariantsMapping(
           shoe_sizes,
           variantIds,
           color_list,
         );
-        // CREATE BUNDLES
-        (shoe_bundles || []).map(async (bundle, key) => {
+
+        // Create bundles
+        for (let i = 0; i < shoe_bundles.length; i++) {
+          const bundle = shoe_bundles[i];
+          const bundleName = shoe_bundle_name[i];
+
           await this.createShoeBundles({
             shoeVariantIdMapping,
             bundle,
             shopId,
             color_list,
-            bundleName: shoe_bundle_name[key],
+            bundleName,
             productId,
           });
-        });
-
-        // ADD PRODUCT VARIANTS TO SHOP
-        addProductVariantToShopHandler(variantIds, shopId);
+        }
       }
     }
   }
 
+  /**
+   * Creates shoe bundles based on the provided parameters.
+   * @param shoeVariantIdMapping - The mapping of shoe variant IDs.
+   * @param bundle - The bundle configuration.
+   * @param shopId - The ID of the shop.
+   * @param color_list - The list of colors.
+   * @param bundleName - The name of the bundle.
+   * @param productId - The ID of the product.
+   * @returns A promise that resolves to an array of created bundles.
+   */
   private async createShoeBundles({
     shoeVariantIdMapping,
     bundle,
@@ -240,27 +283,42 @@ export class ProductVariantService {
     color_list,
     bundleName,
     productId,
+  }: {
+    shoeVariantIdMapping: Record<string, string[]>;
+    bundle: Record<string, string>;
+    shopId: string;
+    color_list: string[];
+    bundleName: string;
+    productId: string;
   }) {
     const quantities: string[] = Object.values(bundle);
-    // GET BUNDLE VARIANT IDS SPLITTED AGAINST COLOR SIZES FROM MAPPED VARIANT IDS
+
+    // Get bundle variant IDs split by color and sizes from the mapped variant IDs
     const bundleVariantIds = getShoeBundlesBySizes(
       shoeVariantIdMapping,
       bundle,
       color_list.length,
     );
-    const createBundles =
-      bundleVariantIds &&
-      (await Promise.all(
-        bundleVariantIds?.map(async (variants) => {
-          await createBundleHandler(
-            variants,
-            quantities,
-            shopId,
-            productId,
-            bundleName['ShoeSizeName'],
-          );
-        }),
-      ));
+
+    this.logger.log('Bundle Variant IDs:', bundleVariantIds);
+
+    // Create the shoe bundles
+    const createBundles = await Promise.all(
+      (bundleVariantIds || []).map(async (variants) => {
+        await createBundleHandler(
+          variants,
+          quantities,
+          shopId,
+          productId,
+          bundleName,
+        );
+
+        this.logger.log('Created bundle:', variants);
+      }),
+    );
+
+    this.logger.log('All bundles created:', createBundles);
+
     return createBundles;
   }
 }

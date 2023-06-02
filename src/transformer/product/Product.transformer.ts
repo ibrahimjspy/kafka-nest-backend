@@ -19,78 +19,58 @@ import { validateMediaArray } from 'src/services/product/media/Product.Media.uti
 @Injectable()
 export class ProductTransformerService {
   /**
-   * transforms and validates productView responses and existence
-   * @value id
-   * @value description
-   * @value name
-   * @params object,  Composite object containing cdc changeData, productView data
+   * Transforms and validates productView responses and existence.
+   * @param {productDto} productData - Composite object containing cdc changeData and productView data.
+   * @returns {Promise<productTransformed>} The transformed product object.
    */
-  public async productGeneralTransformerMethod(@Param() object: productDto) {
-    const productObject: productTransformed = {};
-    const {
-      TBItem_ID,
-      nStyleName,
-      nItemDescription,
-      TBStyleNo_OS_Category_Master_ID,
-      TBStyleNo_OS_Category_Sub_ID,
-      TBVendor_ID,
-      nVendorStyleNo,
-      nSalePrice,
-      nOnSale,
-      nPrice2,
-      min_broken_pack_order_qty,
-      is_broken_pack,
-    } = object;
-    productObject['id'] = TBItem_ID.toString();
-    productObject['styleNumber'] = nVendorStyleNo.toString();
-    productObject['name'] = nStyleName.toString();
-    productObject['description'] =
-      this.descriptionTransformer(nItemDescription);
-    productObject['media'] = this.mediaTransformerMethod(object);
-    productObject['listing'] = this.channelListingTransformer(object);
-    productObject['categoryId'] = TBStyleNo_OS_Category_Sub_ID
-      ? await this.categoryIdTransformer(
-          TBStyleNo_OS_Category_Master_ID,
-          TBStyleNo_OS_Category_Sub_ID,
-        )
-      : await this.categoryIdTransformer(
-          TBStyleNo_OS_Category_Master_ID,
-          '100000',
-        );
-    productObject['shopId'] = await this.shopIdTransformer(
-      TBVendor_ID ? TBVendor_ID : TBVendor_ID[0],
-    );
-    productObject['price'] = this.priceTransformer(
-      nPrice2,
-      nSalePrice,
-      nOnSale,
-    );
-    productObject['openPack'] = is_broken_pack ? true : false;
-    productObject['openPackMinimumQuantity'] = min_broken_pack_order_qty;
+  public async productGeneralTransformerMethod(
+    @Param() productData: productDto,
+  ) {
+    const productObject: productTransformed = {
+      id: productData.TBItem_ID?.toString(),
+      styleNumber: productData.nVendorStyleNo?.toString(),
+      name: productData.nStyleName?.toString(),
+      description: this.descriptionTransformer(productData.nItemDescription),
+      media: this.mediaTransformerMethod(productData),
+      listing: this.channelListingTransformer(productData),
+      categoryId: await this.categoryIdTransformer(
+        productData.TBStyleNo_OS_Category_Master_ID,
+        productData.TBStyleNo_OS_Category_Sub_ID || '100000',
+      ),
+      shopId: await this.shopIdTransformer(
+        productData.TBVendor_ID || productData.TBVendor_ID?.[0],
+      ),
+      price: this.priceTransformer(
+        productData.nPrice2,
+        productData.nSalePrice,
+        productData.nOnSale,
+      ),
+      openPack: !!productData.is_broken_pack,
+      openPackMinimumQuantity: productData.min_broken_pack_order_qty,
+    };
 
     return productObject;
   }
 
   /**
-   * description transformed from string format to richText(destination format)
-   * @params string to be transformed
+   * Transforms the description from string format to richText (destination format).
+   * @param {string} description - The string to be transformed.
+   * @returns {string} The transformed richText description.
    */
-  public descriptionTransformer(@Param() description: string) {
-    const validString = description
-      ?.replace(/"/g, "'")
-      .replace(/[\r\n]+/g, ' ');
-    if (validString) {
-      return `{\"time\": 1662995227870, \"blocks\": [{\"id\": \"cqWmV3MIPH\", \"data\": {\"text\": \"${validString}\"}, \"type\": \"paragraph\"}], \"version\": \"2.24.3\"}`;
-    }
-    return `{\"time\": 1662995227870, \"blocks\": [{\"id\": \"cqWmV3MIPH\", \"data\": {\"text\": \" \"}, \"type\": \"paragraph\"}], \"version\": \"2.24.3\"}`;
+  public descriptionTransformer(description: string): string {
+    const validString =
+      description?.replace(/"/g, "'").replace(/[\r\n]+/g, ' ') || '';
+    return `{"time": 1662995227870, "blocks": [{"id": "cqWmV3MIPH", "data": {"text": "${validString}"}, "type": "paragraph"}], "version": "2.24.3"}`;
   }
 
   /**
-   * media object transformed to a mappable array from object
-   * @params object to be transformed and mapped
-   * @returns media composite array
+   * Transforms the media object to a mappable array from an object.
+   * @param {productDto} productObject - The object to be transformed and mapped.
+   * @returns {mediaDto[]} The transformed media composite array.
    */
-  public mediaTransformerMethod(@Param() productObject: object): mediaDto[] {
+  public mediaTransformerMethod(
+    @Param() productObject: productDto,
+  ): mediaDto[] {
     const mediaArray: mediaDto[] = [];
     for (let i = 1; i < 10; i++) {
       const image: mediaDto = {};
@@ -171,33 +151,26 @@ export class ProductTransformerService {
     return array;
   }
   /**
-   * This function returns variants based on color and its sizes
-   * @params size to be created as variant
-   * @params array of colors to be mapped with color
-   * @params preOrder information
-   * @params pricing information
-   * @returns collection of variants to be created <Array>
+   * Generates shoe variants based on the provided size, colors, preOrder, and price.
+   * @param size - The size to be created as a variant.
+   * @param colors - The array of colors to be mapped with the size.
+   * @param preOrder - The preOrder information.
+   * @param price - The pricing information.
+   * @returns An array of shoe variants to be created.
    */
   public async shoeVariantTransformer(
     size: string,
     colors: string[],
     preOrder: string,
     price: priceInterface,
-  ) {
-    const array = [];
-    try {
-      colors.map((color) => {
-        const object: any = { size: size };
-        object.color = color;
-        object.price = price;
-        object.preOrder = preOrder;
-        array.push(object);
-      });
-    } catch (error) {
-      console.warn(error);
-    }
-
-    return array;
+  ): Promise<any[]> {
+    const variants = colors.map((color) => ({
+      size,
+      color,
+      price,
+      preOrder,
+    }));
+    return variants;
   }
 
   /**
@@ -213,14 +186,14 @@ export class ProductTransformerService {
   }
 
   /**
-   * This function returns retail price based on  a constant rule
+   * Transforms the purchase price to the retail price based on a constant rule.
+   * @param {string} purchasePrice - The purchase price to be transformed.
+   * @returns {string} The transformed retail price.
    */
   public retailPriceTransformer(purchasePrice): string {
     const RULE_ENGINE = 1.6;
-    return `${
-      Math.round((Number(purchasePrice) * RULE_ENGINE + Number.EPSILON) * 100) /
-      100
-    }`;
+    const retailPrice = (Number(purchasePrice) * RULE_ENGINE).toFixed(2);
+    return retailPrice;
   }
 
   /**

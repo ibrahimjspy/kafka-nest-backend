@@ -1,27 +1,44 @@
 /**
- * @description - this function is like a transformer with builder pattern built in.
- * what it basically does is that it takes raw db object removes unnecessary information .
- * create a mappable array containing bundles.
+ * Removes unnecessary information from the raw db object and creates a mappable array of bundles.
+ * @param {Object} dbBundle - The raw db object containing bundles.
+ * @returns {Array} The mappable array of bundles.
  */
 export const getShoeBundlesFromDb = (dbBundle) => {
   const bundles = [];
-  dbBundle.TBVendorShoeSize_ID.map((bundle) => {
+
+  dbBundle.TBVendorShoeSize_ID.forEach((bundle) => {
     const bundleArray = Object.entries(bundle);
-    const filterArray = bundleArray.filter(
-      ([key, value]) =>
-        value !== '0' &&
-        value !== '' &&
-        !key.startsWith('sn') &&
-        !key.startsWith('TBVendorShoeSize_ID') &&
-        !key.startsWith('ShoeSizeName') &&
-        !key.startsWith('Description') &&
-        !key.startsWith('TBVendor_ID') &&
-        !key.startsWith('is_favorite'),
+    const filterArray = bundleArray.filter(([key, value]) =>
+      isBundleProperty(key, value),
     );
 
     bundles.push(Object.fromEntries(filterArray));
   });
+
   return bundles;
+};
+
+/**
+ * Checks if a key-value pair represents a valid bundle property.
+ * @param {string} key - The key of the property.
+ * @param {string} value - The value of the property.
+ * @returns {boolean} True if the property is valid, false otherwise.
+ */
+const isBundleProperty = (key, value) => {
+  const excludedPrefixes = [
+    'sn',
+    'TBVendorShoeSize_ID',
+    'ShoeSizeName',
+    'Description',
+    'TBVendor_ID',
+    'is_favorite',
+  ];
+
+  return (
+    value !== '0' &&
+    value !== '' &&
+    !excludedPrefixes.some((prefix) => key.startsWith(prefix))
+  );
 };
 
 /**
