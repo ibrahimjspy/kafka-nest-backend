@@ -18,7 +18,8 @@ export const getProductVariantsForSku = (
     const skuProductVariant = {};
     skuProductVariant['color'] = variant.color;
     skuProductVariant['size'] = variant.size;
-    skuProductVariant['id'] = Number(idBase64Decode(productId));
+    skuProductVariant['id'] =
+      Math.floor(Math.random() * 100000) || Number(idBase64Decode(productId));
     skuProductVariants.push(skuProductVariant);
   });
   return JSON.stringify(skuProductVariants)

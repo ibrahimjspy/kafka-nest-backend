@@ -42,6 +42,7 @@ export const productVariantQueryTransformer = (variants) => {
 
     ]
       sku: "${variant.sku}"
+      quantityLimitPerCustomer: 1000
       channelListings: { channelId: "${DEFAULT_CHANNEL_ID}", price: ${
       variant.price.purchasePrice
     } costPrice: ${variant.price.purchasePrice} }
