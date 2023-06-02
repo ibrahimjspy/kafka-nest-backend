@@ -94,7 +94,10 @@ export class AppService {
       const vendorProducts = (await fetchBulkProductsData(
         bulkImportInput.vendorId,
       )) as productDto[];
-      this.logger.log('Bulk products data fetched successfully.');
+      this.logger.log(
+        'Bulk products data fetched successfully.',
+        vendorProducts.length,
+      );
 
       const { startCurser, endCurser } = bulkImportInput;
       const productBatch = vendorProducts.slice(startCurser, endCurser);
@@ -210,7 +213,7 @@ export class AppService {
   // big data import methods dividing data in batches and running them in pools
   async productVariantMediaImport(bulkArray) {
     try {
-      const { results } = await PromisePool.withConcurrency(100)
+      const { results } = await PromisePool.withConcurrency(BATCH_SIZE)
         .for(bulkArray)
         .onTaskStarted((product, pool) => {
           Logger.log(`Progress: ${pool.processedPercentage()}%`);

@@ -3,7 +3,7 @@ dotenv.config();
 // file storing common env configurations
 dotenv.config();
 
-export const BATCH_SIZE = Number(process.env.BATCH_SIZE) || 10;
+export const BATCH_SIZE = Number(process.env.BATCH_SIZE) || 7;
 export const SALEOR_ENDPOINT = process.env.FEDERATION_ENDPOINT;
 export const FEDERATION_ENDPOINT = process.env.DESTINATION_FEDERATION_ENDPOINT;
 export const KAFKA_BROKER_ENDPOINT = process.env.KAFKA_BROKER;
