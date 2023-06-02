@@ -105,7 +105,7 @@ export class ProductService {
     } catch (error) {
       this.logger.error(
         `An error occurred while creating product: ${error.message}`,
-        error,
+        productData,
       );
       throw error;
     }
@@ -143,25 +143,30 @@ export class ProductService {
     productData: productTransformed,
     productId: string,
   ): Promise<void> {
-    const productVariantData: productVariantInterface =
-      await this.transformerClass.productViewTransformer(
-        await getProductDetailsFromDb(productData.id),
-      );
+    try {
+      const productVariantData: productVariantInterface =
+        await this.transformerClass.productViewTransformer(
+          await getProductDetailsFromDb(productData.id),
+        );
 
-    if (productVariantData.productGroup === 'SHOES') {
-      await this.productVariantService.shoeVariantsAssign(
+      if (productVariantData.productGroup === 'SHOES') {
+        await this.productVariantService.shoeVariantsAssign(
+          productVariantData,
+          productId,
+          productData.shopId,
+        );
+        return;
+      }
+
+      await this.productVariantService.productVariantAssign(
         productVariantData,
         productId,
         productData.shopId,
       );
-      return;
+    } catch (error) {
+      await this.productDelete(productId);
+      throw error;
     }
-
-    await this.productVariantService.productVariantAssign(
-      productVariantData,
-      productId,
-      productData.shopId,
-    );
   }
 
   /**
