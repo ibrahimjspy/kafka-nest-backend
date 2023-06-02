@@ -36,7 +36,8 @@ export class ShopTransformerService {
       VDPhone,
       VDReturnPolicy,
       Brand_Rep_Image,
-      ShippedFrom,
+      VDCity,
+      VDState,
     } = object;
 
     /**
@@ -59,7 +60,7 @@ export class ShopTransformerService {
       storePolicy: VDStorePolicy ? this.textTransformer(VDStorePolicy) : '',
       madeIn: VDMadeIn || '',
       returnPolicy: VDReturnPolicy ? this.textTransformer(VDReturnPolicy) : '',
-      shippedFrom: ShippedFrom,
+      shippedFrom: `${VDCity},${VDState}`,
     };
 
     return shopObject;

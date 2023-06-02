@@ -26,6 +26,7 @@ import {
   removeProductMapping,
 } from 'src/mapping/methods/product';
 import { autoSyncWebhookHandler } from 'src/external/endpoints/autoSync';
+import { SHOES_GROUP_NAME } from 'common.env';
 
 /**
  *  Injectable class handling product variant and its relating tables CDC
@@ -105,7 +106,7 @@ export class ProductService {
     } catch (error) {
       this.logger.error(
         `An error occurred while creating product: ${error.message}`,
-        error,
+        productData,
       );
       throw error;
     }
@@ -143,25 +144,30 @@ export class ProductService {
     productData: productTransformed,
     productId: string,
   ): Promise<void> {
-    const productVariantData: productVariantInterface =
-      await this.transformerClass.productViewTransformer(
-        await getProductDetailsFromDb(productData.id),
-      );
+    try {
+      const productVariantData: productVariantInterface =
+        await this.transformerClass.productViewTransformer(
+          await getProductDetailsFromDb(productData.id),
+        );
 
-    if (productVariantData.productGroup === 'SHOES') {
-      await this.productVariantService.shoeVariantsAssign(
+      if (productVariantData.productGroup === SHOES_GROUP_NAME) {
+        await this.productVariantService.shoeVariantsAssign(
+          productVariantData,
+          productId,
+          productData.shopId,
+        );
+        return;
+      }
+
+      await this.productVariantService.productVariantAssign(
         productVariantData,
         productId,
         productData.shopId,
       );
-      return;
+    } catch (error) {
+      await this.productDelete(productId);
+      throw error;
     }
-
-    await this.productVariantService.productVariantAssign(
-      productVariantData,
-      productId,
-      productData.shopId,
-    );
   }
 
   /**

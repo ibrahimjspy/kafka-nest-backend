@@ -21,10 +21,14 @@ export const tbStyleNoQuery = (): string => {
 export const tbStyleNoNewQuery = (vendorId: string): string => {
   return `SELECT *
   FROM [ARAOS].[dbo].[TBStyleNo]
-  where  nSoldOut != 'Y' and TBVendor_ID = '${vendorId}' and nActive = 'Y' 
+  where  nSoldOut != 'Y'
+	and TBVendor_ID = '${vendorId}'
+	and nActive = 'Y'
+	AND Picture1 <> ''
+	AND ISNULL(TBStyleNo_OS_Category_Master_ID,0) <> 0
 `;
 };
-// TBStyleNo_OS_Category_Master_ID = '15' and
+
 export const subCategoryQuery = (): string => {
   return `SELECT TBStyleNo_OS_Category_Sub_ID, TBStyleNo_OS_Category_Master_ID, CategorySubName, Description, Active, url, Description50, seo_title, seo_description, Description_tmpl, h1_tag
   FROM ARAOS.dbo.TBStyleNo_OS_Category_Sub ;`;

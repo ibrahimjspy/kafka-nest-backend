@@ -154,4 +154,20 @@ export class BulkImportController {
       this.logger.error(error);
     }
   }
+
+  @Post('api/v2/bulk/products')
+  @ApiOperation({
+    summary: 'imports bulk products against a vendor v2',
+  })
+  async createProductsV2(
+    @Body() bulkProductsImportInput: BulkProductImportDto,
+  ) {
+    try {
+      this.appService.handleProductBulkCreateCDC(bulkProductsImportInput);
+      return 'Added bulk products to kafka topic';
+    } catch (error) {
+      this.logger.error(error);
+      return error.message;
+    }
+  }
 }
