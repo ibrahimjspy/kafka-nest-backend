@@ -27,6 +27,7 @@ export const createBulkVariantsHandler = async (
         productId,
       ),
     );
+    console.dir(createProductVariants, { depth: null });
     createProductVariants.productVariantBulkCreate.productVariants.map(
       (variant) => [variantIds.push(variant.id)],
     );

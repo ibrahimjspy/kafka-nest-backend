@@ -106,6 +106,7 @@ export class ProductVariantService {
       addSkuToProductVariants(skuMap, productVariants);
 
       if (productVariants.length > 0) {
+        console.log(productVariants);
         // Logging the creation of product variants
         this.logger.verbose(
           `Creating ${productVariants.length} variants for product ${productId}`,
