@@ -16,7 +16,7 @@ import { getProductDetailsFromDb } from './database/mssql/product-view/getProduc
 import { productVariantInterface } from './database/mssql/types/product';
 import { TransformerService } from './transformer/Transformer.service';
 import { getAllMappings, getProductMapping } from './mapping/methods/product';
-import { BATCH_SIZE } from 'common.env';
+import { BATCH_SIZE, VARIANT_MEDIA_BATCH_SIZE } from 'common.env';
 import { fetchBulkProductsData } from './database/mssql/bulk-import/methods';
 import { productDto } from './transformer/types/product';
 
@@ -213,7 +213,9 @@ export class AppService {
   // big data import methods dividing data in batches and running them in pools
   async productVariantMediaImport(bulkArray) {
     try {
-      const { results } = await PromisePool.withConcurrency(BATCH_SIZE)
+      const { results } = await PromisePool.withConcurrency(
+        VARIANT_MEDIA_BATCH_SIZE,
+      )
         .for(bulkArray)
         .onTaskStarted((product, pool) => {
           Logger.log(`Progress: ${pool.processedPercentage()}%`);

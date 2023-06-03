@@ -16,9 +16,13 @@ export class KafkaController {
   private readonly logger = new Logger(KafkaController.name);
 
   @MessagePattern(KAFKA_CREATE_PRODUCTS_TOPIC)
-  autoSyncCreateBatches(@Payload() message) {
+  async autoSyncCreateBatches(@Payload() message) {
     try {
-      return this.productService.handleProductBulkCreateCDC(message);
+      this.logger.log('received product import message');
+      const bulkCreate = await this.productService.handleProductBulkCreateCDC(
+        message,
+      );
+      return bulkCreate;
     } catch (error) {
       this.logger.error(error);
     }

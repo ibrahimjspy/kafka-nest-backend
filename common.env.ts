@@ -3,7 +3,14 @@ dotenv.config();
 // file storing common env configurations
 dotenv.config();
 
-export const BATCH_SIZE = Number(process.env.BATCH_SIZE) || 7;
+export const BATCH_SIZE = Number(process.env.BATCH_SIZE) || 5;
+export const VARIANT_MEDIA_BATCH_SIZE = Number(process.env.BATCH_SIZE) || 30;
+export const KAFKA_HEARTBEAT_INTERVAL =
+  Number(process.env.KAFKA_HEARTBEAT_INTERVAL) || 1000;
+export const KAFKA_RETRIES = Number(process.env.KAFKA_RETRIES) || 5;
+export const KAFKA_SESSION_TIMEOUT =
+  Number(process.env.KAFKA_SESSION_TIMEOUT) || 1000000;
+
 export const SALEOR_ENDPOINT = process.env.FEDERATION_ENDPOINT;
 export const FEDERATION_ENDPOINT = process.env.DESTINATION_FEDERATION_ENDPOINT;
 export const KAFKA_BROKER_ENDPOINT = process.env.KAFKA_BROKER;

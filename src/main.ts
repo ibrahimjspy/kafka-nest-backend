@@ -4,6 +4,9 @@ import { Transport, MicroserviceOptions } from '@nestjs/microservices';
 import {
   KAFKA_BROKER_ENDPOINT,
   KAFKA_CONSUMER_GROUP,
+  KAFKA_HEARTBEAT_INTERVAL,
+  KAFKA_RETRIES,
+  KAFKA_SESSION_TIMEOUT,
   SERVER_PORT,
 } from '../common.env';
 import packageInfo from '../package.json';
@@ -26,9 +29,10 @@ async function bootstrap() {
       },
 
       consumer: {
-        // sessionTimeout: 200007,
-
-        groupId: KAFKA_CONSUMER_GROUP || 'my-kafka-consumer3',
+        heartbeatInterval: KAFKA_HEARTBEAT_INTERVAL,
+        sessionTimeout: KAFKA_SESSION_TIMEOUT,
+        retry: { retries: KAFKA_RETRIES },
+        groupId: KAFKA_CONSUMER_GROUP,
       },
     },
   });
