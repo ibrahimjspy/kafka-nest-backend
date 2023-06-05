@@ -160,6 +160,7 @@ export class ProductVariantService {
         destinationProductData.variants[0].pricing?.price?.gross?.amount,
       )
     ) {
+      this.logger.log('syncing cost price', destinationProductData);
       await Promise.all(
         destinationProductData.variants.map(async (variant) => {
           await updateProductVariantPriceHandler(
@@ -172,15 +173,16 @@ export class ProductVariantService {
         destinationProductData.productId,
       );
       await updateBundlePriceHandler(bundleIds);
-      return;
+    } else {
+      return this.syncResalePrice(price, destinationProductData);
     }
-    return this.syncResalePrice(price, destinationProductData);
   }
 
   private async syncResalePrice(price: priceInterface, destinationProductData) {
     if (
       validateResalePrice(price.retailPrice, destinationProductData.variants[0])
     ) {
+      this.logger.log('syncing resale price attribute', destinationProductData);
       await Promise.all(
         destinationProductData.variants.map(async (variant) => {
           await updateProductVariantAttributeResaleHandler(
