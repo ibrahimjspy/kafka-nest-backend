@@ -167,6 +167,10 @@ export class ProductVariantService {
             variant.id,
             price.purchasePrice,
           );
+          await updateProductVariantAttributeResaleHandler(
+            variant.id,
+            price.retailPrice,
+          );
         }),
       );
       const bundleIds: any = await getBundleIdsHandler(
@@ -180,7 +184,10 @@ export class ProductVariantService {
 
   private async syncResalePrice(price: priceInterface, destinationProductData) {
     if (
-      validateResalePrice(price.retailPrice, destinationProductData.variants[0])
+      !validateResalePrice(
+        price.retailPrice,
+        destinationProductData.variants[0],
+      )
     ) {
       this.logger.log('syncing resale price attribute', destinationProductData);
       await Promise.all(
