@@ -55,7 +55,7 @@ export class ProductVariantTransformerService {
         salePrice: sale_price,
         onSale: is_sale,
         retailPrice:
-          this.productTransformerService.retailPriceTransformer(regular_price),
+          this.productTransformerService.retailPriceTransformer(sale_price),
       };
       productVariantData['style_name'] = style_name;
       productVariantData['sizes'] = item_sizes?.split('-');

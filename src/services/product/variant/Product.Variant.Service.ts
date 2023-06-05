@@ -1,12 +1,14 @@
 import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
 import {
   createBulkVariantsHandler,
+  updateProductVariantAttributeResaleHandler,
   updateProductVariantPriceHandler,
 } from 'src/graphql/handlers/productVariant';
 import { TransformerService } from 'src/transformer/Transformer.service';
 import { productVariantInterface } from 'src/database/mssql/types/product';
 import {
   colorSelectDto,
+  priceInterface,
   productTransformed,
 } from 'src/transformer/types/product';
 import {
@@ -22,8 +24,10 @@ import {
 } from '../Product.utils';
 import { ProductService } from '../Product.Service';
 import { getProductDetailsHandler } from 'src/graphql/handlers/product';
-import { createSalesHandler } from 'src/graphql/handlers/sale';
-import { addSkuToProductVariants } from './Product.Variant.utils';
+import {
+  addSkuToProductVariants,
+  validateResalePrice,
+} from './Product.Variant.utils';
 import { createSkuHandler } from 'src/graphql/handlers/sku';
 import { getProductDetailsFromDb } from 'src/database/mssql/product-view/getProductViewById';
 import { bundlesCreateInterface } from './Product.Variant.types';
@@ -67,10 +71,7 @@ export class ProductVariantService {
         productId,
       );
     }
-    return await this.updatePrice(
-      sourceProductData.price.purchasePrice,
-      productDetails,
-    );
+    return await this.updatePrice(sourceProductData.price, productDetails);
   }
 
   /**
@@ -87,7 +88,7 @@ export class ProductVariantService {
     productId: string,
     shopId?: string,
   ): Promise<void> {
-    const { sizes, price, color_list, pack_name, isPreOrder, style_name } =
+    const { sizes, price, color_list, pack_name, isPreOrder } =
       productVariantData;
     const productVariants = [];
 
@@ -106,7 +107,6 @@ export class ProductVariantService {
       addSkuToProductVariants(skuMap, productVariants);
 
       if (productVariants.length > 0) {
-        console.log(productVariants);
         // Logging the creation of product variants
         this.logger.verbose(
           `Creating ${productVariants.length} variants for product ${productId}`,
@@ -116,17 +116,6 @@ export class ProductVariantService {
           productVariants,
           productId,
         );
-
-        if (price.onSale === 'Y') {
-          // Logging the creation of sales for on-sale products
-          this.logger.verbose(`Creating sales for product ${productId}`);
-
-          createSalesHandler(
-            style_name,
-            Number(price.purchasePrice) - Number(price.salePrice),
-            variantIds,
-          );
-        }
 
         await this.createBundles({
           variantIds,
@@ -164,22 +153,43 @@ export class ProductVariantService {
     return Promise.all(createBundlesPromises);
   }
 
-  private async updatePrice(sourcePrice, destinationProductData) {
+  private async updatePrice(price: priceInterface, destinationProductData) {
     if (
-      parseFloat(sourcePrice) !==
+      parseFloat(price.purchasePrice as string) !==
       parseFloat(
         destinationProductData.variants[0].pricing?.price?.gross?.amount,
       )
     ) {
       await Promise.all(
         destinationProductData.variants.map(async (variant) => {
-          await updateProductVariantPriceHandler(variant.id, sourcePrice);
+          await updateProductVariantPriceHandler(
+            variant.id,
+            price.purchasePrice,
+          );
         }),
       );
       const bundleIds: any = await getBundleIdsHandler(
         destinationProductData.productId,
       );
       await updateBundlePriceHandler(bundleIds);
+      return;
+    }
+    return this.syncResalePrice(price, destinationProductData);
+  }
+
+  private async syncResalePrice(price: priceInterface, destinationProductData) {
+    if (
+      validateResalePrice(price.retailPrice, destinationProductData.variants[0])
+    ) {
+      await Promise.all(
+        destinationProductData.variants.map(async (variant) => {
+          await updateProductVariantAttributeResaleHandler(
+            variant.id,
+            price.retailPrice,
+          );
+        }),
+      );
+      return;
     }
   }
 
@@ -201,7 +211,6 @@ export class ProductVariantService {
       shoe_bundles,
       shoe_bundle_name,
       isPreOrder,
-      style_name,
     } = shoeVariantData;
 
     const sizes = getShoeSizes(shoe_sizes);
@@ -233,15 +242,6 @@ export class ProductVariantService {
       );
 
       if (variantIds) {
-        // Create sales if product is on sale
-        if (price.onSale === 'Y') {
-          createSalesHandler(
-            style_name,
-            Number(price.purchasePrice) - Number(price.salePrice),
-            variantIds,
-          );
-        }
-
         // Map variant IDs according to sizes
         shoeVariantIdMapping = getShoeVariantsMapping(
           shoe_sizes,

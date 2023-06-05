@@ -1,4 +1,7 @@
-import { DEFAULT_CHANNEL_ID, COST_ATTRIBUTE_ID } from '../../../../common.env';
+import {
+  DEFAULT_CHANNEL_ID,
+  RESALE_PRICE_ATTRIBUTE,
+} from '../../../../common.env';
 import { gql } from 'graphql-request';
 
 export const updateProductVariantPricingMutation = (
@@ -28,15 +31,15 @@ export const updateProductVariantPricingMutation = (
     `;
 };
 
-export const updateProductVariantCostAttributeMutation = (
+export const updateProductVariantResaleAttributeMutation = (
   productVariantId,
-  costPrice,
+  resalePrice,
 ) => {
   return gql`
     mutation {
       productVariantUpdate(
         id: "${productVariantId}"
-        input: { attributes: [{ id: "${COST_ATTRIBUTE_ID}", values: ["${costPrice}"] }] }
+        input: { attributes: [{ id: "${RESALE_PRICE_ATTRIBUTE}", values: ["${resalePrice}"] }] }
       ) {
         productVariant {
           id

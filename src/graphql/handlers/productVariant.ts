@@ -8,8 +8,8 @@ import {
 import { productVariantQueryTransformer } from '../utils/transformers';
 import { deleteProductHandler } from './product';
 import {
-  updateProductVariantCostAttributeMutation,
   updateProductVariantPricingMutation,
+  updateProductVariantResaleAttributeMutation,
 } from '../mutations/productVariant/update';
 import { validateProductVariants } from 'src/services/product/variant/Product.Variant.utils';
 import { removeProductMapping } from 'src/mapping/methods/product';
@@ -83,16 +83,16 @@ export const updateProductVariantPriceHandler = async (
   }
 };
 
-export const updateProductVariantAttributeCostHandler = async (
+export const updateProductVariantAttributeResaleHandler = async (
   productVariantId,
-  productVariantCostPrice,
+  productVariantResalePrice,
 ) => {
   try {
     if (productVariantId) {
       await graphqlCall(
-        updateProductVariantCostAttributeMutation(
+        updateProductVariantResaleAttributeMutation(
           productVariantId,
-          productVariantCostPrice,
+          productVariantResalePrice,
         ),
       );
     }
