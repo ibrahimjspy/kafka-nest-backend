@@ -25,6 +25,7 @@ export interface productDto {
   nActive?: string;
   is_broken_pack?: number;
   min_broken_pack_order_qty?: number;
+  nSalePrice2?: number;
 }
 
 export interface productTransformed {

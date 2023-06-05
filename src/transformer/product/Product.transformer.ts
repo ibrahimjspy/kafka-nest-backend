@@ -42,7 +42,7 @@ export class ProductTransformerService {
       ),
       price: this.priceTransformer(
         productData.nPrice2,
-        productData.nSalePrice,
+        productData.nSalePrice2,
         productData.nOnSale,
       ),
       openPack: !!productData.is_broken_pack,
@@ -177,11 +177,12 @@ export class ProductTransformerService {
    * This function returns pricing information
    */
   public priceTransformer(purchasePrice, salePrice, onSale): priceInterface {
+    const productMinimumPrice = onSale == 'Y' ? salePrice : purchasePrice;
     return {
-      purchasePrice: purchasePrice,
-      salePrice: salePrice,
+      purchasePrice: productMinimumPrice,
+      salePrice: productMinimumPrice,
       onSale: onSale,
-      retailPrice: this.retailPriceTransformer(purchasePrice),
+      retailPrice: this.retailPriceTransformer(productMinimumPrice),
     };
   }
 
