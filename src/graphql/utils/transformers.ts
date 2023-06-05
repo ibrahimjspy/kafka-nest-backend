@@ -36,14 +36,14 @@ export const productVariantQueryTransformer = (variants) => {
       { id: "${RESALE_PRICE_ATTRIBUTE}", values:["${
       variant?.price?.retailPrice
     }"] }
-      { id: "${COST_ATTRIBUTE_ID}", values:["${variant?.price?.price}"] }
+      { id: "${COST_ATTRIBUTE_ID}", values:["${variant?.price?.salePrice}"] }
 
     ]
       sku: "${variant.sku}"
       quantityLimitPerCustomer: 1000
       channelListings: { channelId: "${DEFAULT_CHANNEL_ID}", price: ${
-      variant.price.price
-    } costPrice: ${variant.price.price} }
+      variant.price.salePrice
+    } costPrice: ${variant.price.salePrice} }
       ${variant.preOrder == 'Y' ? ` preorder: { globalThreshold: 1000 }` : ' '}
       ${
         variant.preOrder == 'N'

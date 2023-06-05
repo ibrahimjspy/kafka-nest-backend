@@ -44,7 +44,6 @@ export class ProductVariantTransformerService {
       pack_name,
       ShoeDetails,
       group_name,
-      sale_price,
       is_sale,
       is_preorder,
     } = object;
@@ -52,7 +51,7 @@ export class ProductVariantTransformerService {
     if (price && item_sizes) {
       productVariantData['price'] = {
         purchasePrice: regular_price,
-        salePrice: sale_price,
+        salePrice: price,
         onSale: is_sale,
         retailPrice:
           this.productTransformerService.retailPriceTransformer(price),
