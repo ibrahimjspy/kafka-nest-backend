@@ -46,4 +46,9 @@ export class AppController {
     Logger.verbose('kafka healthCheck');
     return 'service running';
   }
+
+  @MessagePattern('TbStyleNo') // topic name
+  tbStyleNoMessage(@Payload() message) {
+    Logger.log('kafka tb style number event received', message);
+  }
 }
