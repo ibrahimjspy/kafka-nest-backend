@@ -4,6 +4,7 @@ export interface productVariantInterface {
   price?: priceInterface;
   sizes?: string[];
   color_list?: any;
+  product_id?: string;
   pack_name?: string;
   shoe_bundles?: any;
   shoe_sizes?: any;

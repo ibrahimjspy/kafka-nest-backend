@@ -109,8 +109,7 @@ describe('Product utility tests', () => {
   });
 
   it('product variants are transformed accurately for sku', async () => {
-    const data = getProductVariantsForSku(mockVariantData, mockColorList);
-    console.log(data);
+    const data = getProductVariantsForSku(mockVariantData, '123');
     expect(data).toBeDefined();
   });
 

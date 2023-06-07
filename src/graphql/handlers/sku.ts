@@ -6,7 +6,7 @@ import { getProductVariantsForSku } from 'src/services/product/variant/Product.V
 
 export const createSkuHandler = async (
   productVariants,
-  productId,
+  productId: string,
 ): Promise<object> => {
   try {
     const skuData = await graphqlCall(

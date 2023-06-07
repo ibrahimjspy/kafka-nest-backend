@@ -88,7 +88,7 @@ export class ProductVariantService {
     productId: string,
     shopId?: string,
   ): Promise<void> {
-    const { sizes, price, color_list, pack_name, isPreOrder } =
+    const { sizes, price, color_list, pack_name, isPreOrder, product_id } =
       productVariantData;
     const productVariants = [];
 
@@ -103,7 +103,7 @@ export class ProductVariantService {
         productVariants.push(...variants);
       }
 
-      const skuMap = await createSkuHandler(productVariants, productId);
+      const skuMap = await createSkuHandler(productVariants, product_id);
       addSkuToProductVariants(skuMap, productVariants);
 
       if (productVariants.length > 0) {
@@ -220,6 +220,7 @@ export class ProductVariantService {
       shoe_bundles,
       shoe_bundle_name,
       isPreOrder,
+      product_id,
     } = shoeVariantData;
 
     const sizes = getShoeSizes(shoe_sizes);
@@ -239,7 +240,7 @@ export class ProductVariantService {
 
     // Add SKU for product variants
     await addSkuToProductVariants(
-      await createSkuHandler(productVariants, productId),
+      await createSkuHandler(productVariants, product_id),
       productVariants,
     );
 

@@ -46,9 +46,11 @@ export class ProductVariantTransformerService {
       group_name,
       is_sale,
       is_preorder,
+      product_id,
     } = object;
 
     if (price && item_sizes) {
+      productVariantData['product_id'] = product_id;
       productVariantData['price'] = {
         purchasePrice: regular_price,
         salePrice: price,
