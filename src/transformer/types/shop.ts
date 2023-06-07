@@ -38,7 +38,7 @@ export interface shopTransformed {
   seo_title?: string;
   email?: string;
   url?: string;
-  minOrder?: string;
+  minOrder?: number;
   banners?: string[];
   vendorMainImage?: string;
   storePolicy?: string;

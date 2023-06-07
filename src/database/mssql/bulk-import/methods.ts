@@ -4,11 +4,13 @@ import {
   subCategoryQuery,
   tbCustomerQuery,
   tbShipMethodQuery,
+  tbShipsFromQuery,
   tbStyleFirstTenQuery,
   tbStyleNoNewQuery,
   tbVendorQuery,
   tbVendorShippingDetailsQuery,
 } from '../query';
+import { shipsFromInterface } from '../types/product';
 
 export const fetchBulkSubCategoriesData = async () => {
   return await mssqlCall(subCategoryQuery());
@@ -40,4 +42,15 @@ export const fetchBulkCustomers = async () => {
 
 export const fetchFirstTenProducts = async () => {
   return await mssqlCall(tbStyleFirstTenQuery());
+};
+
+/**
+ * @description -- this method takes in vendorName and returns vendor minimum order amount from os tb ships from table
+ */
+export const fetchVendorMinimumOrderAmount = async (vendorName: string) => {
+  let shipsFromData = [] as shipsFromInterface[];
+  shipsFromData = (await mssqlCall(
+    tbShipsFromQuery(vendorName),
+  )) as shipsFromInterface[];
+  return shipsFromData[0].InvMinAmount || 0;
 };

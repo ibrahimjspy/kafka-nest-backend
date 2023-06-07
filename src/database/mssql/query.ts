@@ -78,3 +78,9 @@ export const tbStyleFirstTenQuery = (): string => {
   FROM [ARAOS].[dbo].[TBStyleNo]
   `;
 };
+
+export const tbShipsFromQuery = (vendorName: string): string => {
+  return `
+  select InvMinAmount from ARAOS.dbo.TBShipFrom where ShipFrom = '${vendorName}'
+  `;
+};

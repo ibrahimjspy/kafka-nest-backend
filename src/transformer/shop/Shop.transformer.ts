@@ -7,6 +7,7 @@ import {
   shopTransformed,
 } from 'src/transformer/types/shop';
 import { brandPickupZoneMapping } from './Shop.transformer.utils';
+import { fetchVendorMinimumOrderAmount } from 'src/database/mssql/bulk-import/methods';
 /**
  *  Injectable class handling shop transformation\
  *  @requires Injectable in app scope or in kafka connection to reach kafka messages
@@ -27,7 +28,6 @@ export class ShopTransformerService {
       VDVendorEmail,
       OSDescription,
       VDVendorURL,
-      VDMinimumOrderAmount,
       VDStorePolicy,
       SEOTitle,
       SEODescription,
@@ -54,7 +54,7 @@ export class ShopTransformerService {
       seo_title: SEOTitle || '',
       email: `${this.shopEmailTransformer(VDVendorEmail, VDName)}`,
       url: `${this.shopUrlTransformer(VDVendorURL, VDName)}`,
-      minOrder: VDMinimumOrderAmount || '0',
+      minOrder: await this.getMinimumOrderAmount(VDName),
       banners: this.shopBannerTransformer(object),
       vendorMainImage: this.shopImageTransformer(Brand_Rep_Image) || '',
       storePolicy: VDStorePolicy ? this.textTransformer(VDStorePolicy) : '',
@@ -134,5 +134,14 @@ export class ShopTransformerService {
     shippingZoneData['zoneId'] =
       brandPickupZoneMapping[shopObject.Content] || '8';
     return shippingZoneData;
+  }
+
+  /**
+   * this takes url and returns a url which is s3 image url of source, this helps us in frontend integration with shop service, especially in case of media mapping
+   * @param name -> shop name -- VDName
+   * @returns minimum order amount
+   */
+  public async getMinimumOrderAmount(@Param() name: string) {
+    return await fetchVendorMinimumOrderAmount(name);
   }
 }

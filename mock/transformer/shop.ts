@@ -32,7 +32,7 @@ export const shopTransformedMock: shopTransformed = {
   seo_title: 'seo title',
   email: 'vallykingtradinfeg23csd134@gmail.com',
   url: 'http://localhost:4901133/',
-  minOrder: 'BTvY',
+  minOrder: 100,
   storePolicy: 'vendor store policy',
   madeIn: 'China',
   returnPolicy: 'none',

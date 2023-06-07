@@ -15,8 +15,8 @@ export const updateProductMutation = (
         input:{
         category:"${categoryId}"
         name:"${name}"
+        externalReference:"${id}"
         description:${JSON.stringify(description)}
-        rating:4
       }){
     product{
       name

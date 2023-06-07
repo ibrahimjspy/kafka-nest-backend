@@ -66,3 +66,7 @@ export interface productDatabaseViewInterface {
   color_list?: string;
   ShoeDetails?: string;
 }
+
+export interface shipsFromInterface {
+  InvMinAmount?: number;
+}
