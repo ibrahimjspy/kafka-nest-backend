@@ -5,7 +5,10 @@ import {
   updateProductVariantPriceHandler,
 } from 'src/graphql/handlers/productVariant';
 import { TransformerService } from 'src/transformer/Transformer.service';
-import { productVariantInterface } from 'src/database/mssql/types/product';
+import {
+  colorListInterface,
+  productVariantInterface,
+} from 'src/database/mssql/types/product';
 import {
   colorSelectDto,
   priceInterface,
@@ -88,8 +91,15 @@ export class ProductVariantService {
     productId: string,
     shopId?: string,
   ): Promise<void> {
-    const { sizes, price, color_list, pack_name, isPreOrder, product_id } =
-      productVariantData;
+    const {
+      sizes,
+      price,
+      color_list,
+      pack_name,
+      isPreOrder,
+      product_id,
+      sizeChartId,
+    } = productVariantData;
     const productVariants = [];
 
     if (color_list) {
@@ -103,7 +113,11 @@ export class ProductVariantService {
         productVariants.push(...variants);
       }
 
-      const skuMap = await createSkuHandler(productVariants, product_id);
+      const skuMap = await createSkuHandler(
+        productVariants,
+        product_id,
+        sizeChartId,
+      );
       addSkuToProductVariants(skuMap, productVariants);
 
       if (productVariants.length > 0) {
@@ -221,6 +235,7 @@ export class ProductVariantService {
       shoe_bundle_name,
       isPreOrder,
       product_id,
+      sizeChartId,
     } = shoeVariantData;
 
     const sizes = getShoeSizes(shoe_sizes);
@@ -240,7 +255,7 @@ export class ProductVariantService {
 
     // Add SKU for product variants
     await addSkuToProductVariants(
-      await createSkuHandler(productVariants, product_id),
+      await createSkuHandler(productVariants, product_id, sizeChartId),
       productVariants,
     );
 
@@ -298,7 +313,7 @@ export class ProductVariantService {
     shoeVariantIdMapping: Record<string, string[]>;
     bundle: Record<string, string>;
     shopId: string;
-    color_list: string[];
+    color_list: colorListInterface[];
     bundleName: string;
     productId: string;
   }) {

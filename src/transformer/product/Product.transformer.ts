@@ -12,6 +12,7 @@ import {
 import { getShopMapping } from 'src/mapping/methods/shop';
 import { DEFAULT_CATEGORY_ID, DEFAULT_SHOP_ID } from '../../../common.env';
 import { validateMediaArray } from 'src/services/product/media/Product.Media.utils';
+import { colorListInterface } from 'src/database/mssql/types/product';
 /**
  *  Injectable class handling product transformation
  *  @Injectable in app scope or in kafka connection to reach kafka messages
@@ -130,7 +131,7 @@ export class ProductTransformerService {
    * @returns collection of variants to be created <Array>
    */
   public async productVariantTransformer(
-    color: string,
+    color: colorListInterface,
     sizes: string[],
     preOrder: string,
     price: priceInterface,
@@ -138,7 +139,9 @@ export class ProductTransformerService {
     const array = [];
     try {
       sizes.map((s) => {
-        const object: any = { color: color };
+        const object: any = {};
+        object.color = color.cColorName;
+        object.colorId = color.TBColor_ID;
         object.size = s;
         object.preOrder = preOrder;
         object.price = price;
@@ -160,13 +163,14 @@ export class ProductTransformerService {
    */
   public async shoeVariantTransformer(
     size: string,
-    colors: string[],
+    colors: colorListInterface[],
     preOrder: string,
     price: priceInterface,
   ): Promise<any[]> {
     const variants = colors.map((color) => ({
       size,
-      color,
+      color: color.cColorName,
+      colorId: color.TBColor_ID,
       price,
       preOrder,
     }));

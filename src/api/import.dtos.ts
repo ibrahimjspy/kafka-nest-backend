@@ -1,5 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty } from 'class-validator';
+import { IsEnum, IsNotEmpty, IsOptional } from 'class-validator';
+
+export enum ProductOperationEnum {
+  SYNC = 'sync',
+  CREATE = 'create',
+  UPDATE = 'update',
+}
 
 export class createProductDTO {
   @ApiProperty()
@@ -14,11 +20,20 @@ export class BulkProductImportDto {
 
   @ApiProperty()
   @IsNotEmpty()
-  startCurser: string;
+  startCurser: number;
 
   @ApiProperty()
   @IsNotEmpty()
-  endCurser: string;
+  endCurser: number;
+
+  @ApiProperty({
+    enum: ProductOperationEnum,
+    required: false,
+    default: ProductOperationEnum.SYNC,
+  })
+  @IsEnum(ProductOperationEnum)
+  @IsOptional()
+  operation?: ProductOperationEnum;
 }
 
 export class UpdateOpenPackDto {

@@ -46,6 +46,7 @@ export class ProductVariantTransformerService {
       group_name,
       is_sale,
       is_preorder,
+      TBSizeChart_ID,
       product_id,
     } = object;
 
@@ -61,11 +62,13 @@ export class ProductVariantTransformerService {
       productVariantData['style_name'] = style_name;
       productVariantData['sizes'] = item_sizes?.split('-');
       productVariantData['isPreOrder'] = is_preorder;
-      productVariantData['color_list'] = color_list
-        ? color_list.split(',')
+      productVariantData['color_list'] = JSON.parse(color_list).color_list
+        .length
+        ? JSON.parse(color_list).color_list
         : ['ONE'];
       productVariantData['pack_name'] = pack_name;
       productVariantData['productGroup'] = group_name;
+      productVariantData['sizeChartId'] = TBSizeChart_ID;
       productVariantData['variant_media'] = object['ColorMedia']
         ? JSON.parse(object['ColorMedia'])
         : null;

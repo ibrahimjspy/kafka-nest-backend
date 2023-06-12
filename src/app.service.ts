@@ -19,6 +19,7 @@ import { getAllMappings, getProductMapping } from './mapping/methods/product';
 import { BATCH_SIZE, VARIANT_MEDIA_BATCH_SIZE } from 'common.env';
 import { fetchBulkProductsData } from './database/mssql/bulk-import/methods';
 import { productDto } from './transformer/types/product';
+import { BulkProductImportDto, ProductOperationEnum } from './api/import.dtos';
 
 @Injectable()
 export class AppService {
@@ -40,7 +41,10 @@ export class AppService {
         ? this.productService.handleProductCDCDelete(
             kafkaMessage.before.TBItem_ID,
           )
-        : this.productService.handleProductCDC(kafkaMessage.after);
+        : this.productService.handleProductCDC(
+            kafkaMessage.after,
+            ProductOperationEnum.SYNC,
+          );
     } catch (error) {
       Logger.log('product deleted');
     }
@@ -81,14 +85,14 @@ export class AppService {
   }
 
   /**
-   * Handles the bulk creation of products based on the provided bulk import input.
+   * Handles the sync of products based on the provided bulk import input.
    * @param {Object} bulkImportInput - The input for the bulk import operation.
    * @param {string} bulkImportInput.vendorId - The ID of the vendor.
    * @param {number} bulkImportInput.startCurser - The starting cursor for selecting products from the vendor's data.
    * @param {number} bulkImportInput.endCurser - The ending cursor for selecting products from the vendor's data.
    * @returns {Promise<string>} A promise that resolves to a string indicating the number of products created.
    */
-  async handleProductBulkCreateCDC(bulkImportInput) {
+  async handleProductSyncCDC(bulkImportInput: BulkProductImportDto) {
     try {
       this.logger.log('Fetching bulk products data...');
       const vendorProducts = (await fetchBulkProductsData(
@@ -99,11 +103,11 @@ export class AppService {
         vendorProducts.length,
       );
 
-      const { startCurser, endCurser } = bulkImportInput;
+      const { startCurser, endCurser, operation } = bulkImportInput;
       const productBatch = vendorProducts.slice(startCurser, endCurser);
 
       this.logger.log(`Creating ${productBatch.length} products...`);
-      await this.productBulkCreate(productBatch);
+      await this.productBulkCreate(productBatch, operation);
       this.logger.log(`${productBatch.length} products created.`);
 
       return `${productBatch.length} products created`;
@@ -133,7 +137,7 @@ export class AppService {
   }
 
   // big data import methods dividing data in batches and running them in pools
-  async productBulkCreate(bulkArray) {
+  async productBulkCreate(bulkArray, operation: ProductOperationEnum) {
     try {
       const { results } = await PromisePool.withConcurrency(BATCH_SIZE)
         .for(bulkArray)
@@ -149,6 +153,7 @@ export class AppService {
         .process(async (data: any) => {
           const productCreate = await this.productService.handleProductCDC(
             data,
+            operation,
           );
           return productCreate;
         });
@@ -198,6 +203,7 @@ export class AppService {
       const sourceStyleDetails: any = fetchStyleDetailsById(sourceProductId);
       const createProduct = await this.productService.handleProductCDC(
         sourceStyleDetails,
+        ProductOperationEnum.CREATE,
       );
       return createProduct;
     } catch (error) {
@@ -285,7 +291,10 @@ export class AppService {
         .process(async (data) => {
           const sourceData = await fetchStyleDetailsById(data.sourceId);
           if (!sourceData) return;
-          return await this.productService.handleProductCDC(sourceData);
+          return await this.productService.handleProductCDC(
+            sourceData,
+            ProductOperationEnum.UPDATE,
+          );
         });
     } catch (error) {
       Logger.log(error);

@@ -27,6 +27,7 @@ import {
 } from 'src/mapping/methods/product';
 import { autoSyncWebhookHandler } from 'src/external/endpoints/autoSync';
 import { SHOES_GROUP_NAME } from 'common.env';
+import { ProductOperationEnum } from 'src/api/import.dtos';
 
 /**
  *  Injectable class handling product variant and its relating tables CDC
@@ -42,17 +43,61 @@ export class ProductService {
     public logger: ApplicationLogger,
   ) {}
 
-  public async handleProductCDC(kafkaMessage: productDto) {
+  /**
+   * Handles the product change data capture (CDC) event based on the specified operation.
+   * @param {productDto} kafkaMessage - The Kafka message containing the product data.
+   * @param {ProductOperationEnum} operation - The operation to perform (SYNC, CREATE, UPDATE).
+   * @returns {Promise<void>} A Promise that resolves once the operation is completed.
+   */
+  public async handleProductCDC(
+    kafkaMessage: productDto,
+    operation: ProductOperationEnum,
+  ): Promise<void> {
+    /**
+     * Retrieves the product mapping from the destination system based on the Kafka message's TBItem_ID.
+     * @type {any} The product mapping data.
+     */
     const productExistsInDestination: any = await getProductMapping(
       kafkaMessage.TBItem_ID,
     );
+
+    /**
+     * Transforms the Kafka message into the desired product data format.
+     * @type {Object} The transformed product data.
+     */
     const productData = await this.transformerClass.productDetailsTransformer(
       kafkaMessage,
     );
-    if (productExistsInDestination) {
-      return await this.productUpdate(productExistsInDestination, productData);
+
+    if (operation === ProductOperationEnum.SYNC) {
+      if (!productExistsInDestination) {
+        /**
+         * Performs product creation since the product doesn't exist in the destination system.
+         */
+        await this.productCreate(productData);
+      } else {
+        /**
+         * Performs product update since the product already exists in the destination system.
+         */
+        await this.productUpdate(productExistsInDestination, productData);
+      }
+    } else if (
+      operation === ProductOperationEnum.CREATE &&
+      !productExistsInDestination
+    ) {
+      /**
+       * Performs product creation only if the product doesn't exist in the destination system.
+       */
+      await this.productCreate(productData);
+    } else if (
+      operation === ProductOperationEnum.UPDATE &&
+      productExistsInDestination
+    ) {
+      /**
+       * Performs product update only if the product exists in the destination system.
+       */
+      await this.productUpdate(productExistsInDestination, productData);
     }
-    return await this.productCreate(productData);
   }
 
   public async handleProductCDCDelete(
@@ -90,7 +135,7 @@ export class ProductService {
         // Creates product variants and their media
         await Promise.all([
           addProductToShopHandler(productId, productData),
-          this.productMediaCreate(productId, productData.media),
+          // this.productMediaCreate(productId, productData.media),
           this.productVariantsCreate(productData, productId),
         ]);
         storeProductStatusHandler(productId);

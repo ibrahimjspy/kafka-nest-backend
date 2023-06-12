@@ -19,8 +19,9 @@ export class KafkaController {
   async autoSyncCreateBatches(@Payload() message) {
     try {
       this.logger.log('received product import message');
-      const bulkCreate = await this.productService.handleProductBulkCreateCDC(
+      const bulkCreate = await this.productService.productBulkCreate(
         message,
+        message.operation,
       );
       return bulkCreate;
     } catch (error) {

@@ -3,7 +3,7 @@ import { priceInterface } from 'src/transformer/types/product';
 export interface productVariantInterface {
   price?: priceInterface;
   sizes?: string[];
-  color_list?: any;
+  color_list?: colorListInterface[];
   product_id?: string;
   pack_name?: string;
   shoe_bundles?: any;
@@ -13,6 +13,7 @@ export interface productVariantInterface {
   variant_media?: any;
   isPreOrder?: string;
   style_name?: string;
+  sizeChartId?: number;
 }
 
 export interface productDatabaseViewInterface {
@@ -66,8 +67,14 @@ export interface productDatabaseViewInterface {
   updated_date?: number;
   color_list?: string;
   ShoeDetails?: string;
+  TBSizeChart_ID?: number;
 }
 
 export interface shipsFromInterface {
   InvMinAmount?: number;
+}
+
+export interface colorListInterface {
+  TBColor_ID: string;
+  cColorName: string;
 }

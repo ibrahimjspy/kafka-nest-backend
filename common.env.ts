@@ -55,3 +55,9 @@ export const RESALE_PRICE_ATTRIBUTE =
 export const AUTO_SYNC_URL = process.env.AUTO_SYNC_URL;
 export const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'dev@orangeshine.com';
 export const SHOES_GROUP_NAME = 'SHOES';
+
+/**
+ * kafka topic name for tb style no table os
+ */
+export const TB_STYLE_NO_TOPIC_NAME =
+  process.env.TB_STYLE_NO_TOPIC_NAME || 'mssql.dbo.TBStyleNo';

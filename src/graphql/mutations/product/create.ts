@@ -9,7 +9,7 @@ import { productTransformed } from 'src/transformer/types/product';
 
 export const createProductMutation = (productData: productTransformed) => {
   // parsing product data;
-  const { name, categoryId, description, styleNumber } = productData;
+  const { name, categoryId, description, styleNumber, id } = productData;
   return gql`
     mutation {
       productCreate(
@@ -17,6 +17,7 @@ export const createProductMutation = (productData: productTransformed) => {
           productType: "${DEFAULT_PRODUCT_TYPE}"
           description:${JSON.stringify(description)}
           name: "${name}"
+          externalReference:"${id}"
           attributes:[{
             id:"${STYLE_ATTRIBUTE_ID}",
             values:["${styleNumber}"]

@@ -12,12 +12,13 @@ import { VariantType } from './Product.Variant.types';
 export const getProductVariantsForSku = (
   productVariantData,
   productId: string,
+  sizeChartId: number,
 ): string => {
   const skuProductVariants = [];
   (productVariantData || []).map((variant) => {
     const skuProductVariant = {};
-    skuProductVariant['color'] = variant.color;
-    skuProductVariant['size'] = variant.size;
+    skuProductVariant['color'] = variant.colorId;
+    skuProductVariant['size'] = sizeChartId;
     skuProductVariant['id'] = Number(productId);
     skuProductVariants.push(skuProductVariant);
   });

@@ -4,10 +4,16 @@ import { MessagePattern, Payload } from '@nestjs/microservices';
 import { AppService } from './app.service';
 import { fetchBulkProductsData } from './database/mssql/bulk-import/methods';
 import { Logger } from '@nestjs/common';
+import { ProductService } from './services/product/Product.Service';
+import { TB_STYLE_NO_TOPIC_NAME } from 'common.env';
+import { ProductOperationEnum } from './api/import.dtos';
 
 @Controller()
 export class AppController {
-  constructor(private readonly appService: AppService) {}
+  constructor(
+    private readonly appService: AppService,
+    private readonly productService: ProductService,
+  ) {}
   @MessagePattern('products') // topic name
   async productCdc(@Payload() message) {
     // Logger.log(message.payload.after);
@@ -34,21 +40,23 @@ export class AppController {
     return this.appService.handleShopCDC(message.payload);
   }
 
-  @MessagePattern('product_bulk_create') // topic name
-  async productBulkCreate(@Payload() message) {
-    const data: any = await fetchBulkProductsData(message);
-    await this.appService.productBulkCreate(data.slice(850, 855));
-    return `${data.length} products created`;
-  }
-
   @MessagePattern('healthCheck') // topic name
   healthCheck() {
     Logger.verbose('kafka healthCheck');
     return 'service running';
   }
 
-  @MessagePattern('TbStyleNo') // topic name
-  tbStyleNoMessage(@Payload() message) {
-    Logger.log('kafka tb style number event received', message);
+  @MessagePattern(TB_STYLE_NO_TOPIC_NAME)
+  async tbStyleNoMessage(@Payload() message) {
+    try {
+      Logger.log('kafka tb style number event received', message.payload);
+
+      await this.productService.handleProductCDC(
+        message.payload,
+        ProductOperationEnum.SYNC,
+      );
+    } catch (error) {
+      Logger.error(error);
+    }
   }
 }
