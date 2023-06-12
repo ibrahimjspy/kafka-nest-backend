@@ -24,7 +24,7 @@ export const fetchBulkProductsData = async (vendorId: string) => {
   return await mssqlCall(tbStyleNoNewQuery(vendorId));
 };
 
-export const fetchBulkVendors = async (vendorId) => {
+export const fetchVendor = async (vendorId) => {
   return await mssqlCall(tbVendorQuery(vendorId));
 };
 

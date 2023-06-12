@@ -1,4 +1,4 @@
-import { Injectable, Param } from '@nestjs/common';
+import { Injectable, Logger, Param } from '@nestjs/common';
 import {
   createShopHandler,
   deleteShopHandler,
@@ -6,7 +6,10 @@ import {
 } from 'src/graphql/handlers/shop';
 import { TransformerService } from 'src/transformer/Transformer.service';
 import { shopDto, shopTransformed } from 'src/transformer/types/shop';
-import { fetchBulkVendorShipping } from 'src/database/mssql/bulk-import/methods';
+import {
+  fetchBulkVendorShipping,
+  fetchVendor,
+} from 'src/database/mssql/bulk-import/methods';
 import { fetchShippingMethodId } from 'src/database/postgres/handlers/shippingMethods';
 import { addShippingMethodHandler } from 'src/graphql/handlers/shippingMethod';
 import { shippingMethodValidation } from './Shop.utils';
@@ -27,6 +30,8 @@ import { addShippingZoneHandler } from 'src/graphql/handlers/shippingZone';
  */
 @Injectable()
 export class ShopService {
+  private readonly logger = new Logger(ShopService.name);
+
   constructor(
     private readonly transformerService: TransformerService,
     private readonly userService: UserService,
@@ -125,5 +130,19 @@ export class ShopService {
       return shippingZoneTransformed;
     }
     return;
+  }
+  /**
+   *  validates whether given vendor is allowed in sharove based on sharove type flag in tb vendor table
+   */
+  public async validateSharoveVendor(
+    @Param() vendorId: string,
+  ): Promise<boolean> {
+    try {
+      this.logger.log('Validating vendor', vendorId);
+      const vendorResponse = await fetchVendor(vendorId);
+      return vendorResponse[0].SharoveType !== null;
+    } catch (error) {
+      this.logger.error(error);
+    }
   }
 }

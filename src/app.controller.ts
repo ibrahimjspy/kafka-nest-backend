@@ -7,12 +7,15 @@ import { Logger } from '@nestjs/common';
 import { ProductService } from './services/product/Product.Service';
 import { TB_STYLE_NO_TOPIC_NAME } from 'common.env';
 import { ProductOperationEnum } from './api/import.dtos';
+import { productDto } from './transformer/types/product';
+import { ShopService } from './services/shop/Shop.Service';
 
 @Controller()
 export class AppController {
   constructor(
     private readonly appService: AppService,
     private readonly productService: ProductService,
+    private readonly shopService: ShopService,
   ) {}
   @MessagePattern('products') // topic name
   async productCdc(@Payload() message) {
@@ -49,9 +52,13 @@ export class AppController {
   @MessagePattern(TB_STYLE_NO_TOPIC_NAME)
   async tbStyleNoMessage(@Payload() message) {
     try {
-      Logger.log('kafka tb style number event received', message.payload);
-
-      await this.productService.handleProductCDC(
+      const payload = message.payload as productDto;
+      Logger.log('kafka tb style number event received', payload);
+      const validateVendor = await this.shopService.validateSharoveVendor(
+        payload.TBVendor_ID,
+      );
+      if (!validateVendor) return;
+      return await this.productService.handleProductCDC(
         message.payload,
         ProductOperationEnum.SYNC,
       );

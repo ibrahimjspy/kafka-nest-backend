@@ -12,7 +12,7 @@ import { AppService } from 'src/app.service';
 import { prepareFailedResponse } from 'src/app.utils';
 import {
   fetchBulkProductsData,
-  fetchBulkVendors,
+  fetchVendor,
   fetchBulkCustomers,
   fetchBulkSubCategoriesData,
   fetchBulkShippingMethods,
@@ -103,7 +103,7 @@ export class BulkImportController {
   @Post('api/v1/bulk/shops')
   async createShops(@Body() importVendorsInput: vendorDto) {
     const vendorId = importVendorsInput.vendorId;
-    const data: any = await fetchBulkVendors(vendorId);
+    const data: any = await fetchVendor(vendorId);
     await this.appService.shopBulkCreate(data);
     return `${data.length} shops created`;
   }
