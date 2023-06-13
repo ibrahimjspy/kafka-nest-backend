@@ -22,6 +22,7 @@ import {
 import { DEFAULT_SHIPPING_METHOD } from '../../../common.env';
 import { fetchVendorPickupById } from 'src/database/mssql/api_methods/getVendorPickup';
 import { addShippingZoneHandler } from 'src/graphql/handlers/shippingZone';
+import { syncVendorIds } from '../../../constants';
 
 /**
  *  Injectable class handling brand and its relating tables CDC
@@ -140,6 +141,7 @@ export class ShopService {
     try {
       this.logger.log('Validating vendor', vendorId);
       const vendorResponse = await fetchVendor(vendorId);
+      if (syncVendorIds.includes(vendorResponse[0].TBVendor_ID)) return true;
       return vendorResponse[0].SharoveType !== null;
     } catch (error) {
       this.logger.error(error);

@@ -1,7 +1,5 @@
 import * as dotenv from 'dotenv';
 dotenv.config();
-// file storing common env configurations
-dotenv.config();
 
 export const BATCH_SIZE = Number(process.env.BATCH_SIZE) || 5;
 export const VARIANT_MEDIA_BATCH_SIZE = Number(process.env.BATCH_SIZE) || 30;

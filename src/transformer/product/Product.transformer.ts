@@ -59,9 +59,31 @@ export class ProductTransformerService {
    * @returns {string} The transformed richText description.
    */
   public descriptionTransformer(description: string): string {
-    const validString =
-      description?.replace(/"/g, "'").replace(/[\r\n]+/g, ' ') || '';
-    return `{"time": 1662995227870, "blocks": [{"id": "cqWmV3MIPH", "data": {"text": "${validString}"}, "type": "paragraph"}], "version": "2.24.3"}`;
+    // Escape characters and preserve line breaks and tabs
+    const validString = description
+      .replace(/"/g, '\\"') // Escape double quotes
+      .replace(/\r\n/g, '\\r\\n') // Preserve Windows-style line breaks
+      .replace(/[\r\n]/g, '\\n') // Preserve Unix-style line breaks
+      .replace(/\t/g, '\\t'); // Preserve tabs
+
+    const currentTime = Date.now(); // Get current timestamp
+
+    // Create the richText description JSON string
+    const richTextDescription = `{
+    "time": ${currentTime},
+    "blocks": [
+      {
+        "id": "cqWmV3MIPH",
+        "data": {
+          "text": "${validString}"
+        },
+        "type": "paragraph"
+      }
+    ],
+    "version": "2.24.3"
+  }`;
+
+    return richTextDescription;
   }
 
   /**
