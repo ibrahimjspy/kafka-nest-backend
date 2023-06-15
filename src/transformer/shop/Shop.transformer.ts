@@ -1,13 +1,18 @@
-import { Injectable, Param } from '@nestjs/common';
+import { Injectable, Logger, Param } from '@nestjs/common';
 import { ADMIN_EMAIL, S3_VENDOR_URL } from '../../../common.env';
 import {
   shippingZoneTransformedDto,
   shippingZoneDto,
   shopDto,
   shopTransformed,
+  shopSettingsDto,
+  vendorSettingsEnum,
 } from 'src/transformer/types/shop';
 import { brandPickupZoneMapping } from './Shop.transformer.utils';
-import { fetchVendorMinimumOrderAmount } from 'src/database/mssql/bulk-import/methods';
+import {
+  fetchVendorMinimumOrderAmount,
+  fetchVendorSettings,
+} from 'src/database/mssql/bulk-import/methods';
 /**
  *  Injectable class handling shop transformation\
  *  @requires Injectable in app scope or in kafka connection to reach kafka messages
@@ -34,12 +39,11 @@ export class ShopTransformerService {
       VDName,
       VDMadeIn,
       VDPhone,
-      VDReturnPolicy,
       Brand_Rep_Image,
       VDCity,
       VDState,
     } = object;
-
+    const vendorSettings = await this.getVendorSettings(TBVendor_ID);
     /**
      * Transformed shop object.
      *
@@ -59,8 +63,9 @@ export class ShopTransformerService {
       vendorMainImage: this.shopImageTransformer(Brand_Rep_Image) || '',
       storePolicy: VDStorePolicy ? this.textTransformer(VDStorePolicy) : '',
       madeIn: VDMadeIn || '',
-      returnPolicy: VDReturnPolicy ? this.textTransformer(VDReturnPolicy) : '',
+      returnPolicy: vendorSettings.returnPolicy,
       shippedFrom: `${VDCity},${VDState}`,
+      sizeChart: vendorSettings.sizeChart,
     };
 
     return shopObject;
@@ -143,5 +148,41 @@ export class ShopTransformerService {
    */
   public async getMinimumOrderAmount(@Param() name: string) {
     return await fetchVendorMinimumOrderAmount(name);
+  }
+
+  /**
+   * returns vendor settings which includes size chart and return policy
+   */
+  private async getVendorSettings(@Param() vendorId: string) {
+    const vendorSettings = await fetchVendorSettings(vendorId);
+    return this.vendorSettingsTransformer(vendorSettings as shopSettingsDto[]);
+  }
+
+  private vendorSettingsTransformer(
+    @Param() vendorSettings: shopSettingsDto[],
+  ) {
+    const vendorDetails: {
+      returnPolicy: string;
+      sizeChart: string;
+    } = { returnPolicy: '', sizeChart: '' };
+    vendorSettings.map((vendorSetting) => {
+      if (vendorSetting.Type == vendorSettingsEnum.RETURN_POLICY) {
+        vendorDetails.returnPolicy = this.vendorSettingsContentTransformer(
+          vendorSetting.Content,
+        );
+      }
+      if (vendorSetting.Type == vendorSettingsEnum.SIZE_CHART) {
+        vendorDetails.sizeChart = this.vendorSettingsContentTransformer(
+          vendorSetting.Content,
+        );
+      }
+    });
+    Logger.log('VendorSettings', vendorDetails);
+    return vendorDetails;
+  }
+
+  private vendorSettingsContentTransformer(@Param() returnPolicy: string) {
+    // eslint-disable-next-line prettier/prettier
+    return returnPolicy.replace(/\\/g, '').replace(/"/g, "'").replace(/\\'/g, "'");
   }
 }

@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { gql } from 'graphql-request';
 import { shopTransformed } from 'src/transformer/types/shop';
 
@@ -11,6 +12,7 @@ export const updateShopMutation = (
     madeIn,
     returnPolicy,
     minOrder,
+    sizeChart,
     name,
     phoneNumber,
     vendorMainImage,
@@ -34,6 +36,7 @@ export const updateShopMutation = (
             { name: "banner", newValues: ${JSON.stringify(banners)} }
             { name: "vendorMainImage", newValues: ["${vendorMainImage}"] }
             { name: "phoneNumber", newValues: ["${phoneNumber}"] }
+            { name: "sizeChart", newValues: ["${sizeChart}"] }
             ]
         }
       ) {

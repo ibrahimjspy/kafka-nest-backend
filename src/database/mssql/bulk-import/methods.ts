@@ -8,6 +8,7 @@ import {
   tbStyleFirstTenQuery,
   tbStyleNoNewQuery,
   tbVendorQuery,
+  tbVendorSettingsQuery,
   tbVendorShippingDetailsQuery,
 } from '../query';
 import { shipsFromInterface } from '../types/product';
@@ -53,4 +54,8 @@ export const fetchVendorMinimumOrderAmount = async (vendorName: string) => {
     tbShipsFromQuery(vendorName),
   )) as shipsFromInterface[];
   return shipsFromData[0].InvMinAmount || 0;
+};
+
+export const fetchVendorSettings = async (vendorId: string) => {
+  return await mssqlCall(tbVendorSettingsQuery(vendorId));
 };

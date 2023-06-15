@@ -68,7 +68,7 @@ export const tbSyleNoById = (id: string): string => {
 export const tbVendorSettingsQuery = (vendorId: string): string => {
   return `SELECT *
   FROM ARAOS.[dbo].[TBBrandSettings]
-  WHERE TBBrandSettings.Type = 'pickup_zone' and TBVendor_ID ='${vendorId}'
+  WHERE TBVendor_ID ='${vendorId}'
   `;
 };
 

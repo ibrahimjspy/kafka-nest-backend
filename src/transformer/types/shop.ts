@@ -46,6 +46,7 @@ export interface shopTransformed {
   madeIn?: string;
   returnPolicy?: string;
   shippedFrom?: string;
+  sizeChart?: string;
 }
 
 export interface shippingMethodDto {
@@ -64,4 +65,16 @@ export interface shippingZoneDto {
 export interface shippingZoneTransformedDto {
   shopId?: string;
   zoneId?: string;
+}
+
+export interface shopSettingsDto {
+  id: number;
+  TBVendor_ID: string;
+  Type: string;
+  Content: string;
+}
+
+export enum vendorSettingsEnum {
+  RETURN_POLICY = 'return_policy',
+  SIZE_CHART = 'size_chart',
 }
