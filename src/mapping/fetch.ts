@@ -81,3 +81,29 @@ export const deleteMapping = async (engine: string, id: string) => {
       console.error(error);
     });
 };
+
+/**
+ * @description this common util, takers an object of input defined according to elastic search protocol and adds it
+ * against given engine
+ */
+export const updateMapping = async (engine: string, mappings: object) => {
+  const data = JSON.stringify(mappings);
+
+  return await axios({
+    method: 'patch',
+    url: `${ID_MAPPING_URL}/${engine}/documents`,
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer private-${ID_MAPPING_TOKEN}`,
+    },
+    data: data,
+  })
+    .then(function (response) {
+      // handle success
+      return response.data;
+    })
+    .catch(function (error) {
+      // handle error
+      console.error(error);
+    });
+};

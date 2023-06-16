@@ -18,6 +18,7 @@ import {
   addShopMapping,
   getShopMapping,
   removeShopMapping,
+  updateShopMapping,
 } from 'src/mapping/methods/shop';
 import { DEFAULT_SHIPPING_METHOD } from '../../../common.env';
 import { fetchVendorPickupById } from 'src/database/mssql/api_methods/getVendorPickup';
@@ -41,13 +42,17 @@ export class ShopService {
   public async handleShopCDC(@Param() kafkaMessage: shopDto): Promise<any> {
     const shopData: shopTransformed =
       await this.transformerService.shopTransformer(kafkaMessage);
-
-    const mappingExists: string = await getShopMapping(
+    const { shopId, documentId } = await getShopMapping(
       kafkaMessage.TBVendor_ID,
     );
-    if (mappingExists) {
-      // updates shop and user information
-      return await this.updateShop(shopData, mappingExists);
+    if (shopId) {
+      const updateMapping = await updateShopMapping(documentId, {
+        shopName: shopData.name,
+        sourceId: shopData.id,
+        destinationId: shopId,
+      });
+      this.logger.log('mapping updated', updateMapping);
+      return await this.updateShop(shopData, shopId);
     }
     // creates new users and shop
     return await this.createShop(shopData);
@@ -56,13 +61,11 @@ export class ShopService {
   public async handleShopCDCDelete(
     @Param() kafkaMessage: shopDto,
   ): Promise<object> {
-    const shopExistsInDestination: string = await getShopMapping(
-      kafkaMessage.TBVendor_ID,
-    );
+    const { shopId } = await getShopMapping(kafkaMessage.TBVendor_ID);
     // deactivates shop if it exists
-    if (shopExistsInDestination) {
-      await deleteShopHandler(shopExistsInDestination);
-      await removeShopMapping(shopExistsInDestination);
+    if (shopId) {
+      await deleteShopHandler(shopId);
+      await removeShopMapping(shopId);
     }
     return;
   }
@@ -73,7 +76,11 @@ export class ShopService {
     // creates new shop and map its id in mapping service
     const shop = await createShopHandler(shopData);
     if (shop) {
-      await addShopMapping(shopData.id, shop);
+      await addShopMapping({
+        shopName: shopData.name,
+        sourceId: shopData.id,
+        destinationId: shop,
+      });
     }
 
     return { shop };

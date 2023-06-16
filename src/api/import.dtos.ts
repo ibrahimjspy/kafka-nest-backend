@@ -44,6 +44,6 @@ export class UpdateOpenPackDto {
 
 export class vendorDto {
   @ApiProperty()
-  @IsNotEmpty()
-  vendorId: string;
+  @IsOptional()
+  vendorId?: string;
 }

@@ -48,6 +48,7 @@ export interface shopTransformed {
   shippedFrom?: string;
   sizeChart?: string;
   returnPolicyPlain?: string;
+  sizeChartName?: string;
 }
 
 export interface shippingMethodDto {

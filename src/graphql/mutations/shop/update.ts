@@ -17,6 +17,7 @@ export const updateShopMutation = (
     phoneNumber,
     vendorMainImage,
     banners,
+    sizeChartName,
     shippedFrom,
   } = shopData;
   return gql`
@@ -28,7 +29,7 @@ export const updateShopMutation = (
           madeIn: "${madeIn}"
           minOrder: ${minOrder}
           about: "${description}"
-          returnPolicy: "${returnPolicy.replace(/"/g, "'")}"
+          returnPolicy: "${returnPolicy}"
           storePolicy: "${storePolicy}"
           description: "${description}"
           shipsFrom: "${shippedFrom}"
@@ -36,7 +37,8 @@ export const updateShopMutation = (
             { name: "banner", newValues: ${JSON.stringify(banners)} }
             { name: "vendorMainImage", newValues: ["${vendorMainImage}"] }
             { name: "phoneNumber", newValues: ["${phoneNumber}"] }
-            { name: "sizeChart", newValues: ["${sizeChart}"] }
+            { name: "sizeChart", newValues: ["${sizeChart.replace(/"/g, "'")}"] }
+            { name: "sizeChartName", newValues: ["${sizeChartName.replace(/"/g, "'")}"] }
             ]
         }
       ) {

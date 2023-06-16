@@ -44,6 +44,7 @@ export class ShopTransformerService {
       VDState,
     } = object;
     const vendorSettings = await this.getVendorSettings(TBVendor_ID);
+    Logger.log('vendor settings', vendorSettings);
     /**
      * Transformed shop object.
      *
@@ -66,6 +67,7 @@ export class ShopTransformerService {
       returnPolicy: vendorSettings.returnPolicy,
       shippedFrom: `${VDCity},${VDState}`,
       sizeChart: vendorSettings.sizeChart,
+      sizeChartName: vendorSettings.sizeChartName,
       returnPolicyPlain: vendorSettings.returnPolicyPlain,
     };
 
@@ -89,7 +91,15 @@ export class ShopTransformerService {
   }
 
   public textTransformer(@Param() description: string) {
-    return description.replace(/(\r\n|\n|\r)/gm, '').replace(/"/g, "'");
+    // Replace line breaks with escaped characters
+    // eslint-disable-next-line prettier/prettier
+    const escapedStr = description.replace(/\n/g, "\\n").replace(/\r/g, "\\r");
+
+    // Convert the string to JSON format
+    const jsonStr = JSON.stringify(escapedStr);
+
+    // Remove the surrounding double quotes
+    return jsonStr.slice(1, -1);
   }
 
   /**
@@ -166,6 +176,7 @@ export class ShopTransformerService {
       returnPolicyPlain: string;
       returnPolicy: string;
       sizeChart: string;
+      sizeChartName?: string;
     } = { returnPolicy: '', sizeChart: '', returnPolicyPlain: '' };
     vendorSettings.map((vendorSetting) => {
       if (vendorSetting.Type == vendorSettingsEnum.RETURN_POLICY) {
@@ -177,24 +188,39 @@ export class ShopTransformerService {
         );
       }
       if (vendorSetting.Type == vendorSettingsEnum.SIZE_CHART) {
-        vendorDetails.sizeChart = this.vendorSettingsContentTransformer(
+        const { table, sizeChartName } = this.sizeChartTransformer(
           vendorSetting.Content,
         );
+        vendorDetails.sizeChart = table;
+        vendorDetails.sizeChartName = sizeChartName;
       }
     });
     Logger.log('VendorSettings', vendorDetails);
     return vendorDetails;
   }
 
-  private vendorSettingsContentTransformer(@Param() content: string) {
-    // eslint-disable-next-line prettier/prettier
-    return content.replace(/\\/g, '').replace(/"/g, "'").replace(/\\'/g, "'");
+  private sizeChartTransformer(@Param() content: string) {
+    const parsed = JSON.parse(content);
+
+    if (parsed) {
+      const tables = [];
+      const tableNames = [];
+      parsed.map((entry) => {
+        tables.push(entry.table);
+        tableNames.push(entry.name);
+      });
+      return {
+        table: JSON.stringify(tables),
+        sizeChartName: JSON.stringify(tableNames),
+      };
+    }
+    return { table: '', sizeChartName: '' };
   }
 
   private returnPolicyTransformer(@Param() content: string) {
     const parsed = JSON.parse(content);
     const returnPolicy = parsed.return_policy;
-    return JSON.stringify(returnPolicy);
+    return this.textTransformer(returnPolicy);
   }
 
   private returnPolicyPlainTransformer(@Param() content: string) {

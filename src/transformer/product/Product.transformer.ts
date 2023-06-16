@@ -137,9 +137,9 @@ export class ProductTransformerService {
    * @params TBVendor_ID as input
    */
   public async shopIdTransformer(vendorId: string) {
-    const destinationShopId = await getShopMapping(vendorId);
-    if (destinationShopId) {
-      return destinationShopId;
+    const { shopId } = await getShopMapping(vendorId);
+    if (shopId) {
+      return shopId;
     }
 
     return DEFAULT_SHOP_ID;
