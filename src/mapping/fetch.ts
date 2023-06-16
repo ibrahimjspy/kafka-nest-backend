@@ -99,11 +99,9 @@ export const updateMapping = async (engine: string, mappings: object) => {
     data: data,
   })
     .then(function (response) {
-      // handle success
       return response.data;
     })
     .catch(function (error) {
-      // handle error
       console.error(error);
     });
 };

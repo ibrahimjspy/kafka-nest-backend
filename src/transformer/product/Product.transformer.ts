@@ -138,11 +138,7 @@ export class ProductTransformerService {
    */
   public async shopIdTransformer(vendorId: string) {
     const { shopId } = await getShopMapping(vendorId);
-    if (shopId) {
-      return shopId;
-    }
-
-    return DEFAULT_SHOP_ID;
+    return shopId || DEFAULT_SHOP_ID;
   }
   /**
    * This function returns variants based on color and its sizes
