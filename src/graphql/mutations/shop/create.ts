@@ -8,10 +8,14 @@ export const createShopMutation = (shopData: shopTransformed) => {
     storePolicy,
     email,
     madeIn,
-    returnPolicy,
+    returnPolicyPlain,
     url,
     minOrder,
     shippedFrom,
+    banners,
+    vendorMainImage,
+    phoneNumber,
+    sizeChart,
   } = shopData;
   return gql`
     mutation {
@@ -22,12 +26,18 @@ export const createShopMutation = (shopData: shopTransformed) => {
           user: ""
           minOrder: ${minOrder}
           about: "${description}"
-          returnPolicy: "${returnPolicy}"
+          returnPolicy: "${returnPolicyPlain}"
           storePolicy: "${storePolicy}"
           email: "${email}"
           url: "${url}"
           description: "${description}"
           shipsFrom: "${shippedFrom}"
+          fields: [
+            { name: "banner", newValues: ${JSON.stringify(banners)} }
+            { name: "vendorMainImage", newValues: ["${vendorMainImage}"] }
+            { name: "phoneNumber", newValues: ["${phoneNumber}"] }
+            { name: "sizeChart", newValues: ["${sizeChart}"] }
+            ]
         }
       ) {
         id

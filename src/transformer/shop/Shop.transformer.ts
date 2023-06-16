@@ -66,6 +66,7 @@ export class ShopTransformerService {
       returnPolicy: vendorSettings.returnPolicy,
       shippedFrom: `${VDCity},${VDState}`,
       sizeChart: vendorSettings.sizeChart,
+      returnPolicyPlain: vendorSettings.returnPolicyPlain,
     };
 
     return shopObject;
@@ -162,12 +163,16 @@ export class ShopTransformerService {
     @Param() vendorSettings: shopSettingsDto[],
   ) {
     const vendorDetails: {
+      returnPolicyPlain: string;
       returnPolicy: string;
       sizeChart: string;
-    } = { returnPolicy: '', sizeChart: '' };
+    } = { returnPolicy: '', sizeChart: '', returnPolicyPlain: '' };
     vendorSettings.map((vendorSetting) => {
       if (vendorSetting.Type == vendorSettingsEnum.RETURN_POLICY) {
-        vendorDetails.returnPolicy = this.vendorSettingsContentTransformer(
+        vendorDetails.returnPolicy = this.returnPolicyTransformer(
+          vendorSetting.Content,
+        );
+        vendorDetails.returnPolicyPlain = this.returnPolicyPlainTransformer(
           vendorSetting.Content,
         );
       }
@@ -181,8 +186,21 @@ export class ShopTransformerService {
     return vendorDetails;
   }
 
-  private vendorSettingsContentTransformer(@Param() returnPolicy: string) {
+  private vendorSettingsContentTransformer(@Param() content: string) {
     // eslint-disable-next-line prettier/prettier
-    return returnPolicy.replace(/\\/g, '').replace(/"/g, "'").replace(/\\'/g, "'");
+    return content.replace(/\\/g, '').replace(/"/g, "'").replace(/\\'/g, "'");
+  }
+
+  private returnPolicyTransformer(@Param() content: string) {
+    const parsed = JSON.parse(content);
+    const returnPolicy = parsed.return_policy;
+    return JSON.stringify(returnPolicy);
+  }
+
+  private returnPolicyPlainTransformer(@Param() content: string) {
+    const parsed = JSON.parse(content);
+    const returnPolicy = parsed.return_policy;
+    // eslint-disable-next-line prettier/prettier
+    return returnPolicy.replace(/\s+/g, ' ').replace(/"/g, "'").replace(/\r?\n/g, "\n")
   }
 }

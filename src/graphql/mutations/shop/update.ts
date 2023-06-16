@@ -28,7 +28,7 @@ export const updateShopMutation = (
           madeIn: "${madeIn}"
           minOrder: ${minOrder}
           about: "${description}"
-          returnPolicy: "${returnPolicy}"
+          returnPolicy: "${returnPolicy.replace(/"/g, "'")}"
           storePolicy: "${storePolicy}"
           description: "${description}"
           shipsFrom: "${shippedFrom}"
