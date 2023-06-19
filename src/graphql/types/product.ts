@@ -80,3 +80,22 @@ export interface bulkVariantCreate {
     errors: any[];
   };
 }
+export interface VariantsListInterface {
+  media: any[];
+  pricing: {
+    price: {
+      gross: {
+        amount: number;
+      };
+    };
+  };
+  attributes: {
+    attribute: {
+      name: string;
+    };
+    values: {
+      name: string;
+    }[];
+  }[];
+  id: string;
+}

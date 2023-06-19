@@ -1,6 +1,7 @@
 import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
 import {
   createBulkVariantsHandler,
+  productVariantBulkDeleteHandler,
   updateProductVariantAttributeResaleHandler,
   updateProductVariantPriceHandler,
 } from 'src/graphql/handlers/productVariant';
@@ -16,6 +17,7 @@ import {
 } from 'src/transformer/types/product';
 import {
   createBundleHandler,
+  deleteBundleHandler,
   getBundleIdsHandler,
   updateBundlePriceHandler,
 } from 'src/graphql/handlers/bundle';
@@ -29,12 +31,15 @@ import { ProductService } from '../Product.Service';
 import { getProductDetailsHandler } from 'src/graphql/handlers/product';
 import {
   addSkuToProductVariants,
+  destinationVariantsByColor,
+  validateProductColors,
   validateResalePrice,
 } from './Product.Variant.utils';
 import { createSkuHandler } from 'src/graphql/handlers/sku';
 import { getProductDetailsFromDb } from 'src/database/mssql/product-view/getProductViewById';
 import { bundlesCreateInterface } from './Product.Variant.types';
 import { getProductMapping } from 'src/mapping/methods/product';
+import { VariantsListInterface } from 'src/graphql/types/product';
 
 /**
  *  Injectable class handling productVariant and its relating tables CDC
@@ -346,5 +351,82 @@ export class ProductVariantService {
     this.logger.log('All bundles created:', createBundles);
 
     return createBundles;
+  }
+
+  /**
+   * Synchronizes colors between a source product and its corresponding destination product.
+   * Deletes variants and bundles associated with deactivated colors.
+   *
+   * @param {string} sourceProductId - The ID of the source product.
+   * @returns {Promise<object>} - A promise that resolves to an array of deleted bundle IDs.
+   */
+  public async syncColors(sourceProductId: string): Promise<object> {
+    // Retrieve the ID of the corresponding destination product
+    const destinationProductId = await getProductMapping(sourceProductId);
+
+    // If no destination product is found, return an empty array
+    if (!destinationProductId) {
+      return [];
+    }
+
+    // Transform source product variant data
+    const sourceVariantsData =
+      await this.transformerClass.productViewTransformer(
+        await getProductDetailsFromDb(sourceProductId),
+      );
+
+    // Retrieve the variant data for the destination product
+    const destinationVariantData = (
+      await getProductDetailsHandler(destinationProductId)
+    ).variants as VariantsListInterface[];
+
+    // Generate a mapping of destination variants by color
+    const destinationColorMapping = destinationVariantsByColor(
+      destinationVariantData,
+    );
+
+    // Validate the colors of the source variants against the destination color mapping
+    const validateColor = validateProductColors(
+      sourceVariantsData,
+      destinationColorMapping,
+    );
+
+    // If no colors require validation, return an empty array
+    if (!validateColor) {
+      return [];
+    }
+
+    this.logger.log(
+      `Deleting variants against deactivated colors, destination id ${destinationProductId}, source id ${sourceProductId}`,
+      validateColor,
+    );
+    this.logger.log(
+      `Source colors for product ${sourceProductId}`,
+      sourceVariantsData.color_list.map((color) => color.cColorName),
+    );
+    this.logger.log(
+      `Destination colors for product ${destinationProductId}`,
+      destinationColorMapping,
+    );
+
+    // Retrieve bundle IDs associated with deactivated colors
+    const bundleIds = await getBundleIdsHandler(
+      destinationProductId,
+      validateColor,
+    );
+
+    // Delete the bundles associated with the deactivated colors
+    const deleteBundles = Promise.all(bundleIds.map(deleteBundleHandler));
+    this.logger.log(
+      'Deleted bundles associated with deactivated colors',
+      bundleIds,
+    );
+
+    // Delete variants with deactivated colors
+    const deleteVariants = await productVariantBulkDeleteHandler(validateColor);
+    this.logger.log('Removed variants with deactivated colors', deleteVariants);
+
+    // Return the deleted bundle IDs
+    return deleteBundles;
   }
 }

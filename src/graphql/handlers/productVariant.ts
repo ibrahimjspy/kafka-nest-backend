@@ -13,6 +13,7 @@ import {
 } from '../mutations/productVariant/update';
 import { validateProductVariants } from 'src/services/product/variant/Product.Variant.utils';
 import { removeProductMapping } from 'src/mapping/methods/product';
+import { productVariantBulkDeleteMutation } from '../mutations/productVariant/delete';
 
 //  <-->  Create  <-->
 export const createBulkVariantsHandler = async (
@@ -99,6 +100,25 @@ export const updateProductVariantAttributeResaleHandler = async (
   } catch (err) {
     Logger.error(
       'product variant pricing attribute update call failed',
+      graphqlExceptionHandler(err),
+    );
+    return;
+  }
+};
+
+//  <-->  Delete  <-->
+
+export const productVariantBulkDeleteHandler = async (
+  productVariantIds: string[],
+) => {
+  try {
+    Logger.log('deleting product variants', productVariantIds);
+    return await graphqlCall(
+      productVariantBulkDeleteMutation(productVariantIds),
+    );
+  } catch (err) {
+    Logger.error(
+      'product variant bulk delete call failed',
       graphqlExceptionHandler(err),
     );
     return;

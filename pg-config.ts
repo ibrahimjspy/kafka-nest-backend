@@ -11,6 +11,8 @@ const client = new Client({
   password: process.env.POSTGRES_PASSWORD, // Password of database user
 });
 try {
+  Logger.log('connecting to postgres');
+  Logger.log(process.env.POSTGRES_HOST);
   client.connect();
 } catch (error) {
   Logger.warn(`Postgres connection failed ${process.env.POSTGRES_PORT}`);

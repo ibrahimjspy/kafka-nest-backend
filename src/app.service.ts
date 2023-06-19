@@ -116,6 +116,38 @@ export class AppService {
     }
   }
 
+  /**
+   * Handles the sync of product colors based on the provided bulk import input.
+   * @param {Object} bulkImportInput - The input for the bulk import operation.
+   * @param {string} bulkImportInput.vendorId - The ID of the vendor.
+   * @param {number} bulkImportInput.startCurser - The starting cursor for selecting products from the vendor's data.
+   * @param {number} bulkImportInput.endCurser - The ending cursor for selecting products from the vendor's data.
+   * @returns {Promise<string>} A promise that resolves to a string indicating the number of products created.
+   */
+  async handleProductColorsSyncCDC(bulkImportInput: BulkProductImportDto) {
+    try {
+      this.logger.log('Fetching bulk products data for color syncing ...');
+      const vendorProducts = (await fetchBulkProductsData(
+        bulkImportInput.vendorId,
+      )) as productDto[];
+      this.logger.log(
+        'Bulk products data fetched successfully.',
+        vendorProducts.length,
+      );
+
+      const { startCurser, endCurser } = bulkImportInput;
+      const productBatch = vendorProducts.slice(startCurser, endCurser);
+
+      this.logger.log(`Syncing ${productBatch.length} products...`);
+      await this.syncProductColors(productBatch);
+      this.logger.log(`${productBatch.length} products colors synced`);
+
+      return `${productBatch.length} products colors synced`;
+    } catch (error) {
+      this.logger.error(error);
+    }
+  }
+
   handleShopCDC(kafkaMessage) {
     try {
       return kafkaMessage.op == 'd'
@@ -298,6 +330,32 @@ export class AppService {
         });
     } catch (error) {
       Logger.log(error);
+    }
+  }
+
+  async syncProductColors(bulkArray) {
+    try {
+      const { results } = await PromisePool.withConcurrency(BATCH_SIZE)
+        .for(bulkArray)
+        .onTaskStarted((product, pool) => {
+          Logger.log(`Progress: ${pool.processedPercentage()}%`);
+          Logger.log(`Active tasks: ${pool.activeTasksCount()}`);
+          Logger.log(`Finished tasks: ${pool.processedItems().length}`);
+          Logger.log(`Finished tasks: ${pool.processedCount()}`);
+        })
+        .handleError((error) => {
+          Logger.error(error, 'ProductVariantColorSync');
+        })
+        .process(async (data: productDto) => {
+          const productCreate = await this.productVariantService.syncColors(
+            data.TBItem_ID,
+          );
+          return productCreate;
+        });
+      Logger.verbose(`${bulkArray.length} products variants synced`);
+      return results;
+    } catch (error) {
+      Logger.warn(error);
     }
   }
 }

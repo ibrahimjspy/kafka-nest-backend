@@ -2,6 +2,8 @@ import { Logger } from '@nestjs/common';
 import { deleteProductHandler } from 'src/graphql/handlers/product';
 import { removeProductMapping } from 'src/mapping/methods/product';
 import { VariantType } from './Product.Variant.types';
+import { VariantsListInterface } from 'src/graphql/types/product';
+import { productVariantInterface } from 'src/database/mssql/types/product';
 
 /**
  * this function returns a string that could be added to graphql mutation which fetches sku's for product variants
@@ -87,4 +89,57 @@ export const validateResalePrice = (
    * Return true if they match, false otherwise.
    */
   return resalePrice === destinationResalePrice;
+};
+
+/**
+ * Validates the colors of the source product variants against the destination color mapping.
+ * Returns an array of variant IDs that need to be deactivated.
+ *
+ * @param {productVariantInterface} sourceData - The variant data of the source product.
+ * @param {Record<string, string[]>} destinationColorMapping - The mapping of destination variants by color.
+ * @returns {null | string[]} - An array of variant IDs to be deactivated, or null if no variants need deactivation.
+ */
+export const validateProductColors = (
+  sourceData: productVariantInterface,
+  destinationColorMapping: Record<string, string[]>,
+): null | string[] => {
+  const deActivateVariants: string[] = [];
+  const destinationColors = Object.keys(destinationColorMapping);
+  const sourceColors = sourceData.color_list.map((color) => color.cColorName);
+
+  destinationColors.forEach((color) => {
+    if (sourceColors.includes(color)) return;
+    deActivateVariants.push(...destinationColorMapping[color]);
+  });
+
+  if (!deActivateVariants.length) return null;
+  return deActivateVariants;
+};
+
+/**
+ * Returns an object with color as the key and an array of variantIds of that color as the value.
+ * @param {Variant[]} variants - Array of variant objects.
+ * @returns {Record<string, string[]>} - Object with color as key and variantIds as value.
+ */
+export const destinationVariantsByColor = (
+  variants: VariantsListInterface[],
+): Record<string, string[]> => {
+  const variantIdsByColor: Record<string, string[]> = {};
+
+  variants.forEach((variant) => {
+    const colorAttribute = variant.attributes.find(
+      (attr) => attr.attribute.name === 'Color',
+    );
+    if (colorAttribute) {
+      const colorValue = colorAttribute.values[0].name;
+
+      if (!variantIdsByColor[colorValue]) {
+        variantIdsByColor[colorValue] = [];
+      }
+
+      variantIdsByColor[colorValue].push(variant.id);
+    }
+  });
+
+  return variantIdsByColor;
 };

@@ -135,7 +135,7 @@ export class ProductService {
         // Creates product variants and their media
         await Promise.all([
           addProductToShopHandler(productId, productData),
-          this.productMediaCreate(productId, productData.media),
+          // this.productMediaCreate(productId, productData.media),
           this.productVariantsCreate(productData, productId),
         ]);
         storeProductStatusHandler(productId);

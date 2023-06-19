@@ -32,6 +32,7 @@ import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { getProductDetailsFromDb } from 'src/database/mssql/product-view/getProductViewById';
 import { ProducerService } from 'src/kafka/Kafka.producer.service';
 import { KAFKA_CREATE_PRODUCTS_TOPIC } from 'src/kafka/Kafka.constants';
+import { getProductDetailsHandler } from 'src/graphql/handlers/product';
 
 // endpoints to trigger data bulk imports
 @Controller()
@@ -163,6 +164,22 @@ export class BulkImportController {
     try {
       this.appService.handleProductSyncCDC(bulkProductsImportInput);
       return 'Added bulk products to kafka topic';
+    } catch (error) {
+      this.logger.error(error);
+      return error.message;
+    }
+  }
+
+  @Post('api/v1/bulk/products/colors')
+  @ApiOperation({
+    summary: 'sync product colors of os with b2b',
+  })
+  async productColorSync(
+    @Body() bulkProductsImportInput: BulkProductImportDto,
+  ) {
+    try {
+      this.appService.handleProductColorsSyncCDC(bulkProductsImportInput);
+      return 'Added bulk products color sync to kafka topic';
     } catch (error) {
       this.logger.error(error);
       return error.message;

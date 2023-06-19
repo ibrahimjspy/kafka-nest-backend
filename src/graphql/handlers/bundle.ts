@@ -6,6 +6,7 @@ import { getBundleIdsQuery } from '../queries/bundles';
 import { updateBundlePricingMutation } from '../mutations/bundles/update';
 import { removeProductMapping } from 'src/mapping/methods/product';
 import { deleteProductHandler } from './product';
+import { productBundleDeleteMutation } from '../mutations/bundles/delete';
 
 //  <-->  Create  <-->
 
@@ -35,18 +36,22 @@ export const createBundleHandler = async (
 };
 
 //  <-->  Get  <-->
-
-export const getBundleIdsHandler = async (productId: string) => {
+export const getBundleIdsHandler = async (
+  productId: string,
+  productVariantIds?: string[],
+): Promise<string[]> => {
   try {
     const bundleIds = [];
-    const response: any = await graphqlCall(getBundleIdsQuery(productId));
+    const response: any = await graphqlCall(
+      getBundleIdsQuery(productId, productVariantIds),
+    );
     response?.bundles?.edges.map((bundle) => {
       bundleIds.push(bundle.node.id);
     });
     return bundleIds;
   } catch (err) {
     Logger.error('get bundles call failed');
-    return graphqlExceptionHandler(err);
+    return [];
   }
 };
 
@@ -57,6 +62,18 @@ export const updateBundlePriceHandler = async (bundleIds: string[]) => {
     return await graphqlCall(updateBundlePricingMutation(bundleIds));
   } catch (err) {
     Logger.error('updating bundle pricing call failed call failed');
+    return graphqlExceptionHandler(err);
+  }
+};
+
+//  <-->  Delete  <-->
+
+export const deleteBundleHandler = async (bundleId: string) => {
+  try {
+    Logger.log('deleting bundle', bundleId);
+    return await graphqlCall(productBundleDeleteMutation(bundleId));
+  } catch (err) {
+    Logger.error('deleting product bundle call failed');
     return graphqlExceptionHandler(err);
   }
 };
