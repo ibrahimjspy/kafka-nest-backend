@@ -223,7 +223,11 @@ export class ProductTransformerService {
    * this method adds channel listing to transformed data
    */
   public channelListingTransformer(productData: productDto): boolean {
-    if (productData.nActive == 'Y' && productData.nVendorActive == 'Y') {
+    if (
+      productData.nActive == 'Y' &&
+      productData.nVendorActive == 'Y' &&
+      productData.nSoldOut !== 'Y'
+    ) {
       return true;
     }
     return false;

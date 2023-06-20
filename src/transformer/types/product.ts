@@ -26,6 +26,7 @@ export interface productDto {
   is_broken_pack?: number;
   min_broken_pack_order_qty?: number;
   nSalePrice2?: number;
+  nSoldOut?: string;
 }
 
 export interface productTransformed {

@@ -123,8 +123,12 @@ export class ProductService {
    * @param {productTransformed} productData - The transformed product data.
    * @returns {Promise<object>} An object containing the productId.
    */
-  private async productCreate(productData) {
+  private async productCreate(productData: productTransformed) {
     try {
+      if (!productData.listing) {
+        this.logger.log('Product creation validation fail', productData);
+        return;
+      }
       // Creating a new product and assigning it media
       const productId = await createProductHandler(productData);
 

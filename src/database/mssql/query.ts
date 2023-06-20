@@ -21,9 +21,8 @@ export const tbStyleNoQuery = (): string => {
 export const tbStyleNoNewQuery = (vendorId: string): string => {
   return `SELECT *
   FROM [ARAOS].[dbo].[TBStyleNo]
-  where  nSoldOut != 'Y'
+  where 
 	and TBVendor_ID = '${vendorId}'
-	and nActive = 'Y'
 	AND Picture1 <> ''
 	AND ISNULL(TBStyleNo_OS_Category_Master_ID,0) <> 0
 `;
