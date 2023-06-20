@@ -126,7 +126,7 @@ export class ProductService {
   private async productCreate(productData: productTransformed) {
     try {
       if (!productData.listing) {
-        this.logger.log('Product creation validation fail', productData);
+        this.logger.log('Product creation validation fail', productData.id);
         return;
       }
       // Creating a new product and assigning it media
