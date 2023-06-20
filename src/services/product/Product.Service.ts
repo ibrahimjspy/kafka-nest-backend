@@ -257,6 +257,10 @@ export class ProductService {
     if (productData.listing) {
       return await productChannelListingHandler(productId);
     }
+    this.logger.log(
+      `removing listing due to product update in source ${productData.id}`,
+      productId,
+    );
     return await removeChannelListingHandler(productId);
   }
 }
