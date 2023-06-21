@@ -358,4 +358,58 @@ export class AppService {
       Logger.warn(error);
     }
   }
+
+  async syncProductListings(curserPage) {
+    try {
+      const mappings = await getAllMappings(curserPage);
+      const BATCH = 20;
+      return await PromisePool.withConcurrency(BATCH)
+        .for(mappings)
+        .onTaskStarted((product, pool) => {
+          Logger.log(`Progress: ${pool.processedPercentage()}%`);
+        })
+        .handleError((error) => {
+          Logger.error(error, 'updating products');
+        })
+        .process(async (data) => {
+          const sourceData = await fetchStyleDetailsById(data.sourceId);
+          if (!sourceData) return;
+          const productData =
+            await this.transformerService.productDetailsTransformer(sourceData);
+          return await this.productService.productListingUpdate(
+            data.destinationId,
+            productData,
+          );
+        });
+    } catch (error) {
+      Logger.log(error);
+    }
+  }
+
+  async syncProductVariantPricing(curserPage) {
+    try {
+      const mappings = await getAllMappings(curserPage);
+      const BATCH = 20;
+      return await PromisePool.withConcurrency(BATCH)
+        .for(mappings)
+        .onTaskStarted((product, pool) => {
+          Logger.log(`Progress: ${pool.processedPercentage()}%`);
+        })
+        .handleError((error) => {
+          Logger.error(error, 'updating products');
+        })
+        .process(async (data) => {
+          const sourceData = await fetchStyleDetailsById(data.sourceId);
+          if (!sourceData) return;
+          const productData =
+            await this.transformerService.productDetailsTransformer(sourceData);
+          return await this.productVariantService.productVariantsUpdate(
+            data.destinationId,
+            productData,
+          );
+        });
+    } catch (error) {
+      Logger.log(error);
+    }
+  }
 }

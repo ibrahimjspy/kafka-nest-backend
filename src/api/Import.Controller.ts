@@ -6,6 +6,7 @@ import {
   Logger,
   Param,
   Post,
+  Put,
   Res,
 } from '@nestjs/common';
 import { AppService } from 'src/app.service';
@@ -180,6 +181,34 @@ export class BulkImportController {
     try {
       this.appService.handleProductColorsSyncCDC(bulkProductsImportInput);
       return 'Added bulk products color sync to kafka topic';
+    } catch (error) {
+      this.logger.error(error);
+      return error.message;
+    }
+  }
+
+  @Put('api/v1/bulk/products/listing')
+  @ApiOperation({
+    summary: 'sync product listings',
+  })
+  async productListingSync(@Body() updateProducts: UpdateOpenPackDto) {
+    try {
+      this.appService.syncProductListings(updateProducts.curserPage);
+      return 'Added bulk products for listing update';
+    } catch (error) {
+      this.logger.error(error);
+      return error.message;
+    }
+  }
+
+  @Put('api/v1/bulk/products/colors')
+  @ApiOperation({
+    summary: 'sync product variants pricing',
+  })
+  async productVariantPricing(@Body() updateProducts: UpdateOpenPackDto) {
+    try {
+      this.appService.syncProductVariantPricing(updateProducts.curserPage);
+      return 'Added bulk products for product variant update';
     } catch (error) {
       this.logger.error(error);
       return error.message;
