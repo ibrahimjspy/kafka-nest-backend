@@ -8,6 +8,8 @@ export const KAFKA_HEARTBEAT_INTERVAL =
 export const KAFKA_RETRIES = Number(process.env.KAFKA_RETRIES) || 5;
 export const KAFKA_SESSION_TIMEOUT =
   Number(process.env.KAFKA_SESSION_TIMEOUT) || 1000000;
+//TODO move this to env
+export const KAFKA_CONSUMER_GROUP = 'nest-kafka-consumer-dev';
 
 export const SALEOR_ENDPOINT = process.env.FEDERATION_ENDPOINT;
 export const FEDERATION_ENDPOINT = process.env.DESTINATION_FEDERATION_ENDPOINT;
@@ -46,7 +48,6 @@ export const DEFAULT_CATEGORY_ID =
   process.env.DEFAULT_CATEGORY_ID || 'Q2F0ZWdvcnk6MQ==';
 export const DEFAULT_SHOP_ID = process.env.DEFAULT_SHOP_ID || '16';
 export const S3_VENDOR_URL = process.env.S3_VENDOR_URL;
-export const KAFKA_CONSUMER_GROUP = process.env.KAFKA_CONSUMER_GROUP;
 export const SERVER_PORT = process.env.SERVER_PORT;
 export const RESALE_PRICE_ATTRIBUTE =
   process.env.RESALE_PRICE_ATTRIBUTE || 'QXR0cmlidXRlOjg=';

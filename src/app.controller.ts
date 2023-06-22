@@ -13,6 +13,8 @@ import { fetchStyleDetailsById } from './database/mssql/api_methods/getProductBy
 
 @Controller()
 export class AppController {
+  private readonly logger = new Logger(AppService.name);
+
   constructor(
     private readonly appService: AppService,
     private readonly productService: ProductService,
@@ -53,20 +55,12 @@ export class AppController {
   @MessagePattern(TB_STYLE_NO_TOPIC_NAME)
   async tbStyleNoMessage(@Payload() message) {
     try {
-      const payload = message.payload as productDto;
-      Logger.log('kafka tb style number event received', payload);
-      const validateVendor = await this.shopService.validateSharoveVendor(
-        payload.TBVendor_ID,
+      this.logger.log(
+        'Kafka message for product sync received',
+        message.payload.TBItem_ID,
       );
-      if (!validateVendor) return;
-      const productPayload = message.payload as productDto;
-      const sourceProductDetails = (await fetchStyleDetailsById(
-        productPayload.TBItem_ID,
-      )) as productDto;
-      return await this.productService.handleProductCDC(
-        sourceProductDetails,
-        ProductOperationEnum.SYNC,
-      );
+      this.appService.handleProductCDC(message);
+      return 'Added bulk products for listing update';
     } catch (error) {
       Logger.error(error);
     }

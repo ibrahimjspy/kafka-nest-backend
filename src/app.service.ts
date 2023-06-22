@@ -35,16 +35,23 @@ export class AppService {
   ) {}
 
   // ChangeDataCapture methods
-  handleProductCDC(kafkaMessage) {
+  async handleProductCDC(kafkaMessage) {
     try {
-      return kafkaMessage.op == 'd'
-        ? this.productService.handleProductCDCDelete(
-            kafkaMessage.before.TBItem_ID,
-          )
-        : this.productService.handleProductCDC(
-            kafkaMessage.after,
-            ProductOperationEnum.SYNC,
-          );
+      const payload = kafkaMessage.payload as productDto;
+      Logger.log('kafka tb style number event received', payload);
+      const validateVendor = await this.shopService.validateSharoveVendor(
+        payload.TBVendor_ID,
+      );
+      if (!validateVendor) return;
+      const productPayload = kafkaMessage.payload as productDto;
+      const sourceProductDetails = (await fetchStyleDetailsById(
+        productPayload.TBItem_ID,
+      )) as productDto;
+      this.logger.log('Product validation passed, syncing product');
+      return await this.productService.handleProductCDC(
+        sourceProductDetails,
+        ProductOperationEnum.SYNC,
+      );
     } catch (error) {
       Logger.log('product deleted');
     }
