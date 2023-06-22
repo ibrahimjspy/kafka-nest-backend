@@ -53,7 +53,7 @@ export class AppService {
         ProductOperationEnum.SYNC,
       );
     } catch (error) {
-      Logger.log('product deleted');
+      Logger.log('product sync call failed', error);
     }
   }
 
