@@ -36,7 +36,7 @@ The MSSQL Connector is configured using a JSON file. Here's an example configura
     "transforms.unwrap.drop.tombstones": "false"
   }
 }
-
+```
 - `connector.class`: Specifies the connector class for Microsoft SQL Server.
 - `tasks.max`: Sets the maximum number of tasks for this connector (typically 1 for a single node).
 - `database.hostname`, `database.port`, `database.user`, `database.password`: Database connection details.
@@ -58,11 +58,11 @@ To use the MSSQL Connector, follow these steps:
 
 ```bash
 curl -i -X POST -H "Accept:application/json" -H "Content-Type:application/json" http://localhost:8083/connectors/ -d @mssql-connector-config.json
-
+```
 4. Monitor the connector status and check for any errors in the Kafka Connect logs.
 5. To delete the connector, use the following command:
 
 ```bash
 curl -i -X DELETE http://localhost:8083/connectors/mssql-connector-8
-
+```
 Ensure that you update the necessary details in the configuration file before adding the connector.
