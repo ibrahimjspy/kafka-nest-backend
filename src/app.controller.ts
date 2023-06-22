@@ -9,6 +9,7 @@ import { TB_STYLE_NO_TOPIC_NAME } from 'common.env';
 import { ProductOperationEnum } from './api/import.dtos';
 import { productDto } from './transformer/types/product';
 import { ShopService } from './services/shop/Shop.Service';
+import { fetchStyleDetailsById } from './database/mssql/api_methods/getProductById';
 
 @Controller()
 export class AppController {
@@ -58,8 +59,12 @@ export class AppController {
         payload.TBVendor_ID,
       );
       if (!validateVendor) return;
+      const productPayload = message.payload as productDto;
+      const sourceProductDetails = (await fetchStyleDetailsById(
+        productPayload.TBItem_ID,
+      )) as productDto;
       return await this.productService.handleProductCDC(
-        message.payload,
+        sourceProductDetails,
         ProductOperationEnum.SYNC,
       );
     } catch (error) {
