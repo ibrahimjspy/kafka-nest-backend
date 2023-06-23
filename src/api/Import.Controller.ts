@@ -2,6 +2,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Logger,
   Param,
@@ -209,6 +210,22 @@ export class BulkImportController {
     try {
       this.appService.syncProductVariantPricing(updateProducts.curserPage);
       return 'Added bulk products for product variant update';
+    } catch (error) {
+      this.logger.error(error);
+      return error.message;
+    }
+  }
+
+  @Delete('api/v1/bulk/products/listing')
+  @ApiOperation({
+    summary: 'deactivates products against vendor',
+  })
+  async deActivateVendor(
+    @Body() bulkProductsImportInput: BulkProductImportDto,
+  ) {
+    try {
+      this.appService.deActivateVendor(bulkProductsImportInput);
+      return 'Added bulk products for channel listing deactivate';
     } catch (error) {
       this.logger.error(error);
       return error.message;

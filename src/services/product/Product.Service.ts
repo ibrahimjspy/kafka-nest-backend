@@ -263,4 +263,8 @@ export class ProductService {
     );
     return await removeChannelListingHandler(productId);
   }
+
+  public async productListingDeActivate(productId: string) {
+    return await removeChannelListingHandler(productId);
+  }
 }

@@ -158,7 +158,7 @@ export const deleteProductHandler = async (
   }
 };
 
-export const removeChannelListingHandler = async (productId) => {
+export const removeChannelListingHandler = async (productId: string) => {
   try {
     return await graphqlCall(removeChannelListingMutation(productId));
   } catch (err) {

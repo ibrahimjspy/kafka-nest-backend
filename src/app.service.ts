@@ -155,16 +155,6 @@ export class AppService {
     }
   }
 
-  handleShopCDC(kafkaMessage) {
-    try {
-      return kafkaMessage.op == 'd'
-        ? this.shopService.handleShopCDCDelete(kafkaMessage.before)
-        : this.shopService.handleShopCDC(kafkaMessage.after);
-    } catch (error) {
-      Logger.log('shop deleted');
-    }
-  }
-
   handleSelectColorCDC(kafkaMessage) {
     try {
       return kafkaMessage.op !== 'd'
@@ -417,6 +407,50 @@ export class AppService {
         });
     } catch (error) {
       Logger.log(error);
+    }
+  }
+
+  async deActivateVendor(bulkImportInput: BulkProductImportDto) {
+    try {
+      const BATCH = 20;
+      this.logger.log(
+        'Fetching bulk products data for deactivating vendor ...',
+      );
+      const vendorProducts = (await fetchBulkProductsData(
+        bulkImportInput.vendorId,
+      )) as productDto[];
+      this.logger.log(
+        'Bulk products data fetched successfully.',
+        vendorProducts.length,
+      );
+
+      const { startCurser, endCurser } = bulkImportInput;
+      const productBatch = vendorProducts.slice(startCurser, endCurser);
+
+      this.logger.log(`Syncing ${productBatch.length} products...`);
+
+      await PromisePool.withConcurrency(BATCH)
+        .for(productBatch)
+        .onTaskStarted((product, pool) => {
+          this.logger.log(`Progress: ${pool.processedPercentage()}%`);
+        })
+        .handleError((error) => {
+          this.logger.error(error, 'DeActivateProduct');
+        })
+        .process(async (data: productDto) => {
+          const productExistsInDestination: any = await getProductMapping(
+            data.TBItem_ID,
+          );
+          if (productExistsInDestination) {
+            await this.productService.productListingDeActivate(
+              productExistsInDestination,
+            );
+          }
+        });
+
+      this.logger.log('Product channel listing deactivated');
+    } catch (error) {
+      this.logger.log(error);
     }
   }
 }

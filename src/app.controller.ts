@@ -41,11 +41,6 @@ export class AppController {
     return this.appService.handleSelectColorCDC(message.payload);
   }
 
-  @MessagePattern('vendor') // topic name
-  vendorCdc(@Payload() message) {
-    return this.appService.handleShopCDC(message.payload);
-  }
-
   @MessagePattern('healthCheck') // topic name
   healthCheck() {
     Logger.verbose('kafka healthCheck');
