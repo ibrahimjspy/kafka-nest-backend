@@ -202,7 +202,7 @@ export class BulkImportController {
     }
   }
 
-  @Put('api/v1/bulk/products/colors')
+  @Put('api/v1/bulk/products/pricing')
   @ApiOperation({
     summary: 'sync product variants pricing',
   })
