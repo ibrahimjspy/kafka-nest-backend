@@ -265,6 +265,7 @@ export class ProductService {
   }
 
   public async productListingDeActivate(productId: string) {
+    this.logger.log(`removing listing`, productId);
     return await removeChannelListingHandler(productId);
   }
 }
