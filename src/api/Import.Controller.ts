@@ -224,8 +224,24 @@ export class BulkImportController {
     @Body() bulkProductsImportInput: BulkProductImportDto,
   ) {
     try {
-      this.appService.deActivateVendor(bulkProductsImportInput);
+      this.appService.deactivateVendor(bulkProductsImportInput);
       return 'Added bulk products for channel listing deactivate';
+    } catch (error) {
+      this.logger.error(error);
+      return error.message;
+    }
+  }
+
+  @Delete('api/v1/bulk/products')
+  @ApiOperation({
+    summary: 'deletes products against vendor',
+  })
+  async deleteVendorProducts(
+    @Body() bulkProductsImportInput: BulkProductImportDto,
+  ) {
+    try {
+      this.appService.deleteVendorProducts(bulkProductsImportInput);
+      return 'Added bulk products for deleting vendor products';
     } catch (error) {
       this.logger.error(error);
       return error.message;
