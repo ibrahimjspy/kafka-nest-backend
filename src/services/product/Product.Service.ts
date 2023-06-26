@@ -173,9 +173,12 @@ export class ProductService {
   }
 
   public async productDelete(destinationId: string) {
+    this.logger.log('Deleting product', destinationId);
     if (destinationId) {
       const productDelete = await deleteProductHandler(destinationId);
       const productIdDelete = await removeProductMapping(destinationId);
+
+      this.logger.log('product deleted', productDelete);
       return { productDelete, productIdDelete };
     }
   }
