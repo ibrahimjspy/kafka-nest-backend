@@ -27,6 +27,8 @@ export interface productDto {
   min_broken_pack_order_qty?: number;
   nSalePrice2?: number;
   nSoldOut?: string;
+  OriginDate?: string;
+  nModifyDate?: string;
 }
 
 export interface productTransformed {
@@ -41,6 +43,8 @@ export interface productTransformed {
   listing?: boolean;
   openPack?: boolean;
   openPackMinimumQuantity?: number;
+  createdAt?: string;
+  updatedAt?: string;
 }
 export interface priceInterface {
   purchasePrice?: string | number;

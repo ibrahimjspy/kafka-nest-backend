@@ -48,6 +48,8 @@ export class ProductTransformerService {
       ),
       openPack: !!productData.is_broken_pack,
       openPackMinimumQuantity: productData.min_broken_pack_order_qty,
+      createdAt: new Date(productData.OriginDate).toISOString(),
+      updatedAt: new Date(productData.nModifyDate).toISOString(),
     };
 
     return productObject;
