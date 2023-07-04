@@ -49,6 +49,7 @@ export interface shopTransformed {
   sizeChart?: string;
   returnPolicyPlain?: string;
   sizeChartName?: string;
+  type?: SharoveTypeEnum | null;
 }
 
 export interface shippingMethodDto {
@@ -79,4 +80,10 @@ export interface shopSettingsDto {
 export enum vendorSettingsEnum {
   RETURN_POLICY = 'return_policy',
   SIZE_CHART = 'size_chart',
+}
+
+export enum SharoveTypeEnum {
+  ALL = 'All',
+  WHOLESALE = 'B2B',
+  Retail = 'D2C',
 }

@@ -1,3 +1,5 @@
+import { SharoveTypeEnum } from './shop';
+
 export interface productDto {
   id: number;
   nStyleName: string;
@@ -45,6 +47,7 @@ export interface productTransformed {
   openPackMinimumQuantity?: number;
   createdAt?: string;
   updatedAt?: string;
+  type?: SharoveTypeEnum;
 }
 export interface priceInterface {
   purchasePrice?: string | number;

@@ -29,6 +29,7 @@ import { autoSyncWebhookHandler } from 'src/external/endpoints/autoSync';
 import { SHOES_GROUP_NAME } from 'common.env';
 import { ProductOperationEnum } from 'src/api/import.dtos';
 import { updateProductTimestamp } from 'src/database/postgres/handlers/product';
+import { SharoveTypeEnum } from 'src/transformer/types/shop';
 
 /**
  *  Injectable class handling product variant and its relating tables CDC
@@ -259,11 +260,20 @@ export class ProductService {
     );
   }
 
+  /**
+   * Stores listing of product based on its activation and type
+   * --
+   * product is marked as active if it is active in source as well as it is marked as wholesale type
+   */
   public async productListingUpdate(
     productId: string,
     productData: productTransformed,
   ) {
-    if (productData.listing) {
+    if (
+      productData.listing &&
+      productData.type &&
+      productData.type !== SharoveTypeEnum.Retail
+    ) {
       return await productChannelListingHandler(productId);
     }
     this.logger.log(

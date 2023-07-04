@@ -13,6 +13,8 @@ import { getShopMapping } from 'src/mapping/methods/shop';
 import { DEFAULT_CATEGORY_ID, DEFAULT_SHOP_ID } from '../../../common.env';
 import { validateMediaArray } from 'src/services/product/media/Product.Media.utils';
 import { colorListInterface } from 'src/database/mssql/types/product';
+import { fetchVendor } from 'src/database/mssql/bulk-import/methods';
+import { SharoveTypeEnum, shopDto } from '../types/shop';
 /**
  *  Injectable class handling product transformation
  *  @Injectable in app scope or in kafka connection to reach kafka messages
@@ -50,6 +52,7 @@ export class ProductTransformerService {
       openPackMinimumQuantity: productData.min_broken_pack_order_qty,
       createdAt: new Date(productData.OriginDate).toISOString(),
       updatedAt: new Date(productData.nModifyDate).toISOString(),
+      type: await this.getProductType(productData.TBVendor_ID),
     };
 
     return productObject;
@@ -234,5 +237,14 @@ export class ProductTransformerService {
       return true;
     }
     return false;
+  }
+
+  /**
+   * returns type of product set by vendor currently we have following type -- ALL , Wholesale, Retail
+   * @links tb vendor table tp get vendor details which includes a column for sharove type
+   */
+  public async getProductType(vendorId: string): Promise<SharoveTypeEnum> {
+    const vendorDetails = (await fetchVendor(vendorId)) as shopDto[];
+    return vendorDetails[0]?.SharoveType as SharoveTypeEnum;
   }
 }
