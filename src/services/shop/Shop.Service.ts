@@ -2,6 +2,7 @@ import { Injectable, Logger, Param } from '@nestjs/common';
 import {
   createShopHandler,
   deleteShopHandler,
+  getShopHandler,
   updateShopHandler,
 } from 'src/graphql/handlers/shop';
 import { TransformerService } from 'src/transformer/Transformer.service';
@@ -12,7 +13,7 @@ import {
 } from 'src/database/mssql/bulk-import/methods';
 import { fetchShippingMethodId } from 'src/database/postgres/handlers/shippingMethods';
 import { addShippingMethodHandler } from 'src/graphql/handlers/shippingMethod';
-import { shippingMethodValidation } from './Shop.utils';
+import { getDestinationShopType, shippingMethodValidation } from './Shop.utils';
 import { UserService } from './user/User.Service';
 import {
   addShopMapping,
@@ -24,6 +25,8 @@ import { DEFAULT_SHIPPING_METHOD } from '../../../common.env';
 import { fetchVendorPickupById } from 'src/database/mssql/api_methods/getVendorPickup';
 import { addShippingZoneHandler } from 'src/graphql/handlers/shippingZone';
 import { syncVendorIds } from '../../../constants';
+import { ProducerService } from 'src/kafka/Kafka.producer.service';
+import { KAFKA_SYNC_VENDOR_PRODUCTS_TOPIC } from 'src/kafka/Kafka.constants';
 
 /**
  *  Injectable class handling brand and its relating tables CDC
@@ -37,6 +40,7 @@ export class ShopService {
   constructor(
     private readonly transformerService: TransformerService,
     private readonly userService: UserService,
+    private readonly kafkaService: ProducerService,
   ) {}
 
   public async handleShopCDC(@Param() kafkaMessage: shopDto): Promise<any> {
@@ -52,6 +56,7 @@ export class ShopService {
         destinationId: shopId,
       });
       this.logger.log('mapping updated', updateMapping);
+      this.syncVendorProducts(shopData, shopId);
       return await this.updateShop(shopData, shopId);
     }
     // creates new users and shop
@@ -152,6 +157,33 @@ export class ShopService {
       return vendorResponse[0].SharoveType !== null;
     } catch (error) {
       this.logger.error(error);
+    }
+  }
+
+  /**
+   *  this method checks if vendor type has updated, if vendor type has updated it sends a
+   */
+  private async syncVendorProducts(
+    shopData: shopTransformed,
+    destinationId: string,
+  ): Promise<void> {
+    const shopType = shopData.type;
+    const destinationData = await getShopHandler(destinationId);
+    const destinationShopType = getDestinationShopType(destinationData);
+    if (shopType !== destinationShopType) {
+      if (destinationShopType == 'null' && !shopType) return;
+      this.logger.log(
+        'Sending kafka message to sync vendor products',
+        shopData.id,
+      );
+      await this.kafkaService.produce({
+        topic: KAFKA_SYNC_VENDOR_PRODUCTS_TOPIC,
+        messages: [
+          {
+            value: JSON.stringify({ vendorId: shopData.id }),
+          },
+        ],
+      });
     }
   }
 }

@@ -60,3 +60,5 @@ export const SHOES_GROUP_NAME = 'SHOES';
  */
 export const TB_STYLE_NO_TOPIC_NAME =
   process.env.TB_STYLE_NO_TOPIC_NAME || 'mssql.dbo.TBStyleNo';
+export const TB_VENDOR_TOPIC_NAME =
+  process.env.TB_VENDOR_TOPIC_NAME || 'mssql.dbo.TBVendor';

@@ -73,10 +73,12 @@ export class ProductService {
 
     if (operation === ProductOperationEnum.SYNC) {
       if (!productExistsInDestination) {
-        /**
-         * Performs product creation since the product doesn't exist in the destination system.
-         */
-        await this.productCreate(productData);
+        if (productData.type) {
+          /**
+           * Performs product creation since the product doesn't exist in the destination system.
+           */
+          await this.productCreate(productData);
+        }
       } else {
         /**
          * Performs product update since the product already exists in the destination system.

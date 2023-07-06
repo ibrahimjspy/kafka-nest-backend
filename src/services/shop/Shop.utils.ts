@@ -1,3 +1,5 @@
+import { DestinationShopInterface } from 'src/transformer/types/shop';
+
 /**
  *  this function validates shipping methods array if array is empty it creates an array with default shipping address
  *  @params shipping method array
@@ -12,4 +14,19 @@ export const shippingMethodValidation = (
     return arr;
   }
   return [`${shippingMethodId}`];
-}; //test
+};
+
+/**
+ *  returns shop type value for a destination shop
+ */
+export const getDestinationShopType = (
+  destinationShopData: DestinationShopInterface,
+): string | null => {
+  const SHOP_TYPE_FIELD_KEY = 'shoptype';
+
+  const shopTypeField = destinationShopData.fields.find(
+    (field) => field.name === SHOP_TYPE_FIELD_KEY,
+  );
+
+  return shopTypeField?.values[0] || null;
+};

@@ -118,13 +118,6 @@ export class BulkImportController {
     return `${data.length} shops created`;
   }
 
-  @Post('api/v1/bulk/customers')
-  async createCustomers() {
-    const data: any = await fetchBulkCustomers();
-    await this.appService.handleCustomerCDC(data[0]);
-    return `${data.length} customers created`;
-  }
-
   @Get('api/v1/source/products')
   async getSourceProducts() {
     const data: any = await fetchFirstTenProducts();

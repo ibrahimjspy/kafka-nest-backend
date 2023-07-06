@@ -1,8 +1,5 @@
 import { HttpStatus, Injectable, Logger } from '@nestjs/common';
-import {
-  createProductHandler,
-  updateProductMetadataHandler,
-} from './graphql/handlers/product';
+import { updateProductMetadataHandler } from './graphql/handlers/product';
 import { CategoryService } from './services/category/Category.Service';
 import { ProductService } from './services/product/Product.Service';
 import { ProductVariantService } from './services/product/variant/Product.Variant.Service';
@@ -20,6 +17,7 @@ import { BATCH_SIZE, VARIANT_MEDIA_BATCH_SIZE } from 'common.env';
 import { fetchBulkProductsData } from './database/mssql/bulk-import/methods';
 import { productDto } from './transformer/types/product';
 import { BulkProductImportDto, ProductOperationEnum } from './api/import.dtos';
+import { shopDto } from './transformer/types/shop';
 
 @Injectable()
 export class AppService {
@@ -57,40 +55,19 @@ export class AppService {
     }
   }
 
-  handleMasterCategoryCDC(kafkaMessage) {
+  async handleShopCDC(kafkaMessage) {
     try {
-      return kafkaMessage.op == 'd'
-        ? this.categoryService.handleMasterCategoryCDCDelete(
-            kafkaMessage.before,
-          )
-        : this.categoryService.handleMasterCategoryCDC(kafkaMessage.after);
+      const payload = kafkaMessage.payload as shopDto;
+      Logger.log('kafka tb vendor event received', payload);
+      const validateVendor = await this.shopService.validateSharoveVendor(
+        payload.TBVendor_ID,
+      );
+      if (!validateVendor) return;
+      await this.shopService.handleShopCDC(payload);
     } catch (error) {
-      Logger.log('category deleted');
+      Logger.log('shop sync call failed', error);
     }
   }
-
-  handleSubCategoryCDC(kafkaMessage) {
-    try {
-      return kafkaMessage.op == 'd'
-        ? this.categoryService.handleSubCategoryCDCDelete(kafkaMessage.before)
-        : this.categoryService.handleSubCategoryCDC(kafkaMessage.after);
-    } catch (error) {
-      Logger.log('category deleted');
-    }
-  }
-
-  handleCustomerCDC(kafkaMessage) {
-    try {
-      return this.retailerService.retailerCreate(kafkaMessage);
-    } catch (error) {
-      Logger.log('customer deleted');
-    }
-  }
-
-  public addProductCatalog(kafkaMessage) {
-    return createProductHandler(kafkaMessage);
-  }
-
   /**
    * Handles the sync of products based on the provided bulk import input.
    * @param {Object} bulkImportInput - The input for the bulk import operation.
@@ -152,16 +129,6 @@ export class AppService {
       return `${productBatch.length} products colors synced`;
     } catch (error) {
       this.logger.error(error);
-    }
-  }
-
-  handleSelectColorCDC(kafkaMessage) {
-    try {
-      return kafkaMessage.op !== 'd'
-        ? this.productVariantService.handleSelectColorCDC(kafkaMessage.after)
-        : '';
-    } catch (error) {
-      Logger.log('variant deleted');
     }
   }
 
@@ -511,6 +478,26 @@ export class AppService {
       this.logger.log('Products against vendor deleted');
     } catch (error) {
       this.logger.error(error);
+    }
+  }
+
+  async syncVendorProducts({ vendorId }: { vendorId: string }) {
+    try {
+      this.logger.log(
+        'Fetching bulk products data for vendor syncing ...',
+        vendorId,
+      );
+      const vendorProducts = (await fetchBulkProductsData(
+        vendorId,
+      )) as productDto[];
+      this.logger.log(
+        'Bulk products data fetched successfully.',
+        vendorProducts.length,
+      );
+      await this.productBulkCreate(vendorProducts, ProductOperationEnum.SYNC);
+      this.logger.log('Product synced for vendors', vendorId);
+    } catch (error) {
+      this.logger.log(error);
     }
   }
 }

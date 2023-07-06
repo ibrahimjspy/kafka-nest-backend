@@ -5,7 +5,7 @@ import { AppService } from './app.service';
 import { fetchBulkProductsData } from './database/mssql/bulk-import/methods';
 import { Logger } from '@nestjs/common';
 import { ProductService } from './services/product/Product.Service';
-import { TB_STYLE_NO_TOPIC_NAME } from 'common.env';
+import { TB_STYLE_NO_TOPIC_NAME, TB_VENDOR_TOPIC_NAME } from 'common.env';
 import { ProductOperationEnum } from './api/import.dtos';
 import { productDto } from './transformer/types/product';
 import { ShopService } from './services/shop/Shop.Service';
@@ -20,31 +20,19 @@ export class AppController {
     private readonly productService: ProductService,
     private readonly shopService: ShopService,
   ) {}
-  @MessagePattern('products') // topic name
-  async productCdc(@Payload() message) {
-    // Logger.log(message.payload.after);
-    return this.appService.handleProductCDC(message.payload);
-  }
 
-  @MessagePattern('category_master') // topic name
-  masterCategoryCdc(@Payload() message) {
-    return this.appService.handleMasterCategoryCDC(message.payload);
-  }
-
-  @MessagePattern('category_sub') // topic name
-  async subCategoryCdc(@Payload() message) {
-    return this.appService.handleSubCategoryCDC(message.payload);
-  }
-
-  @MessagePattern('color_select') // topic name
-  colorSelectCdc(@Payload() message) {
-    return this.appService.handleSelectColorCDC(message.payload);
-  }
-
-  @MessagePattern('healthCheck') // topic name
-  healthCheck() {
-    Logger.verbose('kafka healthCheck');
-    return 'service running';
+  @MessagePattern(TB_VENDOR_TOPIC_NAME)
+  async tbVendorMessage(@Payload() message) {
+    try {
+      this.logger.log(
+        'Kafka message for vendor sync received',
+        message.payload.TBVendor_ID,
+      );
+      this.appService.handleShopCDC(message);
+      return 'Added shop for syncing';
+    } catch (error) {
+      Logger.error(error);
+    }
   }
 
   @MessagePattern(TB_STYLE_NO_TOPIC_NAME)

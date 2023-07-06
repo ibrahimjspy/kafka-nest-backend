@@ -1,9 +1,25 @@
 import { Logger } from '@nestjs/common';
-import { shopTransformed } from 'src/transformer/types/shop';
+import {
+  DestinationShopInterface,
+  shopTransformed,
+} from 'src/transformer/types/shop';
 import { graphqlCall, graphqlExceptionHandler } from 'src/graphql/utils/call';
 import { createShopMutation } from '../mutations/shop/create';
 import { deleteShopMutation } from '../mutations/shop/delete';
 import { updateShopMutation } from '../mutations/shop/update';
+import { shopDetailsQuery } from '../queries/shop';
+
+//  <-->  Create  <-->
+
+export const getShopHandler = async (shopId: string) => {
+  try {
+    const shopDetails: object = await graphqlCall(shopDetailsQuery(shopId));
+    return shopDetails['marketplaceShop'] as DestinationShopInterface;
+  } catch (err) {
+    graphqlExceptionHandler(err);
+    return;
+  }
+};
 
 //  <-->  Create  <-->
 

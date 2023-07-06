@@ -7,6 +7,7 @@ import {
   shopTransformed,
   shopSettingsDto,
   vendorSettingsEnum,
+  SharoveTypeEnum,
 } from 'src/transformer/types/shop';
 import { brandPickupZoneMapping } from './Shop.transformer.utils';
 import {
@@ -42,6 +43,7 @@ export class ShopTransformerService {
       Brand_Rep_Image,
       VDCity,
       VDState,
+      SharoveType,
     } = object;
     const vendorSettings = await this.getVendorSettings(TBVendor_ID);
     Logger.log('vendor settings', vendorSettings);
@@ -69,6 +71,7 @@ export class ShopTransformerService {
       sizeChart: vendorSettings.sizeChart,
       sizeChartName: vendorSettings.sizeChartName,
       returnPolicyPlain: vendorSettings.returnPolicyPlain,
+      type: SharoveType as SharoveTypeEnum,
     };
 
     return shopObject;

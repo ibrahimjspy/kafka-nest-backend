@@ -87,3 +87,20 @@ export enum SharoveTypeEnum {
   WHOLESALE = 'B2B',
   Retail = 'D2C',
 }
+export interface DestinationShopInterface {
+  id: string;
+  name: string;
+  email: string;
+  url: string;
+  madeIn: string;
+  minOrder: number;
+  description: string;
+  about: string;
+  returnPolicy: string;
+  storePolicy: string;
+  shipsFrom: string;
+  fields: {
+    name: string;
+    values: string[];
+  }[];
+}
