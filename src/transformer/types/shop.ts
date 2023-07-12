@@ -28,6 +28,8 @@ export interface shopDto {
   ShippedFrom?: string;
   VDState?: string;
   SharoveType?: string;
+  OSFulfillmentType?: string;
+  VendorFlatShipping?: number;
 }
 
 export interface shopTransformed {
@@ -50,6 +52,14 @@ export interface shopTransformed {
   returnPolicyPlain?: string;
   sizeChartName?: string;
   type?: SharoveTypeEnum | null;
+  /**
+   * this field is linked with os fulfillment, and tells whether a vendor is in os fulfillment program or not
+   */
+  flat?: boolean;
+  /**
+   * this field is linked with vendor own fulfillment flat charge, for now this boolean specifies whether a vendor fulfills order himself with a flat charge or not
+   */
+  ownFlat?: boolean;
 }
 
 export interface shippingMethodDto {

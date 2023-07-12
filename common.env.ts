@@ -54,7 +54,14 @@ export const RESALE_PRICE_ATTRIBUTE =
 export const AUTO_SYNC_URL = process.env.AUTO_SYNC_URL;
 export const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'dev@orangeshine.com';
 export const SHOES_GROUP_NAME = 'SHOES';
-
+export const SLEEVES_ATTRIBUTE_ID =
+  process.env.SLEEVES_ATTRIBUTE_ID || 'QXR0cmlidXRlOjE3';
+export const STYLES_ATTRIBUTE_ID =
+  process.env.STYLES_ATTRIBUTE_ID || 'QXR0cmlidXRlOjE2';
+export const PATTERNS_ATTRIBUTE_ID =
+  process.env.PATTERNS_ATTRIBUTE_ID || 'QXR0cmlidXRlOjE4';
+export const IS_SHAROVE_FULFILLMENT =
+  process.env.IS_SHAROVE_FULFILLMENT || 'QXR0cmlidXRlOjE5';
 /**
  * kafka topic name for tb style no table os
  */

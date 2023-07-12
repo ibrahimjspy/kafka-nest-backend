@@ -44,6 +44,8 @@ export class ShopTransformerService {
       VDCity,
       VDState,
       SharoveType,
+      OSFulfillmentType,
+      VendorFlatShipping,
     } = object;
     const vendorSettings = await this.getVendorSettings(TBVendor_ID);
     Logger.log('vendor settings', vendorSettings);
@@ -72,6 +74,8 @@ export class ShopTransformerService {
       sizeChartName: vendorSettings.sizeChartName,
       returnPolicyPlain: vendorSettings.returnPolicyPlain,
       type: SharoveType as SharoveTypeEnum,
+      flat: OSFulfillmentType ? true : false,
+      ownFlat: VendorFlatShipping ? true : false,
     };
 
     return shopObject;

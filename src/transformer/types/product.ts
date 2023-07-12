@@ -48,6 +48,16 @@ export interface productTransformed {
   createdAt?: string;
   updatedAt?: string;
   type?: SharoveTypeEnum;
+  styles?: {
+    value: string;
+  }[];
+  sleeves?: {
+    value: string;
+  }[];
+  patterns?: {
+    value: string;
+  }[];
+  isSharoveFulfillment?: boolean;
 }
 export interface priceInterface {
   purchasePrice?: string | number;

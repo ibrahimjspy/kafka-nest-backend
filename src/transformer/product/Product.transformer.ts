@@ -12,9 +12,13 @@ import {
 import { getShopMapping } from 'src/mapping/methods/shop';
 import { DEFAULT_CATEGORY_ID, DEFAULT_SHOP_ID } from '../../../common.env';
 import { validateMediaArray } from 'src/services/product/media/Product.Media.utils';
-import { colorListInterface } from 'src/database/mssql/types/product';
+import {
+  colorListInterface,
+  productDatabaseViewInterface,
+} from 'src/database/mssql/types/product';
 import { fetchVendor } from 'src/database/mssql/bulk-import/methods';
 import { SharoveTypeEnum, shopDto } from '../types/shop';
+import { getProductDetailsFromDb } from 'src/database/mssql/product-view/getProductViewById';
 /**
  *  Injectable class handling product transformation
  *  @Injectable in app scope or in kafka connection to reach kafka messages
@@ -29,6 +33,11 @@ export class ProductTransformerService {
   public async productGeneralTransformerMethod(
     @Param() productData: productDto,
   ) {
+    const { transformedPatterns, transformedSleeves, transformedStyles } =
+      await this.getProductAttributes(productData.TBItem_ID);
+    const { productType, isSharoveFulfillment } = await this.getVendorDetails(
+      productData.TBVendor_ID,
+    );
     const productObject: productTransformed = {
       id: productData.TBItem_ID?.toString(),
       styleNumber: productData.nVendorStyleNo?.toString(),
@@ -52,7 +61,11 @@ export class ProductTransformerService {
       openPackMinimumQuantity: productData.min_broken_pack_order_qty,
       createdAt: new Date(productData.OriginDate).toISOString(),
       updatedAt: new Date(productData.nModifyDate).toISOString(),
-      type: await this.getProductType(productData.TBVendor_ID),
+      type: productType,
+      styles: transformedStyles,
+      sleeves: transformedSleeves,
+      patterns: transformedPatterns,
+      isSharoveFulfillment: isSharoveFulfillment,
     };
 
     return productObject;
@@ -240,11 +253,51 @@ export class ProductTransformerService {
   }
 
   /**
-   * returns type of product set by vendor currently we have following type -- ALL , Wholesale, Retail
+   * returns -- type of product set by vendor currently we have following type -- ALL , Wholesale, Retail
+   *
+   * returns -- fulfillment type of this product's vendor
    * @links tb vendor table tp get vendor details which includes a column for sharove type
    */
-  public async getProductType(vendorId: string): Promise<SharoveTypeEnum> {
+  public async getVendorDetails(vendorId: string) {
     const vendorDetails = (await fetchVendor(vendorId)) as shopDto[];
-    return vendorDetails[0]?.SharoveType as SharoveTypeEnum;
+    const productType = vendorDetails[0]?.SharoveType as SharoveTypeEnum;
+    const isSharoveFulfillment = vendorDetails[0]?.OSFulfillmentType
+      ? true
+      : false;
+
+    return { productType, isSharoveFulfillment };
+  }
+
+  /**
+   * returns styles, sleeves and patterns information against a product in form of string array
+   * @param -- orangeShine product id
+   */
+  public async getProductAttributes(productId: string) {
+    const { sleeves, styles, patterns } = (await getProductDetailsFromDb(
+      productId,
+    )) as productDatabaseViewInterface;
+    const transformedStyles = styles?.split(',')
+      ? this.getMultiAttributeValue(styles)
+      : null;
+    const transformedSleeves = sleeves?.split(',')
+      ? this.getMultiAttributeValue(sleeves)
+      : null;
+    const transformedPatterns = patterns?.split(',')
+      ? this.getMultiAttributeValue(patterns)
+      : null;
+
+    return { transformedStyles, transformedSleeves, transformedPatterns };
+  }
+
+  /**
+   * attribute values for multiselect option for gql
+   * @param -- orangeShine raw comma separated string
+   */
+  public getMultiAttributeValue(values: string): {
+    value: string;
+  }[] {
+    return (values.split(',') || []).map((value) => {
+      return { value: value };
+    });
   }
 }

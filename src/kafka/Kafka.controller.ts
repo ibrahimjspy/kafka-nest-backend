@@ -31,15 +31,4 @@ export class KafkaController {
       this.logger.error(error);
     }
   }
-
-  @MessagePattern(KAFKA_SYNC_VENDOR_PRODUCTS_TOPIC)
-  async syncVendorProducts(@Payload() message) {
-    try {
-      this.logger.log('received sync vendor products message');
-      const vendorSync = this.productService.syncVendorProducts(message);
-      return vendorSync;
-    } catch (error) {
-      this.logger.error(error);
-    }
-  }
 }

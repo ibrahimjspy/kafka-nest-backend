@@ -20,6 +20,8 @@ export const updateShopMutation = (
     sizeChartName,
     shippedFrom,
     type,
+    flat,
+    ownFlat,
   } = shopData;
   const shopTypeField = type ? `{ name: "shopType", newValues: ["${type}"]}`  : `{ name: "shopType", newValues: ["null"]}`;
   return gql`
@@ -41,6 +43,8 @@ export const updateShopMutation = (
             { name: "phoneNumber", newValues: ["${phoneNumber}"] }
             { name: "sizeChart", newValues: ["${sizeChart.replace(/"/g, "'")}"] }
             { name: "sizeChartName", newValues: ["${sizeChartName.replace(/"/g, "'")}"] }
+            { name: "isFlatShipping", newValues: ["${flat}"] }
+            { name: "isOwnFlatShipping", newValues: ["${ownFlat}"] }
             ${shopTypeField}
             ]
         }
