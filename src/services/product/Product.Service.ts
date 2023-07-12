@@ -171,7 +171,7 @@ export class ProductService {
   ) {
     return await Promise.all([
       updateProductTimestamp(
-        productId,
+        idBase64Decode(productId),
         productData.createdAt,
         productData.updatedAt,
       ),
