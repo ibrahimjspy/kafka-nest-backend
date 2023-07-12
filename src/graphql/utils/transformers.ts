@@ -1,11 +1,17 @@
+import { productTransformed } from 'src/transformer/types/product';
 import {
   COLOR_ATTRIBUTE_ID,
   COMMISSION_ATTRIBUTE_ID,
   COST_ATTRIBUTE_ID,
   DEFAULT_CHANNEL_ID,
   DEFAULT_WAREHOUSE_ID,
+  IS_SHAROVE_FULFILLMENT,
+  PATTERNS_ATTRIBUTE_ID,
   RESALE_PRICE_ATTRIBUTE,
   SIZE_ATTRIBUTE_ID,
+  SLEEVES_ATTRIBUTE_ID,
+  STYLES_ATTRIBUTE_ID,
+  STYLE_ATTRIBUTE_ID,
 } from '../../../common.env';
 
 /**
@@ -69,4 +75,47 @@ export const productMetadataTransformer = (
     shopName ? `{ key: "vendorName", value: "${shopName}" }` : ''
   },
   { key: "isOpenPack", value: "${openPack}" },  { key: "openPackMinimumQuantity", value: "${openPackMinimumQuantity}" } ]`;
+};
+
+/**
+ * this returns product attributes in graphql string which can be used in product create and update
+ */
+export const getProductAttributesGql = (
+  productData: productTransformed,
+): string => {
+  const { styleNumber, isSharoveFulfillment, patterns, sleeves, styles } =
+    productData;
+  return `[{
+    id:"${STYLE_ATTRIBUTE_ID}",
+    values:["${styleNumber}"]
+  },
+  {
+    id:"${IS_SHAROVE_FULFILLMENT}",
+    boolean:${isSharoveFulfillment}
+  },
+  ${
+    patterns
+      ? `{
+    id:"${PATTERNS_ATTRIBUTE_ID}",
+    multiselect: ${JSON.stringify(patterns).replace(/"value"/g, 'value')}
+  }`
+      : ''
+  },
+  ${
+    sleeves
+      ? `{
+    id:"${SLEEVES_ATTRIBUTE_ID}",
+    multiselect: ${JSON.stringify(sleeves).replace(/"value"/g, 'value')}
+  }`
+      : ''
+  },
+  ${
+    styles
+      ? `{
+    id:"${STYLES_ATTRIBUTE_ID}",
+    multiselect: ${JSON.stringify(styles).replace(/"value"/g, 'value')}
+  }`
+      : ''
+  }
+]`;
 };
