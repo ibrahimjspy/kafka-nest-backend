@@ -33,8 +33,12 @@ export class ProductTransformerService {
   public async productGeneralTransformerMethod(
     @Param() productData: productDto,
   ) {
-    const { transformedPatterns, transformedSleeves, transformedStyles } =
-      await this.getProductAttributes(productData.TBItem_ID);
+    const {
+      transformedPatterns,
+      transformedSleeves,
+      transformedStyles,
+      transformedColors,
+    } = await this.getProductAttributes(productData.TBItem_ID);
     const { productType, isSharoveFulfillment } = await this.getVendorDetails(
       productData.TBVendor_ID,
     );
@@ -66,8 +70,8 @@ export class ProductTransformerService {
       sleeves: transformedSleeves,
       patterns: transformedPatterns,
       isSharoveFulfillment: isSharoveFulfillment,
+      colors: transformedColors,
     };
-
     return productObject;
   }
 
@@ -273,9 +277,10 @@ export class ProductTransformerService {
    * @param -- orangeShine product id
    */
   public async getProductAttributes(productId: string) {
-    const { sleeves, styles, patterns } = (await getProductDetailsFromDb(
-      productId,
-    )) as productDatabaseViewInterface;
+    const { sleeves, styles, patterns, color_list } =
+      (await getProductDetailsFromDb(
+        productId,
+      )) as productDatabaseViewInterface;
     const transformedStyles = styles?.split(',')
       ? this.getMultiAttributeValue(styles)
       : null;
@@ -285,8 +290,17 @@ export class ProductTransformerService {
     const transformedPatterns = patterns?.split(',')
       ? this.getMultiAttributeValue(patterns)
       : null;
-
-    return { transformedStyles, transformedSleeves, transformedPatterns };
+    const transformedColors = this.getMultiColorAttributeValue(
+      JSON.parse(color_list).color_list.length
+        ? JSON.parse(color_list).color_list
+        : ['ONE'],
+    );
+    return {
+      transformedStyles,
+      transformedSleeves,
+      transformedPatterns,
+      transformedColors,
+    };
   }
 
   /**
@@ -298,6 +312,19 @@ export class ProductTransformerService {
   }[] {
     return (values.split(',') || []).map((value) => {
       return { value: value };
+    });
+  }
+
+  /**
+   * color attribute values for multiselect option for gql
+   * @warn -- it is currently used only for search
+   * @param -- orangeShine raw comma separated string
+   */
+  public getMultiColorAttributeValue(colorList: colorListInterface[]): {
+    value: string;
+  }[] {
+    return colorList.map((color) => {
+      return { value: color.cColorName };
     });
   }
 }

@@ -8,12 +8,14 @@ import {
   shopSettingsDto,
   vendorSettingsEnum,
   SharoveTypeEnum,
+  BrandInterface,
 } from 'src/transformer/types/shop';
 import { brandPickupZoneMapping } from './Shop.transformer.utils';
 import {
   fetchVendorMinimumOrderAmount,
   fetchVendorSettings,
 } from 'src/database/mssql/bulk-import/methods';
+import { fetchBrandDetails } from 'src/database/mssql/api_methods/getBrandDetails';
 /**
  *  Injectable class handling shop transformation\
  *  @requires Injectable in app scope or in kafka connection to reach kafka messages
@@ -76,6 +78,7 @@ export class ShopTransformerService {
       type: SharoveType as SharoveTypeEnum,
       flat: OSFulfillmentType ? true : false,
       ownFlat: VendorFlatShipping ? true : false,
+      isPopular: await this.getVendorPopularity(TBVendor_ID),
     };
 
     return shopObject;
@@ -235,5 +238,23 @@ export class ShopTransformerService {
     const returnPolicy = parsed.return_policy;
     // eslint-disable-next-line prettier/prettier
     return returnPolicy.replace(/\s+/g, ' ').replace(/"/g, "'").replace(/\r?\n/g, "\n")
+  }
+
+  /**
+   * returns whether a vendor is popular or not based on minimum popularity score
+   * @warn -- rating of brand popularity is determined in os using brand reviews , order count etc
+   */
+  private async getVendorPopularity(
+    @Param() vendorId: string,
+  ): Promise<boolean> {
+    const brandDetails = (await fetchBrandDetails(vendorId)) as BrandInterface;
+    const POPULARITY_SCORE = 90;
+    if (
+      brandDetails.avg_total_score &&
+      brandDetails.avg_total_score > POPULARITY_SCORE
+    ) {
+      return true;
+    }
+    return false;
   }
 }

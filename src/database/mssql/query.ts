@@ -85,3 +85,9 @@ export const tbShipsFromQuery = (vendorName: string): string => {
   select InvMinAmount from ARAOS.dbo.TBShipFrom where ShipFrom = '${vendorName}'
   `;
 };
+
+export const brandViewQuery = (vendorId: string): string => {
+  return `
+   select * from dbo.vw_BrandList where TBVendor_ID = '${vendorId}'
+  `;
+};

@@ -53,11 +53,21 @@ export const updateShopMapping = async (
   id: string,
   shopMapping: ShopMappingType,
 ) => {
-  const { sourceId, destinationId, shopName } = shopMapping;
+  const {
+    sourceId,
+    destinationId,
+    shopName,
+    isPopular,
+    isSharoveFulfillment,
+    brandImage,
+  } = shopMapping;
   return await updateMapping(SHOP_ENGINE, {
     id: id,
     os_vendor_id: sourceId,
     shr_shop_id: destinationId,
     shr_shop_name: shopName,
+    is_popular: isPopular,
+    is_sharove_fulfillment: isSharoveFulfillment,
+    main_image: brandImage,
   });
 };

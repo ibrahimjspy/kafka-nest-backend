@@ -62,6 +62,8 @@ export const PATTERNS_ATTRIBUTE_ID =
   process.env.PATTERNS_ATTRIBUTE_ID || 'QXR0cmlidXRlOjE4';
 export const IS_SHAROVE_FULFILLMENT =
   process.env.IS_SHAROVE_FULFILLMENT || 'QXR0cmlidXRlOjE5';
+export const COLOR_NAME_ATTRIBUTE_ID =
+  process.env.COLOR_NAME_ATTRIBUTE_ID || 'QXR0cmlidXRlOjIw';
 /**
  * kafka topic name for tb style no table os
  */

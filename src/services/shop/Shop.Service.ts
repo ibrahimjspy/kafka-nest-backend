@@ -54,6 +54,9 @@ export class ShopService {
         shopName: shopData.name,
         sourceId: shopData.id,
         destinationId: shopId,
+        isPopular: shopData.isPopular,
+        isSharoveFulfillment: shopData.flat,
+        brandImage: shopData.vendorMainImage,
       });
       this.logger.log('mapping updated', updateMapping);
       this.syncVendorProducts(shopData, shopId);
@@ -85,6 +88,9 @@ export class ShopService {
         shopName: shopData.name,
         sourceId: shopData.id,
         destinationId: shop,
+        isPopular: shopData.isPopular,
+        isSharoveFulfillment: shopData.flat,
+        brandImage: shopData.vendorMainImage,
       });
     }
 

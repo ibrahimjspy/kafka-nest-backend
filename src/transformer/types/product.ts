@@ -57,6 +57,9 @@ export interface productTransformed {
   patterns?: {
     value: string;
   }[];
+  colors?: {
+    value: string;
+  }[];
   isSharoveFulfillment?: boolean;
 }
 export interface priceInterface {
