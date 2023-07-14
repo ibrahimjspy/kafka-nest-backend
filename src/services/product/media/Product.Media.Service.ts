@@ -1,6 +1,9 @@
 import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
 import { stringValidation } from 'src/app.utils';
-import { productVariantInterface } from 'src/database/mssql/types/product';
+import {
+  MediaColorListInterface,
+  productVariantInterface,
+} from 'src/database/mssql/types/product';
 import {
   fetchProductMediaId,
   insertProductMediaById,
@@ -15,6 +18,7 @@ import {
   getVariantIdsByColor,
   getVariantMediaById,
 } from './Product.Media.utils';
+import { ApplicationLogger } from 'src/logger/Logger.service';
 /**
  *  Injectable class handling media assign
  *  @Injected transformation class for CDC payload validations and transformations
@@ -25,6 +29,7 @@ export class ProductMediaService {
   constructor(
     @Inject(forwardRef(() => ProductService))
     private readonly productClass: ProductService,
+    public logger: ApplicationLogger,
   ) {}
 
   /**
@@ -122,9 +127,10 @@ export class ProductMediaService {
       !productDetails.variants[0]?.media[0]?.url &&
       productVariantData.variant_media
     ) {
+      this.logger.log('Creating variant media against product id', productId);
       // getting media ids of each product color
       const mediaIds = await this.createVariantMedia(
-        productVariantData.variant_media['ColorMedia'],
+        productVariantData.variant_media?.ColorMedia,
         productId,
         idBase64Decode(productDetails['media'][0]?.id),
       );
@@ -153,33 +159,57 @@ export class ProductMediaService {
     }
   }
 
+  /**
+   * Create variant media for a product.
+   *
+   * @param productVariantMedia - Array of media objects containing color information.
+   * @param productId - ID of the product.
+   * @param defaultMediaId - ID of the default media.
+   * @returns A Promise resolving to an object containing color-name to media-ID mappings.
+   */
   public async createVariantMedia(
-    productVariantMedia,
-    productId,
-    defaultMediaId,
-  ) {
-    const mediaIds = {};
+    productVariantMedia: MediaColorListInterface[],
+    productId: string,
+    defaultMediaId: string,
+  ): Promise<{ [key: string]: string }> {
+    // Object to store the color-name to media-ID mappings
+    const mediaIds: { [key: string]: string } = {};
+
+    // Process each media object asynchronously
     await Promise.all(
       productVariantMedia?.map(async (media) => {
-        const url: string = media['color_image'];
-        // creates media against that color
+        const url: string = media.color_image;
+
+        // If the URL includes 'ColorSwatch', create media against that color
         if (url.includes('ColorSwatch')) {
-          await insertProductMediaById(
-            `ColorSwatch/${url.split('ColorSwatch/')[1]}`,
-            idBase64Decode(productId),
-          );
+          // Extract the colorSwatchUrl from the URL
+          const colorSwatchUrl = url.split('ColorSwatch/')[1];
+
+          // Construct the full path for the color swatch media
+          const colorSwatchPath = `ColorSwatch/${colorSwatchUrl}`;
+
+          // Decode the product ID if necessary
+          const decodedProductId = idBase64Decode(productId);
+
+          // Insert the product media using the color swatch path and decoded product ID
+          await insertProductMediaById(colorSwatchPath, decodedProductId);
+
+          // Fetch the media ID of the newly created color swatch media
           const productMediaId = await fetchProductMediaId(
-            `ColorSwatch/${url.split('ColorSwatch/')[1]}`,
-            idBase64Decode(productId),
+            colorSwatchPath,
+            decodedProductId,
           );
-          mediaIds[`${media.color_name}`] = productMediaId;
-          return mediaIds;
+
+          // Store the media ID in the mediaIds object using the color name as the key
+          mediaIds[media.color_name] = productMediaId;
+        } else {
+          // If the media already exists in the product scope, use the default media ID
+          mediaIds[media.color_name] = defaultMediaId;
         }
-        // checks if media all ready exists in product scope
-        mediaIds[`${media.color_name}`] = defaultMediaId;
-        return;
       }),
     );
+
+    // Return the mediaIds object
     return mediaIds;
   }
 }

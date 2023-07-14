@@ -187,7 +187,7 @@ export class ProductService {
       const productDelete = await deleteProductHandler(destinationId);
       const productIdDelete = await removeProductMapping(destinationId);
 
-      this.logger.log('product deleted', productDelete);
+      this.logger.log('product deleted', destinationId);
       return { productDelete, productIdDelete };
     }
   }
@@ -217,6 +217,7 @@ export class ProductService {
           productId,
           productData.shopId,
         );
+        this.productVariantMediaCreate(productId, productVariantData);
         return;
       }
 
@@ -225,6 +226,7 @@ export class ProductService {
         productId,
         productData.shopId,
       );
+      this.productVariantMediaCreate(productId, productVariantData);
     } catch (error) {
       await this.productDelete(productId);
       throw error;
@@ -254,7 +256,7 @@ export class ProductService {
   }
   public async productVariantMediaCreate(
     productId: string,
-    productVariantData,
+    productVariantData: productVariantInterface,
   ) {
     await this.productMediaClass.productVariantMediaAssign(
       productId,

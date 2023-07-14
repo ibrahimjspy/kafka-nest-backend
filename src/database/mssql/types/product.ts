@@ -10,7 +10,9 @@ export interface productVariantInterface {
   shoe_sizes?: any;
   productGroup?: string;
   shoe_bundle_name?: any[];
-  variant_media?: any;
+  variant_media?: {
+    ColorMedia: MediaColorListInterface[];
+  };
   isPreOrder?: string;
   style_name?: string;
   sizeChartId?: number;
@@ -77,4 +79,9 @@ export interface shipsFromInterface {
 export interface colorListInterface {
   TBColor_ID: string;
   cColorName: string;
+}
+
+export interface MediaColorListInterface {
+  color_image: string;
+  color_name: string;
 }

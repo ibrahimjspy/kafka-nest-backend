@@ -1,7 +1,6 @@
 import { productTransformed } from 'src/transformer/types/product';
 import {
   COLOR_ATTRIBUTE_ID,
-  COLOR_NAME_ATTRIBUTE_ID,
   COMMISSION_ATTRIBUTE_ID,
   COST_ATTRIBUTE_ID,
   DEFAULT_CHANNEL_ID,
@@ -84,14 +83,8 @@ export const productMetadataTransformer = (
 export const getProductAttributesGql = (
   productData: productTransformed,
 ): string => {
-  const {
-    styleNumber,
-    isSharoveFulfillment,
-    patterns,
-    sleeves,
-    styles,
-    colors,
-  } = productData;
+  const { styleNumber, isSharoveFulfillment, patterns, sleeves, styles } =
+    productData;
   return `[{
     id:"${STYLE_ATTRIBUTE_ID}",
     values:["${styleNumber}"]
@@ -121,14 +114,6 @@ export const getProductAttributesGql = (
       ? `{
     id:"${STYLES_ATTRIBUTE_ID}",
     multiselect: ${JSON.stringify(styles).replace(/"value"/g, 'value')}
-  }`
-      : ''
-  }
-  ${
-    colors
-      ? `{
-    id:"${COLOR_NAME_ATTRIBUTE_ID}",
-    multiselect: ${JSON.stringify(colors).replace(/"value"/g, 'value')}
   }`
       : ''
   }

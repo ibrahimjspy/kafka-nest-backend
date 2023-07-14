@@ -2,34 +2,63 @@ import { stringValidation } from 'src/app.utils';
 import { mediaDto } from 'src/transformer/types/product';
 
 /**
- * returns variant ids against each color, using destination attribute mapping
+ * Returns variant IDs corresponding to each color using destination attribute mapping.
+ *
+ * @param variantInformation - Array of variant information objects.
+ * @param colorList - Array of color objects.
+ * @returns An object containing color names as keys and corresponding variant IDs as values.
  */
 export const getVariantIdsByColor = (variantInformation, colorList) => {
+  // Object to store variant IDs corresponding to each color
   const variantData = {};
-  (colorList || []).map((color) => {
-    variantData[color] = [];
-    (variantInformation || []).map((variant) => {
-      if (variant.attributes[0].values[0].name == color)
-        variantData[color].push(variant.id);
+
+  // Iterate over each color in the colorList array
+  (colorList || []).forEach((color) => {
+    const colorName = color.cColorName;
+
+    // Initialize an empty array to store variant IDs for the current color
+    variantData[colorName] = [];
+
+    // Iterate over each variant in the variantInformation array
+    (variantInformation || []).forEach((variant) => {
+      const variantAttribute = variant.attributes[0];
+
+      // Check if the variant's attribute matches the current color name
+      if (variantAttribute.values[0].name === colorName) {
+        // Push the variant's ID to the array of variant IDs for the current color
+        variantData[colorName].push(variant.id);
+      }
     });
   });
+
+  // Return the object containing color names as keys and variant IDs as values
   return variantData;
 };
 
 /**
- * maps media against variants against their respective ids
+ * Maps media against variants using their respective IDs.
+ *
+ * @param variantIds - Object containing variant IDs mapped by color.
+ * @param mediaIds - Object containing media IDs mapped by color.
+ * @returns An array of variant media objects, each containing variant ID and color image.
  */
 export const getVariantMediaById = (variantIds, mediaIds) => {
   const variantMedia = [];
+
   const variantColors = Object.keys(variantIds);
-  (variantColors || []).map((color) => {
-    variantIds[`${color}`].map((id) => {
+
+  (variantColors || []).forEach((color) => {
+    variantIds[color].forEach((id) => {
+      const variantId = atob(id).split('ProductVariant:')[1];
+      const colorImage = mediaIds[color];
+
       variantMedia.push({
-        variantId: atob(id).split('ProductVariant:')[1],
-        colorImage: mediaIds[`${color}`],
+        variantId,
+        colorImage,
       });
     });
   });
+
   return variantMedia;
 };
 
