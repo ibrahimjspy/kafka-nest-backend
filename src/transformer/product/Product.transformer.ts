@@ -277,6 +277,7 @@ export class ProductTransformerService {
    * @param -- orangeShine product id
    */
   public async getProductAttributes(productId: string) {
+    const defaultColorsList = ['ONE'];
     const { sleeves, styles, patterns, color_list } =
       (await getProductDetailsFromDb(
         productId,
@@ -293,7 +294,7 @@ export class ProductTransformerService {
     const transformedColors = this.getMultiColorAttributeValue(
       JSON.parse(color_list).color_list.length
         ? JSON.parse(color_list).color_list
-        : ['ONE'],
+        : defaultColorsList,
     );
     return {
       transformedStyles,

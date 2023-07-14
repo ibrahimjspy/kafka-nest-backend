@@ -169,9 +169,10 @@ export class ProductService {
     productId: string,
     productData: productTransformed,
   ) {
+    const decodedProductId = idBase64Decode(productId);
     return await Promise.all([
       updateProductTimestamp(
-        idBase64Decode(productId),
+        decodedProductId,
         productData.createdAt,
         productData.updatedAt,
       ),
@@ -218,15 +219,14 @@ export class ProductService {
           productData.shopId,
         );
         this.productVariantMediaCreate(productId, productVariantData);
-        return;
+      } else {
+        await this.productVariantService.productVariantAssign(
+          productVariantData,
+          productId,
+          productData.shopId,
+        );
+        this.productVariantMediaCreate(productId, productVariantData);
       }
-
-      await this.productVariantService.productVariantAssign(
-        productVariantData,
-        productId,
-        productData.shopId,
-      );
-      this.productVariantMediaCreate(productId, productVariantData);
     } catch (error) {
       await this.productDelete(productId);
       throw error;

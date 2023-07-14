@@ -19,6 +19,7 @@ import {
   getVariantMediaById,
 } from './Product.Media.utils';
 import { ApplicationLogger } from 'src/logger/Logger.service';
+import { MediaIdsInterface } from '../variant/Product.Variant.types';
 /**
  *  Injectable class handling media assign
  *  @Injected transformation class for CDC payload validations and transformations
@@ -130,7 +131,7 @@ export class ProductMediaService {
       this.logger.log('Creating variant media against product id', productId);
       // getting media ids of each product color
       const mediaIds = await this.createVariantMedia(
-        productVariantData.variant_media?.ColorMedia,
+        productVariantData?.variant_media?.ColorMedia,
         productId,
         idBase64Decode(productDetails['media'][0]?.id),
       );
@@ -171,9 +172,9 @@ export class ProductMediaService {
     productVariantMedia: MediaColorListInterface[],
     productId: string,
     defaultMediaId: string,
-  ): Promise<{ [key: string]: string }> {
+  ): Promise<MediaIdsInterface> {
     // Object to store the color-name to media-ID mappings
-    const mediaIds: { [key: string]: string } = {};
+    const mediaIds: MediaIdsInterface = {};
 
     // Process each media object asynchronously
     await Promise.all(

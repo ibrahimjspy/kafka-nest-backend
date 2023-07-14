@@ -24,3 +24,7 @@ export interface VariantType {
   }[];
   id: string;
 }
+
+export interface MediaIdsInterface {
+  [key: string]: string;
+}
