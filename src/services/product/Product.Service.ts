@@ -29,7 +29,6 @@ import { autoSyncWebhookHandler } from 'src/external/endpoints/autoSync';
 import { SHOES_GROUP_NAME } from 'common.env';
 import { ProductOperationEnum } from 'src/api/import.dtos';
 import { updateProductTimestamp } from 'src/database/postgres/handlers/product';
-import { SharoveTypeEnum } from 'src/transformer/types/shop';
 
 /**
  *  Injectable class handling product variant and its relating tables CDC
@@ -273,11 +272,7 @@ export class ProductService {
     productId: string,
     productData: productTransformed,
   ) {
-    if (
-      productData.listing &&
-      productData.type &&
-      productData.type !== SharoveTypeEnum.Retail
-    ) {
+    if (productData.listing) {
       return await productChannelListingHandler(productId);
     }
     this.logger.log(

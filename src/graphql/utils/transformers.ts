@@ -8,6 +8,7 @@ import {
   IS_SHAROVE_FULFILLMENT,
   PATTERNS_ATTRIBUTE_ID,
   RESALE_PRICE_ATTRIBUTE,
+  SHOP_ID_ATTRIBUTE_ID,
   SIZE_ATTRIBUTE_ID,
   SLEEVES_ATTRIBUTE_ID,
   STYLES_ATTRIBUTE_ID,
@@ -83,11 +84,21 @@ export const productMetadataTransformer = (
 export const getProductAttributesGql = (
   productData: productTransformed,
 ): string => {
-  const { styleNumber, isSharoveFulfillment, patterns, sleeves, styles } =
-    productData;
+  const {
+    styleNumber,
+    isSharoveFulfillment,
+    patterns,
+    sleeves,
+    styles,
+    shopId,
+  } = productData;
   return `[{
     id:"${STYLE_ATTRIBUTE_ID}",
     values:["${styleNumber}"]
+  },
+  {
+    id:"${SHOP_ID_ATTRIBUTE_ID}",
+    values:["${shopId}"]
   },
   {
     id:"${IS_SHAROVE_FULFILLMENT}",

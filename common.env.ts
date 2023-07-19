@@ -1,7 +1,7 @@
 import * as dotenv from 'dotenv';
 dotenv.config();
 
-export const BATCH_SIZE = Number(process.env.BATCH_SIZE) || 5;
+export const BATCH_SIZE = Number(process.env.BATCH_SIZE) || 15;
 export const VARIANT_MEDIA_BATCH_SIZE = Number(process.env.BATCH_SIZE) || 30;
 export const KAFKA_HEARTBEAT_INTERVAL =
   Number(process.env.KAFKA_HEARTBEAT_INTERVAL) || 1000;
@@ -62,8 +62,8 @@ export const PATTERNS_ATTRIBUTE_ID =
   process.env.PATTERNS_ATTRIBUTE_ID || 'QXR0cmlidXRlOjE4';
 export const IS_SHAROVE_FULFILLMENT =
   process.env.IS_SHAROVE_FULFILLMENT || 'QXR0cmlidXRlOjE5';
-export const COLOR_NAME_ATTRIBUTE_ID =
-  process.env.COLOR_NAME_ATTRIBUTE_ID || 'QXR0cmlidXRlOjIw';
+export const SHOP_ID_ATTRIBUTE_ID =
+  process.env.SHOP_ID_ATTRIBUTE_ID || 'QXR0cmlidXRlOjIx';
 /**
  * kafka topic name for tb style no table os
  */
