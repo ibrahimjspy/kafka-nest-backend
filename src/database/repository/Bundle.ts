@@ -180,10 +180,16 @@ export class BundleRepository {
   ): Promise<void> {
     const bundleProductVariants: BundleProductVariant[] = [];
 
-    for (let i = 0; i < bundleVariants.length; i++) {
-      const variantId = bundleVariants[i];
-      const quantity = bundleQuantities[i];
+    // Create a map of variant IDs and quantities
+    const variantQuantityMap = bundleVariants.reduce(
+      (map, variantId, index) => {
+        map.set(variantId, bundleQuantities[index]);
+        return map;
+      },
+      new Map<string, number>(),
+    );
 
+    for (const [variantId, quantity] of variantQuantityMap.entries()) {
       const bundleProductVariant = new BundleProductVariant();
       bundleProductVariant.id = uuidv4();
       bundleProductVariant.created_at = new Date();
@@ -214,13 +220,18 @@ export class BundleRepository {
     bundle: Bundle | OpenBundle,
     productId: string,
   ): Promise<void> {
-    console.log(bundle);
     const bundleProductVariants: BundleProductVariant[] = [];
 
-    for (let i = 0; i < bundleVariants.length; i++) {
-      const variantId = bundleVariants[i];
-      const quantity = bundleQuantities[i];
+    // Create a map of variant IDs and quantities
+    const variantQuantityMap = bundleVariants.reduce(
+      (map, variantId, index) => {
+        map.set(variantId, bundleQuantities[index]);
+        return map;
+      },
+      new Map<string, number>(),
+    );
 
+    for (const [variantId, quantity] of variantQuantityMap.entries()) {
       const bundleProductVariant = new BundleProductVariant();
       bundleProductVariant.id = uuidv4();
       bundleProductVariant.created_at = new Date();
