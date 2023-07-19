@@ -222,6 +222,7 @@ export class ProductService {
         await this.productVariantService.productVariantAssign(
           productVariantData,
           productId,
+          productData,
           productData.shopId,
         );
         this.productVariantMediaCreate(productId, productVariantData);

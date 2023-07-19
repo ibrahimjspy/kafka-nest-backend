@@ -3,6 +3,8 @@ export interface bundlesCreateInterface {
   bundle: string[];
   shopId: string;
   productId: string;
+  isOpenBundle: boolean;
+  productPrice: number;
 }
 
 export interface VariantType {

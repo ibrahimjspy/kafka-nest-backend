@@ -93,3 +93,14 @@ export const getShoeVariantsMapping = (shoe_sizes, variantIds, color_list) => {
 export const idBase64Decode = (productId: string): string => {
   return atob(productId).split(':')[1];
 };
+
+export const getBundlePrice = (
+  bundleQuantities: number[],
+  productPrice: number,
+): number => {
+  let bundlePrice = 0;
+  bundleQuantities.map((quantity) => {
+    bundlePrice = bundlePrice + quantity * productPrice;
+  });
+  return bundlePrice;
+};

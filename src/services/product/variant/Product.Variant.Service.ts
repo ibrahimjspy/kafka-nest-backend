@@ -11,7 +11,6 @@ import {
   productVariantInterface,
 } from 'src/database/mssql/types/product';
 import {
-  colorSelectDto,
   priceInterface,
   productTransformed,
 } from 'src/transformer/types/product';
@@ -23,6 +22,7 @@ import {
 } from 'src/graphql/handlers/bundle';
 import {
   chunkArray,
+  getBundlePrice,
   getShoeBundlesBySizes,
   getShoeSizes,
   getShoeVariantsMapping,
@@ -40,6 +40,7 @@ import { getProductDetailsFromDb } from 'src/database/mssql/product-view/getProd
 import { bundlesCreateInterface } from './Product.Variant.types';
 import { getProductMapping } from 'src/mapping/methods/product';
 import { VariantsListInterface } from 'src/graphql/types/product';
+import { BundleRepository } from 'src/database/repository/Bundle';
 
 /**
  *  Injectable class handling productVariant and its relating tables CDC
@@ -52,20 +53,10 @@ export class ProductVariantService {
 
   constructor(
     private readonly transformerClass: TransformerService,
+    private readonly bundleRepository: BundleRepository,
     @Inject(forwardRef(() => ProductService))
     private readonly productClass: ProductService,
   ) {}
-
-  public async handleSelectColorCDC(productColorData: colorSelectDto) {
-    const sourceId = productColorData.TBItem_ID;
-    // fetching product variant additional information
-    const productVariantData: productVariantInterface =
-      await getProductDetailsFromDb(sourceId);
-    const productId = await getProductMapping(sourceId);
-
-    // creating product variant against color
-    return await this.productVariantAssign(productVariantData, productId);
-  }
 
   public async productVariantsUpdate(
     productId,
@@ -94,6 +85,7 @@ export class ProductVariantService {
   public async productVariantAssign(
     productVariantData: productVariantInterface,
     productId: string,
+    productData: productTransformed,
     shopId?: string,
   ): Promise<void> {
     const {
@@ -141,6 +133,8 @@ export class ProductVariantService {
           bundle: pack_name.split('-'),
           shopId,
           productId,
+          productPrice: Number(price.salePrice),
+          isOpenBundle: productData.openPack,
         });
 
         // Logging the completion of variant assignment
@@ -164,10 +158,21 @@ export class ProductVariantService {
     bundle,
     shopId,
     productId,
+    productPrice,
+    isOpenBundle,
   }: bundlesCreateInterface): Promise<void[]> {
     const bundleVariantIds = chunkArray(variantIds, bundle.length);
     const createBundlesPromises = bundleVariantIds.map(async (variants) => {
-      return createBundleHandler(variants, bundle, shopId, productId);
+      const bundleQuantities = bundle.map((str) => Number(str));
+      const bundlePrice = getBundlePrice(bundleQuantities, productPrice);
+      return this.bundleRepository.createBundles(
+        variants,
+        bundleQuantities,
+        shopId,
+        productId,
+        bundlePrice,
+        isOpenBundle,
+      );
     });
     return Promise.all(createBundlesPromises);
   }

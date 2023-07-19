@@ -1,5 +1,5 @@
 import { Logger, Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { BulkImportController } from './api/Import.Controller';
@@ -17,9 +17,43 @@ import { RetailerTransformerService } from './transformer/shop/Retailer.transfor
 import { LoggerModule } from './logger/Logger.module';
 import { ProducerService } from './kafka/Kafka.producer.service';
 import { KafkaController } from './kafka/Kafka.controller';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { Bundle, OpenBundle } from './database/postgres/tables/Bundle';
+import { BundleRepository } from './database/repository/Bundle';
+import {
+  BundleProductVariant,
+  OpenBundleProductVariant,
+} from './database/postgres/tables/BundleVariants';
 
 @Module({
-  imports: [ConfigModule.forRoot(), TransformerModule, LoggerModule],
+  imports: [
+    ConfigModule.forRoot(),
+    TransformerModule,
+    LoggerModule,
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) => ({
+        type: 'postgres',
+        host: configService.get('POSTGRES_HOST'),
+        port: +configService.get<number>('POSTGRES_PORT'),
+        username: configService.get('POSTGRES_USER'),
+        password: configService.get('POSTGRES_PASSWORD'),
+        database: configService.get('POSTGRES_DATABASE'),
+        entities: [
+          Bundle,
+          OpenBundle,
+          BundleProductVariant,
+          OpenBundleProductVariant,
+        ],
+        synchronize: false,
+      }),
+      inject: [ConfigService],
+    }),
+    TypeOrmModule.forFeature([Bundle]),
+    TypeOrmModule.forFeature([OpenBundle]),
+    TypeOrmModule.forFeature([BundleProductVariant]),
+    TypeOrmModule.forFeature([OpenBundleProductVariant]),
+  ],
   controllers: [AppController, BulkImportController, KafkaController],
   providers: [
     AppService,
@@ -35,6 +69,11 @@ import { KafkaController } from './kafka/Kafka.controller';
     RetailerService,
     RetailerTransformerService,
     ProducerService,
+    Bundle,
+    OpenBundle,
+    BundleProductVariant,
+    OpenBundleProductVariant,
+    BundleRepository,
   ],
 })
 export class AppModule {}
