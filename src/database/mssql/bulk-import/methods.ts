@@ -12,6 +12,7 @@ import {
   tbVendorShippingDetailsQuery,
 } from '../query';
 import { shipsFromInterface } from '../types/product';
+import { Logger } from '@nestjs/common';
 
 export const fetchBulkSubCategoriesData = async () => {
   return await mssqlCall(subCategoryQuery());
@@ -49,11 +50,16 @@ export const fetchFirstTenProducts = async () => {
  * @description -- this method takes in vendorName and returns vendor minimum order amount from os tb ships from table
  */
 export const fetchVendorMinimumOrderAmount = async (vendorName: string) => {
-  let shipsFromData = [] as shipsFromInterface[];
-  shipsFromData = (await mssqlCall(
-    tbShipsFromQuery(vendorName),
-  )) as shipsFromInterface[];
-  return shipsFromData[0].InvMinAmount || 0;
+  try {
+    let shipsFromData = [] as shipsFromInterface[];
+    shipsFromData = (await mssqlCall(
+      tbShipsFromQuery(vendorName),
+    )) as shipsFromInterface[];
+    return shipsFromData[0]?.InvMinAmount || 0;
+  } catch (error) {
+    Logger.log(error);
+    return 0;
+  }
 };
 
 export const fetchVendorSettings = async (vendorId: string) => {

@@ -49,25 +49,15 @@ export class BundleRepository {
         bundleQuantities,
         bundlePrice,
       });
-      if (isOpenBundle) {
-        await this.createOpenBundle(
-          bundleVariants,
-          bundleQuantities,
-          shopId,
-          productId,
-          bundlePrice,
-          bundleName,
-        );
-      } else {
-        await this.createClosedBundle(
-          bundleVariants,
-          bundleQuantities,
-          shopId,
-          productId,
-          bundlePrice,
-          bundleName,
-        );
-      }
+
+      await this.createClosedBundle(
+        bundleVariants,
+        bundleQuantities,
+        shopId,
+        productId,
+        bundlePrice,
+        bundleName,
+      );
 
       this.logger.log(
         isOpenBundle

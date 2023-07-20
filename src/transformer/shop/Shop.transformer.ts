@@ -22,6 +22,8 @@ import { fetchBrandDetails } from 'src/database/mssql/api_methods/getBrandDetail
  */
 @Injectable()
 export class ShopTransformerService {
+  private readonly logger = new Logger(ShopTransformerService.name);
+
   /**
    * Transforms and validates shop responses and existence.
    *
@@ -168,7 +170,10 @@ export class ShopTransformerService {
    * @returns minimum order amount
    */
   public async getMinimumOrderAmount(@Param() name: string) {
-    return await fetchVendorMinimumOrderAmount(name);
+    this.logger.log('Getting vendor minimum order amount', name);
+    const vendorMinimumAmount = await fetchVendorMinimumOrderAmount(name);
+    this.logger.log('fetched vendor minimum order amount', vendorMinimumAmount);
+    return vendorMinimumAmount;
   }
 
   /**
@@ -247,11 +252,12 @@ export class ShopTransformerService {
   private async getVendorPopularity(
     @Param() vendorId: string,
   ): Promise<boolean> {
+    this.logger.log('fetching vendor popularity', vendorId);
     const brandDetails = (await fetchBrandDetails(vendorId)) as BrandInterface;
     const POPULARITY_SCORE = 90;
     if (
-      brandDetails.avg_total_score &&
-      brandDetails.avg_total_score > POPULARITY_SCORE
+      brandDetails?.avg_total_score &&
+      brandDetails?.avg_total_score > POPULARITY_SCORE
     ) {
       return true;
     }
