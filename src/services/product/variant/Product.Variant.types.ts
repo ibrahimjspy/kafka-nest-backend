@@ -1,3 +1,5 @@
+import { BundleImportType } from 'src/api/import.dtos';
+
 export interface bundlesCreateInterface {
   variantIds: string[];
   bundle: string[];
@@ -5,6 +7,7 @@ export interface bundlesCreateInterface {
   productId: string;
   isOpenBundle: boolean;
   productPrice: number;
+  importType: BundleImportType;
 }
 
 export interface VariantType {

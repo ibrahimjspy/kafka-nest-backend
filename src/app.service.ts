@@ -16,7 +16,11 @@ import { getAllMappings, getProductMapping } from './mapping/methods/product';
 import { BATCH_SIZE, VARIANT_MEDIA_BATCH_SIZE } from 'common.env';
 import { fetchBulkProductsData } from './database/mssql/bulk-import/methods';
 import { productDto } from './transformer/types/product';
-import { BulkProductImportDto, ProductOperationEnum } from './api/import.dtos';
+import {
+  BulkProductImportDto,
+  BundleImportType,
+  ProductOperationEnum,
+} from './api/import.dtos';
 import { shopDto } from './transformer/types/shop';
 
 @Injectable()
@@ -49,6 +53,7 @@ export class AppService {
       return await this.productService.handleProductCDC(
         sourceProductDetails,
         ProductOperationEnum.SYNC,
+        BundleImportType.DATABASE,
       );
     } catch (error) {
       Logger.log('product sync call failed', error);
@@ -91,7 +96,11 @@ export class AppService {
       const productBatch = vendorProducts.slice(startCurser, endCurser);
 
       this.logger.log(`Creating ${productBatch.length} products...`);
-      await this.productBulkCreate(productBatch, operation);
+      await this.productBulkCreate(
+        productBatch,
+        operation,
+        bulkImportInput.importType,
+      );
       this.logger.log(`${productBatch.length} products created.`);
 
       return `${productBatch.length} products created`;
@@ -133,7 +142,11 @@ export class AppService {
   }
 
   // big data import methods dividing data in batches and running them in pools
-  async productBulkCreate(bulkArray, operation: ProductOperationEnum) {
+  async productBulkCreate(
+    bulkArray,
+    operation: ProductOperationEnum,
+    importType = BundleImportType.DATABASE,
+  ) {
     try {
       const { results } = await PromisePool.withConcurrency(BATCH_SIZE)
         .for(bulkArray)
@@ -150,6 +163,7 @@ export class AppService {
           const productCreate = await this.productService.handleProductCDC(
             data,
             operation,
+            importType,
           );
           return productCreate;
         });
@@ -200,6 +214,7 @@ export class AppService {
       const createProduct = await this.productService.handleProductCDC(
         sourceStyleDetails,
         ProductOperationEnum.CREATE,
+        BundleImportType.DATABASE,
       );
       return createProduct;
     } catch (error) {
@@ -290,6 +305,7 @@ export class AppService {
           return await this.productService.handleProductCDC(
             sourceData,
             ProductOperationEnum.UPDATE,
+            BundleImportType.DATABASE,
           );
         });
     } catch (error) {

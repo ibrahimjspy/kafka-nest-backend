@@ -7,6 +7,11 @@ export enum ProductOperationEnum {
   UPDATE = 'update',
 }
 
+export enum BundleImportType {
+  API = 'api',
+  DATABASE = 'database',
+}
+
 export class createProductDTO {
   @ApiProperty()
   @IsNotEmpty()
@@ -34,6 +39,15 @@ export class BulkProductImportDto {
   @IsEnum(ProductOperationEnum)
   @IsOptional()
   operation?: ProductOperationEnum;
+
+  @ApiProperty({
+    enum: BundleImportType,
+    required: false,
+    default: BundleImportType.DATABASE,
+  })
+  @IsEnum(BundleImportType)
+  @IsOptional()
+  importType?: BundleImportType;
 }
 
 export class UpdateOpenPackDto {

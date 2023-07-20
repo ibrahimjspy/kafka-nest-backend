@@ -27,7 +27,7 @@ import {
 } from 'src/mapping/methods/product';
 import { autoSyncWebhookHandler } from 'src/external/endpoints/autoSync';
 import { SHOES_GROUP_NAME } from 'common.env';
-import { ProductOperationEnum } from 'src/api/import.dtos';
+import { BundleImportType, ProductOperationEnum } from 'src/api/import.dtos';
 import { updateProductTimestamp } from 'src/database/postgres/handlers/product';
 
 /**
@@ -53,6 +53,7 @@ export class ProductService {
   public async handleProductCDC(
     kafkaMessage: productDto,
     operation: ProductOperationEnum,
+    importType: BundleImportType,
   ): Promise<void> {
     /**
      * Retrieves the product mapping from the destination system based on the Kafka message's TBItem_ID.
@@ -76,7 +77,7 @@ export class ProductService {
           /**
            * Performs product creation since the product doesn't exist in the destination system.
            */
-          await this.productCreate(productData);
+          await this.productCreate(productData, importType);
         }
       } else {
         /**
@@ -91,7 +92,7 @@ export class ProductService {
       /**
        * Performs product creation only if the product doesn't exist in the destination system.
        */
-      await this.productCreate(productData);
+      await this.productCreate(productData, importType);
     } else if (
       operation === ProductOperationEnum.UPDATE &&
       productExistsInDestination
@@ -126,7 +127,10 @@ export class ProductService {
    * @param {productTransformed} productData - The transformed product data.
    * @returns {Promise<object>} An object containing the productId.
    */
-  private async productCreate(productData: productTransformed) {
+  private async productCreate(
+    productData: productTransformed,
+    bundleImportType = BundleImportType.DATABASE,
+  ) {
     try {
       if (!productData.listing) {
         this.logger.log('Product creation validation fail', productData.id);
@@ -143,7 +147,7 @@ export class ProductService {
         await Promise.all([
           addProductToShopHandler(productId, productData),
           this.productMediaCreate(productId, productData.media),
-          this.productVariantsCreate(productData, productId),
+          this.productVariantsCreate(productData, productId, bundleImportType),
         ]);
         storeProductStatusHandler(productId);
         autoSyncWebhookHandler(productId);
@@ -204,6 +208,7 @@ export class ProductService {
   public async productVariantsCreate(
     productData: productTransformed,
     productId: string,
+    bundleImportType = BundleImportType.DATABASE,
   ): Promise<void> {
     try {
       const productVariantData: productVariantInterface =
@@ -224,6 +229,7 @@ export class ProductService {
           productId,
           productData,
           productData.shopId,
+          bundleImportType,
         );
         this.productVariantMediaCreate(productId, productVariantData);
       }

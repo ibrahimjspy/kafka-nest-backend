@@ -41,6 +41,7 @@ import { bundlesCreateInterface } from './Product.Variant.types';
 import { getProductMapping } from 'src/mapping/methods/product';
 import { VariantsListInterface } from 'src/graphql/types/product';
 import { BundleRepository } from 'src/database/repository/Bundle';
+import { BundleImportType } from 'src/api/import.dtos';
 
 /**
  *  Injectable class handling productVariant and its relating tables CDC
@@ -87,6 +88,7 @@ export class ProductVariantService {
     productId: string,
     productData: productTransformed,
     shopId?: string,
+    bundleImportType = BundleImportType.DATABASE,
   ): Promise<void> {
     const {
       sizes,
@@ -135,6 +137,7 @@ export class ProductVariantService {
           productId,
           productPrice: Number(price.salePrice),
           isOpenBundle: productData.openPack,
+          importType: bundleImportType,
         });
 
         // Logging the completion of variant assignment
@@ -160,19 +163,24 @@ export class ProductVariantService {
     productId,
     productPrice,
     isOpenBundle,
+    importType,
   }: bundlesCreateInterface): Promise<void[]> {
     const bundleVariantIds = chunkArray(variantIds, bundle.length);
     const createBundlesPromises = bundleVariantIds.map(async (variants) => {
       const bundleQuantities = bundle.map((str) => Number(str));
       const bundlePrice = getBundlePrice(bundleQuantities, productPrice);
-      return this.bundleRepository.createBundles(
-        variants,
-        bundleQuantities,
-        shopId,
-        productId,
-        bundlePrice,
-        isOpenBundle,
-      );
+      if (importType == BundleImportType.DATABASE) {
+        return await this.bundleRepository.createBundles(
+          variants,
+          bundleQuantities,
+          shopId,
+          productId,
+          bundlePrice,
+          isOpenBundle,
+        );
+      } else {
+        return await createBundleHandler(variants, bundle, shopId, productId);
+      }
     });
     return Promise.all(createBundlesPromises);
   }
