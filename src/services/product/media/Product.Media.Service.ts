@@ -123,40 +123,44 @@ export class ProductMediaService {
     productId: string,
     productVariantData: productVariantInterface,
   ) {
-    const productDetails = await getProductDetailsHandler(productId);
-    if (
-      !productDetails.variants[0]?.media[0]?.url &&
-      productVariantData.variant_media
-    ) {
-      this.logger.log('Creating variant media against product id', productId);
-      // getting media ids of each product color
-      const mediaIds = await this.createVariantMedia(
-        productVariantData?.variant_media?.ColorMedia,
-        productId,
-        idBase64Decode(productDetails['media'][0]?.id),
-      );
+    try {
+      const productDetails = await getProductDetailsHandler(productId);
+      if (
+        !productDetails.variants[0]?.media[0]?.url &&
+        productVariantData.variant_media
+      ) {
+        this.logger.log('Creating variant media against product id', productId);
+        // getting media ids of each product color
+        const mediaIds = await this.createVariantMedia(
+          productVariantData?.variant_media?.ColorMedia,
+          productId,
+          idBase64Decode(productDetails['media'][0]?.id),
+        );
 
-      // getting variantIds of all product colors
-      const variantIds = getVariantIdsByColor(
-        productDetails['variants'],
-        productVariantData.color_list,
-      );
+        // getting variantIds of all product colors
+        const variantIds = getVariantIdsByColor(
+          productDetails['variants'],
+          productVariantData.color_list,
+        );
 
-      // mapping variant ids with media ids
-      const variantMedia = getVariantMediaById(variantIds, mediaIds);
+        // mapping variant ids with media ids
+        const variantMedia = getVariantMediaById(variantIds, mediaIds);
 
-      // inserting media ids  against variant ids using mapping array
-      await Promise.all(
-        variantMedia?.map(async (media) => {
-          return await insertVariantMedia(
-            media['colorImage'],
-            media['variantId'],
-          );
-        }),
-      );
-      Logger.verbose(
-        `variant media created against product id === ${productDetails.productId}`,
-      );
+        // inserting media ids  against variant ids using mapping array
+        await Promise.all(
+          variantMedia?.map(async (media) => {
+            return await insertVariantMedia(
+              media['colorImage'],
+              media['variantId'],
+            );
+          }),
+        );
+        Logger.verbose(
+          `variant media created against product id === ${productDetails.productId}`,
+        );
+      }
+    } catch (error) {
+      this.logger.log(error);
     }
   }
 
