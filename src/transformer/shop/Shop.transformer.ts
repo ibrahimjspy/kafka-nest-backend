@@ -192,7 +192,12 @@ export class ShopTransformerService {
       returnPolicy: string;
       sizeChart: string;
       sizeChartName?: string;
-    } = { returnPolicy: '', sizeChart: '', returnPolicyPlain: '' };
+    } = {
+      returnPolicy: '',
+      sizeChart: '',
+      returnPolicyPlain: '',
+      sizeChartName: '',
+    };
     vendorSettings.map((vendorSetting) => {
       if (vendorSetting.Type == vendorSettingsEnum.RETURN_POLICY) {
         vendorDetails.returnPolicy = this.returnPolicyTransformer(
