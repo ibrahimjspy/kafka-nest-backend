@@ -179,7 +179,13 @@ export class ProductVariantService {
           isOpenBundle,
         );
       } else {
-        return await createBundleHandler(variants, bundle, shopId, productId);
+        return await createBundleHandler(
+          variants,
+          bundle,
+          shopId,
+          productId,
+          bundlePrice,
+        );
       }
     });
     return Promise.all(createBundlesPromises);
@@ -304,6 +310,7 @@ export class ProductVariantService {
             color_list,
             bundleName,
             productId,
+            price: price.salePrice as number,
           });
         }
       }
@@ -327,6 +334,7 @@ export class ProductVariantService {
     color_list,
     bundleName,
     productId,
+    price,
   }: {
     shoeVariantIdMapping: Record<string, string[]>;
     bundle: Record<string, string>;
@@ -334,6 +342,7 @@ export class ProductVariantService {
     color_list: colorListInterface[];
     bundleName: string;
     productId: string;
+    price: number;
   }) {
     const quantities: string[] = Object.values(bundle);
 
@@ -349,11 +358,14 @@ export class ProductVariantService {
     // Create the shoe bundles
     const createBundles = await Promise.all(
       (bundleVariantIds || []).map(async (variants) => {
+        const bundleQuantities = quantities.map((str) => Number(str));
+        const bundlePrice = getBundlePrice(bundleQuantities, price);
         await createBundleHandler(
           variants,
           quantities,
           shopId,
           productId,
+          bundlePrice,
           bundleName,
         );
 

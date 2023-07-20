@@ -3,6 +3,7 @@ import { gql } from 'graphql-request';
 export const createBundleMutation = (
   bundleVariants,
   shopId,
+  price,
   bundleName = 'product variant bundle',
   productId,
 ) => {
@@ -14,6 +15,7 @@ export const createBundleMutation = (
           description: "bundle description"
           shopId: "${shopId}"
           productId: "${productId}",
+          price: ${price},
           productVariants: [${bundleVariants}] ,
         }
    ){

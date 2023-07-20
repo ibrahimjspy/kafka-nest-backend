@@ -15,6 +15,7 @@ export const createBundleHandler = async (
   bundleQuantities: string[],
   shopId: string,
   productId: string,
+  price: number,
   bundleName = 'product variant bundle',
 ) => {
   try {
@@ -24,6 +25,7 @@ export const createBundleHandler = async (
         shopId,
         bundleName,
         productId,
+        price,
       ).replace(/'/g, '"'),
     );
     return bundles;

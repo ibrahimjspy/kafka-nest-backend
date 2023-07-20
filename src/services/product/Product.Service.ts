@@ -29,6 +29,7 @@ import { autoSyncWebhookHandler } from 'src/external/endpoints/autoSync';
 import { SHOES_GROUP_NAME } from 'common.env';
 import { BundleImportType, ProductOperationEnum } from 'src/api/import.dtos';
 import { updateProductTimestamp } from 'src/database/postgres/handlers/product';
+import { ProductValidationService } from './Product.validate.service';
 
 /**
  *  Injectable class handling product variant and its relating tables CDC
@@ -41,6 +42,7 @@ export class ProductService {
     private readonly transformerClass: TransformerService,
     private readonly productMediaClass: ProductMediaService,
     private readonly productVariantService: ProductVariantService,
+    private readonly productValidationService: ProductValidationService,
     public logger: ApplicationLogger,
   ) {}
 
@@ -173,16 +175,26 @@ export class ProductService {
     productData: productTransformed,
   ) {
     const decodedProductId = idBase64Decode(productId);
-    return await Promise.all([
-      updateProductTimestamp(
-        decodedProductId,
-        productData.createdAt,
-        productData.updatedAt,
-      ),
-      this.productListingUpdate(productId, productData),
-      this.productVariantService.productVariantsUpdate(productId, productData),
-      updateProductHandler(productData, productId),
-    ]);
+    const validateProduct =
+      await this.productValidationService.validateCreatedProduct(productId);
+    if (validateProduct) {
+      return await Promise.all([
+        updateProductTimestamp(
+          decodedProductId,
+          productData.createdAt,
+          productData.updatedAt,
+        ),
+        this.productListingUpdate(productId, productData),
+        this.productVariantService.productVariantsUpdate(
+          productId,
+          productData,
+        ),
+        updateProductHandler(productData, productId),
+      ]);
+    } else {
+      this.logger.log('Created Product validation failed', productId);
+      return await this.productDelete(productId);
+    }
   }
 
   public async productDelete(destinationId: string) {
