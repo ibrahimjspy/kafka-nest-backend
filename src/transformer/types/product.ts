@@ -61,6 +61,8 @@ export interface productTransformed {
     value: string;
   }[];
   isSharoveFulfillment?: boolean;
+  variantsData?: any[];
+  shopName?: string;
 }
 export interface priceInterface {
   purchasePrice?: string | number;

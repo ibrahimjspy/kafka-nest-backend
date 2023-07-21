@@ -1,4 +1,4 @@
-import { Injectable, Param } from '@nestjs/common';
+import { Inject, Injectable, Param, forwardRef } from '@nestjs/common';
 import {
   productDatabaseViewInterface,
   productVariantInterface,
@@ -9,6 +9,8 @@ import {
   getShoeSizeColumns,
 } from './Product.variant.transformer.utils';
 import { ProductTransformerService } from '../Product.transformer';
+import { createSkuHandler } from 'src/graphql/handlers/sku';
+import { addSkuToProductVariants } from 'src/services/product/variant/Product.Variant.utils';
 /**
  *  Injectable class handling product transformation
  *  @Injectable in app scope or in kafka connection to reach kafka messages
@@ -16,6 +18,7 @@ import { ProductTransformerService } from '../Product.transformer';
 @Injectable()
 export class ProductVariantTransformerService {
   constructor(
+    @Inject(forwardRef(() => ProductTransformerService))
     private readonly productTransformerService: ProductTransformerService,
   ) {}
   /**
@@ -106,5 +109,44 @@ export class ProductVariantTransformerService {
       JSON.parse(shoeDetails),
     );
     return productVariantObject;
+  }
+
+  /**
+   * Transforms and validates product variant data.
+   * @param {productVariantInterface} productVariantData - Product variant data to be transformed.
+   * @returns {Promise<any[]>} An array of transformed product variants.
+   */
+  public async transformProductVariantData(
+    productVariantData: productVariantInterface,
+  ): Promise<any[]> {
+    const { sizes, price, color_list, isPreOrder, product_id, sizeChartId } =
+      productVariantData;
+    const productVariants = [];
+
+    if (color_list) {
+      // Use Promise.all to handle multiple asynchronous calls in parallel
+      const variantPromises = color_list.map((color) =>
+        this.productTransformerService.productVariantTransformer(
+          color,
+          sizes,
+          isPreOrder,
+          price,
+        ),
+      );
+
+      const variants = await Promise.all(variantPromises);
+      for (const variant of variants) {
+        productVariants.push(...variant);
+      }
+
+      const skuMap = await createSkuHandler(
+        productVariants,
+        product_id,
+        sizeChartId,
+      );
+      addSkuToProductVariants(skuMap, productVariants);
+    }
+
+    return productVariants;
   }
 }

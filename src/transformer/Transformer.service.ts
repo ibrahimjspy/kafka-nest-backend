@@ -4,6 +4,7 @@ import { ProductTransformerService } from './product/Product.transformer';
 import { RetailerTransformerService } from './shop/Retailer.transformer';
 import { ShopTransformerService } from './shop/Shop.transformer';
 import { ProductVariantTransformerService } from './product/Product.variant/Product.variant.transformer';
+import { productDto } from './types/product';
 
 /**
  * Transformation class with utility methods performing specific
@@ -135,5 +136,16 @@ export class TransformerService {
 
   public healthCheck(): string {
     return 'Service running';
+  }
+
+  /**
+   * product details transform and validate
+   * name, description, category
+   * @returns product information object ready to be mapped against Api interface
+   */
+  public productBulkDetailsTransformer(productObjects: productDto[]) {
+    return this.productTransformerService.bulkProductGeneralTransformerMethod(
+      productObjects,
+    );
   }
 }

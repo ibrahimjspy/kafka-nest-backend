@@ -24,6 +24,7 @@ import {
   BundleProductVariant,
   OpenBundleProductVariant,
 } from './database/postgres/tables/BundleVariants';
+import { ProductValidationService } from './services/product/Product.validate.service';
 
 @Module({
   imports: [
@@ -74,6 +75,7 @@ import {
     BundleProductVariant,
     OpenBundleProductVariant,
     BundleRepository,
+    ProductValidationService,
   ],
 })
 export class AppModule {}

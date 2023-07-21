@@ -67,3 +67,30 @@ export const removeProductMapping = async (destinationId: string) => {
   });
   return await deleteMapping(PRODUCT_ENGINE, getIdByElement('id', id));
 };
+
+/**
+ * @param {string[]} sourceIds - Array of source productIds for which to get the destination productIds.
+ * @returns {Promise<Map<string, string>>} A map with sourceId as keys and the corresponding destination productIds as values.
+ */
+export const getProductMappingBulk = async (
+  sourceIds: string[],
+): Promise<Map<string, string>> => {
+  const productMapping: Map<string, string> = new Map();
+
+  const mappingPromises = sourceIds.map(async (sourceId) => {
+    const destinationProductId = await getIdByElement(
+      'shr_b2b_product_id',
+      await getMapping(PRODUCT_ENGINE, [
+        {
+          os_product_id: sourceId,
+        },
+      ]),
+    );
+    if (destinationProductId) {
+      productMapping.set(sourceId, destinationProductId);
+    }
+  });
+
+  await Promise.all(mappingPromises);
+  return productMapping;
+};

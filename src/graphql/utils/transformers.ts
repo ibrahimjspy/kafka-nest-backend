@@ -4,6 +4,7 @@ import {
   COMMISSION_ATTRIBUTE_ID,
   COST_ATTRIBUTE_ID,
   DEFAULT_CHANNEL_ID,
+  DEFAULT_PRODUCT_TYPE,
   DEFAULT_WAREHOUSE_ID,
   IS_SHAROVE_FULFILLMENT,
   PATTERNS_ATTRIBUTE_ID,
@@ -129,4 +130,36 @@ export const getProductAttributesGql = (
       : ''
   }
 ]`;
+};
+
+/**
+ *   transforms product variants and their attributes array into a string which can be used in graphql query
+ *   @returns string e.g: ["id1","id2", 'id3]
+ */
+export const getBulkProductsGql = (products: productTransformed[]) => {
+  return products.map((product) => {
+    const { shopId, openPack, openPackMinimumQuantity, shopName } = product;
+    return `
+    {
+      name: "${product.name}"
+      description: ${JSON.stringify(product.description)}
+      category: "${product.categoryId}"
+      rating: 4
+      productType: "${DEFAULT_PRODUCT_TYPE}"
+      channelListings: {
+        channelId: "${DEFAULT_CHANNEL_ID}"
+        visibleInListings: false
+        isAvailableForPurchase: false
+        isPublished: false
+      }
+      metadata: ${productMetadataTransformer(
+        shopId,
+        openPack,
+        openPackMinimumQuantity,
+        shopName,
+      )}
+      variants: [${productVariantQueryTransformer(product.variantsData)}]
+    }
+  `;
+  });
 };

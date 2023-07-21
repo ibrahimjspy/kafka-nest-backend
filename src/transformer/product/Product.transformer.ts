@@ -19,12 +19,83 @@ import {
 import { fetchVendor } from 'src/database/mssql/bulk-import/methods';
 import { SharoveTypeEnum, shopDto } from '../types/shop';
 import { getProductDetailsFromDb } from 'src/database/mssql/product-view/getProductViewById';
+import { ProductVariantTransformerService } from './Product.variant/Product.variant.transformer';
 /**
  *  Injectable class handling product transformation
  *  @Injectable in app scope or in kafka connection to reach kafka messages
  */
 @Injectable()
 export class ProductTransformerService {
+  constructor(
+    private readonly productVariantTransformerService: ProductVariantTransformerService,
+  ) {}
+  /**
+   * Transforms and validates an array of productView responses and existence.
+   * @param {productDto[]} productDataArray - Array of productDto containing cdc changeData and productView data for multiple products.
+   * @returns {Promise<productTransformed[]>} The transformed product objects array.
+   */
+  public async bulkProductGeneralTransformerMethod(
+    productDataArray: productDto[],
+  ): Promise<productTransformed[]> {
+    const shopId = await this.shopIdTransformer(
+      productDataArray[0].TBVendor_ID || productDataArray[0].TBVendor_ID?.[0],
+    );
+
+    // Fetch vendor details once for all products
+    const vendorId = productDataArray[0].TBVendor_ID;
+    const { productType, isSharoveFulfillment, vendorName } =
+      await this.getVendorDetails(vendorId);
+
+    const transformedProducts: productTransformed[] = await Promise.all(
+      productDataArray.map(async (productData) => {
+        const {
+          transformedPatterns,
+          transformedSleeves,
+          transformedStyles,
+          transformedColors,
+        } = await this.getProductAttributes(productData.TBItem_ID);
+
+        const productObject: productTransformed = {
+          id: productData.TBItem_ID?.toString(),
+          styleNumber: productData.nVendorStyleNo?.toString(),
+          name: productData.nStyleName?.toString(),
+          description: this.descriptionTransformer(
+            productData.nItemDescription,
+          ),
+          media: this.mediaTransformerMethod(productData),
+          listing: this.channelListingTransformer(productData),
+          categoryId: await this.categoryIdTransformer(
+            productData.TBStyleNo_OS_Category_Master_ID,
+            productData.TBStyleNo_OS_Category_Sub_ID || '100000',
+          ),
+          shopId: shopId, // Use the same shopId for all products in bulk
+          price: this.priceTransformer(
+            productData.nPrice2,
+            productData.nSalePrice2,
+            productData.nOnSale,
+          ),
+          openPack: !!productData.is_broken_pack,
+          openPackMinimumQuantity: productData.min_broken_pack_order_qty,
+          createdAt: new Date(productData.OriginDate).toISOString(),
+          updatedAt: new Date(productData.nModifyDate).toISOString(),
+          type: productType,
+          styles: transformedStyles,
+          sleeves: transformedSleeves,
+          patterns: transformedPatterns,
+          isSharoveFulfillment: isSharoveFulfillment,
+          colors: transformedColors,
+          variantsData: await this.getVariantsListForBulk(
+            productData.TBItem_ID,
+          ),
+          shopName: vendorName,
+        };
+        return productObject;
+      }),
+    );
+
+    return transformedProducts;
+  }
+
   /**
    * Transforms and validates productView responses and existence.
    * @param {productDto} productData - Composite object containing cdc changeData and productView data.
@@ -265,11 +336,13 @@ export class ProductTransformerService {
   public async getVendorDetails(vendorId: string) {
     const vendorDetails = (await fetchVendor(vendorId)) as shopDto[];
     const productType = vendorDetails[0]?.SharoveType as SharoveTypeEnum;
+    const vendorName = vendorDetails[0]?.VDName;
+
     const isSharoveFulfillment = vendorDetails[0]?.OSFulfillmentType
       ? true
       : false;
 
-    return { productType, isSharoveFulfillment };
+    return { productType, isSharoveFulfillment, vendorName };
   }
 
   /**
@@ -327,5 +400,20 @@ export class ProductTransformerService {
     return colorList.map((color) => {
       return { value: color.cColorName };
     });
+  }
+
+  public async getVariantsListForBulk(productId: string) {
+    const databaseVariantsData = (await getProductDetailsFromDb(
+      productId,
+    )) as productDatabaseViewInterface;
+    const transformDatabaseData =
+      await this.productVariantTransformerService.productViewTransformer(
+        databaseVariantsData,
+      );
+    const productVariantsList =
+      await this.productVariantTransformerService.transformProductVariantData(
+        transformDatabaseData,
+      );
+    return productVariantsList;
   }
 }

@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import {
   addProductToShopHandler,
+  createBulkProductsHandler,
   createProductHandler,
   deleteProductHandler,
   productChannelListingHandler,
@@ -17,12 +18,17 @@ import { TransformerService } from '../../transformer/Transformer.service';
 import { ProductMediaService } from './media/Product.Media.Service';
 import { ProductVariantService } from './variant/Product.Variant.Service';
 import { productVariantInterface } from 'src/database/mssql/types/product';
-import { idBase64Decode } from './Product.utils';
+import {
+  getNonExistentProducts,
+  getSourceProductIds,
+  idBase64Decode,
+} from './Product.utils';
 import { ApplicationLogger } from 'src/logger/Logger.service';
 import { getProductDetailsFromDb } from 'src/database/mssql/product-view/getProductViewById';
 import {
   addProductMapping,
   getProductMapping,
+  getProductMappingBulk,
   removeProductMapping,
 } from 'src/mapping/methods/product';
 import { autoSyncWebhookHandler } from 'src/external/endpoints/autoSync';
@@ -304,5 +310,17 @@ export class ProductService {
   public async productListingDeActivate(productId: string) {
     this.logger.log(`removing listing`, productId);
     return await removeChannelListingHandler(productId);
+  }
+
+  public async bulkProductCreate(sourceProducts: productDto[]) {
+    const bulkProductsTransformed =
+      await this.transformerClass.productBulkDetailsTransformer(sourceProducts);
+    const sourceProductIds = getSourceProductIds(bulkProductsTransformed);
+    const getBulkProductMapping = await getProductMappingBulk(sourceProductIds);
+    const nonExistentProducts = getNonExistentProducts(
+      bulkProductsTransformed,
+      getBulkProductMapping,
+    );
+    await createBulkProductsHandler(nonExistentProducts);
   }
 }

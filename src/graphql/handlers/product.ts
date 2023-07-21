@@ -18,6 +18,8 @@ import {
 } from '../mutations/product/delete';
 import { updateProductMutation } from '../mutations/product/update';
 import { getProductDetailsQuery } from '../queries/product';
+import { productBulkCreateMutation } from '../mutations/product/bulkCreate';
+import { getBulkProductsGql } from '../utils/transformers';
 
 //  <-->  Create  <-->
 
@@ -166,6 +168,21 @@ export const removeChannelListingHandler = async (productId: string) => {
       'product channel update call failed',
       graphqlExceptionHandler(err),
     );
+    return;
+  }
+};
+
+export const createBulkProductsHandler = async (
+  productsData: productTransformed[],
+): Promise<object> => {
+  try {
+    const createBulkProducts = await graphqlCall(
+      productBulkCreateMutation(`${getBulkProductsGql(productsData)}`),
+    );
+    Logger.verbose('Bulk Products created', createBulkProducts);
+    return createBulkProducts;
+  } catch (err) {
+    Logger.error('Product create call failed', graphqlExceptionHandler(err));
     return;
   }
 };

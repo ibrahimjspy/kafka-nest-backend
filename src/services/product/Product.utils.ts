@@ -1,5 +1,5 @@
 import { shoeSizeMapping } from 'src/transformer/product/Product.transformer.utils';
-import { mediaDto } from 'src/transformer/types/product';
+import { mediaDto, productTransformed } from 'src/transformer/types/product';
 
 /**
  *  this utility function converts an array of n size in k quantity by making their sub arrays like this 
@@ -103,4 +103,25 @@ export const getBundlePrice = (
     bundlePrice = bundlePrice + quantity * productPrice;
   });
   return bundlePrice;
+};
+
+export const getSourceProductIds = (
+  products: productTransformed[],
+): string[] => {
+  return products.map((product) => product.id);
+};
+
+/**
+ * @param {productTransformed[]} products - Array of transformed products.
+ * @param {Map<string, string>} productMapping - Map with sourceId as keys and destination productIds as values.
+ * @returns {productTransformed[]} Array of products that do not have a corresponding destination productId in the productMapping.
+ */
+export const getNonExistentProducts = (
+  products: productTransformed[],
+  productMapping: Map<string, string>,
+): productTransformed[] => {
+  const destinationProductIdsSet = new Set(productMapping.values());
+  return products.filter(
+    (product) => !destinationProductIdsSet.has(product.id),
+  );
 };
