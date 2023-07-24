@@ -1,5 +1,6 @@
 import { shoeSizeMapping } from 'src/transformer/product/Product.transformer.utils';
 import { mediaDto, productTransformed } from 'src/transformer/types/product';
+import { BulkProductResults, BulkProductFail } from './Product.types';
 
 /**
  *  this utility function converts an array of n size in k quantity by making their sub arrays like this 
@@ -120,8 +121,43 @@ export const getNonExistentProducts = (
   products: productTransformed[],
   productMapping: Map<string, string>,
 ): productTransformed[] => {
-  const destinationProductIdsSet = new Set(productMapping.values());
+  const destinationProductIdsSet = new Set(productMapping.keys());
   return products.filter(
     (product) => !destinationProductIdsSet.has(product.id),
   );
+};
+
+/**
+ * Filters an array of mixed objects containing instances of BulkProductResults and BulkProductFail
+ * and returns an array containing only the instances of BulkProductResults.
+ * @param {Array<BulkProductResults | BulkProductFail>} products - The array of mixed objects.
+ * @returns {BulkProductResults[]} An array containing only the instances of BulkProductResults.
+ */
+export const validateCreatedProducts = (
+  products: Array<BulkProductResults | BulkProductFail>,
+): BulkProductResults[] => {
+  return products.filter(
+    (product) => product.product !== null,
+  ) as BulkProductResults[];
+};
+
+/**
+ * Transforms an array of productTransformed objects into a Map with product IDs as keys and the corresponding productTransformed objects as values.
+ * @param {productTransformed[]} products - An array of productTransformed objects to be transformed into a Map.
+ * @returns {Map<string, productTransformed>} A Map with product IDs as keys and corresponding productTransformed objects as values.
+ */
+export const getTransformedProductsMapping = (
+  products: productTransformed[],
+): Map<string, productTransformed> => {
+  /**
+   * A Map containing product IDs as keys and corresponding productTransformed objects as values.
+   * @type {Map<string, productTransformed>}
+   */
+  const productMapping: Map<string, productTransformed> = new Map();
+
+  products.forEach((product) => {
+    productMapping.set(product.id, product);
+  });
+
+  return productMapping;
 };

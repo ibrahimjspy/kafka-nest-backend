@@ -20,6 +20,7 @@ import {
 } from './Product.Media.utils';
 import { ApplicationLogger } from 'src/logger/Logger.service';
 import { MediaIdsInterface } from '../variant/Product.Variant.types';
+import { BulkProductResults } from '../Product.types';
 /**
  *  Injectable class handling media assign
  *  @Injected transformation class for CDC payload validations and transformations
@@ -216,5 +217,57 @@ export class ProductMediaService {
 
     // Return the mediaIds object
     return mediaIds;
+  }
+
+  /**
+   * Creates variant media for a product based on the provided product details and variant data.
+   * @param {ProductDetails} productDetails - The details of the product for which variant media is created.
+   * @param {string} productId - The ID of the product.
+   * @param {productVariantInterface} productVariantData - The variant data containing information about variant media.
+   * @returns {Promise<void>} A promise that resolves when variant media is created.
+   */
+  async createProductVariantMediaV2(
+    productDetails: BulkProductResults,
+    productId: string,
+    productVariantData: productVariantInterface,
+  ): Promise<void> {
+    try {
+      if (
+        !productDetails.product.variants[0]?.media[0]?.url &&
+        productVariantData.variant_media
+      ) {
+        this.logger.log('Creating variant media against product id', productId);
+        // getting media ids of each product color
+        const mediaIds = await this.createVariantMedia(
+          productVariantData?.variant_media?.ColorMedia,
+          productId,
+          idBase64Decode(productDetails['media'][0]?.id),
+        );
+
+        // getting variantIds of all product colors
+        const variantIds = getVariantIdsByColor(
+          productDetails['variants'],
+          productVariantData.color_list,
+        );
+
+        // mapping variant ids with media ids
+        const variantMedia = getVariantMediaById(variantIds, mediaIds);
+
+        // inserting media ids  against variant ids using mapping array
+        await Promise.all(
+          variantMedia?.map(async (media) => {
+            return await insertVariantMedia(
+              media['colorImage'],
+              media['variantId'],
+            );
+          }),
+        );
+        Logger.verbose(
+          `variant media created against product id === ${productDetails.product.id}`,
+        );
+      }
+    } catch (error) {
+      this.logger.log(error);
+    }
   }
 }

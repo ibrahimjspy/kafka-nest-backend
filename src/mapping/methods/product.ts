@@ -3,6 +3,7 @@ import { deleteMapping, getMapping, insertMapping } from '../fetch';
 import { getIdByElement, transformMappingsArray } from '../utils';
 import { PRODUCT_ENGINE } from '../../../common.env';
 import { Logger } from '@nestjs/common';
+import { BulkProductResults } from 'src/services/product/Product.types';
 
 /**
  * @returns product information in destination according to source Id
@@ -93,4 +94,45 @@ export const getProductMappingBulk = async (
 
   await Promise.all(mappingPromises);
   return productMapping;
+};
+
+/**
+ * Inserts the product mapping information into the destination based on the source ID.
+ * @param {BulkProductResults[]} createdProducts - An array of BulkProductResults containing the products to map.
+ * @param {string} shopId - The ID of the shop.
+ * @returns {Promise<void>} A promise that resolves when the mapping is inserted.
+ * @throws {Error} If there's an error while adding the product mapping.
+ */
+export const addBulkProductMapping = async (
+  createdProducts: BulkProductResults[],
+  shopId: string,
+): Promise<void> => {
+  try {
+    /**
+     * Prepare the mapping data by extracting the necessary information from the createdProducts array.
+     * @type {Array<{ os_product_id: string; shr_b2b_product_id: string; tenant_id: string }>}
+     */
+    const mappingData = createdProducts.map((product) => {
+      return {
+        os_product_id: product.product.id,
+        shr_b2b_product_id: product.product.id,
+        tenant_id: shopId,
+      };
+    });
+
+    // Insert the product mapping
+    await insertMapping(PRODUCT_ENGINE, mappingData);
+
+    // Log the success message
+    Logger.verbose(
+      `Product mapping added for ${createdProducts.length} products.`,
+    );
+  } catch (error) {
+    // Log the error
+    Logger.verbose(
+      `An error occurred while adding product mapping: ${error.message}`,
+      error,
+    );
+    throw new Error('Failed to add product mapping.');
+  }
 };

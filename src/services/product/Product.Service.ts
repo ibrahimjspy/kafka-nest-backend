@@ -17,15 +17,20 @@ import {
 import { TransformerService } from '../../transformer/Transformer.service';
 import { ProductMediaService } from './media/Product.Media.Service';
 import { ProductVariantService } from './variant/Product.Variant.Service';
-import { productVariantInterface } from 'src/database/mssql/types/product';
+import {
+  productDatabaseViewInterface,
+  productVariantInterface,
+} from 'src/database/mssql/types/product';
 import {
   getNonExistentProducts,
   getSourceProductIds,
   idBase64Decode,
+  validateCreatedProducts,
 } from './Product.utils';
 import { ApplicationLogger } from 'src/logger/Logger.service';
 import { getProductDetailsFromDb } from 'src/database/mssql/product-view/getProductViewById';
 import {
+  addBulkProductMapping,
   addProductMapping,
   getProductMapping,
   getProductMappingBulk,
@@ -36,6 +41,7 @@ import { SHOES_GROUP_NAME } from 'common.env';
 import { BundleImportType, ProductOperationEnum } from 'src/api/import.dtos';
 import { updateProductTimestamp } from 'src/database/postgres/handlers/product';
 import { ProductValidationService } from './Product.validate.service';
+import { BulkProductResults, BulkProductFail } from './Product.types';
 
 /**
  *  Injectable class handling product variant and its relating tables CDC
@@ -322,5 +328,91 @@ export class ProductService {
       getBulkProductMapping,
     );
     await createBulkProductsHandler(nonExistentProducts);
+  }
+
+  public async saveBulkProductMapping(
+    productsResults: Array<BulkProductResults | BulkProductFail>,
+    shopId: string,
+  ) {
+    const validateNewProducts = validateCreatedProducts(productsResults);
+    return await addBulkProductMapping(validateNewProducts, shopId);
+  }
+
+  /**
+   * Saves the media information for the bulk product results.
+   * @param {BulkProductResults[]} productsResults - An array of BulkProductResults containing the products for which media needs to be saved.
+   * @param {Map<string, productTransformed>} transformedProducts - A Map containing transformed products with their IDs as keys and media information as values.
+   * @returns {Promise<void>} A promise that resolves when all the media information is saved for the products.
+   */
+  public async saveBulkProductMedia(
+    productsResults: BulkProductResults[],
+    transformedProducts: Map<string, productTransformed>,
+  ): Promise<void> {
+    try {
+      const mediaSavingPromises = productsResults.map(async (product) => {
+        const sourceId = product.product.id;
+        const media = transformedProducts.get(sourceId)?.media;
+        if (media) {
+          await this.productMediaCreate(product.product.id, media);
+        } else {
+          this.logger.warn(
+            `Media information not found for product ID: ${sourceId}`,
+          );
+        }
+      });
+
+      await Promise.all(mediaSavingPromises);
+
+      this.logger.verbose(
+        `Media information saved for ${mediaSavingPromises.length} products.`,
+      );
+    } catch (error) {
+      this.logger.error(
+        `An error occurred while saving product media information: ${error.message}`,
+        error,
+      );
+      throw new Error('Failed to save product media information.');
+    }
+  }
+
+  /**
+   * Saves the variant media information for the bulk product results.
+   * @param {BulkProductResults[]} productsResults - An array of BulkProductResults containing the products for which variant media needs to be saved.
+   * @returns {Promise<void>} A promise that resolves when all the variant media information is saved for the products.
+   */
+  public async saveBulkProductVariantMedia(
+    productsResults: BulkProductResults[],
+  ): Promise<void> {
+    try {
+      const variantMediaSavingPromises = productsResults.map(
+        async (product) => {
+          const databaseVariantsData = (await getProductDetailsFromDb(
+            product.product.externalReference,
+          )) as productDatabaseViewInterface;
+          const transformDatabaseData =
+            await this.transformerClass.productViewTransformer(
+              databaseVariantsData,
+            );
+          return this.productMediaClass.createProductVariantMediaV2(
+            product,
+            product.product.id,
+            transformDatabaseData,
+          );
+        },
+      );
+
+      // Wait for all variant media saving promises to resolve
+      await Promise.all(variantMediaSavingPromises);
+
+      this.logger.verbose(
+        `Variant media information saved for ${variantMediaSavingPromises.length} products.`,
+      );
+    } catch (error) {
+      this.logger.error(
+        `An error occurred while saving product variant media information: ${error.message}`,
+        error,
+      );
+      throw new Error('Failed to save product variant media information.');
+    }
   }
 }

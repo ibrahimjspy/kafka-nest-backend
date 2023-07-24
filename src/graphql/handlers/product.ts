@@ -20,6 +20,10 @@ import { updateProductMutation } from '../mutations/product/update';
 import { getProductDetailsQuery } from '../queries/product';
 import { productBulkCreateMutation } from '../mutations/product/bulkCreate';
 import { getBulkProductsGql } from '../utils/transformers';
+import {
+  BulkProductFail,
+  BulkProductResults,
+} from 'src/services/product/Product.types';
 
 //  <-->  Create  <-->
 
@@ -174,13 +178,13 @@ export const removeChannelListingHandler = async (productId: string) => {
 
 export const createBulkProductsHandler = async (
   productsData: productTransformed[],
-): Promise<object> => {
+): Promise<Array<BulkProductResults | BulkProductFail>> => {
   try {
     const createBulkProducts = await graphqlCall(
       productBulkCreateMutation(`${getBulkProductsGql(productsData)}`),
     );
     Logger.verbose('Bulk Products created', createBulkProducts);
-    return createBulkProducts;
+    return createBulkProducts['productBulkCreate'].results;
   } catch (err) {
     Logger.error('Product create call failed', graphqlExceptionHandler(err));
     return;
