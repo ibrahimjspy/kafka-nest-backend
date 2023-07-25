@@ -8,6 +8,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
   Res,
 } from '@nestjs/common';
 import { AppService } from 'src/app.service';
@@ -27,6 +28,7 @@ import client from 'pg-config';
 import {
   BulkProductImportDto,
   UpdateOpenPackDto,
+  collectionNameDto,
   createProductDTO,
   vendorDto,
 } from './import.dtos';
@@ -35,6 +37,7 @@ import { getProductDetailsFromDb } from 'src/database/mssql/product-view/getProd
 import { ProducerService } from 'src/kafka/Kafka.producer.service';
 import { KAFKA_CREATE_PRODUCTS_TOPIC } from 'src/kafka/Kafka.constants';
 import { getProductDetailsHandler } from 'src/graphql/handlers/product';
+import { fetchCollections } from 'src/database/mssql/api_methods/collections';
 
 // endpoints to trigger data bulk imports
 @Controller()
@@ -238,6 +241,18 @@ export class BulkImportController {
     } catch (error) {
       this.logger.error(error);
       return error.message;
+    }
+  }
+
+  @Get('api/v1/source/collections')
+  @ApiOperation({
+    summary: 'returns collections from source database',
+  })
+  async getCollections(@Query() filter: collectionNameDto) {
+    try {
+      return await fetchCollections(filter);
+    } catch (error) {
+      this.logger.error(error);
     }
   }
 }

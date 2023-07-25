@@ -61,3 +61,9 @@ export class vendorDto {
   @IsOptional()
   vendorId?: string;
 }
+
+export class collectionNameDto {
+  @ApiProperty({ required: false })
+  @IsOptional()
+  collectionName: string;
+}

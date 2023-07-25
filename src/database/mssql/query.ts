@@ -91,3 +91,17 @@ export const brandViewQuery = (vendorId: string): string => {
    select * from dbo.vw_BrandList where TBVendor_ID = '${vendorId}'
   `;
 };
+
+export const masterEventQuery = (vendorName?: string): string => {
+  return `
+  SELECT * from dbo.TBEventPageMaster ${
+    vendorName ? `where event_title like '${vendorName}%'` : ''
+  }
+  `;
+};
+
+export const subEventQuery = (masterId?: string): string => {
+  return `
+  SELECT * from dbo.TBEventPageSubmaster where TBEventPageMaster_ID = '${masterId}'
+  `;
+};

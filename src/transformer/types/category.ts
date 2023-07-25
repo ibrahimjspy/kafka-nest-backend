@@ -42,3 +42,30 @@ export interface subCategoryTransformed {
   seo_title?: string;
   sourceParentId?: string; // from database
 }
+export interface MasterEventDto {
+  TBEventPageMaster_ID: string;
+  event_title: string;
+  seopath: string;
+  status: string;
+  input_date: string;
+  MasterImage: string;
+  sort: any;
+  orderby: number;
+  listimage: string;
+  linkurl: any;
+  published: boolean;
+  data: string;
+  modified_date: string;
+  published_date: string;
+  site: string;
+  desktop_main_banner: string;
+}
+
+export interface SubEventDto {
+  TBEventPageSubmaster_ID: string;
+  TBEventPageMaster_ID: string;
+  eventsubtitle: string;
+  status: string;
+  input_date: string;
+  SubImage: any;
+}
