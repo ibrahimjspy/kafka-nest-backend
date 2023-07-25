@@ -4,10 +4,12 @@ import {
   DEFAULT_PRODUCT_TYPE,
 } from '../../../../common.env';
 import { gql } from 'graphql-request';
+import { ProductAttributes } from 'src/app.utils.types';
 import { getProductAttributesGql, productMetadataTransformer } from 'src/graphql/utils/transformers';
 import { productTransformed } from 'src/transformer/types/product';
 
-export const createProductMutation = (productData: productTransformed) => {
+export const createProductMutation = (productData: productTransformed, 
+  attributes: ProductAttributes) => {
   // parsing product data;
   const {
     name,
@@ -23,7 +25,7 @@ export const createProductMutation = (productData: productTransformed) => {
           description:${JSON.stringify(description)}
           name: "${name}"
           externalReference:"${id}"
-          attributes: ${getProductAttributesGql(productData)}
+          attributes: ${getProductAttributesGql(productData, attributes)}
           category:"${categoryId}"
           rating: 4
         }

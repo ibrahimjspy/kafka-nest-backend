@@ -24,15 +24,17 @@ import {
   BulkProductFail,
   BulkProductResults,
 } from 'src/services/product/Product.types';
+import { ProductAttributes } from 'src/app.utils.types';
 
 //  <-->  Create  <-->
 
 export const createProductHandler = async (
   productData: productTransformed,
+  attributes: ProductAttributes,
 ): Promise<string> => {
   try {
     const createProduct: productCreate = await graphqlCall(
-      createProductMutation(productData),
+      createProductMutation(productData, attributes),
     );
     const productId = createProduct?.productCreate?.product?.id;
     await productChannelListingHandler(productId);
@@ -138,10 +140,11 @@ export const getProductDetailsHandler = async (productId: string) => {
 export const updateProductHandler = async (
   productUpdateData: productTransformed,
   destinationId: string,
+  attributes: ProductAttributes,
 ): Promise<object> => {
   try {
     const productUpdate = await graphqlCall(
-      updateProductMutation(productUpdateData, destinationId),
+      updateProductMutation(productUpdateData, destinationId, attributes),
     );
     Logger.verbose('Product updated', productUpdate);
     return productUpdate;

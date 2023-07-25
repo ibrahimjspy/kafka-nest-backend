@@ -42,6 +42,7 @@ import { BundleImportType, ProductOperationEnum } from 'src/api/import.dtos';
 import { updateProductTimestamp } from 'src/database/postgres/handlers/product';
 import { ProductValidationService } from './Product.validate.service';
 import { BulkProductResults, BulkProductFail } from './Product.types';
+import { ConstantsService } from 'src/app.constants';
 
 /**
  *  Injectable class handling product variant and its relating tables CDC
@@ -55,6 +56,7 @@ export class ProductService {
     private readonly productMediaClass: ProductMediaService,
     private readonly productVariantService: ProductVariantService,
     private readonly productValidationService: ProductValidationService,
+    private readonly constantsService: ConstantsService,
     public logger: ApplicationLogger,
   ) {}
 
@@ -150,8 +152,10 @@ export class ProductService {
         this.logger.log('Product creation validation fail', productData.id);
         return;
       }
+      const attributes = await this.constantsService.fetchAttributes();
+
       // Creating a new product and assigning it media
-      const productId = await createProductHandler(productData);
+      const productId = await createProductHandler(productData, attributes);
 
       if (productId) {
         // Inserts product id into elastic search mapping
@@ -190,6 +194,7 @@ export class ProductService {
     const validateProduct =
       await this.productValidationService.validateCreatedProduct(productId);
     if (validateProduct) {
+      const attributes = await this.constantsService.fetchAttributes();
       return await Promise.all([
         updateProductTimestamp(
           decodedProductId,
@@ -201,7 +206,7 @@ export class ProductService {
           productId,
           productData,
         ),
-        updateProductHandler(productData, productId),
+        updateProductHandler(productData, productId, attributes),
       ]);
     } else {
       this.logger.log('Created Product validation failed', productId);

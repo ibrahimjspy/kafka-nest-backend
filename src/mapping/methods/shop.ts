@@ -7,6 +7,7 @@ import {
 import { getIdByElement } from '../utils';
 import { SHOP_ENGINE } from '../../../common.env';
 import { ShopMappingType } from '../types';
+import { shopTransformed } from 'src/transformer/types/shop';
 
 /**
  * @returns shop mapping information in destination according to source Id
@@ -51,23 +52,17 @@ export const removeShopMapping = async (destinationId: string) => {
  */
 export const updateShopMapping = async (
   id: string,
-  shopMapping: ShopMappingType,
+  shopData: shopTransformed,
+  destinationShopId: string,
 ) => {
-  const {
-    sourceId,
-    destinationId,
-    shopName,
-    isPopular,
-    isSharoveFulfillment,
-    brandImage,
-  } = shopMapping;
   return await updateMapping(SHOP_ENGINE, {
     id: id,
-    os_vendor_id: sourceId,
-    shr_shop_id: destinationId,
-    shr_shop_name: shopName,
-    is_popular: isPopular,
-    is_sharove_fulfillment: isSharoveFulfillment,
-    main_image: brandImage,
+    os_vendor_id: shopData.id,
+    shr_shop_id: destinationShopId,
+    shr_shop_name: shopData.name,
+    is_popular: shopData.isPopular,
+    is_sharove_fulfillment: shopData.flat,
+    main_image: shopData.vendorMainImage,
+    banners: shopData.banners,
   });
 };

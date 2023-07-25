@@ -30,8 +30,8 @@ export class ProductValidationService {
   ): Promise<boolean> {
     const createdBundles = await getBundleIdsHandler(destinationProductId);
     if (createdBundles.length) {
-      return false;
+      return true;
     }
-    return true;
+    return false;
   }
 }

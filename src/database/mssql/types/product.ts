@@ -53,10 +53,10 @@ export interface productDatabaseViewInterface {
   is_prepare?: string;
   pack_name?: string;
   item_sizes?: string;
-  popular_point_7?: any;
-  popular_point_14?: any;
-  popular_point_30?: any;
-  popular_point_60?: any;
+  popular_point_7?: number;
+  popular_point_14?: number;
+  popular_point_30?: number;
+  popular_point_60?: number;
   pct_1_stars?: any;
   pct_2_stars?: any;
   pct_3_stars?: any;

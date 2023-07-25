@@ -50,15 +50,12 @@ export class ShopService {
       kafkaMessage.TBVendor_ID,
     );
     if (shopId) {
-      const updateMapping = await updateShopMapping(documentId, {
-        shopName: shopData.name,
-        sourceId: shopData.id,
-        destinationId: shopId,
-        isPopular: shopData.isPopular,
-        isSharoveFulfillment: shopData.flat,
-        brandImage: shopData.vendorMainImage,
-      });
-      this.logger.log('mapping updated', updateMapping);
+      const updateMapping = await updateShopMapping(
+        documentId,
+        shopData,
+        shopId,
+      );
+      this.logger.log('mapping updated', JSON.stringify(updateMapping));
       this.syncVendorProducts(shopData, shopId);
       return await this.updateShop(shopData, shopId);
     }
@@ -91,6 +88,7 @@ export class ShopService {
         isPopular: shopData.isPopular,
         isSharoveFulfillment: shopData.flat,
         brandImage: shopData.vendorMainImage,
+        banners: shopData.banners,
       });
     }
 

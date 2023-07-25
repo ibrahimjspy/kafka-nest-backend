@@ -31,6 +31,7 @@ export interface productDto {
   nSoldOut?: string;
   OriginDate?: string;
   nModifyDate?: string;
+  popular_point?: number;
 }
 
 export interface productTransformed {
@@ -63,6 +64,13 @@ export interface productTransformed {
   isSharoveFulfillment?: boolean;
   variantsData?: any[];
   shopName?: string;
+  popularity?: {
+    popularPoint7: number;
+    popularPoint14: number;
+    popularPoint30: number;
+    popularPoint60: number;
+    popularPoint: number;
+  };
 }
 export interface priceInterface {
   purchasePrice?: string | number;

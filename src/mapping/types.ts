@@ -5,4 +5,5 @@ export interface ShopMappingType {
   brandImage: string;
   isPopular: boolean;
   isSharoveFulfillment: boolean;
+  banners: string[];
 }

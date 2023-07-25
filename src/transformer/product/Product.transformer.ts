@@ -53,6 +53,7 @@ export class ProductTransformerService {
           transformedSleeves,
           transformedStyles,
           transformedColors,
+          popularity,
         } = await this.getProductAttributes(productData.TBItem_ID);
 
         const productObject: productTransformed = {
@@ -88,6 +89,10 @@ export class ProductTransformerService {
             productData.TBItem_ID,
           ),
           shopName: vendorName,
+          popularity: {
+            ...popularity,
+            popularPoint: productData.popular_point || 0,
+          },
         };
         return productObject;
       }),
@@ -109,6 +114,7 @@ export class ProductTransformerService {
       transformedSleeves,
       transformedStyles,
       transformedColors,
+      popularity,
     } = await this.getProductAttributes(productData.TBItem_ID);
     const { productType, isSharoveFulfillment } = await this.getVendorDetails(
       productData.TBVendor_ID,
@@ -142,6 +148,10 @@ export class ProductTransformerService {
       patterns: transformedPatterns,
       isSharoveFulfillment: isSharoveFulfillment,
       colors: transformedColors,
+      popularity: {
+        ...popularity,
+        popularPoint: productData.popular_point || 0,
+      },
     };
     return productObject;
   }
@@ -351,10 +361,18 @@ export class ProductTransformerService {
    */
   public async getProductAttributes(productId: string) {
     const defaultColorsList = ['ONE'];
-    const { sleeves, styles, patterns, color_list } =
-      (await getProductDetailsFromDb(
-        productId,
-      )) as productDatabaseViewInterface;
+    const {
+      sleeves,
+      styles,
+      patterns,
+      color_list,
+      popular_point_7,
+      popular_point_14,
+      popular_point_30,
+      popular_point_60,
+    } = (await getProductDetailsFromDb(
+      productId,
+    )) as productDatabaseViewInterface;
     const transformedStyles = styles?.split(',')
       ? this.getMultiAttributeValue(styles)
       : null;
@@ -369,11 +387,19 @@ export class ProductTransformerService {
         ? JSON.parse(color_list).color_list
         : defaultColorsList,
     );
+    const popularity = {
+      popularPoint7: popular_point_7 || 0,
+      popularPoint14: popular_point_14 || 0,
+      popularPoint30: popular_point_30 || 0,
+      popularPoint60: popular_point_60 || 0,
+    };
+
     return {
       transformedStyles,
       transformedSleeves,
       transformedPatterns,
       transformedColors,
+      popularity,
     };
   }
 

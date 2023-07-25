@@ -6,15 +6,10 @@ import {
   DEFAULT_CHANNEL_ID,
   DEFAULT_PRODUCT_TYPE,
   DEFAULT_WAREHOUSE_ID,
-  IS_SHAROVE_FULFILLMENT,
-  PATTERNS_ATTRIBUTE_ID,
   RESALE_PRICE_ATTRIBUTE,
-  SHOP_ID_ATTRIBUTE_ID,
   SIZE_ATTRIBUTE_ID,
-  SLEEVES_ATTRIBUTE_ID,
-  STYLES_ATTRIBUTE_ID,
-  STYLE_ATTRIBUTE_ID,
 } from '../../../common.env';
+import { ProductAttributes } from 'src/app.utils.types';
 
 /**
  *   transforms bundle variants and their quantity array into a string which can be used in graphql query
@@ -84,6 +79,7 @@ export const productMetadataTransformer = (
  */
 export const getProductAttributesGql = (
   productData: productTransformed,
+  attributes?: ProductAttributes,
 ): string => {
   const {
     styleNumber,
@@ -94,21 +90,45 @@ export const getProductAttributesGql = (
     shopId,
   } = productData;
   return `[{
-    id:"${STYLE_ATTRIBUTE_ID}",
+    id:"${attributes.styleNumber.id}",
     values:["${styleNumber}"]
   },
   {
-    id:"${SHOP_ID_ATTRIBUTE_ID}",
+    id:"${attributes.shopid.id}",
     values:["${shopId}"]
   },
   {
-    id:"${IS_SHAROVE_FULFILLMENT}",
+    id:"${attributes.vendorType.id}",
+    values:["${productData.type}"]
+  },
+  {
+    id:"${attributes.sevenDaysPopularity.id}",
+    values:["${productData.popularity.popularPoint7}"]
+  },
+  {
+    id:"${attributes.fourteenDaysPopularity.id}",
+    values:["${productData.popularity.popularPoint14}"]
+  },
+  {
+    id:"${attributes.thirtyDaysPopularity.id}",
+    values:["${productData.popularity.popularPoint30}"]
+  },
+  {
+    id:"${attributes.sixtyDaysPopularity.id}",
+    values:["${productData.popularity.popularPoint60}"]
+  },
+  {
+    id:"${attributes.popularityPoint.id}",
+    values:["${productData.popularity.popularPoint}"]
+  },
+  {
+    id:"${attributes.issharovefulfillment.id}",
     boolean:${isSharoveFulfillment}
   },
   ${
     patterns
       ? `{
-    id:"${PATTERNS_ATTRIBUTE_ID}",
+    id:"${attributes.patterns.id}",
     multiselect: ${JSON.stringify(patterns).replace(/"value"/g, 'value')}
   }`
       : ''
@@ -116,7 +136,7 @@ export const getProductAttributesGql = (
   ${
     sleeves
       ? `{
-    id:"${SLEEVES_ATTRIBUTE_ID}",
+    id:"${attributes.sleeves.id}",
     multiselect: ${JSON.stringify(sleeves).replace(/"value"/g, 'value')}
   }`
       : ''
@@ -124,7 +144,7 @@ export const getProductAttributesGql = (
   ${
     styles
       ? `{
-    id:"${STYLES_ATTRIBUTE_ID}",
+    id:"${attributes.styles.id}",
     multiselect: ${JSON.stringify(styles).replace(/"value"/g, 'value')}
   }`
       : ''
