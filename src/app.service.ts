@@ -516,4 +516,13 @@ export class AppService {
       this.logger.log(error);
     }
   }
+
+  async createCollection(subEventId: string) {
+    try {
+      this.logger.log('creating collection ...', subEventId);
+      return await this.categoryService.collectionCreate(subEventId);
+    } catch (error) {
+      this.logger.log(error);
+    }
+  }
 }

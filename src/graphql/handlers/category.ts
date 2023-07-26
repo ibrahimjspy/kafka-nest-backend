@@ -13,6 +13,8 @@ import {
   updateMasterCategoryMutation,
   updateSubCategoryMutation,
 } from '../mutations/category/update';
+import { CollectionCreateInput } from '../types/collection';
+import { collectionCreateMutation } from '../mutations/collections/create';
 
 //  <-->  Create  <-->
 
@@ -50,6 +52,20 @@ export const createSubCategoryHandler = async (
   }
 };
 
+export const createCollectionHandler = async (
+  collectionCreateInput: CollectionCreateInput,
+): Promise<object> => {
+  try {
+    const createCollection = await graphqlCall(
+      collectionCreateMutation(collectionCreateInput),
+    );
+    Logger.verbose('Collection created', createCollection);
+    return createCollection;
+  } catch (err) {
+    graphqlExceptionHandler(err);
+    return;
+  }
+};
 //   <-->  Update  <-->
 
 export const updateMasterCategoryHandler = async (

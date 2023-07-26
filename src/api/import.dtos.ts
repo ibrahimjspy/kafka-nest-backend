@@ -67,3 +67,9 @@ export class collectionNameDto {
   @IsOptional()
   collectionName: string;
 }
+
+export class subCollectionIdDto {
+  @ApiProperty({ required: true })
+  @IsOptional()
+  subCollectionId: string;
+}

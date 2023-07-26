@@ -1,8 +1,18 @@
 import { Logger } from '@nestjs/common';
 import { collectionNameDto } from 'src/api/import.dtos';
 import { mssqlCall } from '../bulk-import/fetch';
-import { MasterEventDto, SubEventDto } from 'src/transformer/types/category';
-import { masterEventQuery, subEventQuery } from '../query';
+import {
+  EventItemDto,
+  MasterEventDto,
+  SubEventDto,
+} from 'src/transformer/types/category';
+import {
+  eventProductsQuery,
+  masterEventByIdQuery,
+  masterEventQuery,
+  subEventByIdQuery,
+  subEventQuery,
+} from '../query';
 
 /**
  * Fetch collections based on the provided collection name filter.
@@ -48,5 +58,33 @@ export const fetchCollections = async (
     // Log the error and return null to indicate a failure occurred.
     Logger.error(`Error fetching collections: ${error.message}`);
     return `No collections found like collection name ==== '${collectionsFilter.collectionName}'`;
+  }
+};
+
+export const fetchEventProducts = async (subEventId: string) => {
+  return (await mssqlCall(eventProductsQuery(subEventId))) as EventItemDto[];
+};
+
+export const fetchSubEventDetails = async (id: string) => {
+  try {
+    let viewData = [];
+    viewData = (await mssqlCall(subEventByIdQuery(id))) as SubEventDto[];
+    return viewData[0] as SubEventDto;
+  } catch (error) {
+    Logger.error(error);
+    return null;
+  }
+};
+
+export const fetchMasterEventDetails = async (masterEventId: string) => {
+  try {
+    let viewData = [];
+    viewData = (await mssqlCall(
+      masterEventByIdQuery(masterEventId),
+    )) as MasterEventDto[];
+    return viewData[0] as MasterEventDto;
+  } catch (error) {
+    Logger.error(error);
+    return null;
   }
 };

@@ -4,6 +4,7 @@ import { getIdByElement, transformMappingsArray } from '../utils';
 import { PRODUCT_ENGINE } from '../../../common.env';
 import { Logger } from '@nestjs/common';
 import { BulkProductResults } from 'src/services/product/Product.types';
+import { chunkArray } from 'src/services/product/Product.utils';
 
 /**
  * @returns product information in destination according to source Id
@@ -135,4 +136,36 @@ export const addBulkProductMapping = async (
     );
     throw new Error('Failed to add product mapping.');
   }
+};
+
+/**
+ * Fetches destination product IDs based on the provided source IDs.
+ *
+ * @param {string[]} sourceIds - An array of source IDs.
+ * @returns {Promise<string[]>} - A promise that resolves to an array of destination product IDs.
+ */
+export const getDestinationProductIds = async (
+  sourceIds: string[],
+): Promise<string[]> => {
+  let destinationIds: string[] = [];
+  const BATCH_SIZE = 100;
+
+  // Split the sourceIds into batches of 100 each
+  const batches = chunkArray(sourceIds, BATCH_SIZE);
+
+  for (const batch of batches) {
+    const mappings = await getMapping(PRODUCT_ENGINE, [
+      {
+        os_product_id: batch,
+      },
+    ]);
+
+    const batchDestinationIds: string[] = mappings.map(
+      (mapping) => mapping.shr_b2b_product_id.raw,
+    );
+
+    destinationIds = destinationIds.concat(batchDestinationIds);
+  }
+
+  return destinationIds;
 };

@@ -30,6 +30,7 @@ import {
   UpdateOpenPackDto,
   collectionNameDto,
   createProductDTO,
+  subCollectionIdDto,
   vendorDto,
 } from './import.dtos';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
@@ -251,6 +252,18 @@ export class BulkImportController {
   async getCollections(@Query() filter: collectionNameDto) {
     try {
       return await fetchCollections(filter);
+    } catch (error) {
+      this.logger.error(error);
+    }
+  }
+
+  @Post('api/v1/source/collection')
+  @ApiOperation({
+    summary: 'creates a collection in saleor',
+  })
+  async createCollection(@Query() filter: subCollectionIdDto) {
+    try {
+      return await this.appService.createCollection(filter.subCollectionId);
     } catch (error) {
       this.logger.error(error);
     }

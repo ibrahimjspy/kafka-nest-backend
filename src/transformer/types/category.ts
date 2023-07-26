@@ -69,3 +69,12 @@ export interface SubEventDto {
   input_date: string;
   SubImage: any;
 }
+
+export interface EventItemDto {
+  TBEventItems_ID: string;
+  TBEventPageSubmaster_ID: string;
+  TBItem_ID: string;
+  Nickname: string;
+  status: string;
+  input_date: string;
+}

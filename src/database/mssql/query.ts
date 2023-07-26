@@ -105,3 +105,21 @@ export const subEventQuery = (masterId?: string): string => {
   SELECT * from dbo.TBEventPageSubmaster where TBEventPageMaster_ID = '${masterId}'
   `;
 };
+
+export const eventProductsQuery = (subEventId?: string): string => {
+  return `
+  SELECT * from dbo.TBEventItems where TBEventPageSubmaster_ID = '${subEventId}'
+  `;
+};
+
+export const subEventByIdQuery = (id?: string): string => {
+  return `
+  SELECT * from dbo.TBEventPageSubmaster where TBEventPageSubmaster_ID = '${id}'
+  `;
+};
+
+export const masterEventByIdQuery = (id?: string): string => {
+  return `
+  SELECT * from dbo.TBEventPageMaster where TBEventPageMaster_ID = '${id}'
+  `;
+};
