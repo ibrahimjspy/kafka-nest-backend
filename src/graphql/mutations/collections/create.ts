@@ -6,7 +6,6 @@ export const collectionCreateMutation = ({
   name,
   products,
   sourceId,
-  masterImage,
   banner,
   listImage
 }: CollectionCreateInput): string => {
@@ -16,7 +15,7 @@ export const collectionCreateMutation = ({
         input: {
           name: "${name}"
           products: ${JSON.stringify(products)}
-          metadata: [{ key: "sourceId", value: "${sourceId}" }, { key: "masterImage", value: "${masterImage.replace(/"/g, "'")}" }
+          metadata: [{ key: "sourceId", value: "${sourceId}" }
         ,{ key: "banner", value: "${banner}" }, { key: "listImage", value: "${listImage}" }]
         }
       ) {
