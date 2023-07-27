@@ -27,6 +27,7 @@ import {
   fetchEventProducts,
   fetchMasterEventDetails,
   fetchSubEventDetails,
+  fetchSubEventsByMaster,
 } from 'src/database/mssql/api_methods/collections';
 import { getDestinationProductIds } from 'src/mapping/methods/product';
 import { ApplicationLogger } from 'src/logger/Logger.service';
@@ -165,6 +166,53 @@ export class CategoryService {
         masterImage: masterEventDetails.MasterImage,
         banner: masterEventDetails.desktop_main_banner,
         listImage: masterEventDetails.listimage,
+      });
+
+      return createCollection;
+    } catch (error) {
+      this.logger.error(`Error creating collection: ${error.message}`);
+      throw new Error('Failed to create collection'); // Throw an error to be handled at a higher level
+    }
+  }
+
+  /**
+   * Create a collection based on the provided masterCollectionId.
+   *
+   * @param {string} masterCollectionId - The masterCollectionId to create the collection for.
+   * @returns {Promise<any>} - A promise that resolves to the created collection details.
+   */
+  public async collectionCreateMaster(
+    @Param() masterCollectionId: string,
+  ): Promise<any> {
+    try {
+      // Fetch event details for the masterCollectionId
+      const eventDetails = await fetchMasterEventDetails(masterCollectionId);
+
+      // Fetch subEvents for the masterCollectionId
+      const subEvents = await fetchSubEventsByMaster(masterCollectionId);
+
+      // Fetch master products for all subEvents concurrently
+      const productIdsPromises = subEvents.map(async (subEvent) => {
+        const masterProducts = await fetchEventProducts(
+          subEvent.TBEventPageSubmaster_ID,
+        );
+        return getDestinationProductIds(
+          masterProducts.map((item) => item.TBItem_ID),
+        );
+      });
+
+      // Wait for all the getDestinationProductIds promises to resolve
+      const productIds = await Promise.all(productIdsPromises);
+
+      // Create the collection using the collected data
+      const createCollection = await createCollectionHandler({
+        name: eventDetails.event_title,
+        sourceId: eventDetails.TBEventPageMaster_ID,
+        products: productIds.flat(), // Flatten the array of arrays of productIds
+        backgroundImage: eventDetails.MasterImage,
+        masterImage: eventDetails.MasterImage,
+        banner: eventDetails.desktop_main_banner,
+        listImage: eventDetails.listimage,
       });
 
       return createCollection;

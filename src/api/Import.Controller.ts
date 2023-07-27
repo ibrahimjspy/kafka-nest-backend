@@ -30,6 +30,7 @@ import {
   UpdateOpenPackDto,
   collectionNameDto,
   createProductDTO,
+  masterCollectionIdDto,
   subCollectionIdDto,
   vendorDto,
 } from './import.dtos';
@@ -264,6 +265,20 @@ export class BulkImportController {
   async createCollection(@Query() filter: subCollectionIdDto) {
     try {
       return await this.appService.createCollection(filter.subCollectionId);
+    } catch (error) {
+      this.logger.error(error);
+    }
+  }
+
+  @Post('api/v1/source/collection/master')
+  @ApiOperation({
+    summary: 'creates a collection in saleor',
+  })
+  async createCollectionMaster(@Query() filter: masterCollectionIdDto) {
+    try {
+      return await this.appService.createCollectionFromMaster(
+        filter.masterCollectionId,
+      );
     } catch (error) {
       this.logger.error(error);
     }

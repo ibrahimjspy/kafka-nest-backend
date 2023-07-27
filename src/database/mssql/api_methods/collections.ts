@@ -88,3 +88,7 @@ export const fetchMasterEventDetails = async (masterEventId: string) => {
     return null;
   }
 };
+
+export const fetchSubEventsByMaster = async (masterEventId: string) => {
+  return (await mssqlCall(subEventQuery(masterEventId))) as SubEventDto[];
+};

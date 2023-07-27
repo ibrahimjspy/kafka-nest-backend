@@ -73,3 +73,9 @@ export class subCollectionIdDto {
   @IsOptional()
   subCollectionId: string;
 }
+
+export class masterCollectionIdDto {
+  @ApiProperty({ required: true })
+  @IsOptional()
+  masterCollectionId: string;
+}

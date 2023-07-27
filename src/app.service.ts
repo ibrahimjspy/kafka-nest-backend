@@ -525,4 +525,13 @@ export class AppService {
       this.logger.log(error);
     }
   }
+
+  async createCollectionFromMaster(masterEventId: string) {
+    try {
+      this.logger.log('creating collection from master ...', masterEventId);
+      return await this.categoryService.collectionCreateMaster(masterEventId);
+    } catch (error) {
+      this.logger.log(error);
+    }
+  }
 }
