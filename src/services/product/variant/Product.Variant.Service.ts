@@ -156,7 +156,7 @@ export class ProductVariantService {
    * @param productId - The ID of the product associated with the bundles.
    * @returns A promise that resolves when all bundles have been created.
    */
-  private async createBundles({
+  public async createBundles({
     variantIds,
     bundle,
     shopId,

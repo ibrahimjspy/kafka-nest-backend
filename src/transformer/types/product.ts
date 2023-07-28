@@ -71,6 +71,7 @@ export interface productTransformed {
     popularPoint60: number;
     popularPoint: number;
   };
+  productGroup?: 'SHOES' | 'WOMEN' | string;
 }
 export interface priceInterface {
   purchasePrice?: string | number;

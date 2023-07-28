@@ -420,4 +420,60 @@ export class ProductService {
       throw new Error('Failed to save product variant media information.');
     }
   }
+
+  /**
+   * Saves the bundle information for the bulk product results.
+   * --
+   * Note: This implementation does not cover shoe products.
+   *
+   * @param {BulkProductResults[]} productsResults - An array of BulkProductResults containing the products for which bundles need to be saved.
+   * @param {string} shopId - The ID of the shop.
+   * @returns {Promise<void>} A promise that resolves when all the bundle information is saved for the products.
+   */
+  public async saveBulkProductsBundles(
+    productsResults: BulkProductResults[],
+    shopId: string,
+  ): Promise<void> {
+    try {
+      const bundlePromises: Promise<void[]>[] = [];
+
+      for (const product of productsResults) {
+        const databaseVariantsData = (await getProductDetailsFromDb(
+          product.product.externalReference,
+        )) as productDatabaseViewInterface;
+        const variantIds = product.product.variants.map(
+          (variant) => variant.id,
+        );
+        const transformDatabaseData =
+          await this.transformerClass.productViewTransformer(
+            databaseVariantsData,
+          );
+
+        const bundlePromise = this.productVariantService.createBundles({
+          variantIds,
+          bundle: databaseVariantsData.pack_name.split('-'),
+          shopId,
+          productId: product.product.id,
+          productPrice: Number(transformDatabaseData.price.salePrice),
+          isOpenBundle: false,
+          importType: BundleImportType.DATABASE,
+        });
+
+        bundlePromises.push(bundlePromise);
+      }
+
+      // Wait for all bundle saving promises to resolve
+      await Promise.all(bundlePromises);
+
+      this.logger.verbose(
+        `Bulk bundles saved for ${productsResults.length} products.`,
+      );
+    } catch (error) {
+      this.logger.error(
+        `An error occurred while saving product bundle information: ${error.message}`,
+        error,
+      );
+      throw new Error('Failed to save product bundle information.');
+    }
+  }
 }

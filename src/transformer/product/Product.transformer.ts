@@ -54,6 +54,7 @@ export class ProductTransformerService {
           transformedStyles,
           transformedColors,
           popularity,
+          productGroup,
         } = await this.getProductAttributes(productData.TBItem_ID);
 
         const productObject: productTransformed = {
@@ -93,6 +94,7 @@ export class ProductTransformerService {
             ...popularity,
             popularPoint: productData.popular_point || 0,
           },
+          productGroup,
         };
         return productObject;
       }),
@@ -115,6 +117,7 @@ export class ProductTransformerService {
       transformedStyles,
       transformedColors,
       popularity,
+      productGroup,
     } = await this.getProductAttributes(productData.TBItem_ID);
     const { productType, isSharoveFulfillment } = await this.getVendorDetails(
       productData.TBVendor_ID,
@@ -152,6 +155,7 @@ export class ProductTransformerService {
         ...popularity,
         popularPoint: productData.popular_point || 0,
       },
+      productGroup,
     };
     return productObject;
   }
@@ -370,6 +374,7 @@ export class ProductTransformerService {
       popular_point_14,
       popular_point_30,
       popular_point_60,
+      group_name,
     } = (await getProductDetailsFromDb(
       productId,
     )) as productDatabaseViewInterface;
@@ -393,6 +398,7 @@ export class ProductTransformerService {
       popularPoint30: popular_point_30 || 0,
       popularPoint60: popular_point_60 || 0,
     };
+    const productGroup = group_name;
 
     return {
       transformedStyles,
@@ -400,6 +406,7 @@ export class ProductTransformerService {
       transformedPatterns,
       transformedColors,
       popularity,
+      productGroup,
     };
   }
 
