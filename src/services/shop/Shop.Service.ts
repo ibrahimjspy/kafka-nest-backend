@@ -27,6 +27,7 @@ import { addShippingZoneHandler } from 'src/graphql/handlers/shippingZone';
 import { syncVendorIds } from '../../../constants';
 import { ProducerService } from 'src/kafka/Kafka.producer.service';
 import { KAFKA_SYNC_VENDOR_PRODUCTS_TOPIC } from 'src/kafka/Kafka.constants';
+import { ShippingService } from './shipping/Shipping.Service';
 
 /**
  *  Injectable class handling brand and its relating tables CDC
@@ -41,6 +42,7 @@ export class ShopService {
     private readonly transformerService: TransformerService,
     private readonly userService: UserService,
     private readonly kafkaService: ProducerService,
+    private readonly shippingService: ShippingService,
   ) {}
 
   public async handleShopCDC(@Param() kafkaMessage: shopDto): Promise<any> {
@@ -57,6 +59,11 @@ export class ShopService {
       );
       this.logger.log('mapping updated', JSON.stringify(updateMapping));
       this.syncVendorProducts(shopData, shopId);
+      await this.addShippingMethodToShop(
+        shopData.shipsFromId,
+        shopId,
+        shopData.flat,
+      );
       return await this.updateShop(shopData, shopId);
     }
     // creates new users and shop
@@ -104,11 +111,22 @@ export class ShopService {
     return { updateShop };
   }
 
-  private async addShippingMethodToShop(sourceId: string, destinationId) {
+  private async addShippingMethodToShop(
+    shipsFromId: number,
+    destinationId,
+    isFlatVendor: boolean,
+  ) {
     const shippingMethodIds = [];
-    const sourceShippingDetails: any = await fetchBulkVendorShipping(sourceId);
-
-    if (sourceShippingDetails) {
+    const sourceShippingDetails: any = await fetchBulkVendorShipping(
+      shipsFromId,
+    );
+    if (isFlatVendor) {
+      this.logger.log('Adding flat shipping method for vendor');
+      shippingMethodIds.push(
+        ...(await this.shippingService.getFlatShippingMethodIds()),
+      );
+    }
+    if (sourceShippingDetails && !isFlatVendor) {
       await Promise.all(
         sourceShippingDetails?.map(async (shippingMethod) => {
           const id = await fetchShippingMethodId(

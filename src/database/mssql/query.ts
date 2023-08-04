@@ -47,9 +47,8 @@ export const tbShipMethodQuery = (): string => {
 };
 
 export const tbVendorShippingDetailsQuery = (vendorId): string => {
-  return `SELECT TBVendor_ID, ShippedFrom, TBShipMethod_ID, SMShipMethodName, SMDescription
-  FROM ARAOS.dbo.TBVendorShippingDetails
-  where TBVendor_ID = '${vendorId}'
+  return `SELECT TBVendorShipMethod_ID, TBShipFrom_ID, TBShipMethod_ID, [Order], IsInternational, IsDefault
+  FROM ARAOS.dbo.TBVendorShipMethod where TBShipFrom_ID = ${vendorId}
   `;
 };
 
@@ -82,7 +81,7 @@ export const tbStyleFirstTenQuery = (): string => {
 
 export const tbShipsFromQuery = (vendorName: string): string => {
   return `
-  select InvMinAmount from ARAOS.dbo.TBShipFrom where ShipFrom = '${vendorName}'
+  select InvMinAmount, id from ARAOS.dbo.TBShipFrom where ShipFrom = '${vendorName}'
   `;
 };
 

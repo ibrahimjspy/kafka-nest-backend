@@ -34,7 +34,7 @@ export const fetchBulkShippingMethods = async () => {
   return await mssqlCall(tbShipMethodQuery());
 };
 
-export const fetchBulkVendorShipping = async (vendorId: string) => {
+export const fetchBulkVendorShipping = async (vendorId: number) => {
   return await mssqlCall(tbVendorShippingDetailsQuery(vendorId));
 };
 
@@ -55,10 +55,16 @@ export const fetchVendorMinimumOrderAmount = async (vendorName: string) => {
     shipsFromData = (await mssqlCall(
       tbShipsFromQuery(vendorName),
     )) as shipsFromInterface[];
-    return shipsFromData[0]?.InvMinAmount || 0;
+    return {
+      minimumAmount: shipsFromData[0]?.InvMinAmount,
+      shipsFrom: shipsFromData[0].id,
+    };
   } catch (error) {
     Logger.log(error);
-    return 0;
+    return {
+      minimumAmount: 0,
+      shipsFrom: 0,
+    };
   }
 };
 

@@ -74,6 +74,7 @@ export interface productDatabaseViewInterface {
 
 export interface shipsFromInterface {
   InvMinAmount?: number;
+  id?: number;
 }
 
 export interface colorListInterface {

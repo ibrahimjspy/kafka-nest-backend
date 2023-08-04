@@ -52,6 +52,7 @@ export class ShopTransformerService {
       VendorFlatShipping,
     } = object;
     const vendorSettings = await this.getVendorSettings(TBVendor_ID);
+    const shipsFromData = await this.getMinimumOrderAmount(VDName);
     Logger.log('vendor settings', vendorSettings);
     /**
      * Transformed shop object.
@@ -67,7 +68,7 @@ export class ShopTransformerService {
       seo_title: SEOTitle || '',
       email: `${this.shopEmailTransformer(VDVendorEmail, VDName)}`,
       url: `${this.shopUrlTransformer(VDVendorURL, VDName)}`,
-      minOrder: await this.getMinimumOrderAmount(VDName),
+      minOrder: shipsFromData.minimumAmount,
       banners: this.shopBannerTransformer(object),
       vendorMainImage: this.shopImageTransformer(Brand_Rep_Image) || '',
       storePolicy: VDStorePolicy ? this.textTransformer(VDStorePolicy) : '',
@@ -81,6 +82,7 @@ export class ShopTransformerService {
       flat: OSFulfillmentType ? true : false,
       ownFlat: VendorFlatShipping ? true : false,
       isPopular: await this.getVendorPopularity(TBVendor_ID),
+      shipsFromId: shipsFromData.shipsFrom,
     };
 
     return shopObject;

@@ -1,12 +1,16 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import {
   fetchShippingMethodId,
   insertShippingMethodId,
 } from 'src/database/postgres/handlers/shippingMethods';
 import { createShippingMethodHandler } from 'src/graphql/handlers/shippingMethod';
+import { getDefaultShippingZoneHandler } from 'src/graphql/handlers/shippingZone';
 import { shippingMethodDto } from 'src/transformer/types/shop';
 @Injectable()
 export class ShippingService {
+  private cachedFlatShippingMethodIds: string[];
+  private readonly logger = new Logger(ShippingService.name);
+
   /**
    * creates shipping methods through graphql api and store its mapping in database
    */
@@ -34,5 +38,23 @@ export class ShippingService {
       );
     }
     return;
+  }
+
+  public async getFlatShippingMethodIds(): Promise<string[]> {
+    if (!this.cachedFlatShippingMethodIds) {
+      this.logger.log('Fetching shipping method with flat rate');
+      const defaultShippingZone = await getDefaultShippingZoneHandler();
+      const shippingMethodIds =
+        defaultShippingZone?.edges[0]?.node?.shippingMethods
+          .filter((shippingMethod) => {
+            return shippingMethod.metadata.some((meta) => {
+              return meta.key === 'is_flat' && meta.value === 'true';
+            });
+          })
+          .map((shippingMethod) => shippingMethod.id);
+      this.cachedFlatShippingMethodIds = shippingMethodIds;
+      return this.cachedFlatShippingMethodIds;
+    }
+    return this.cachedFlatShippingMethodIds;
   }
 }

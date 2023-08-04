@@ -64,6 +64,7 @@ export interface shopTransformed {
    * this field is linked with os brand score which tells whether a vendor is popular in terms of reviews and order count
    */
   isPopular?: boolean;
+  shipsFromId?: number;
 }
 
 export interface shippingMethodDto {
