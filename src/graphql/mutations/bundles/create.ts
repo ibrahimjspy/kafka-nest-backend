@@ -18,13 +18,13 @@ export const createBundleMutation = (
           price: ${price},
           productVariants: [${bundleVariants}] ,
         }
-   ){
+      ){
         ... on BundleViewType {
           __typename
              id
              name
-        }}
-        
+        }
+      }  
     } 
   `;
   return bundle;

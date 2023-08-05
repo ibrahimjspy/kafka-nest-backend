@@ -23,9 +23,9 @@ export const createBundleHandler = async (
       createBundleMutation(
         bundleQueryTransformer(bundleVariants, bundleQuantities),
         shopId,
+        price,
         bundleName,
         productId,
-        price,
       ).replace(/'/g, '"'),
     );
     return bundles;
