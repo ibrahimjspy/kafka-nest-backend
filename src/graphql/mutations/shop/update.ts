@@ -24,6 +24,12 @@ export const updateShopMutation = (
     ownFlat,
   } = shopData;
   const shopTypeField = type ? `{ name: "shopType", newValues: ["${type}"]}`  : `{ name: "shopType", newValues: ["null"]}`;
+  const sharoveFulfillment = () =>{
+    if(ownFlat == false && flat == true){
+      return true
+    }
+    return false
+  }
   return gql`
     mutation {
       updateMarketplaceShop(
@@ -43,8 +49,8 @@ export const updateShopMutation = (
             { name: "phoneNumber", newValues: ["${phoneNumber}"] }
             { name: "sizeChart", newValues: ["${sizeChart.replace(/"/g, "'")}"] }
             { name: "sizeChartName", newValues: ["${sizeChartName.replace(/"/g, "'")}"] }
-            { name: "isFlatShipping", newValues: ["${flat}"] }
-            { name: "isOwnFlatShipping", newValues: ["${ownFlat}"] }
+            { name: "issharovefulfillment", newValues: ["${sharoveFulfillment()}"] }
+            { name: "isownflatshipping", newValues: ["${ownFlat}"] }
             ${shopTypeField}
             ]
         }
