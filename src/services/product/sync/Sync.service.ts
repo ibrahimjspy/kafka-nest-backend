@@ -67,6 +67,8 @@ export class ProductSyncService {
       cursor.endCurser,
     );
     const syncPromises = filterVendors.map(async (vendor) => {
+      this.logger.log('Syncing vendor listing', vendor.shr_shop_name?.raw);
+
       const sourceProductsPromise = this.getSourceVendorProducts(
         vendor.os_vendor_id.raw,
       );
