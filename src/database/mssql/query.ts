@@ -18,13 +18,17 @@ export const tbStyleNoQuery = (): string => {
   WHERE UN.product_id iS NULL and NN.TBStyleNo_OS_Category_Master_ID  = 15`;
 };
 
-export const tbStyleNoNewQuery = (vendorId: string): string => {
+export const tbStyleNoNewQuery = (vendorId: string, filter = true): string => {
   return `SELECT *
   FROM [ARAOS].[dbo].[TBStyleNo]
   where TBVendor_ID = '${vendorId}'
-  AND nSoldOut != 'Y' AND nActive = 'Y' 
+  ${
+    filter
+      ? `AND nSoldOut != 'Y' AND nActive = 'Y' 
 	AND Picture1 <> ''
-	AND ISNULL(TBStyleNo_OS_Category_Master_ID,0) <> 0
+	AND ISNULL(TBStyleNo_OS_Category_Master_ID,0) <> 0`
+      : ''
+  }
 `;
 };
 

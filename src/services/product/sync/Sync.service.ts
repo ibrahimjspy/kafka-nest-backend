@@ -95,6 +95,7 @@ export class ProductSyncService {
     const productMappings: Map<number, productDto> = new Map();
     const sourceProducts = (await fetchBulkProductsData(
       shopId,
+      false,
     )) as productDto[];
     sourceProducts.map((product) => {
       productMappings.set(product.id, product);
