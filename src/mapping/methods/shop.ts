@@ -66,3 +66,11 @@ export const updateShopMapping = async (
     banners: shopData.banners,
   });
 };
+
+/**
+ * @returns shop mapping information in destination according to source Id
+ */
+export const getAllShopsMapping = async () => {
+  const response = await getMapping(SHOP_ENGINE, []);
+  return response;
+};

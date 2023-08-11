@@ -79,3 +79,13 @@ export class masterCollectionIdDto {
   @IsOptional()
   masterCollectionId: string;
 }
+
+export class cursorDto {
+  @ApiProperty()
+  @IsOptional()
+  startCurser?: number;
+
+  @ApiProperty()
+  @IsOptional()
+  endCurser?: number;
+}

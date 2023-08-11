@@ -30,6 +30,7 @@ import {
   UpdateOpenPackDto,
   collectionNameDto,
   createProductDTO,
+  cursorDto,
   masterCollectionIdDto,
   subCollectionIdDto,
   vendorDto,
@@ -40,6 +41,7 @@ import { ProducerService } from 'src/kafka/Kafka.producer.service';
 import { KAFKA_CREATE_PRODUCTS_TOPIC } from 'src/kafka/Kafka.constants';
 import { getProductDetailsHandler } from 'src/graphql/handlers/product';
 import { fetchCollections } from 'src/database/mssql/api_methods/collections';
+import { ProductSyncService } from 'src/services/product/sync/Sync.service';
 
 // endpoints to trigger data bulk imports
 @Controller()
@@ -49,6 +51,7 @@ export class BulkImportController {
   constructor(
     private readonly appService: AppService,
     private readonly kafkaService: ProducerService,
+    private readonly productSyncService: ProductSyncService,
   ) {}
   @Get()
   async app() {
@@ -279,6 +282,30 @@ export class BulkImportController {
       return await this.appService.createCollectionFromMaster(
         filter.masterCollectionId,
       );
+    } catch (error) {
+      this.logger.error(error);
+    }
+  }
+
+  @Post('api/v2/vendors/listing/sync')
+  @ApiOperation({
+    summary: 'sync vendors listing using db',
+  })
+  async vendorsListingSync(@Body() body: cursorDto) {
+    try {
+      return await this.productSyncService.productsListingSync(body);
+    } catch (error) {
+      this.logger.error(error);
+    }
+  }
+
+  @Post('api/v1/vendors/pricing/sync')
+  @ApiOperation({
+    summary: 'sync vendors pricing using db',
+  })
+  async vendorPricingSync(@Body() body: cursorDto) {
+    try {
+      return await this.productSyncService.productVariantPricingSync(body);
     } catch (error) {
       this.logger.error(error);
     }

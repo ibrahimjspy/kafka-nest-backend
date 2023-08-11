@@ -26,6 +26,11 @@ import {
 } from './database/postgres/tables/BundleVariants';
 import { ProductValidationService } from './services/product/Product.validate.service';
 import { ConstantsService } from './app.constants';
+import { ProductSyncService } from './services/product/sync/Sync.service';
+import { ProductProduct } from './database/postgres/tables/Product';
+import { ProductProductVariant } from './database/postgres/tables/ProductVariants';
+import { ProductProductChannelListing } from './database/postgres/tables/ProductListing';
+import { ProductProductVariantChannelListing } from './database/postgres/tables/ProductVariantListing';
 
 @Module({
   imports: [
@@ -46,6 +51,10 @@ import { ConstantsService } from './app.constants';
           OpenBundle,
           BundleProductVariant,
           OpenBundleProductVariant,
+          ProductProduct,
+          ProductProductVariant,
+          ProductProductChannelListing,
+          ProductProductVariantChannelListing,
         ],
         synchronize: false,
       }),
@@ -55,10 +64,15 @@ import { ConstantsService } from './app.constants';
     TypeOrmModule.forFeature([OpenBundle]),
     TypeOrmModule.forFeature([BundleProductVariant]),
     TypeOrmModule.forFeature([OpenBundleProductVariant]),
+    TypeOrmModule.forFeature([ProductProduct]),
+    TypeOrmModule.forFeature([ProductProductVariant]),
+    TypeOrmModule.forFeature([ProductProductChannelListing]),
+    TypeOrmModule.forFeature([ProductProductVariantChannelListing]),
   ],
   controllers: [AppController, BulkImportController, KafkaController],
   providers: [
     AppService,
+    ProductSyncService,
     Logger,
     ProductService,
     CategoryService,
