@@ -45,7 +45,10 @@ export class ShopService {
     private readonly shippingService: ShippingService,
   ) {}
 
-  public async handleShopCDC(@Param() kafkaMessage: shopDto): Promise<any> {
+  public async handleShopCDC(
+    @Param() kafkaMessage: shopDto,
+    method = 'sync',
+  ): Promise<any> {
     const shopData: shopTransformed =
       await this.transformerService.shopTransformer(kafkaMessage);
     const { shopId, documentId } = await getShopMapping(
@@ -66,8 +69,9 @@ export class ShopService {
       );
       return await this.updateShop(shopData, shopId);
     }
-    // creates new users and shop
-    return await this.createShop(shopData);
+    if (method !== 'sync') {
+      return await this.createShop(shopData);
+    }
   }
 
   public async handleShopCDCDelete(

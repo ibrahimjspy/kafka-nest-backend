@@ -60,6 +60,10 @@ export class vendorDto {
   @ApiProperty()
   @IsOptional()
   vendorId?: string;
+
+  @ApiProperty()
+  @IsOptional()
+  method?: string;
 }
 
 export class collectionNameDto {

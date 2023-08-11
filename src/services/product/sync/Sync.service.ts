@@ -55,7 +55,7 @@ export class ProductSyncService {
       );
     });
 
-    await Promise.all(syncPromises);
+    await Promise.allSettled(syncPromises);
   }
   /**
    * Synchronize product variant pricing for all vendors.
@@ -84,7 +84,7 @@ export class ProductSyncService {
       return this.syncVendorPricing(sourceProducts, destinationProducts);
     });
 
-    await Promise.all(syncPromises);
+    await Promise.allSettled(syncPromises);
   }
   /**
    * Fetch source vendor products by shop ID.
@@ -136,6 +136,7 @@ export class ProductSyncService {
       const sourceData = sourceProductsMapping.get(
         Number(product.external_reference),
       );
+      if (!sourceData) return;
       const isActiveProduct = this.isActiveProduct(sourceData);
 
       if (!isActiveProduct) {
@@ -159,7 +160,7 @@ export class ProductSyncService {
       }
     });
 
-    await Promise.all(promises);
+    await Promise.allSettled(promises);
   }
   /**
    * Check if a product is active.
@@ -192,6 +193,8 @@ export class ProductSyncService {
       const sourceData = sourceProductsMapping.get(
         Number(product.external_reference),
       );
+
+      if (!sourceData) return;
       const defaultVariantPricePromise = this.getDefaultVariantPrice(
         product.default_variant_id,
       );
@@ -207,7 +210,7 @@ export class ProductSyncService {
       }
     });
 
-    await Promise.all(promises);
+    await Promise.allSettled(promises);
   }
 
   public async getDefaultVariantPrice(defaultVariantId: number) {
@@ -274,6 +277,6 @@ export class ProductSyncService {
       }
     });
 
-    await Promise.all(promises);
+    await Promise.allSettled(promises);
   }
 }

@@ -115,7 +115,7 @@ export class BulkImportController {
   async createShops(@Body() importVendorsInput: vendorDto) {
     const vendorId = importVendorsInput.vendorId;
     const data: any = await fetchVendor(vendorId);
-    await this.appService.shopBulkCreate(data);
+    await this.appService.shopBulkCreate(data, importVendorsInput.method);
     return `${data.length} shops created`;
   }
 

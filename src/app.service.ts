@@ -174,12 +174,12 @@ export class AppService {
     }
   }
 
-  async shopBulkCreate(bulkArray, batchSize = 5) {
+  async shopBulkCreate(bulkArray, method, batchSize = 5) {
     try {
       const { results } = await PromisePool.for(bulkArray)
         .withConcurrency(batchSize)
         .process(async (data: any) => {
-          const shopCreate = await this.shopService.handleShopCDC(data);
+          const shopCreate = await this.shopService.handleShopCDC(data, method);
 
           return shopCreate;
         });
