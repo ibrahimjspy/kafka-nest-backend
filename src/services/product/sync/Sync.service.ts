@@ -94,13 +94,15 @@ export class ProductSyncService {
    * @returns A mapping of product IDs to source products.
    */
   public async getSourceVendorProducts(shopId: string) {
+    this.logger.log('fetching source vendor products', shopId);
     const productMappings: Map<number, productDto> = new Map();
     const sourceProducts = (await fetchBulkProductsData(
       shopId,
       false,
     )) as productDto[];
+    this.logger.log('fetched source vendor products', sourceProducts.length);
     sourceProducts.map((product) => {
-      productMappings.set(product.id, product);
+      productMappings.set(Number(product.TBItem_ID), product);
     });
     return productMappings;
   }
@@ -111,6 +113,8 @@ export class ProductSyncService {
    */
 
   public async getDestinationVendorProduct(shopId: string) {
+    this.logger.log('fetching destination vendor products', shopId);
+
     const metadataKey = 'vendorId';
 
     const destinationVendorProducts = await this.productRepository
@@ -120,6 +124,10 @@ export class ProductSyncService {
         metadataValue: shopId,
       })
       .getMany();
+    this.logger.log(
+      'fetched destination vendor products',
+      destinationVendorProducts.length,
+    );
 
     return destinationVendorProducts;
   }
