@@ -246,7 +246,7 @@ export class ProductSyncService {
       if (!this.isVariantPriceValid(sourceData, defaultVariantPrice)) {
         this.logger.log('Syncing variant pricing', product.id);
 
-        await this.updateVariantPricing(sourceData, defaultVariantPrice);
+        await this.updateVariantPricing(sourceData, product.id);
       }
       this.logger.log('product pricing is valid', product.id);
     });
