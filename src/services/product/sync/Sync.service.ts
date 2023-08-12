@@ -93,7 +93,7 @@ export class ProductSyncService {
    * @param shopId Shop ID of the vendor.
    * @returns A mapping of product IDs to source products.
    */
-  public async getSourceVendorProducts(shopId: string) {
+  private async getSourceVendorProducts(shopId: string) {
     this.logger.log('fetching source vendor products', shopId);
     const productMappings: Map<number, productDto> = new Map();
     const sourceProducts = (await fetchBulkProductsData(
@@ -136,7 +136,7 @@ export class ProductSyncService {
    * @param sourceProductsMapping Mapping of source products.
    * @param destinationVendorProducts Array of destination products.
    */
-  public async syncVendorProductsListing(
+  private async syncVendorProductsListing(
     sourceProductsMapping: Map<number, productDto>,
     destinationVendorProducts: ProductProduct[],
   ): Promise<void> {
@@ -192,7 +192,7 @@ export class ProductSyncService {
    * @param productData Source product data.
    * @returns `true` if the product is active, otherwise `false`.
    */
-  public async isActiveProduct(productData: productDto) {
+  private isActiveProduct(productData: productDto) {
     const valid = 'Y';
     if (
       productData.nActive == valid &&
@@ -208,7 +208,7 @@ export class ProductSyncService {
    * @param sourceProductsMapping Mapping of source products.
    * @param destinationVendorProducts Array of destination products.
    */
-  public async syncVendorPricing(
+  private async syncVendorPricing(
     sourceProductsMapping: Map<number, productDto>,
     destinationVendorProducts: ProductProduct[],
   ): Promise<void> {
@@ -254,7 +254,7 @@ export class ProductSyncService {
     await Promise.allSettled(promises);
   }
 
-  public async getDefaultVariantPrice(defaultVariantId: number) {
+  private async getDefaultVariantPrice(defaultVariantId: number) {
     const defaultVariantListing =
       await this.productVariantChannelListingRepository.findOne({
         where: {
@@ -279,7 +279,7 @@ export class ProductSyncService {
    * @param defaultVariantPrice The default variant price.
    * @returns `true` if the variant price is valid, otherwise `false`.
    */
-  public async isVariantPriceValid(
+  public isVariantPriceValid(
     sourceProduct: productDto,
     defaultVariantPrice: number,
   ) {
@@ -290,7 +290,7 @@ export class ProductSyncService {
    * @param sourceProduct The source product data.
    * @param destinationProductId The ID of the destination product.
    */
-  public async updateVariantPricing(
+  private async updateVariantPricing(
     sourceProduct: productDto,
     destinationProductId: number,
   ): Promise<void> {
