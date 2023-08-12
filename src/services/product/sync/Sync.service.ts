@@ -56,6 +56,7 @@ export class ProductSyncService {
     });
 
     await Promise.allSettled(syncPromises);
+    this.logger.verbose('Vendor product listing sync completed successfully');
   }
   /**
    * Synchronize product variant pricing for all vendors.
@@ -85,6 +86,7 @@ export class ProductSyncService {
     });
 
     await Promise.allSettled(syncPromises);
+    this.logger.verbose('Vendor product pricing sync completed successfully');
   }
   /**
    * Fetch source vendor products by shop ID.
@@ -131,12 +133,26 @@ export class ProductSyncService {
     destinationVendorProducts: ProductProduct[],
   ): Promise<void> {
     const promises = destinationVendorProducts.map(async (product) => {
-      if (!product.external_reference) return;
-
+      if (!product.external_reference) {
+        this.logger.log(
+          'Did not find external reference for product',
+          product.id,
+        );
+        return;
+      }
+      this.logger.log(
+        `Syncing destination product ${product.id} with source ${product.external_reference}`,
+      );
       const sourceData = sourceProductsMapping.get(
         Number(product.external_reference),
       );
-      if (!sourceData) return;
+      if (!sourceData) {
+        this.logger.warn(
+          'Did not find source product data for product',
+          product.id,
+        );
+        return;
+      }
       const isActiveProduct = this.isActiveProduct(sourceData);
 
       if (!isActiveProduct) {
@@ -158,6 +174,7 @@ export class ProductSyncService {
           await this.productChannelListingRepository.save(updatedListing);
         }
       }
+      this.logger.log('product listing is valid', product.id);
     });
 
     await Promise.allSettled(promises);
@@ -188,13 +205,28 @@ export class ProductSyncService {
     destinationVendorProducts: ProductProduct[],
   ): Promise<void> {
     const promises = destinationVendorProducts.map(async (product) => {
-      if (!product.external_reference) return;
+      if (!product.external_reference) {
+        this.logger.log(
+          'Did not find external reference for product',
+          product.id,
+        );
+        return;
+      }
+      this.logger.log(
+        `Syncing destination product ${product.id} with source ${product.external_reference}`,
+      );
 
       const sourceData = sourceProductsMapping.get(
         Number(product.external_reference),
       );
 
-      if (!sourceData) return;
+      if (!sourceData) {
+        this.logger.warn(
+          'Did not find source product data for product',
+          product.id,
+        );
+        return;
+      }
       const defaultVariantPricePromise = this.getDefaultVariantPrice(
         product.default_variant_id,
       );
@@ -208,6 +240,7 @@ export class ProductSyncService {
 
         await this.updateVariantPricing(sourceData, defaultVariantPrice);
       }
+      this.logger.log('product pricing is valid', product.id);
     });
 
     await Promise.allSettled(promises);
@@ -253,6 +286,7 @@ export class ProductSyncService {
     sourceProduct: productDto,
     destinationProductId: number,
   ): Promise<void> {
+    this.logger.log('Updating variant pricing', destinationProductId);
     const sourcePrice = this.getSourcePrice(sourceProduct);
     const productVariants = await this.productVariantRepository.find({
       where: {
