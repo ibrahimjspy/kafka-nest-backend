@@ -163,30 +163,19 @@ export class ProductVariantService {
     productId,
     productPrice,
     isOpenBundle,
-    importType,
   }: bundlesCreateInterface): Promise<void[]> {
     const bundleVariantIds = chunkArray(variantIds, bundle.length);
     const createBundlesPromises = bundleVariantIds.map(async (variants) => {
       const bundleQuantities = bundle.map((str) => Number(str));
       const bundlePrice = getBundlePrice(bundleQuantities, productPrice);
-      if (importType == BundleImportType.DATABASE) {
-        return await this.bundleRepository.createBundles(
-          variants,
-          bundleQuantities,
-          shopId,
-          productId,
-          bundlePrice,
-          isOpenBundle,
-        );
-      } else {
-        return await createBundleHandler(
-          variants,
-          bundle,
-          shopId,
-          productId,
-          bundlePrice,
-        );
-      }
+      return await this.bundleRepository.createBundles(
+        variants,
+        bundleQuantities,
+        shopId,
+        productId,
+        bundlePrice,
+        isOpenBundle,
+      );
     });
     return Promise.all(createBundlesPromises);
   }
