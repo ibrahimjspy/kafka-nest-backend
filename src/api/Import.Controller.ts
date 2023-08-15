@@ -30,6 +30,7 @@ import {
   UpdateOpenPackDto,
   collectionNameDto,
   createProductDTO,
+  createProductsSyncDto,
   cursorDto,
   masterCollectionIdDto,
   subCollectionIdDto,
@@ -306,6 +307,18 @@ export class BulkImportController {
   async vendorPricingSync(@Body() body: cursorDto) {
     try {
       return await this.productSyncService.productVariantPricingSync(body);
+    } catch (error) {
+      this.logger.error(error);
+    }
+  }
+
+  @Post('api/v1/vendors/products/create/sync')
+  @ApiOperation({
+    summary: 'sync vendors created products using bulk implementation',
+  })
+  async vendorCreatedProductsSync(@Body() body: createProductsSyncDto) {
+    try {
+      return await this.productSyncService.createdProductSync(body);
     } catch (error) {
       this.logger.error(error);
     }

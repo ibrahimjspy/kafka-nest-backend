@@ -15,7 +15,6 @@ import {
   productTransformed,
 } from 'src/transformer/types/product';
 import {
-  createBundleHandler,
   deleteBundleHandler,
   getBundleIdsHandler,
   updateBundlePriceHandler,
@@ -349,12 +348,14 @@ export class ProductVariantService {
       (bundleVariantIds || []).map(async (variants) => {
         const bundleQuantities = quantities.map((str) => Number(str));
         const bundlePrice = getBundlePrice(bundleQuantities, price);
-        await createBundleHandler(
+        this.logger.log('Creating shoe bundles', bundleQuantities);
+        await this.bundleRepository.createBundles(
           variants,
-          quantities,
+          bundleQuantities,
           shopId,
           productId,
           bundlePrice,
+          false,
           bundleName,
         );
 

@@ -9,7 +9,10 @@ import { productDto } from 'src/transformer/types/product';
 import { Repository } from 'typeorm';
 import { ShopMappingType } from './Sync.service.types';
 import { fetchBulkProductsData } from 'src/database/mssql/bulk-import/methods';
-import { cursorDto } from 'src/api/import.dtos';
+import { createProductsSyncDto, cursorDto } from 'src/api/import.dtos';
+import PromisePool from '@supercharge/promise-pool';
+import { chunkArray } from '../Product.utils';
+import { ProductService } from '../Product.Service';
 
 @Injectable()
 export class ProductSyncService {
@@ -24,6 +27,7 @@ export class ProductSyncService {
     private productVariantChannelListingRepository: Repository<ProductProductVariantChannelListing>,
     @InjectRepository(ProductProductVariant)
     private productVariantRepository: Repository<ProductProductVariant>,
+    private productService: ProductService,
   ) {}
   /**
    * Synchronize product listings for all vendors.
@@ -34,28 +38,38 @@ export class ProductSyncService {
       cursor.startCurser,
       cursor.endCurser,
     );
+    const SYNC_BATCH_SIZE = 5;
+    await PromisePool.withConcurrency(SYNC_BATCH_SIZE)
+      .for(filterVendors)
+      .onTaskStarted((product, pool) => {
+        this.logger.log(`Progress: ${pool.processedPercentage()}%`);
+        this.logger.log(`Active tasks: ${pool.activeTasksCount()}`);
+        this.logger.log(`Finished tasks: ${pool.processedItems().length}`);
+        this.logger.log(`Finished tasks: ${pool.processedCount()}`);
+      })
+      .handleError((error) => {
+        this.logger.error(error, 'ProductBulkCreate');
+      })
+      .process(async (vendor) => {
+        this.logger.log('Syncing vendor listing', vendor.shr_shop_name?.raw);
+        const sourceProductsPromise = this.getSourceVendorProducts(
+          vendor.os_vendor_id.raw,
+        );
+        const destinationProductsPromise = this.getDestinationVendorProduct(
+          vendor.shr_shop_id.raw,
+        );
 
-    const syncPromises = filterVendors.map(async (vendor) => {
-      this.logger.log('Syncing vendor listing', vendor.shr_shop_name?.raw);
-      const sourceProductsPromise = this.getSourceVendorProducts(
-        vendor.os_vendor_id.raw,
-      );
-      const destinationProductsPromise = this.getDestinationVendorProduct(
-        vendor.shr_shop_id.raw,
-      );
+        const [sourceProducts, destinationProducts] = await Promise.all([
+          sourceProductsPromise,
+          destinationProductsPromise,
+        ]);
 
-      const [sourceProducts, destinationProducts] = await Promise.all([
-        sourceProductsPromise,
-        destinationProductsPromise,
-      ]);
+        return this.syncVendorProductsListing(
+          sourceProducts,
+          destinationProducts,
+        );
+      });
 
-      return this.syncVendorProductsListing(
-        sourceProducts,
-        destinationProducts,
-      );
-    });
-
-    await Promise.allSettled(syncPromises);
     this.logger.verbose('Vendor product listing sync completed successfully');
   }
   /**
@@ -67,38 +81,101 @@ export class ProductSyncService {
       cursor.startCurser,
       cursor.endCurser,
     );
-    const syncPromises = filterVendors.map(async (vendor) => {
-      this.logger.log('Syncing vendor listing', vendor.shr_shop_name?.raw);
+    const SYNC_BATCH_SIZE = 3;
 
-      const sourceProductsPromise = this.getSourceVendorProducts(
-        vendor.os_vendor_id.raw,
-      );
-      const destinationProductsPromise = this.getDestinationVendorProduct(
-        vendor.shr_shop_id.raw,
-      );
+    await PromisePool.withConcurrency(SYNC_BATCH_SIZE)
+      .for(filterVendors)
+      .onTaskStarted((vendor, pool) => {
+        this.logger.log(`Progress: ${pool.processedPercentage()}%`);
+        this.logger.log(`Active tasks: ${pool.activeTasksCount()}`);
+        this.logger.log(`Finished tasks: ${pool.processedItems().length}`);
+        this.logger.log(`Finished tasks: ${pool.processedCount()}`);
+      })
+      .handleError((error) => {
+        this.logger.error(error, 'ProductBulkCreate');
+      })
+      .process(async (vendor) => {
+        this.logger.log('Syncing vendor listing', vendor.shr_shop_name?.raw);
 
-      const [sourceProducts, destinationProducts] = await Promise.all([
-        sourceProductsPromise,
-        destinationProductsPromise,
-      ]);
+        const sourceProductsPromise = this.getSourceVendorProducts(
+          vendor.os_vendor_id.raw,
+        );
+        const destinationProductsPromise = this.getDestinationVendorProduct(
+          vendor.shr_shop_id.raw,
+        );
 
-      return this.syncVendorPricing(sourceProducts, destinationProducts);
-    });
+        const [sourceProducts, destinationProducts] = await Promise.all([
+          sourceProductsPromise,
+          destinationProductsPromise,
+        ]);
 
-    await Promise.allSettled(syncPromises);
+        return this.syncVendorPricing(sourceProducts, destinationProducts);
+      });
+
     this.logger.verbose('Vendor product pricing sync completed successfully');
   }
+
+  /**
+   * Synchronize newly created vendor products with destination vendor products for a specific range of vendors.
+   *
+   * @param cursor - Object containing cursor details for filtering vendors.
+   */
+  public async createdProductSync(
+    cursor: createProductsSyncDto,
+  ): Promise<void> {
+    const importedVendors = (await getAllShopsMapping()) as ShopMappingType[];
+    const filterVendors = importedVendors.slice(
+      cursor.startCurser,
+      cursor.endCurser,
+    );
+    const SYNC_BATCH_SIZE = 1;
+
+    await PromisePool.withConcurrency(SYNC_BATCH_SIZE)
+      .for(filterVendors)
+      .onTaskStarted((vendor, pool) => {
+        this.logger.log(`Finished vendors: ${pool.processedCount()}`);
+      })
+      .handleError((error) => {
+        this.logger.error(error, 'ProductBulkCreate');
+      })
+      .process(async (vendor) => {
+        this.logger.log('Syncing vendor listing', vendor.shr_shop_name?.raw);
+
+        const sourceProductsPromise = this.getSourceVendorProducts(
+          vendor.os_vendor_id.raw,
+          true,
+        );
+        const destinationProductsPromise = this.getDestinationVendorProduct(
+          vendor.shr_shop_id.raw,
+        );
+
+        const [sourceProducts, destinationProducts] = await Promise.all([
+          sourceProductsPromise,
+          destinationProductsPromise,
+        ]);
+
+        return this.syncVendorCreatedProducts(
+          sourceProducts,
+          destinationProducts,
+          cursor.count || sourceProducts.size,
+        );
+      });
+
+    this.logger.verbose('Vendor created products sync completed successfully');
+  }
+
   /**
    * Fetch source vendor products by shop ID.
    * @param shopId Shop ID of the vendor.
+   * @param filter whether you want to filter inactive products
    * @returns A mapping of product IDs to source products.
    */
-  private async getSourceVendorProducts(shopId: string) {
+  private async getSourceVendorProducts(shopId: string, filter = false) {
     this.logger.log('fetching source vendor products', shopId);
     const productMappings: Map<number, productDto> = new Map();
     const sourceProducts = (await fetchBulkProductsData(
       shopId,
-      false,
+      filter,
     )) as productDto[];
     this.logger.log('fetched source vendor products', sourceProducts.length);
     sourceProducts.map((product) => {
@@ -320,5 +397,57 @@ export class ProductSyncService {
     });
 
     await Promise.allSettled(promises);
+  }
+
+  /**
+   * Synchronize newly created vendor products with destination vendor products.
+   *
+   * @param sourceProductsMapping - Mapping of source product IDs to product data.
+   * @param destinationVendorProducts - List of existing destination vendor products.
+   * @param count - Maximum number of products to sync.
+   */
+  private async syncVendorCreatedProducts(
+    sourceProductsMapping: Map<number, productDto>,
+    destinationVendorProducts: ProductProduct[],
+    count: number,
+  ): Promise<void> {
+    const destinationExternalProducts = destinationVendorProducts.map(
+      (product) => Number(product.external_reference),
+    );
+
+    const nonExistentProducts: productDto[] = Array.from(
+      sourceProductsMapping.keys(),
+    )
+      .filter((sourceId) => !destinationExternalProducts.includes(sourceId))
+      .map((sourceId) => sourceProductsMapping.get(sourceId));
+
+    const PRODUCT_BATCH_SIZE = 2;
+    const PRODUCT_BATCH_COUNT = 200;
+
+    // Divide non-existent products into batches for bulk processing
+    const productChunks = chunkArray(
+      nonExistentProducts.slice(0, count),
+      PRODUCT_BATCH_COUNT,
+    ) as productDto[][];
+
+    this.logger.log(
+      'Creating bulk products which are non-existent',
+      nonExistentProducts.slice(0, count).length,
+    );
+
+    await PromisePool.withConcurrency(PRODUCT_BATCH_SIZE)
+      .for(productChunks)
+      .onTaskStarted((vendor, pool) => {
+        this.logger.log(`Progress: ${pool.processedPercentage()}%`);
+        this.logger.log(`Active tasks: ${pool.activeTasksCount()}`);
+        this.logger.log(`Finished tasks: ${pool.processedItems().length}`);
+        this.logger.log(`Finished tasks: ${pool.processedCount()}`);
+      })
+      .handleError((error) => {
+        this.logger.error(error, 'ProductBulkCreate');
+      })
+      .process(async (products: productDto[]) => {
+        return await this.productService.bulkProductCreate(products);
+      });
   }
 }

@@ -93,3 +93,12 @@ export class cursorDto {
   @IsOptional()
   endCurser?: number;
 }
+
+export class createProductsSyncDto extends cursorDto {
+  @ApiProperty({
+    description:
+      'count of products you want to bulk create if not provided defaults to total count of products against a vendor',
+  })
+  @IsOptional()
+  count?: number;
+}

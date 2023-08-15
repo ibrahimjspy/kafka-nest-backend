@@ -8,7 +8,7 @@ import { BulkProductResults, BulkProductFail } from './Product.types';
       @links bundle service 
       @usecase splitting variants into quantities of colors , so we can create bundle against each color with equal amount
  */
-export const chunkArray = (arr: string[], size: number) =>
+export const chunkArray = (arr: any[], size: number) =>
   arr.length > size
     ? [arr.slice(0, size), ...chunkArray(arr.slice(size), size)]
     : [arr];
@@ -121,8 +121,11 @@ export const getNonExistentProducts = (
   products: productTransformed[],
   productMapping: Map<string, string>,
 ): productTransformed[] => {
+  const nonShoesProducts = products.filter(
+    (product) => product.productGroup !== 'SHOES',
+  );
   const destinationProductIdsSet = new Set(productMapping.keys());
-  return products.filter(
+  return nonShoesProducts.filter(
     (product) => !destinationProductIdsSet.has(product.id),
   );
 };

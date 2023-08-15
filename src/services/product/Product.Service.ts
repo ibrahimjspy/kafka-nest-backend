@@ -24,6 +24,7 @@ import {
 import {
   getNonExistentProducts,
   getSourceProductIds,
+  getTransformedProductsMapping,
   idBase64Decode,
   validateCreatedProducts,
 } from './Product.utils';
@@ -36,7 +37,6 @@ import {
   getProductMappingBulk,
   removeProductMapping,
 } from 'src/mapping/methods/product';
-import { autoSyncWebhookHandler } from 'src/external/endpoints/autoSync';
 import { SHOES_GROUP_NAME } from 'common.env';
 import { BundleImportType, ProductOperationEnum } from 'src/api/import.dtos';
 import { updateProductTimestamp } from 'src/database/postgres/handlers/product';
@@ -168,7 +168,6 @@ export class ProductService {
           this.productVariantsCreate(productData, productId, bundleImportType),
         ]);
         storeProductStatusHandler(productId);
-        autoSyncWebhookHandler(productId);
         this.logger.verbose(
           `Product flow completed for productId: ${productId}`,
         );
@@ -332,7 +331,27 @@ export class ProductService {
       bulkProductsTransformed,
       getBulkProductMapping,
     );
-    await createBulkProductsHandler(nonExistentProducts);
+    const createdProducts = await createBulkProductsHandler(
+      nonExistentProducts,
+    );
+    const sourceProductMapping = getTransformedProductsMapping(
+      bulkProductsTransformed,
+    );
+    await this.saveBulkProductMapping(
+      createdProducts,
+      bulkProductsTransformed[0].shopId,
+    );
+    await Promise.all([
+      this.saveBulkProductMedia(createdProducts, sourceProductMapping),
+      this.saveBulkProductsBundles(
+        createdProducts,
+        bulkProductsTransformed[0].shopId,
+      ),
+    ]);
+    this.saveBulkProductVariantMedia(createdProducts);
+
+    this.logger.log('created bulk products', createdProducts.length);
+    return createdProducts;
   }
 
   public async saveBulkProductMapping(
