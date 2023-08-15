@@ -12,7 +12,7 @@ type ProductAttribute = {
 export type ProductAttributes = {
   attributeOne: ProductAttribute;
   color: ProductAttribute;
-  colors: ProductAttribute;
+  availableColors: ProductAttribute;
   commission: ProductAttribute;
   costPrice: ProductAttribute;
   issharovefulfillment: ProductAttribute;

@@ -88,6 +88,7 @@ export const getProductAttributesGql = (
     sleeves,
     styles,
     shopId,
+    colors,
   } = productData;
   return `[{
     id:"${attributes.styleNumber.id}",
@@ -148,7 +149,15 @@ export const getProductAttributesGql = (
     multiselect: ${JSON.stringify(styles).replace(/"value"/g, 'value')}
   }`
       : ''
-  }
+  },
+  ${
+    colors
+      ? `{
+    id:"${attributes.availableColors.id}",
+    multiselect: ${JSON.stringify(colors).replace(/"value"/g, 'value')}
+  }`
+      : ''
+  },
 ]`;
 };
 
