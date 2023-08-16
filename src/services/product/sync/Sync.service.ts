@@ -43,7 +43,7 @@ export class ProductSyncService {
       cursor.startCurser,
       cursor.endCurser,
     );
-    const SYNC_BATCH_SIZE = 5;
+    const SYNC_BATCH_SIZE = 2;
     await PromisePool.withConcurrency(SYNC_BATCH_SIZE)
       .for(filterVendors)
       .onTaskStarted((product, pool) => {
@@ -86,7 +86,7 @@ export class ProductSyncService {
       cursor.startCurser,
       cursor.endCurser,
     );
-    const SYNC_BATCH_SIZE = 3;
+    const SYNC_BATCH_SIZE = 2;
 
     await PromisePool.withConcurrency(SYNC_BATCH_SIZE)
       .for(filterVendors)
@@ -178,7 +178,7 @@ export class ProductSyncService {
       cursor.startCurser,
       cursor.endCurser,
     );
-    const SYNC_BATCH_SIZE = 5;
+    const SYNC_BATCH_SIZE = 2;
     await PromisePool.withConcurrency(SYNC_BATCH_SIZE)
       .for(filterVendors)
       .onTaskStarted((product, pool) => {
