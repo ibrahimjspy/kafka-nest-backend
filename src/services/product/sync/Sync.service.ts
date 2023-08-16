@@ -18,7 +18,6 @@ import {
 import PromisePool from '@supercharge/promise-pool';
 import { chunkArray } from '../Product.utils';
 import { ProductService } from '../Product.Service';
-import { updateProductTimestamp } from 'src/database/postgres/handlers/product';
 
 @Injectable()
 export class ProductSyncService {
@@ -551,6 +550,7 @@ export class ProductSyncService {
     sourceProductsMapping: Map<number, productDto>,
     destinationVendorProducts: ProductProduct[],
   ): Promise<void> {
+    const products = [];
     const promises = destinationVendorProducts.map(async (product) => {
       if (!product.external_reference) {
         this.logger.log(
@@ -572,14 +572,16 @@ export class ProductSyncService {
         );
         return;
       }
-      updateProductTimestamp(
-        String(product.id),
-        sourceData.OriginDate,
-        sourceData.nModifyDate,
-      );
+      const updatedProduct: ProductProduct = {
+        ...product,
+        created_at: new Date(sourceData.OriginDate),
+        updated_at: new Date(sourceData.nModifyDate),
+      };
+      products.push(updatedProduct);
     });
 
     await Promise.allSettled(promises);
+    await this.productRepository.save(products);
   }
 
   private async syncVendorCreatedProductsV2(
