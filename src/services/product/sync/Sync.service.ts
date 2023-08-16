@@ -178,7 +178,7 @@ export class ProductSyncService {
       cursor.startCurser,
       cursor.endCurser,
     );
-    const SYNC_BATCH_SIZE = 2;
+    const SYNC_BATCH_SIZE = 1;
     await PromisePool.withConcurrency(SYNC_BATCH_SIZE)
       .for(filterVendors)
       .onTaskStarted((product, pool) => {
@@ -606,7 +606,7 @@ export class ProductSyncService {
     );
 
     await PromisePool.withConcurrency(PRODUCT_BATCH_SIZE)
-      .for(nonExistentProducts)
+      .for(nonExistentProducts.slice(0, count))
       .onTaskStarted((vendor, pool) => {
         this.logger.log(`Progress: ${pool.processedPercentage()}%`);
         this.logger.log(`Active tasks: ${pool.activeTasksCount()}`);
