@@ -244,7 +244,7 @@ export class ProductSyncService {
           destinationProductsPromise,
         ]);
 
-        return this.syncVendorCreatedProductsV2(
+        return await this.syncVendorCreatedProductsV2(
           sourceProducts,
           destinationProducts,
           cursor.count || sourceProducts.size,
