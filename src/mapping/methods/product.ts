@@ -115,7 +115,7 @@ export const addBulkProductMapping = async (
      */
     const mappingData = createdProducts.map((product) => {
       return {
-        os_product_id: product.product.id,
+        os_product_id: product.product.externalReference,
         shr_b2b_product_id: product.product.id,
         tenant_id: shopId,
       };

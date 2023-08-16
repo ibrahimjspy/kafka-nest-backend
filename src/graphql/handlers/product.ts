@@ -181,10 +181,13 @@ export const removeChannelListingHandler = async (productId: string) => {
 
 export const createBulkProductsHandler = async (
   productsData: productTransformed[],
+  attributes: ProductAttributes,
 ): Promise<Array<BulkProductResults | BulkProductFail>> => {
   try {
     const createBulkProducts = await graphqlCall(
-      productBulkCreateMutation(`${getBulkProductsGql(productsData)}`),
+      productBulkCreateMutation(
+        `${getBulkProductsGql(productsData, attributes)}`,
+      ),
     );
     Logger.verbose('Bulk Products created', createBulkProducts);
     return createBulkProducts['productBulkCreate'].results;

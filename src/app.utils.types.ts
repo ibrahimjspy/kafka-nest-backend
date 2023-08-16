@@ -30,4 +30,5 @@ export type ProductAttributes = {
   thirtyDaysPopularity: ProductAttribute;
   fourteenDaysPopularity: ProductAttribute;
   popularityPoint: ProductAttribute;
+  isvendorfulfillment: ProductAttribute;
 };

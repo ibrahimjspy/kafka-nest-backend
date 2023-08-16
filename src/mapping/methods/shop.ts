@@ -61,7 +61,8 @@ export const updateShopMapping = async (
     shr_shop_id: destinationShopId,
     shr_shop_name: shopData.name,
     is_popular: shopData.isPopular,
-    is_sharove_fulfillment: shopData.flat,
+    is_sharove_fulfillment: shopData.flat && !shopData.ownFlat,
+    is_vendor_fulfillment: shopData.ownFlat,
     main_image: shopData.vendorMainImage,
     banners: shopData.banners,
   });

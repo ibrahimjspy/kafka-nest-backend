@@ -89,6 +89,7 @@ export const getProductAttributesGql = (
     styles,
     shopId,
     colors,
+    isVendorFulfillment,
   } = productData;
   return `[{
     id:"${attributes.styleNumber.id}",
@@ -125,6 +126,10 @@ export const getProductAttributesGql = (
   {
     id:"${attributes.issharovefulfillment.id}",
     boolean:${isSharoveFulfillment}
+  },
+    {
+    id:"${attributes.isvendorfulfillment.id}",
+    boolean:${isVendorFulfillment}
   },
   ${
     patterns
@@ -165,15 +170,20 @@ export const getProductAttributesGql = (
  *   transforms product variants and their attributes array into a string which can be used in graphql query
  *   @returns string e.g: ["id1","id2", 'id3]
  */
-export const getBulkProductsGql = (products: productTransformed[]) => {
+export const getBulkProductsGql = (
+  products: productTransformed[],
+  attributes: ProductAttributes,
+) => {
   return products.map((product) => {
-    const { shopId, openPack, openPackMinimumQuantity, shopName } = product;
+    const { shopId, openPack, openPackMinimumQuantity, shopName, id } = product;
     return `
     {
       name: "${product.name}"
+      externalReference:"${id}"
       description: ${JSON.stringify(product.description)}
       category: "${product.categoryId}"
       rating: 4
+      attributes: ${getProductAttributesGql(product, attributes)}
       productType: "${DEFAULT_PRODUCT_TYPE}"
       channelListings: {
         channelId: "${DEFAULT_CHANNEL_ID}"

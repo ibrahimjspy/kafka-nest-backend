@@ -15,6 +15,7 @@ export const productBulkCreateMutation = (products: string) => {
         results {
           product {
             id
+            externalReference
             variants {
               id
               attributes {

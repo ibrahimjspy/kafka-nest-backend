@@ -43,8 +43,12 @@ export class ProductTransformerService {
 
     // Fetch vendor details once for all products
     const vendorId = productDataArray[0].TBVendor_ID;
-    const { productType, isSharoveFulfillment, vendorName } =
-      await this.getVendorDetails(vendorId);
+    const {
+      productType,
+      isSharoveFulfillment,
+      vendorName,
+      isVendorFulfillment,
+    } = await this.getVendorDetails(vendorId);
 
     const transformedProducts: productTransformed[] = await Promise.all(
       productDataArray.map(async (productData) => {
@@ -81,6 +85,7 @@ export class ProductTransformerService {
           createdAt: new Date(productData.OriginDate).toISOString(),
           updatedAt: new Date(productData.nModifyDate).toISOString(),
           type: productType,
+          isVendorFulfillment: isVendorFulfillment,
           styles: transformedStyles,
           sleeves: transformedSleeves,
           patterns: transformedPatterns,
@@ -119,9 +124,8 @@ export class ProductTransformerService {
       popularity,
       productGroup,
     } = await this.getProductAttributes(productData.TBItem_ID);
-    const { productType, isSharoveFulfillment } = await this.getVendorDetails(
-      productData.TBVendor_ID,
-    );
+    const { productType, isSharoveFulfillment, isVendorFulfillment } =
+      await this.getVendorDetails(productData.TBVendor_ID);
     const productObject: productTransformed = {
       id: productData.TBItem_ID?.toString(),
       styleNumber: productData.nVendorStyleNo?.toString(),
@@ -149,6 +153,7 @@ export class ProductTransformerService {
       styles: transformedStyles,
       sleeves: transformedSleeves,
       patterns: transformedPatterns,
+      isVendorFulfillment: isVendorFulfillment,
       isSharoveFulfillment: isSharoveFulfillment,
       colors: transformedColors,
       popularity: {
@@ -349,14 +354,19 @@ export class ProductTransformerService {
    */
   public async getVendorDetails(vendorId: string) {
     const vendorDetails = (await fetchVendor(vendorId)) as shopDto[];
-    const productType = vendorDetails[0]?.SharoveType as SharoveTypeEnum;
-    const vendorName = vendorDetails[0]?.VDName;
+    const { OSFulfillmentType, SharoveType, VDName } = vendorDetails[0] || {};
+    const productType = SharoveType as SharoveTypeEnum;
+    const vendorName = VDName;
 
-    const isSharoveFulfillment = vendorDetails[0]?.OSFulfillmentType
-      ? true
-      : false;
-
-    return { productType, isSharoveFulfillment, vendorName };
+    const isSharoveFulfillment =
+      OSFulfillmentType !== 'V' && OSFulfillmentType ? true : false;
+    const isVendorFulfillment = OSFulfillmentType == 'V' ? true : false;
+    return {
+      productType,
+      isSharoveFulfillment,
+      vendorName,
+      isVendorFulfillment,
+    };
   }
 
   /**

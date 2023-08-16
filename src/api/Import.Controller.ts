@@ -323,4 +323,28 @@ export class BulkImportController {
       this.logger.error(error);
     }
   }
+
+  @Post('api/v1/vendors/products/timestamps/sync')
+  @ApiOperation({
+    summary: 'sync vendors timestamps that are created',
+  })
+  async vendorTimestampsSync(@Body() body: cursorDto) {
+    try {
+      return await this.productSyncService.productTimestampsSync(body);
+    } catch (error) {
+      this.logger.error(error);
+    }
+  }
+
+  @Post('api/v2/vendors/products/create/sync')
+  @ApiOperation({
+    summary: 'sync vendors created products ',
+  })
+  async vendorCreatedProductsSyncV2(@Body() body: createProductsSyncDto) {
+    try {
+      return await this.productSyncService.createdProductSyncV2(body);
+    } catch (error) {
+      this.logger.error(error);
+    }
+  }
 }

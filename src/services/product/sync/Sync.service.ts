@@ -9,10 +9,16 @@ import { productDto } from 'src/transformer/types/product';
 import { Repository } from 'typeorm';
 import { ShopMappingType } from './Sync.service.types';
 import { fetchBulkProductsData } from 'src/database/mssql/bulk-import/methods';
-import { createProductsSyncDto, cursorDto } from 'src/api/import.dtos';
+import {
+  BundleImportType,
+  ProductOperationEnum,
+  createProductsSyncDto,
+  cursorDto,
+} from 'src/api/import.dtos';
 import PromisePool from '@supercharge/promise-pool';
 import { chunkArray } from '../Product.utils';
 import { ProductService } from '../Product.Service';
+import { updateProductTimestamp } from 'src/database/postgres/handlers/product';
 
 @Injectable()
 export class ProductSyncService {
@@ -155,6 +161,91 @@ export class ProductSyncService {
         ]);
 
         return this.syncVendorCreatedProducts(
+          sourceProducts,
+          destinationProducts,
+          cursor.count || sourceProducts.size,
+        );
+      });
+
+    this.logger.verbose('Vendor created products sync completed successfully');
+  }
+
+  /**
+   * Synchronize product listings for all vendors.
+   */
+  public async productTimestampsSync(cursor: cursorDto): Promise<void> {
+    const importedVendors = (await getAllShopsMapping()) as ShopMappingType[];
+    const filterVendors = importedVendors.slice(
+      cursor.startCurser,
+      cursor.endCurser,
+    );
+    const SYNC_BATCH_SIZE = 5;
+    await PromisePool.withConcurrency(SYNC_BATCH_SIZE)
+      .for(filterVendors)
+      .onTaskStarted((product, pool) => {
+        this.logger.log(`Progress: ${pool.processedPercentage()}%`);
+        this.logger.log(`Active tasks: ${pool.activeTasksCount()}`);
+        this.logger.log(`Finished tasks: ${pool.processedItems().length}`);
+        this.logger.log(`Finished tasks: ${pool.processedCount()}`);
+      })
+      .handleError((error) => {
+        this.logger.error(error, 'ProductBulkCreate');
+      })
+      .process(async (vendor) => {
+        this.logger.log('Syncing vendor listing', vendor.shr_shop_name?.raw);
+        const sourceProductsPromise = this.getSourceVendorProducts(
+          vendor.os_vendor_id.raw,
+        );
+        const destinationProductsPromise = this.getDestinationVendorProduct(
+          vendor.shr_shop_id.raw,
+        );
+
+        const [sourceProducts, destinationProducts] = await Promise.all([
+          sourceProductsPromise,
+          destinationProductsPromise,
+        ]);
+
+        return this.syncVendorTimestamps(sourceProducts, destinationProducts);
+      });
+
+    this.logger.verbose('Vendor product listing sync completed successfully');
+  }
+
+  public async createdProductSyncV2(
+    cursor: createProductsSyncDto,
+  ): Promise<void> {
+    const importedVendors = (await getAllShopsMapping()) as ShopMappingType[];
+    const filterVendors = importedVendors.slice(
+      cursor.startCurser,
+      cursor.endCurser,
+    );
+    const SYNC_BATCH_SIZE = 1;
+
+    await PromisePool.withConcurrency(SYNC_BATCH_SIZE)
+      .for(filterVendors)
+      .onTaskStarted((vendor, pool) => {
+        this.logger.log(`Finished vendors: ${pool.processedCount()}`);
+      })
+      .handleError((error) => {
+        this.logger.error(error, 'ProductBulkCreate');
+      })
+      .process(async (vendor) => {
+        this.logger.log('Syncing vendor listing', vendor.shr_shop_name?.raw);
+
+        const sourceProductsPromise = this.getSourceVendorProducts(
+          vendor.os_vendor_id.raw,
+          true,
+        );
+        const destinationProductsPromise = this.getDestinationVendorProduct(
+          vendor.shr_shop_id.raw,
+        );
+
+        const [sourceProducts, destinationProducts] = await Promise.all([
+          sourceProductsPromise,
+          destinationProductsPromise,
+        ]);
+
+        return this.syncVendorCreatedProductsV2(
           sourceProducts,
           destinationProducts,
           cursor.count || sourceProducts.size,
@@ -448,6 +539,87 @@ export class ProductSyncService {
       })
       .process(async (products: productDto[]) => {
         return await this.productService.bulkProductCreate(products);
+      });
+  }
+
+  /**
+   * Synchronize product listings for a vendor.
+   * @param sourceProductsMapping Mapping of source products.
+   * @param destinationVendorProducts Array of destination products.
+   */
+  private async syncVendorTimestamps(
+    sourceProductsMapping: Map<number, productDto>,
+    destinationVendorProducts: ProductProduct[],
+  ): Promise<void> {
+    const promises = destinationVendorProducts.map(async (product) => {
+      if (!product.external_reference) {
+        this.logger.log(
+          'Did not find external reference for product',
+          product.id,
+        );
+        return;
+      }
+      this.logger.log(
+        `Syncing destination product ${product.id} with source ${product.external_reference}`,
+      );
+      const sourceData = sourceProductsMapping.get(
+        Number(product.external_reference),
+      );
+      if (!sourceData) {
+        this.logger.warn(
+          'Did not find source product data for product',
+          product.id,
+        );
+        return;
+      }
+      updateProductTimestamp(
+        String(product.id),
+        sourceData.OriginDate,
+        sourceData.nModifyDate,
+      );
+    });
+
+    await Promise.allSettled(promises);
+  }
+
+  private async syncVendorCreatedProductsV2(
+    sourceProductsMapping: Map<number, productDto>,
+    destinationVendorProducts: ProductProduct[],
+    count: number,
+  ): Promise<void> {
+    const destinationExternalProducts = destinationVendorProducts.map(
+      (product) => Number(product.external_reference),
+    );
+
+    const nonExistentProducts: productDto[] = Array.from(
+      sourceProductsMapping.keys(),
+    )
+      .filter((sourceId) => !destinationExternalProducts.includes(sourceId))
+      .map((sourceId) => sourceProductsMapping.get(sourceId));
+
+    const PRODUCT_BATCH_SIZE = 10;
+    this.logger.log(
+      'Creating bulk products which are non-existent',
+      nonExistentProducts.slice(0, count).length,
+    );
+
+    await PromisePool.withConcurrency(PRODUCT_BATCH_SIZE)
+      .for(nonExistentProducts)
+      .onTaskStarted((vendor, pool) => {
+        this.logger.log(`Progress: ${pool.processedPercentage()}%`);
+        this.logger.log(`Active tasks: ${pool.activeTasksCount()}`);
+        this.logger.log(`Finished tasks: ${pool.processedItems().length}`);
+        this.logger.log(`Finished tasks: ${pool.processedCount()}`);
+      })
+      .handleError((error) => {
+        this.logger.error(error, 'ProductBulkCreate');
+      })
+      .process(async (products: productDto) => {
+        return await this.productService.handleProductCDC(
+          products,
+          ProductOperationEnum.CREATE,
+          BundleImportType.DATABASE,
+        );
       });
   }
 }

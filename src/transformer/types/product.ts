@@ -62,6 +62,7 @@ export interface productTransformed {
     value: string;
   }[];
   isSharoveFulfillment?: boolean;
+  isVendorFulfillment?: boolean;
   variantsData?: any[];
   shopName?: string;
   popularity?: {

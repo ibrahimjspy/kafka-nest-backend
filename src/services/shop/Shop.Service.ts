@@ -65,7 +65,7 @@ export class ShopService {
       await this.addShippingMethodToShop(
         shopData.shipsFromId,
         shopId,
-        shopData.flat,
+        shopData.flat || shopData.ownFlat,
       );
       return await this.updateShop(shopData, shopId);
     }

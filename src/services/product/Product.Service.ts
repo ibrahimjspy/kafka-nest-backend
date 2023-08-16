@@ -333,6 +333,7 @@ export class ProductService {
     );
     const createdProducts = await createBulkProductsHandler(
       nonExistentProducts,
+      await this.constantsService.fetchAttributes(),
     );
     const sourceProductMapping = getTransformedProductsMapping(
       bulkProductsTransformed,
@@ -374,7 +375,7 @@ export class ProductService {
   ): Promise<void> {
     try {
       const mediaSavingPromises = productsResults.map(async (product) => {
-        const sourceId = product.product.id;
+        const sourceId = product.product.externalReference;
         const media = transformedProducts.get(sourceId)?.media;
         if (media) {
           await this.productMediaCreate(product.product.id, media);
