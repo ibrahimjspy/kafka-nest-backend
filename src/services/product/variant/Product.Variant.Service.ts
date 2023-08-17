@@ -356,7 +356,7 @@ export class ProductVariantService {
           productId,
           bundlePrice,
           false,
-          bundleName,
+          bundleName['ShoeSizeName'] || bundleName,
         );
 
         this.logger.log('Created bundle:', variants);
