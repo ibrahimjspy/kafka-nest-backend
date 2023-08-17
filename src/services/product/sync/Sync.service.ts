@@ -18,6 +18,11 @@ import {
 import PromisePool from '@supercharge/promise-pool';
 import { chunkArray } from '../Product.utils';
 import { ProductService } from '../Product.Service';
+import {
+  getBundleIdsHandler,
+  updateBundlePriceHandler,
+} from 'src/graphql/handlers/bundle';
+import { getEncodedProductId } from './Sync.utils';
 
 @Injectable()
 export class ProductSyncService {
@@ -487,6 +492,9 @@ export class ProductSyncService {
     });
 
     await Promise.allSettled(promises);
+    await this.syncProductBundlePricing(
+      getEncodedProductId(String(destinationProductId)),
+    );
   }
 
   /**
@@ -623,5 +631,20 @@ export class ProductSyncService {
           BundleImportType.DATABASE,
         );
       });
+  }
+
+  /**
+   * Synchronize bundle pricing with variants, make sure you pass encoded product id as well as variant pricing is updated first
+   *
+   * @param productId - id of product you want bundles pricing to be synced
+   */
+  public async syncProductBundlePricing(productId: string) {
+    try {
+      this.logger.log('syncing products bundle pricing', productId);
+      const bundleIds = await getBundleIdsHandler(productId);
+      await updateBundlePriceHandler(bundleIds);
+    } catch (error) {
+      this.logger.log(error);
+    }
   }
 }
