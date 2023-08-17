@@ -168,9 +168,14 @@ export class ProductService {
           this.productVariantsCreate(productData, productId, bundleImportType),
         ]);
         storeProductStatusHandler(productId);
-        this.logger.verbose(
-          `Product flow completed for productId: ${productId}`,
-        );
+        updateProductTimestamp(
+          idBase64Decode(productId),
+          productData.createdAt,
+          productData.updatedAt,
+        ),
+          this.logger.verbose(
+            `Product flow completed for productId: ${productId}`,
+          );
       }
 
       return {

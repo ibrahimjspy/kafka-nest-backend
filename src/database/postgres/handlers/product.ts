@@ -10,7 +10,11 @@ export const updateProductTimestamp = async (
   updatedAt: string,
 ) => {
   Logger.log('Updating product timestamps', productId);
-  return await postgresInsertCall(
-    updateProductTimestampsQuery(productId, createdAt, updatedAt),
-  );
+  try {
+    return await postgresInsertCall(
+      updateProductTimestampsQuery(productId, createdAt, updatedAt),
+    );
+  } catch (error) {
+    Logger.error(error);
+  }
 };
