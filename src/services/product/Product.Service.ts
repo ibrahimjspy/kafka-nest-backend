@@ -43,6 +43,9 @@ import { updateProductTimestamp } from 'src/database/postgres/handlers/product';
 import { ProductValidationService } from './Product.validate.service';
 import { BulkProductResults, BulkProductFail } from './Product.types';
 import { ConstantsService } from 'src/app.constants';
+import { InjectRepository } from '@nestjs/typeorm';
+import { ProductProductChannelListing } from 'src/database/postgres/tables/ProductListing';
+import { Repository } from 'typeorm';
 
 /**
  *  Injectable class handling product variant and its relating tables CDC
@@ -57,6 +60,8 @@ export class ProductService {
     private readonly productVariantService: ProductVariantService,
     private readonly productValidationService: ProductValidationService,
     private readonly constantsService: ConstantsService,
+    @InjectRepository(ProductProductChannelListing)
+    private productChannelListingRepository: Repository<ProductProductChannelListing>,
     public logger: ApplicationLogger,
   ) {}
 
@@ -168,11 +173,7 @@ export class ProductService {
         ]);
         addProductToShopHandler(productId, productData);
         storeProductStatusHandler(productId);
-        updateProductTimestamp(
-          idBase64Decode(productId),
-          productData.createdAt,
-          productData.updatedAt,
-        ),
+        this.updateProductTimestamps(idBase64Decode(productId), productData),
           this.logger.verbose(
             `Product flow completed for productId: ${productId}`,
           );
@@ -200,11 +201,7 @@ export class ProductService {
     if (validateProduct) {
       const attributes = await this.constantsService.fetchAttributes();
       return await Promise.all([
-        updateProductTimestamp(
-          decodedProductId,
-          productData.createdAt,
-          productData.updatedAt,
-        ),
+        this.updateProductTimestamps(decodedProductId, productData),
         this.productListingUpdate(productId, productData),
         this.productVariantService.productVariantsUpdate(
           productId,
@@ -499,6 +496,37 @@ export class ProductService {
         error,
       );
       throw new Error('Failed to save product bundle information.');
+    }
+  }
+
+  /**
+   * Updates product timestamps usting source timestamps
+   * @param {BulkProductResults[]} productId - An array of BulkProductResults containing the products for which bundles need to be saved.
+   * @param {string} productData - The ID of the shop.
+   * @returns {Promise<void>} A promise that resolves when all the bundle information is saved for the products.
+   */
+  public async updateProductTimestamps(
+    productId: string,
+    productData: productTransformed,
+  ) {
+    try {
+      updateProductTimestamp(
+        productId,
+        productData.createdAt,
+        productData.updatedAt,
+      );
+      const productChannelListing =
+        await this.productChannelListingRepository.findOne({
+          where: { product_id: Number(productId) },
+        });
+
+      const updatedListing: ProductProductChannelListing = {
+        ...productChannelListing,
+        available_for_purchase_at: new Date(productData.createdAt),
+      };
+      await this.productChannelListingRepository.save(updatedListing);
+    } catch (error) {
+      this.logger.error(error);
     }
   }
 }
