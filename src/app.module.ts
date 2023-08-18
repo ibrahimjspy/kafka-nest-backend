@@ -34,7 +34,6 @@ import { ProductProductVariantChannelListing } from './database/postgres/tables/
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
     TransformerModule,
     LoggerModule,
     TypeOrmModule.forRootAsync({

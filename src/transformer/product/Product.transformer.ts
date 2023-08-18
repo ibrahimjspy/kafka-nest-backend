@@ -1,10 +1,4 @@
-import {
-  CACHE_MANAGER,
-  CacheTTL,
-  Inject,
-  Injectable,
-  Param,
-} from '@nestjs/common';
+import { CacheTTL, Injectable, Param } from '@nestjs/common';
 import {
   mediaDto,
   priceInterface,
@@ -26,7 +20,7 @@ import { fetchVendor } from 'src/database/mssql/bulk-import/methods';
 import { SharoveTypeEnum, shopDto } from '../types/shop';
 import { getProductDetailsFromDb } from 'src/database/mssql/product-view/getProductViewById';
 import { ProductVariantTransformerService } from './Product.variant/Product.variant.transformer';
-import * as cacheManager from 'cache-manager';
+
 /**
  *  Injectable class handling product transformation
  *  @Injectable in app scope or in kafka connection to reach kafka messages
@@ -34,10 +28,10 @@ import * as cacheManager from 'cache-manager';
 @Injectable()
 export class ProductTransformerService {
   constructor(
-    @Inject(CACHE_MANAGER) private readonly cache: cacheManager.Cache,
-
     private readonly productVariantTransformerService: ProductVariantTransformerService,
   ) {}
+  private ShopMap: Map<string, string> = new Map();
+
   /**
    * Transforms and validates an array of productView responses and existence.
    * @param {productDto[]} productDataArray - Array of productDto containing cdc changeData and productView data for multiple products.
@@ -258,8 +252,7 @@ export class ProductTransformerService {
    * @params TBVendor_ID as input
    */
   public async shopIdTransformer(vendorId: string) {
-    const cacheKey = `shopId_${vendorId}`;
-    const cachedShopId = await this.cache.get<string>(cacheKey);
+    const cachedShopId = await this.ShopMap.get(vendorId);
 
     if (cachedShopId) {
       return cachedShopId;
@@ -267,7 +260,7 @@ export class ProductTransformerService {
 
     const { shopId } = await getShopMapping(vendorId);
 
-    await this.cache.set(cacheKey, shopId || DEFAULT_SHOP_ID); // Cache for 1 hour
+    await this.ShopMap.set(vendorId, shopId || DEFAULT_SHOP_ID); // Cache for 1 hour
 
     return shopId || DEFAULT_SHOP_ID;
   }
