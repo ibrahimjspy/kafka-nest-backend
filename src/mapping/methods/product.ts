@@ -56,7 +56,6 @@ export const addProductMapping = async (sourceId, destinationId, shopId) => {
       `An error occurred while adding product mapping: ${error.message}`,
       error,
     );
-    throw error;
   }
 };
 

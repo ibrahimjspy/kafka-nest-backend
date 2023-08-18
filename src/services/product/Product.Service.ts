@@ -159,14 +159,14 @@ export class ProductService {
 
       if (productId) {
         // Inserts product id into elastic search mapping
-        await addProductMapping(productData.id, productId, productData.shopId);
+        addProductMapping(productData.id, productId, productData.shopId);
 
         // Creates product variants and their media
         await Promise.all([
-          addProductToShopHandler(productId, productData),
           this.productMediaCreate(productId, productData.media),
           this.productVariantsCreate(productData, productId, bundleImportType),
         ]);
+        addProductToShopHandler(productId, productData);
         storeProductStatusHandler(productId);
         updateProductTimestamp(
           idBase64Decode(productId),

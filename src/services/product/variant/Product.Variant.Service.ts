@@ -163,6 +163,7 @@ export class ProductVariantService {
     productPrice,
     isOpenBundle,
   }: bundlesCreateInterface): Promise<void[]> {
+    if (isOpenBundle) return;
     const bundleVariantIds = chunkArray(variantIds, bundle.length);
     const createBundlesPromises = bundleVariantIds.map(async (variants) => {
       const bundleQuantities = bundle.map((str) => Number(str));

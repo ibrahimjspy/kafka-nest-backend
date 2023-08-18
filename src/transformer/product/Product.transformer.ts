@@ -1,4 +1,10 @@
-import { Injectable, Param } from '@nestjs/common';
+import {
+  CACHE_MANAGER,
+  CacheTTL,
+  Inject,
+  Injectable,
+  Param,
+} from '@nestjs/common';
 import {
   mediaDto,
   priceInterface,
@@ -20,6 +26,7 @@ import { fetchVendor } from 'src/database/mssql/bulk-import/methods';
 import { SharoveTypeEnum, shopDto } from '../types/shop';
 import { getProductDetailsFromDb } from 'src/database/mssql/product-view/getProductViewById';
 import { ProductVariantTransformerService } from './Product.variant/Product.variant.transformer';
+import * as cacheManager from 'cache-manager';
 /**
  *  Injectable class handling product transformation
  *  @Injectable in app scope or in kafka connection to reach kafka messages
@@ -27,6 +34,8 @@ import { ProductVariantTransformerService } from './Product.variant/Product.vari
 @Injectable()
 export class ProductTransformerService {
   constructor(
+    @Inject(CACHE_MANAGER) private readonly cache: cacheManager.Cache,
+
     private readonly productVariantTransformerService: ProductVariantTransformerService,
   ) {}
   /**
@@ -249,7 +258,17 @@ export class ProductTransformerService {
    * @params TBVendor_ID as input
    */
   public async shopIdTransformer(vendorId: string) {
+    const cacheKey = `shopId_${vendorId}`;
+    const cachedShopId = await this.cache.get<string>(cacheKey);
+
+    if (cachedShopId) {
+      return cachedShopId;
+    }
+
     const { shopId } = await getShopMapping(vendorId);
+
+    await this.cache.set(cacheKey, shopId || DEFAULT_SHOP_ID); // Cache for 1 hour
+
     return shopId || DEFAULT_SHOP_ID;
   }
   /**
@@ -326,7 +345,7 @@ export class ProductTransformerService {
    * @returns {string} The transformed retail price.
    */
   public retailPriceTransformer(purchasePrice): string {
-    const RULE_ENGINE = 1.6;
+    const RULE_ENGINE = 2.5;
     const retailPrice = (Number(purchasePrice) * RULE_ENGINE).toFixed(2);
     return retailPrice;
   }
@@ -352,7 +371,7 @@ export class ProductTransformerService {
    * returns -- fulfillment type of this product's vendor
    * @links tb vendor table tp get vendor details which includes a column for sharove type
    */
-  public async getVendorDetails(vendorId: string) {
+  private async fetchVendorDetails(vendorId: string) {
     const vendorDetails = (await fetchVendor(vendorId)) as shopDto[];
     const { OSFulfillmentType, SharoveType, VDName } = vendorDetails[0] || {};
     const productType = SharoveType as SharoveTypeEnum;
@@ -367,6 +386,16 @@ export class ProductTransformerService {
       vendorName,
       isVendorFulfillment,
     };
+  }
+
+  @CacheTTL(600)
+  async getVendorDetailsCached(vendorId: string) {
+    const vendorDetails = await this.fetchVendorDetails(vendorId);
+    return vendorDetails;
+  }
+
+  public async getVendorDetails(vendorId: string) {
+    return await this.getVendorDetailsCached(vendorId);
   }
 
   /**
