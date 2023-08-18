@@ -49,18 +49,9 @@ export class ProductSyncService {
       cursor.endCurser,
     );
     const SYNC_BATCH_SIZE = 2;
-    await PromisePool.withConcurrency(SYNC_BATCH_SIZE)
-      .for(filterVendors)
-      .onTaskStarted((product, pool) => {
-        this.logger.log(`Progress: ${pool.processedPercentage()}%`);
-        this.logger.log(`Active tasks: ${pool.activeTasksCount()}`);
-        this.logger.log(`Finished tasks: ${pool.processedItems().length}`);
-        this.logger.log(`Finished tasks: ${pool.processedCount()}`);
-      })
-      .handleError((error) => {
-        this.logger.error(error, 'ProductBulkCreate');
-      })
-      .process(async (vendor) => {
+
+    const processBatch = async (vendors: ShopMappingType[]) => {
+      const batchPromises = vendors.map(async (vendor) => {
         this.logger.log('Syncing vendor listing', vendor.shr_shop_name?.raw);
         const sourceProductsPromise = this.getSourceVendorProducts(
           vendor.os_vendor_id.raw,
@@ -80,8 +71,17 @@ export class ProductSyncService {
         );
       });
 
+      return await Promise.all(batchPromises);
+    };
+
+    for (let i = 0; i < filterVendors.length; i += SYNC_BATCH_SIZE) {
+      const batch = filterVendors.slice(i, i + SYNC_BATCH_SIZE);
+      await processBatch(batch);
+    }
+
     this.logger.verbose('Vendor product listing sync completed successfully');
   }
+
   /**
    * Synchronize product variant pricing for all vendors.
    */
@@ -93,18 +93,8 @@ export class ProductSyncService {
     );
     const SYNC_BATCH_SIZE = 2;
 
-    await PromisePool.withConcurrency(SYNC_BATCH_SIZE)
-      .for(filterVendors)
-      .onTaskStarted((vendor, pool) => {
-        this.logger.log(`Progress: ${pool.processedPercentage()}%`);
-        this.logger.log(`Active tasks: ${pool.activeTasksCount()}`);
-        this.logger.log(`Finished tasks: ${pool.processedItems().length}`);
-        this.logger.log(`Finished tasks: ${pool.processedCount()}`);
-      })
-      .handleError((error) => {
-        this.logger.error(error, 'ProductBulkCreate');
-      })
-      .process(async (vendor) => {
+    const processBatch = async (vendors: ShopMappingType[]) => {
+      const batchPromises = vendors.map(async (vendor) => {
         this.logger.log('Syncing vendor listing', vendor.shr_shop_name?.raw);
 
         const sourceProductsPromise = this.getSourceVendorProducts(
@@ -121,6 +111,14 @@ export class ProductSyncService {
 
         return this.syncVendorPricing(sourceProducts, destinationProducts);
       });
+
+      return await Promise.all(batchPromises);
+    };
+
+    for (let i = 0; i < filterVendors.length; i += SYNC_BATCH_SIZE) {
+      const batch = filterVendors.slice(i, i + SYNC_BATCH_SIZE);
+      await processBatch(batch);
+    }
 
     this.logger.verbose('Vendor product pricing sync completed successfully');
   }
@@ -223,38 +221,31 @@ export class ProductSyncService {
       cursor.startCurser,
       cursor.endCurser,
     );
-    const SYNC_BATCH_SIZE = 1;
 
-    await PromisePool.withConcurrency(SYNC_BATCH_SIZE)
-      .for(filterVendors)
-      .onTaskStarted((vendor, pool) => {
-        this.logger.log(`Finished vendors: ${pool.processedCount()}`);
-      })
-      .handleError((error) => {
-        this.logger.error(error, 'ProductBulkCreate');
-      })
-      .process(async (vendor) => {
-        this.logger.log('Syncing vendor listing', vendor.shr_shop_name?.raw);
+    for (const vendor of filterVendors) {
+      this.logger.log('Syncing vendor listing', vendor.shr_shop_name?.raw);
 
-        const sourceProductsPromise = this.getSourceVendorProducts(
-          vendor.os_vendor_id.raw,
-          true,
-        );
-        const destinationProductsPromise = this.getDestinationVendorProduct(
-          vendor.shr_shop_id.raw,
-        );
+      const sourceProductsPromise = this.getSourceVendorProducts(
+        vendor.os_vendor_id.raw,
+        true,
+      );
+      const destinationProductsPromise = this.getDestinationVendorProduct(
+        vendor.shr_shop_id.raw,
+      );
 
-        const [sourceProducts, destinationProducts] = await Promise.all([
-          sourceProductsPromise,
-          destinationProductsPromise,
-        ]);
+      const [sourceProducts, destinationProducts] = await Promise.all([
+        sourceProductsPromise,
+        destinationProductsPromise,
+      ]);
 
-        return await this.syncVendorCreatedProductsV2(
-          sourceProducts,
-          destinationProducts,
-          cursor.count || sourceProducts.size,
-        );
-      });
+      await this.syncVendorCreatedProductsV2(
+        sourceProducts,
+        destinationProducts,
+        cursor.count || sourceProducts.size,
+      );
+
+      await new Promise((resolve) => setTimeout(resolve, 0));
+    }
 
     this.logger.verbose('Vendor created products sync completed successfully');
   }
