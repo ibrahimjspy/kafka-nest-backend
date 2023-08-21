@@ -97,7 +97,7 @@ export class ShopTransformerService {
   }
 
   public shopUrlTransformer(@Param() url, name) {
-    if (url.length) {
+    if (url?.length) {
       return url;
     }
     return `${name.toLowerCase()}.com`;
@@ -150,7 +150,7 @@ export class ShopTransformerService {
    * @returns image url which could be integrated
    */
   public shopImageTransformer(@Param() url) {
-    if (url.length) {
+    if (url?.length) {
       return `${S3_VENDOR_URL}${url}`;
     }
   }
@@ -161,7 +161,7 @@ export class ShopTransformerService {
     const shippingZoneData = {};
     shippingZoneData['shopId'] = shopObject.TBVendor_ID;
     shippingZoneData['zoneId'] =
-      brandPickupZoneMapping[shopObject.Content] || '8';
+      brandPickupZoneMapping[shopObject?.Content] || '8';
     return shippingZoneData;
   }
 
@@ -227,8 +227,8 @@ export class ShopTransformerService {
       const tables = [];
       const tableNames = [];
       parsed.map((entry) => {
-        tables.push(entry.table);
-        tableNames.push(entry.name);
+        tables.push(entry?.table);
+        tableNames.push(entry?.name);
       });
       return {
         table: JSON.stringify(tables),
@@ -240,13 +240,13 @@ export class ShopTransformerService {
 
   private returnPolicyTransformer(@Param() content: string) {
     const parsed = JSON.parse(content);
-    const returnPolicy = parsed.return_policy;
+    const returnPolicy = parsed?.return_policy;
     return this.textTransformer(returnPolicy);
   }
 
   private returnPolicyPlainTransformer(@Param() content: string) {
     const parsed = JSON.parse(content);
-    const returnPolicy = parsed.return_policy;
+    const returnPolicy = parsed?.return_policy;
     // eslint-disable-next-line prettier/prettier
     return returnPolicy.replace(/\s+/g, ' ').replace(/"/g, "'").replace(/\r?\n/g, "\n")
   }

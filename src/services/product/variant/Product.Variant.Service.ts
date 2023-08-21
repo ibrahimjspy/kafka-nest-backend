@@ -129,7 +129,7 @@ export class ProductVariantService {
           productId,
         );
 
-        await this.createBundles({
+        this.createBundles({
           variantIds,
           bundle: pack_name.split('-'),
           shopId,
@@ -163,21 +163,24 @@ export class ProductVariantService {
     productPrice,
     isOpenBundle,
   }: bundlesCreateInterface): Promise<void[]> {
-    if (isOpenBundle) return;
-    const bundleVariantIds = chunkArray(variantIds, bundle.length);
-    const createBundlesPromises = bundleVariantIds.map(async (variants) => {
-      const bundleQuantities = bundle.map((str) => Number(str));
-      const bundlePrice = getBundlePrice(bundleQuantities, productPrice);
-      return await this.bundleRepository.createBundles(
-        variants,
-        bundleQuantities,
-        shopId,
-        productId,
-        bundlePrice,
-        isOpenBundle,
-      );
-    });
-    return Promise.all(createBundlesPromises);
+    try {
+      const bundleVariantIds = chunkArray(variantIds, bundle.length);
+      const createBundlesPromises = bundleVariantIds.map(async (variants) => {
+        const bundleQuantities = bundle.map((str) => Number(str));
+        const bundlePrice = getBundlePrice(bundleQuantities, productPrice);
+        return await this.bundleRepository.createBundles(
+          variants,
+          bundleQuantities,
+          shopId,
+          productId,
+          bundlePrice,
+          isOpenBundle,
+        );
+      });
+      return Promise.all(createBundlesPromises);
+    } catch (error) {
+      this.logger.error(error);
+    }
   }
 
   private async updatePrice(price: priceInterface, destinationProductData) {
