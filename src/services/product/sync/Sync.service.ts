@@ -638,4 +638,50 @@ export class ProductSyncService {
       this.logger.log(error);
     }
   }
+
+  /**
+   * Validates products and deletes those without bundles.
+   */
+  public async validateProductBundles() {
+    try {
+      // Fetch products without bundles
+      const productsWithoutBundles: {
+        product_id: number;
+      }[] = await this.productRepository.query(`
+      WITH CTE_bundle AS (
+        SELECT
+          REPLACE(
+            CONVERT_FROM(DECODE(product_id, 'base64'), 'UTF-8'), 'Product:', ''
+          )::integer AS product_id
+        FROM
+          bundle.bundle_bundleproductvariant
+      )
+      SELECT
+        pp.id AS product_id
+      FROM
+        saleor.product_product pp
+      LEFT JOIN
+        CTE_bundle pv
+      ON
+        pp.id = pv.product_id
+      WHERE
+        pv.product_id IS NULL
+    `);
+
+      this.logger.log(
+        `Found ${productsWithoutBundles.length} products without bundles`,
+      );
+
+      // Delete products without bundles
+      for (const product of productsWithoutBundles) {
+        const { product_id } = product;
+        const encodedProductId = getEncodedProductId(String(product_id));
+
+        this.logger.log('Deleting product with no bundles', encodedProductId);
+        await this.productService.productDelete(encodedProductId);
+      }
+    } catch (error) {
+      this.logger.log(error);
+    }
+  }
 }

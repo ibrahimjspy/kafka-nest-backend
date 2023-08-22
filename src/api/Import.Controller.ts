@@ -347,4 +347,18 @@ export class BulkImportController {
       this.logger.error(error);
     }
   }
+
+  @Delete('api/v1/destination/products/bundles/revalidate')
+  async revalidateProductBundles() {
+    try {
+      return await this.productSyncService.validateProductBundles();
+    } catch (error) {
+      this.logger.error(error);
+    }
+  }
+
+  @Delete('api/v1/reset')
+  async reset() {
+    throw new Error('Resetting state failed');
+  }
 }
