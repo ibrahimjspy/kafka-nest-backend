@@ -48,7 +48,7 @@ export class ProductSyncService {
       cursor.startCurser,
       cursor.endCurser,
     );
-    const SYNC_BATCH_SIZE = 2;
+    const SYNC_BATCH_SIZE = 1;
 
     const processBatch = async (vendors: ShopMappingType[]) => {
       const batchPromises = vendors.map(async (vendor) => {
@@ -91,7 +91,7 @@ export class ProductSyncService {
       cursor.startCurser,
       cursor.endCurser,
     );
-    const SYNC_BATCH_SIZE = 2;
+    const SYNC_BATCH_SIZE = 1;
 
     const processBatch = async (vendors: ShopMappingType[]) => {
       const batchPromises = vendors.map(async (vendor) => {
@@ -305,10 +305,23 @@ export class ProductSyncService {
   ): Promise<void> {
     const promises = destinationVendorProducts.map(async (product) => {
       if (!product.external_reference) {
-        this.logger.log(
-          'Did not find external reference for product',
-          product.id,
-        );
+        this.logger.log('Inactivating product', product.id);
+
+        const productListingPromise =
+          this.productChannelListingRepository.findOne({
+            where: {
+              product_id: product.id,
+            },
+          });
+
+        const productListing = await productListingPromise;
+
+        if (productListing) {
+          const updatedListing = { ...productListing };
+          updatedListing.is_published = false;
+          updatedListing.visible_in_listings = false;
+          await this.productChannelListingRepository.save(updatedListing);
+        }
         return;
       }
       this.logger.log(

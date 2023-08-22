@@ -71,14 +71,13 @@ export const productChannelListingMutation = (productId) => {
 };
 
 export const addProductToShopMutation = (
-  productIds: string[],
+  productId: string,
   shopId: string,
+  isOpenPack: boolean,
 ) => {
   return gql`
     mutation {
-      addProductsToShop(Input: { productIds: ${JSON.stringify(
-        productIds,
-      )}, shopId: "${shopId}" }) {
+      addProductsToShop(Input: { products: [{productId: ${productId}, isOpenPack: ${isOpenPack}}]}, shopId: "${shopId}" }) {
         id
         name
       }

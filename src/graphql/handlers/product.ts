@@ -71,7 +71,11 @@ export const addProductToShopHandler = async (
 ): Promise<void> => {
   try {
     const response = await graphqlCall(
-      addProductToShopMutation([productId], productData.shopId),
+      addProductToShopMutation(
+        productId,
+        productData.shopId,
+        productData.openPack,
+      ),
     );
 
     if (!response || !response['addProductsToShop']) {

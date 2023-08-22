@@ -46,6 +46,8 @@ import { ConstantsService } from 'src/app.constants';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ProductProductChannelListing } from 'src/database/postgres/tables/ProductListing';
 import { Repository } from 'typeorm';
+import { ProductProduct } from 'src/database/postgres/tables/Product';
+import { ProductVariantDecoratorProductMapping } from 'src/database/postgres/tables/ShopProducts';
 
 /**
  *  Injectable class handling product variant and its relating tables CDC
@@ -62,6 +64,10 @@ export class ProductService {
     private readonly constantsService: ConstantsService,
     @InjectRepository(ProductProductChannelListing)
     private productChannelListingRepository: Repository<ProductProductChannelListing>,
+    @InjectRepository(ProductProduct)
+    private productRepository: Repository<ProductProduct>,
+    @InjectRepository(ProductVariantDecoratorProductMapping)
+    private shopProductVariantRepository: Repository<ProductVariantDecoratorProductMapping>,
     public logger: ApplicationLogger,
   ) {}
 
@@ -350,6 +356,9 @@ export class ProductService {
         createdProducts,
         bulkProductsTransformed[0].shopId,
       ),
+      this.bulkProductsDefaultVariantAssign(createdProducts),
+      this.bulkProductsTimestampsUpdate(createdProducts, sourceProductMapping),
+      this.addBulkProductsToShop(createdProducts, sourceProductMapping),
     ]);
     this.saveBulkProductVariantMedia(createdProducts);
 
@@ -525,6 +534,81 @@ export class ProductService {
         available_for_purchase_at: new Date(productData.createdAt),
       };
       await this.productChannelListingRepository.save(updatedListing);
+    } catch (error) {
+      this.logger.error(error);
+    }
+  }
+
+  public async bulkProductsDefaultVariantAssign(
+    productsResults: BulkProductResults[],
+  ) {
+    try {
+      this.logger.log('assigning default variants to product');
+      const defaultVariantUpdatePromises = [];
+      for (const product of productsResults) {
+        const defaultVariantId = product.product.variants[0]?.id || null;
+        if (!defaultVariantId) return;
+        const decodedDefaultVariantId = idBase64Decode(defaultVariantId);
+        const decodedProductId = idBase64Decode(product.product.id);
+        const defaultVariantPromise = this.productRepository.update(
+          { id: Number(decodedProductId) },
+          { default_variant_id: Number(decodedDefaultVariantId) },
+        );
+        defaultVariantUpdatePromises.push(defaultVariantPromise);
+      }
+      await Promise.all(defaultVariantUpdatePromises);
+    } catch (error) {
+      this.logger.error(error);
+    }
+  }
+
+  public async bulkProductsTimestampsUpdate(
+    productsResults: BulkProductResults[],
+    transformedProducts: Map<string, productTransformed>,
+  ) {
+    try {
+      this.logger.log('saving product timestamps from source');
+
+      const timeStampPromises = [];
+      for (const product of productsResults) {
+        const defaultVariantId = product.product.variants[0]?.id || null;
+        if (!defaultVariantId) return;
+        const timestampPromise = this.updateProductTimestamps(
+          idBase64Decode(product.product.id),
+          transformedProducts.get(product.product.externalReference),
+        );
+        timeStampPromises.push(timestampPromise);
+      }
+      await Promise.all(timeStampPromises);
+    } catch (error) {
+      this.logger.error(error);
+    }
+  }
+
+  public async addBulkProductsToShop(
+    productsResults: BulkProductResults[],
+    transformedProducts: Map<string, productTransformed>,
+  ) {
+    try {
+      const shopProductMappings = [];
+      this.logger.log('saving product timestamps from source');
+
+      for (const product of productsResults) {
+        const sourceProduct = transformedProducts.get(
+          product.product.externalReference,
+        );
+        const shopId = sourceProduct.shopId;
+        const isOpenPack = sourceProduct.openPack;
+        const shopProductMapping: ProductVariantDecoratorProductMapping = {
+          product_id: product.product.id,
+          shop_id: Number(shopId),
+          is_open_bundle: isOpenPack,
+          channel_slug: 'default-channel',
+          id: null,
+        };
+        shopProductMappings.push(shopProductMapping);
+      }
+      await this.shopProductVariantRepository.save(shopProductMappings);
     } catch (error) {
       this.logger.error(error);
     }

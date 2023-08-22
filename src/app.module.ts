@@ -31,6 +31,7 @@ import { ProductProduct } from './database/postgres/tables/Product';
 import { ProductProductVariant } from './database/postgres/tables/ProductVariants';
 import { ProductProductChannelListing } from './database/postgres/tables/ProductListing';
 import { ProductProductVariantChannelListing } from './database/postgres/tables/ProductVariantListing';
+import { ProductVariantDecoratorProductMapping } from './database/postgres/tables/ShopProducts';
 
 @Module({
   imports: [
@@ -54,6 +55,7 @@ import { ProductProductVariantChannelListing } from './database/postgres/tables/
           ProductProductVariant,
           ProductProductChannelListing,
           ProductProductVariantChannelListing,
+          ProductVariantDecoratorProductMapping,
         ],
         synchronize: false,
       }),
@@ -67,6 +69,7 @@ import { ProductProductVariantChannelListing } from './database/postgres/tables/
     TypeOrmModule.forFeature([ProductProductVariant]),
     TypeOrmModule.forFeature([ProductProductChannelListing]),
     TypeOrmModule.forFeature([ProductProductVariantChannelListing]),
+    TypeOrmModule.forFeature([ProductVariantDecoratorProductMapping]),
   ],
   controllers: [AppController, BulkImportController, KafkaController],
   providers: [
@@ -91,6 +94,7 @@ import { ProductProductVariantChannelListing } from './database/postgres/tables/
     BundleRepository,
     ProductValidationService,
     ConstantsService,
+    ProductVariantDecoratorProductMapping,
   ],
 })
 export class AppModule {}
