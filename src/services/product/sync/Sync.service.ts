@@ -524,7 +524,7 @@ export class ProductSyncService {
       .map((sourceId) => sourceProductsMapping.get(sourceId));
 
     const PRODUCT_BATCH_SIZE = 2;
-    const PRODUCT_BATCH_COUNT = 200;
+    const PRODUCT_BATCH_COUNT = 10;
 
     // Divide non-existent products into batches for bulk processing
     const productChunks = chunkArray(
