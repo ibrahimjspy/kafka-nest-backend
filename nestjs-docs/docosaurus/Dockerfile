@@ -17,7 +17,7 @@ COPY . .
 RUN npm run build
 
 # Expose the port your Docosaurus site will run on
-EXPOSE 3000
+EXPOSE 4040
 
 # Define the command to run your Docosaurus site
 CMD ["npm", "start"]
