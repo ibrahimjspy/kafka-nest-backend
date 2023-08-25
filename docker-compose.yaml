@@ -81,5 +81,12 @@ services:
     depends_on:
       - kafka1
 
+  docs:
+    build: ./nestjs-docs/docosaurus/
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./nestjs-docs/docosaurus:/usr/src/app
+
 
 
