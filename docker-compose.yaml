@@ -84,7 +84,7 @@ services:
   docs:
     build: ./nestjs-docs/docosaurus/
     ports:
-      - "4040:4040"
+      - "4040:3000"
     volumes:
       - ./nestjs-docs/docosaurus:/usr/src/app
 
