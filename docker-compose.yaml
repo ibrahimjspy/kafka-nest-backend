@@ -1,85 +1,85 @@
 version: '2'
 services:
 # Zookeeper, single node
-  zookeeper:
-    image: wurstmeister/zookeeper:latest
-    environment:
-      ZOOKEEPER_CLIENT_PORT: 2181
-      ZOOKEEPER_TICK_TIME: 2000
-    ports:
-      - 2181:2181
-      - 2888:2888
-      - 3888:3888
+#   zookeeper:
+#     image: wurstmeister/zookeeper:latest
+#     environment:
+#       ZOOKEEPER_CLIENT_PORT: 2181
+#       ZOOKEEPER_TICK_TIME: 2000
+#     ports:
+#       - 2181:2181
+#       - 2888:2888
+#       - 3888:3888
 
-# #  # kafka multi node     
-  kafka1:
-    image: wurstmeister/kafka:latest
-    restart: "no"
-    links:
-      - zookeeper
-    ports:
-      - 29092:9092
-    environment:
-      KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_LISTENERS: INTERNAL://:29092,EXTERNAL://:9092
-      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka1:29092,EXTERNAL://localhost:9092
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT
-      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+# # #  # kafka multi node     
+#   kafka1:
+#     image: wurstmeister/kafka:latest
+#     restart: "no"
+#     links:
+#       - zookeeper
+#     ports:
+#       - 29092:9092
+#     environment:
+#       KAFKA_BROKER_ID: 1
+#       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+#       KAFKA_LISTENERS: INTERNAL://:29092,EXTERNAL://:9092
+#       KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka1:29092,EXTERNAL://localhost:9092
+#       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT
+#       KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
 
-#kafdrop for topic/msg visualization
-  kafdrop:
-    image: obsidiandynamics/kafdrop
-    restart: "no"
-    environment:
-      KAFKA_BROKERCONNECT: "kafka1:29092"
-      JVM_OPTS: "-Xms16M -Xmx512M -Xss180K -XX:-TieredCompilation -XX:+UseStringDeduplication -noverify"
-    ports:
-      - 9001:9000
-    depends_on:
-      - kafka1
+# #kafdrop for topic/msg visualization
+#   kafdrop:
+#     image: obsidiandynamics/kafdrop
+#     restart: "no"
+#     environment:
+#       KAFKA_BROKERCONNECT: "kafka1:29092"
+#       JVM_OPTS: "-Xms16M -Xmx512M -Xss180K -XX:-TieredCompilation -XX:+UseStringDeduplication -noverify"
+#     ports:
+#       - 9001:9000
+#     depends_on:
+#       - kafka1
 
-  connect:
-    image:  debezium/connect-jdbc-es:1.9
-    build:
-      context: debezium-jdbc-es
-    ports:
-     - 8083:8083
-     - 5005:5005
-    links:
-     - kafka1
-    environment:
-     - BOOTSTRAP_SERVERS=kafka1:29092
-     - GROUP_ID=1
-     - CONFIG_STORAGE_TOPIC=my_connect_configs
-     - OFFSET_STORAGE_TOPIC=my_connect_offsets
-     - STATUS_STORAGE_TOPIC=my_connect_statuses
+#   connect:
+#     image:  debezium/connect-jdbc-es:1.9
+#     build:
+#       context: debezium-jdbc-es
+#     ports:
+#      - 8083:8083
+#      - 5005:5005
+#     links:
+#      - kafka1
+#     environment:
+#      - BOOTSTRAP_SERVERS=kafka1:29092
+#      - GROUP_ID=1
+#      - CONFIG_STORAGE_TOPIC=my_connect_configs
+#      - OFFSET_STORAGE_TOPIC=my_connect_offsets
+#      - STATUS_STORAGE_TOPIC=my_connect_statuses
      
-  client:
-    ports:
-      - 5000:5000
-      - 6003:6003
-    build:
-      context: .
-      dockerfile: ./Dockerfile
-    restart: unless-stopped
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
-    depends_on:
-      - kafka1
+#   client:
+#     ports:
+#       - 5000:5000
+#       - 6003:6003
+#     build:
+#       context: .
+#       dockerfile: ./Dockerfile
+#     restart: unless-stopped
+#     extra_hosts:
+#       - "host.docker.internal:host-gateway"
+#     depends_on:
+#       - kafka1
   
-  autosync:
-    ports:
-      - 4001:5000
-      - 3000:3000
-    build:
-      context: ../auto-sync
-      dockerfile: ./Dockerfile
-    restart: unless-stopped
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
-    depends_on:
-      - kafka1
+#   autosync:
+#     ports:
+#       - 4001:5000
+#       - 3000:3000
+#     build:
+#       context: ../auto-sync
+#       dockerfile: ./Dockerfile
+#     restart: unless-stopped
+#     extra_hosts:
+#       - "host.docker.internal:host-gateway"
+#     depends_on:
+#       - kafka1
 
   docs:
     build: ./nestjs-docs/docosaurus/
